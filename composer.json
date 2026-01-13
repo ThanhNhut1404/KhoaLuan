@@ -3,7 +3,7 @@
     "description": "He thong quan ly diem ren luyen sinh vien",
     "autoload": {
         "psr-4": {
-            "KhoaLuan\\QuanLyDiemRenLuyenSinhVien\\": "src/"
+            "KhoaLuan\\QLDRL\\": "src/"
         }
     },
     "authors": [
