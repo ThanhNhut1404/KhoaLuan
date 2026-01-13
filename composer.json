@@ -1,0 +1,15 @@
+{
+    "name": "khoaluan/quan-ly-diem-ren-luyen-sinh-vien",
+    "description": "He thong quan ly diem ren luyen sinh vien",
+    "autoload": {
+        "psr-4": {
+            "KhoaLuan\\QuanLyDiemRenLuyenSinhVien\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "KhoaLuan"
+        }
+    ],
+    "require": {}
+}
