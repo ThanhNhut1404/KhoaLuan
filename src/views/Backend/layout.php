@@ -8,68 +8,43 @@
         body {
             margin: 0;
             font-family: Arial, sans-serif;
-            background: #f4f6f8;
+            background: #eef0f2;
         }
 
-        /* HEADER */
-        .header {
-            height: 55px;
-            background: #2c387e;
-            color: white;
+        .container {
             display: flex;
-            align-items: center;
-            padding: 0 15px;
         }
 
-        .menu-btn {
-            font-size: 24px;
-            cursor: pointer;
-            margin-right: 15px;
-        }
-
-        /* MENU TRƯỢT */
-        .menu {
-            position: fixed;
-            top: 0;
-            left: -240px;
-            width: 240px;
-            height: 100%;
-            background: #ffffff;
-            box-shadow: 2px 0 6px rgba(0,0,0,0.2);
+        .sidebar {
+            width: 220px;
+            background: #1e1e1e;
+            color: white;
+            min-height: 100vh;
             padding: 20px;
-            transition: 0.3s;
-            z-index: 1000;
         }
 
-        .menu.active {
-            left: 0;
-        }
-
-        .menu h3 {
+        .sidebar h2 {
             margin-top: 0;
         }
 
-        .menu a {
+        .sidebar a {
+            color: #ddd;
             display: block;
             text-decoration: none;
-            color: #333;
             margin: 12px 0;
         }
 
-        /* OVERLAY */
-        .overlay {
-            display: none;
-            position: fixed;
-            inset: 0;
-            background: rgba(0,0,0,0.3);
-            z-index: 999;
+        .main {
+            flex: 1;
         }
 
-        .overlay.active {
-            display: block;
+        .header {
+            background: #ffffff;
+            padding: 15px;
+            border-bottom: 1px solid #ccc;
+            font-weight: bold;
         }
 
-        /* CONTENT */
         .content {
             padding: 20px;
         }
@@ -77,22 +52,16 @@
 </head>
 <body>
 
-<?php include 'menu.php'; ?>
+<div class="container">
+    <?php include 'sidebar.php'; ?>
 
-<div class="overlay" id="overlay" onclick="toggleMenu()"></div>
-
-<?php include 'header.php'; ?>
-
-<div class="content">
-    <?php include $content; ?>
+    <div class="main">
+        <?php include 'header.php'; ?>
+        <div class="content">
+            <?php include $content; ?>
+        </div>
+    </div>
 </div>
-
-<script>
-    function toggleMenu() {
-        document.getElementById('menu').classList.toggle('active');
-        document.getElementById('overlay').classList.toggle('active');
-    }
-</script>
 
 </body>
 </html>

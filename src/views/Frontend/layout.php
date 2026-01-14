@@ -3,47 +3,38 @@
 <head>
     <meta charset="UTF-8">
     <title><?= $title ?></title>
-
     <style>
         body {
             margin: 0;
-            font-family: Arial, sans-serif;
-            background: #f5f6fa;
+            font-family: Arial;
+            background: #f4f6f8;
         }
-
-        .container {
-            display: flex;
-        }
-
-        .sidebar {
-            width: 220px;
+        header {
             background: #2c387e;
             color: white;
-            min-height: 100vh;
-            padding: 20px;
-        }
-
-        .sidebar h2 {
-            margin-top: 0;
-        }
-
-        .sidebar a {
-            color: white;
-            display: block;
-            text-decoration: none;
-            margin: 12px 0;
-        }
-
-        .main {
-            flex: 1;
-        }
-
-        .header {
-            background: white;
             padding: 15px;
-            border-bottom: 1px solid #ddd;
+            display: flex;
+            align-items: center;
         }
-
+        .menu-btn {
+            font-size: 22px;
+            cursor: pointer;
+            margin-right: 15px;
+        }
+        .sidebar {
+            position: fixed;
+            top: 0;
+            left: -250px;
+            width: 250px;
+            height: 100%;
+            background: #2c387e;
+            color: white;
+            padding: 20px;
+            transition: 0.3s;
+        }
+        .sidebar.active {
+            left: 0;
+        }
         .content {
             padding: 20px;
         }
@@ -51,16 +42,27 @@
 </head>
 <body>
 
-<div class="container">
-    <?php include 'sidebar.php'; ?>
+<header>
+    <div class="menu-btn" onclick="toggleMenu()">☰</div>
+    <div>Hệ thống sinh viên</div>
+</header>
 
-    <div class="main">
-        <?php include 'header.php'; ?>
-        <div class="content">
-            <?php include $content; ?>
-        </div>
-    </div>
+<div class="sidebar" id="sidebar">
+    <p>🏠 Trang chủ</p>
+    <p>📸 Điểm danh</p>
+    <p>📊 Hoạt động</p>
+    <p>🚪 Đăng xuất</p>
 </div>
+
+<div class="content">
+    <?php require $content; ?>
+</div>
+
+<script>
+function toggleMenu() {
+    document.getElementById('sidebar').classList.toggle('active');
+}
+</script>
 
 </body>
 </html>

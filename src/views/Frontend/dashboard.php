@@ -1,2 +1,2 @@
-<h3>Trang Sinh Viên</h3>
-<p>Chào mừng bạn đến với hệ thống điểm danh sinh viên.</p>
+<h2>Xin chào sinh viên 👋</h2>
+<p>Đây là khung giao diện sinh viên.</p>

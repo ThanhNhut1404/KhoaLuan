@@ -1,14 +1,15 @@
 <?php
 
-$page = $_GET['page'] ?? 'dashboard';
+class StudentController
+{
+    public function dashboard()
+    {
+        $title = "Trang sinh viên";
 
-$viewPath = __DIR__ . '/../views/frontend/';
-$content = $viewPath . $page . '.php';
+        // file nội dung
+        $content = __DIR__ . '/../views/frontend/dashboard.php';
 
-if (!file_exists($content)) {
-    $content = $viewPath . 'dashboard.php';
+        // gọi layout
+        require __DIR__ . '/../views/frontend/layout.php';
+    }
 }
-
-$title = 'Trang Sinh Viên';
-
-include $viewPath . 'layout.php';

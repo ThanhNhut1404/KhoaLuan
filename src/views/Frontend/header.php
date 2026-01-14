@@ -1,3 +1,4 @@
 <div class="header">
-    Xin chào Sinh viên
+    <span class="menu-btn" onclick="toggleMenu()">☰</span>
+    <span>Hệ thống điểm danh sinh viên</span>
 </div>
