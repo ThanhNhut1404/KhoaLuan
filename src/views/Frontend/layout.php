@@ -58,11 +58,8 @@
     <?php require $content; ?>
 </div>
 
-<script>
-function toggleMenu() {
-    document.getElementById('sidebar').classList.toggle('active');
-}
-</script>
+<!-- Use external JS for menu toggling -->
+<script src="/KhoaLuan/public/js/menu.js"></script>
 
 </body>
 </html>
