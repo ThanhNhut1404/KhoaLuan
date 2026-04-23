@@ -1,48 +1,75 @@
-<style>
-    .frontend-header {
-        position: fixed;
-        top: 0;
-        left: 0;
-        right: 0;
-        height: 56px;
-        background: #2c387e;
-        color: #fff;
-        display: flex;
-        align-items: center;
-        padding: 0 12px;
-        z-index: 1000;
-        box-sizing: border-box;
-    }
-    .frontend-header .menu-btn {
-        font-size: 24px;
-        cursor: pointer;
-        margin-right: 12px;
-        user-select: none;
-    }
-    /* slide-in menu for pages that use #menu */
-    .menu, #sidebar {
-        position: fixed;
-        top: 56px;
-        left: -250px;
-        width: 250px;
-        height: calc(100% - 56px);
-        background: #2c387e;
-        color: #fff;
-        padding: 12px;
-        box-sizing: border-box;
-        transition: left .25s ease;
-        z-index: 999;
-    }
-    .menu.active, #sidebar.active {
-        left: 0;
-    }
-    /* ensure page content is not hidden under fixed header */
-    .content { padding-top: 70px; }
-</style>
+<header class="student-header">
+    <div class="header-left">
+        <div class="logo">
+            <i class="fas fa-graduation-cap"></i>
+            <span>Điểm Rèn Luyện</span>
+        </div>
+    </div>
+    
+    <div class="header-center">
+        <!-- THANH TIM KIEM -->
+        <div class="search-box">
+            <input type="text" placeholder="Tìm kiếm..." class="search-input">
+            <button class="search-btn"><i class="fas fa-search"></i></button>
+        </div>
+    </div>
+    
+    <div class="header-right">
+        <!-- ICON TRANG CHU VA THONG BAO -->
+        <a href="#" class="header-icon-link" title="Trang chủ">
+            <i class="fas fa-home"></i> <span>Trang chủ</span>
+        </a>
+        <a href="#" class="header-icon-link" title="Thông báo">
+            <i class="fas fa-bell"></i> <span>Thông báo</span>
+        </a>
 
-<div class="frontend-header">
-    <div class="menu-btn" onclick="toggleMenu()" aria-label="Mở menu">☰</div>
-    <div>Hệ thống điểm danh sinh viên</div>
-</div>
+        <!-- DROPDOWN USER -->
+        <div class="user-dropdown">
+            <button class="user-btn" onclick="toggleUserMenu()" title="Thông tin cá nhân">
+                <div class="user-avatar">
+                    <i class="fas fa-user"></i>
+                </div>
+                <span class="user-name">Nguyễn Văn A</span>
+            </button>
+            
+            <div class="dropdown-menu" id="userMenu">
+                <a href="#profile" onclick="closeUserMenu()">
+                    <i class="fas fa-id-card"></i> Thông tin cá nhân
+                </a>
+                <a href="#change-password" onclick="closeUserMenu()">
+                    <i class="fas fa-key"></i> Đổi mật khẩu
+                </a>
+                <div class="dropdown-divider"></div>
+                <a href="#logout" onclick="logout()">
+                    <i class="fas fa-sign-out-alt"></i> Đăng xuất
+                </a>
+            </div>
+        </div>
+    </div>
+</header>
 
-<!-- JS moved to public/js/menu.js -->
+<script>
+    function toggleUserMenu() {
+        const menu = document.getElementById('userMenu');
+        menu.classList.toggle('active');
+    }
+
+    function closeUserMenu() {
+        const menu = document.getElementById('userMenu');
+        menu.classList.remove('active');
+    }
+
+    // Đóng menu khi click ngoài
+    document.addEventListener('click', function(event) {
+        const userDropdown = document.querySelector('.user-dropdown');
+        if (!userDropdown.contains(event.target)) {
+            closeUserMenu();
+        }
+    });
+
+    function logout() {
+        if (confirm('Bạn có chắc muốn đăng xuất?')) {
+            window.location.href = '/KhoaLuan/public/logout.php';
+        }
+    }
+</script>
