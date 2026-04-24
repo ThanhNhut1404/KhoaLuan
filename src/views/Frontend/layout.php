@@ -21,6 +21,7 @@
             --danger: #e74c3c;
             --light: #ecf0f1;
             --dark: #2c3e50;
+            --sidebar-width: 240px;
         }
 
         body {
@@ -69,6 +70,14 @@
             flex: 1;
             display: flex;
             justify-content: center;
+            padding: 0 20px;
+        }
+
+        /* HEADER CENTER - THANH TIM KIEM */
+        .header-center {
+            flex: 1;
+            display: flex;
+                opacity: 0.9;
             padding: 0 20px;
         }
 
@@ -133,6 +142,10 @@
             transition: 0.3s;
             padding: 0;
             z-index: 1001;
+        }
+
+        body.sidebar-open .menu-toggle-btn {
+            color: #fff;
         }
 
         .menu-toggle-btn:hover {
@@ -283,9 +296,10 @@
         .sidebar {
             position: fixed;
             top: 70px;
-            left: -280px;
-            width: 280px;
-            height: calc(100vh - 130px);
+            left: calc(-1 * var(--sidebar-width));
+            width: var(--sidebar-width);
+            height: auto;
+            max-height: calc(100vh - 90px);
             background: var(--primary);
             color: white;
             padding: 20px 0;
@@ -311,7 +325,7 @@
             display: flex;
             align-items: center;
             gap: 12px;
-            padding: 12px 20px;
+            padding: 12px 16px;
             color: #d0d5e8;
             text-decoration: none;
             transition: 0.3s;
@@ -344,52 +358,159 @@
             margin: 0 auto;
         }
 
+        /* Desktop: sidebar luôn hiện giống cổng thông tin */
+        @media (min-width: 992px) {
+            .main-content {
+                margin-left: 0;
+                padding: 30px 30px;
+            }
+
+            .content-wrapper {
+                max-width: 1400px;
+            }
+        }
+
         /* FOOTER */
         .student-footer {
-            background: #1d4ed8;
-            color: white;
-            text-align: center;
-            padding: 20px;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            color: rgba(255,255,255,0.92);
             font-size: 13px;
             margin-top: auto;
-            border-top: 1px solid rgba(255,255,255,0.1);
+            border-top: 1px solid rgba(255,255,255,0.12);
+            padding: 18px 0;
+        }
+
+        .footer-inner {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
         }
 
         .footer-content {
-            display: flex;
-            justify-content: space-around;
-            flex-wrap: wrap;
-            gap: 15px;
-            margin-bottom: 10px;
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 14px;
+            align-items: start;
+            justify-items: center;
         }
 
         .footer-section {
-            flex: 1;
-            min-width: 150px;
+            min-width: 0;
+            text-align: center;
         }
 
-        .footer-section strong {
+        @media (min-width: 768px) {
+            .footer-content {
+                grid-template-columns: repeat(3, minmax(0, 1fr));
+                gap: 18px;
+            }
+
+            .footer-section {
+                text-align: left;
+                min-height: 80px;
+            }
+
+            .footer-inner {
+                align-items: stretch;
+            }
+
+            .footer-content {
+                justify-items: start;
+            }
+        }
+
+        .footer-heading {
             display: flex;
             align-items: center;
-            justify-content: center;
-            gap: 6px;
-            font-weight: 600;
+            gap: 8px;
+            flex-wrap: wrap;
+            font-weight: 700;
+            color: #fff;
+            letter-spacing: 0.2px;
         }
 
-        .footer-section p {
-            margin: 5px 0 0 0;
+        .footer-heading i {
+            opacity: 0.9;
         }
+
+        .footer-text {
+            margin: 6px 0 0 0;
+            font-size: 12px;
+            line-height: 1.55;
+            opacity: 0.92;
+            overflow-wrap: anywhere;
+            word-break: break-word;
+        }
+
+        /* Brand + social */
+        .footer-brand {
+            font-size: 18px;
+            font-weight: 800;
+            color: #fff;
+        }
+
+        .footer-social {
+            margin-top: 12px;
+            display: flex;
+            gap: 10px;
+        }
+
+        .footer-social a {
+            display: inline-flex;
+            width: 36px;
+            height: 36px;
+            align-items: center;
+            justify-content: center;
+            background: rgba(255,255,255,0.08);
+            border-radius: 8px;
+            color: #fff;
+            text-decoration: none;
+            transition: background 0.15s, transform 0.12s;
+        }
+
+        .footer-social a:hover { background: rgba(255,255,255,0.14); transform: translateY(-2px); }
+
+        .footer-contact, .footer-links { list-style: none; margin: 8px 0 0 0; padding: 0; }
+        .footer-contact li, .footer-links li { margin: 6px 0; }
+
+        .footer-links a, .footer-contact a { color: rgba(255,255,255,0.95); }
 
         .footer-section a {
             color: #fff;
             text-decoration: none;
             transition: 0.2s;
             opacity: 0.9;
+            overflow-wrap: anywhere;
+            word-break: break-word;
         }
 
         .footer-section a:hover {
             opacity: 1;
             text-decoration: underline;
+        }
+
+        .footer-bottom {
+            margin-top: 14px;
+            padding-top: 12px;
+            border-top: 1px solid rgba(255,255,255,0.16);
+            font-size: 12px;
+            opacity: 0.9;
+            text-align: center;
+        }
+
+        .footer-bottom p {
+            margin: 0;
+            line-height: 1.5;
+        }
+
+        @media (min-width: 768px) {
+            .footer-bottom { text-align: center; }
+            .footer-bottom p { display: flex; gap: 10px; align-items: center; justify-content: center; flex-wrap: wrap; }
+            .footer-bottom a { color: rgba(255,255,255,0.95); }
+            .footer-bottom .footer-bottom-sep { opacity: 0.6; margin: 0 6px; }
         }
 
         /* OVERLAY untuk mobile */
@@ -480,9 +601,6 @@
 </button>
 
 <div class="sidebar" id="sidebar">
-    <div style="padding: 20px; border-bottom: 1px solid rgba(255,255,255,0.1); margin-bottom: 20px;">
-        <h3 style="margin: 0; font-size: 16px;">Menu</h3>
-    </div>
     <ul class="sidebar-menu">
         <li><a href="#dashboard" onclick="closeSidebar()"><i class="fas fa-home"></i> <span>Trang chủ</span></a></li>
         <li><a href="#scores" onclick="closeSidebar()"><i class="fas fa-chart-bar"></i> <span>Xem điểm</span></a></li>
@@ -503,24 +621,43 @@
 <?php include __DIR__ . '/footer.php'; ?>
 
 <script>
-    function toggleMenu() {
+    function setSidebarState(isOpen) {
         const sidebar = document.getElementById('sidebar');
         const overlay = document.getElementById('sidebarOverlay');
-        sidebar.classList.toggle('active');
-        overlay.classList.toggle('active');
+
+        if (isOpen) {
+            sidebar.classList.add('active');
+            document.body.classList.add('sidebar-open');
+            overlay.classList.add('active');
+        } else {
+            sidebar.classList.remove('active');
+            document.body.classList.remove('sidebar-open');
+            overlay.classList.remove('active');
+        }
+    }
+
+    function toggleMenu() {
+        const sidebar = document.getElementById('sidebar');
+        setSidebarState(!sidebar.classList.contains('active'));
     }
 
     function closeSidebar() {
-        const sidebar = document.getElementById('sidebar');
-        const overlay = document.getElementById('sidebarOverlay');
-        sidebar.classList.remove('active');
-        overlay.classList.remove('active');
+        setSidebarState(false);
     }
+
+    function syncSidebarForViewport() {
+        const sidebar = document.getElementById('sidebar');
+        setSidebarState(sidebar.classList.contains('active'));
+    }
+
+    window.addEventListener('resize', syncSidebarForViewport);
+    setSidebarState(false);
 
     // Đóng sidebar khi nhấp vào overlay
     document.addEventListener('click', function(event) {
         const sidebar = document.getElementById('sidebar');
         const toggleBtn = document.querySelector('.menu-toggle-btn');
+
         if (sidebar.classList.contains('active') && 
             !sidebar.contains(event.target) && 
             !toggleBtn.contains(event.target)) {
