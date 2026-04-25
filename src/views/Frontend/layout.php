@@ -45,7 +45,7 @@
             height: 70px;
             display: flex;
             align-items: center;
-            justify-content: space-between;
+            justify-content: flex-end;
             z-index: 1000;
             box-shadow: 0 2px 10px rgba(0,0,0,0.1);
         }
@@ -85,7 +85,7 @@
             display: flex;
             align-items: center;
             background: rgba(255,255,255,0.15);
-            border-radius: 20px;
+            border-radius: 12px;
             padding: 0 12px;
             width: 100%;
             max-width: 400px;
@@ -134,29 +134,34 @@
             position: fixed;
             top: 75px;
             left: 20px;
-            font-size: 24px;
+            width: 38px;
+            height: 38px;
+            border-radius: 10px;
             cursor: pointer;
-            background: none;
-            border: none;
+            background: #ffffff;
+            border: 1px solid #e8ecf3;
             color: var(--primary);
             transition: 0.3s;
             padding: 0;
             z-index: 1001;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
         }
 
         body.sidebar-open .menu-toggle-btn {
-            color: #fff;
+            color: var(--primary);
         }
 
         .menu-toggle-btn:hover {
-            color: var(--secondary);
-            transform: scale(1.1);
+            color: var(--primary);
+            transform: none;
         }
 
         .header-right {
             display: flex;
             align-items: center;
-            gap: 15px;
+            gap: 10px;
             padding-right: 20px;
         }
 
@@ -184,6 +189,7 @@
             text-decoration: none;
             padding: 6px 10px;
             border-radius: 4px;
+            white-space: nowrap;
         }
 
         .header-icon-link:hover {
@@ -191,8 +197,15 @@
             background: rgba(255,255,255,0.1);
         }
 
-        .header-icon-link i {
-            font-size: 18px;
+        .header-icon-link svg,
+        .header-icon svg,
+        .search-btn svg,
+        .user-avatar svg,
+        .menu-toggle-btn svg,
+        .sidebar-menu svg {
+            width: 18px;
+            height: 18px;
+            stroke: currentColor;
         }
 
         /* USER DROPDOWN */
@@ -232,6 +245,7 @@
 
         .user-name {
             font-weight: 500;
+            white-space: nowrap;
         }
 
         /* DROPDOWN MENU */
@@ -242,10 +256,9 @@
             background: white;
             border-radius: 6px;
             box-shadow: 0 4px 12px rgba(29, 78, 216, 0.15);
-            min-width: 200px;
+            min-width: 190px;
             opacity: 0;
             visibility: hidden;
-            transition: 0.3s;
             z-index: 1002;
             border: 1px solid #e8ecf3;
         }
@@ -277,13 +290,14 @@
         .dropdown-menu a:hover {
             background: #f0f2f5;
             color: #2c387e;
-            padding-left: 20px;
         }
 
-        .dropdown-menu a i {
+        .dropdown-menu a svg {
             width: 18px;
+            height: 18px;
             text-align: center;
             color: #00a8e8;
+            stroke: currentColor;
         }
 
         .dropdown-divider {
@@ -315,6 +329,7 @@
 
         .sidebar-menu {
             list-style: none;
+            padding-top: 14px; /* tạo khoảng cách với nút menu */
         }
 
         .sidebar-menu li {
@@ -340,9 +355,11 @@
             border-left-color: #00a8e8;
         }
 
-        .sidebar-menu i {
+        .sidebar-menu svg {
             width: 20px;
+            height: 20px;
             text-align: center;
+            stroke: currentColor;
         }
 
         /* MAIN CONTENT */
@@ -536,8 +553,12 @@
             }
 
             .header-right {
-                gap: 10px;
+                gap: 5px;
                 padding-right: 10px;
+            }
+
+            .header-icon-link span {
+                display: none;
             }
 
             .user-name {
@@ -597,16 +618,41 @@
 <?php include __DIR__ . '/header.php'; ?>
 
 <button class="menu-toggle-btn" onclick="toggleMenu()" title="Mở menu">
-    <i class="fas fa-bars"></i>
+    <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M4 7h16M4 12h16M4 17h16" stroke-width="2" stroke-linecap="round"/>
+    </svg>
 </button>
 
 <div class="sidebar" id="sidebar">
     <ul class="sidebar-menu">
-        <li><a href="#dashboard" onclick="closeSidebar()"><i class="fas fa-home"></i> <span>Trang chủ</span></a></li>
-        <li><a href="#scores" onclick="closeSidebar()"><i class="fas fa-chart-bar"></i> <span>Xem điểm</span></a></li>
-        <li><a href="#history" onclick="closeSidebar()"><i class="fas fa-history"></i> <span>Lịch sử</span></a></li>
-        <li><a href="#profile" onclick="closeSidebar()"><i class="fas fa-user-circle"></i> <span>Hồ sơ</span></a></li>
-        <li><a href="#contact" onclick="closeSidebar()"><i class="fas fa-headset"></i> <span>Liên hệ</span></a></li>
+        <li><a href="#dashboard" onclick="closeSidebar()">
+            <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M3 12h8V3H3v9Zm10 9h8v-7h-8v7ZM3 21h8v-7H3v7Zm10-9h8V3h-8v9Z" stroke-width="2" stroke-linecap="round"/>
+            </svg>
+            <span>Trang chủ</span></a></li>
+        <li><a href="#scores" onclick="closeSidebar()">
+            <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M4 19h16M7 16V9M12 16V5M17 16v-7" stroke-width="2" stroke-linecap="round"/>
+            </svg>
+            <span>Xem điểm</span></a></li>
+        <li><a href="#history" onclick="closeSidebar()">
+            <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M3 12a9 9 0 1 0 3-6.7" stroke-width="2" stroke-linecap="round"/>
+                <path d="M3 4v5h5" stroke-width="2" stroke-linecap="round"/>
+                <path d="M12 7v5l3 2" stroke-width="2" stroke-linecap="round"/>
+            </svg>
+            <span>Lịch sử</span></a></li>
+        <li><a href="#profile" onclick="closeSidebar()">
+            <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M12 12a4 4 0 1 0-4-4 4 4 0 0 0 4 4Z" stroke-width="2" stroke-linecap="round"/>
+                <path d="M4 20c1.6-3 5-4 8-4s6.4 1 8 4" stroke-width="2" stroke-linecap="round"/>
+            </svg>
+            <span>Hồ sơ</span></a></li>
+        <li><a href="#contact" onclick="closeSidebar()">
+            <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.8 19.8 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.08 4.18 2 2 0 0 1 4.06 2h3a2 2 0 0 1 2 1.72 12.7 12.7 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.22a2 2 0 0 1 2.11-.45 12.7 12.7 0 0 0 2.81.7A2 2 0 0 1 22 16.92Z" stroke-width="2" stroke-linecap="round"/>
+            </svg>
+            <span>Liên hệ</span></a></li>
     </ul>
 </div>
 

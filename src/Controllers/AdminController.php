@@ -9,6 +9,6 @@ if (!file_exists($content)) {
     $content = $viewPath . 'dashboard.php';
 }
 
-$title = 'Trang Quản Trị';
+$title = 'Quản Trị';
 
 include $viewPath . 'layout.php';

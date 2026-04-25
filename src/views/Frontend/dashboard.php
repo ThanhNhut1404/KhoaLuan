@@ -61,8 +61,11 @@
         margin: 0;
     }
 
-    .card-title i {
+    .card-title svg {
+        width: 16px;
+        height: 16px;
         color: #00a8e8;
+        stroke: currentColor;
     }
 
     .card-body {
@@ -159,7 +162,13 @@
         transform: translateY(-1px);
     }
 
-    .quick-link i {
+    .quick-link svg {
+        width: 18px;
+        height: 18px;
+        stroke: currentColor;
+    }
+
+    .quick-link .quick-icon {
         width: 34px;
         height: 34px;
         border-radius: 10px;
@@ -344,9 +353,14 @@
     }
 
     .stat-icon {
-        font-size: 32px;
         margin-bottom: 12px;
         color: #00a8e8;
+    }
+
+    .stat-icon svg {
+        width: 32px;
+        height: 32px;
+        stroke: currentColor;
     }
 
     .stat-label {
@@ -530,9 +544,19 @@
         margin-top: 15px;
     }
 
-    .chart-placeholder i {
-        font-size: 48px;
+    .chart-placeholder svg {
+        width: 48px;
+        height: 48px;
         opacity: 0.3;
+        stroke: currentColor;
+    }
+
+    .btn svg {
+        width: 16px;
+        height: 16px;
+        margin-right: 6px;
+        stroke: currentColor;
+        vertical-align: -3px;
     }
 
     .chart-placeholder p {
@@ -564,7 +588,7 @@
         <section id="dashboard">
             <div class="card student-profile">
                 <div class="card-header">
-                    <h3 class="card-title"><i class="fas fa-id-card"></i> Thông tin sinh viên</h3>
+                    <h3 class="card-title">Thông tin sinh viên</h3>
                 </div>
                 <div class="card-body">
                     <div class="student-profile-grid">
@@ -573,7 +597,10 @@
                                 <?php if (!empty($student['avatar_url'])): ?>
                                     <img src="<?= htmlspecialchars($student['avatar_url']) ?>" alt="Avatar">
                                 <?php else: ?>
-                                    <i class="fas fa-user"></i>
+                                    <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                        <path d="M12 12a4 4 0 1 0-4-4 4 4 0 0 0 4 4Z" stroke-width="2" stroke-linecap="round"/>
+                                        <path d="M4 20c1.6-3 5-4 8-4s6.4 1 8 4" stroke-width="2" stroke-linecap="round"/>
+                                    </svg>
                                 <?php endif; ?>
                             </div>
                         </div>
@@ -604,28 +631,50 @@
             <!-- THỐNG KÊ -->
             <div class="stats-container">
                 <div class="stat-card">
-                    <div class="stat-icon"><i class="fas fa-star"></i></div>
+                    <div class="stat-icon">
+                        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="m12 2 3 6 6 1-4 4 1 6-6-3-6 3 1-6-4-4 6-1 3-6Z" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                    </div>
                     <div class="stat-label">Điểm Tổng Hợp</div>
                     <div class="stat-value">85.5</div>
                     <p style="margin: 5px 0 0 0; font-size: 12px; color: #666;">Trên 100</p>
                 </div>
 
                 <div class="stat-card">
-                    <div class="stat-icon"><i class="fas fa-check-circle"></i></div>
+                    <div class="stat-icon">
+                        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <circle cx="12" cy="12" r="9" stroke-width="2" />
+                            <path d="m8 12 3 3 5-6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                    </div>
                     <div class="stat-label">Số Hoạt Động</div>
                     <div class="stat-value">12</div>
                     <p style="margin: 5px 0 0 0; font-size: 12px; color: #666;">Hoạt động</p>
                 </div>
 
                 <div class="stat-card">
-                    <div class="stat-icon"><i class="fas fa-trophy"></i></div>
+                    <div class="stat-icon">
+                        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M8 4h8v4a4 4 0 1 1-8 0V4Z" stroke-width="2" />
+                            <path d="M6 4H4v2a4 4 0 0 0 4 4" stroke-width="2" />
+                            <path d="M18 4h2v2a4 4 0 0 1-4 4" stroke-width="2" />
+                            <path d="M12 12v4" stroke-width="2" stroke-linecap="round" />
+                            <path d="M8 20h8" stroke-width="2" stroke-linecap="round" />
+                        </svg>
+                    </div>
                     <div class="stat-label">Xếp Hạng</div>
                     <div class="stat-value">Giỏi</div>
                     <p style="margin: 5px 0 0 0; font-size: 12px; color: #666;">Loại điểm</p>
                 </div>
 
                 <div class="stat-card">
-                    <div class="stat-icon"><i class="fas fa-clock"></i></div>
+                    <div class="stat-icon">
+                        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <circle cx="12" cy="12" r="9" stroke-width="2" />
+                            <path d="M12 7v5l3 2" stroke-width="2" stroke-linecap="round" />
+                        </svg>
+                    </div>
                     <div class="stat-label">Cập Nhật Lần Cuối</div>
                     <div class="stat-value">Hôm nay</div>
                     <p style="margin: 5px 0 0 0; font-size: 12px; color: #666;">21:30</p>
@@ -641,24 +690,50 @@
     <aside class="portal-aside">
         <div class="card" style="margin-bottom: 20px;">
             <div class="card-header">
-                <h3 class="card-title"><i class="fas fa-bolt"></i> Thao tác nhanh</h3>
+                <h3 class="card-title">
+                    <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M13 2 4 14h7l-1 8 9-12h-7l1-8Z" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                    Thao tác nhanh
+                </h3>
             </div>
             <div class="card-body">
                 <div class="aside-actions">
                     <a class="quick-link" href="#scores">
-                        <i class="fas fa-chart-column"></i>
+                        <span class="quick-icon">
+                            <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M4 19h16M7 16V9M12 16V5M17 16v-7" stroke-width="2" stroke-linecap="round"/>
+                            </svg>
+                        </span>
                         <span>Xem điểm</span>
                     </a>
                     <a class="quick-link" href="#profile">
-                        <i class="fas fa-id-badge"></i>
+                        <span class="quick-icon">
+                            <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M4 5h16v14H4z" stroke-width="2" stroke-linecap="round"/>
+                                <path d="M8 9h8M8 13h5" stroke-width="2" stroke-linecap="round"/>
+                            </svg>
+                        </span>
                         <span>Hồ sơ</span>
                     </a>
                     <a class="quick-link" href="#contact">
-                        <i class="fas fa-headset"></i>
+                        <span class="quick-icon">
+                            <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M4 12a8 8 0 0 1 16 0" stroke-width="2" stroke-linecap="round"/>
+                                <path d="M4 12v3a2 2 0 0 0 2 2h2v-6H6a2 2 0 0 0-2 2Z" stroke-width="2" stroke-linecap="round"/>
+                                <path d="M20 12v3a2 2 0 0 1-2 2h-2v-6h2a2 2 0 0 1 2 2Z" stroke-width="2" stroke-linecap="round"/>
+                            </svg>
+                        </span>
                         <span>Hỗ trợ</span>
                     </a>
                     <a class="quick-link" href="#history">
-                        <i class="fas fa-clock-rotate-left"></i>
+                        <span class="quick-icon">
+                            <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M3 12a9 9 0 1 0 3-6.7" stroke-width="2" stroke-linecap="round"/>
+                                <path d="M3 4v5h5" stroke-width="2" stroke-linecap="round"/>
+                                <path d="M12 7v5l3 2" stroke-width="2" stroke-linecap="round"/>
+                            </svg>
+                        </span>
                         <span>Lịch sử</span>
                     </a>
                 </div>
@@ -667,7 +742,13 @@
 
         <div class="card">
             <div class="card-header">
-                <h3 class="card-title"><i class="fas fa-bell"></i> Thông báo</h3>
+                <h3 class="card-title">
+                    <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M18 8a6 6 0 1 0-12 0c0 7-3 7-3 7h18s-3 0-3-7Z" stroke-width="2" stroke-linecap="round"/>
+                        <path d="M10 21a2 2 0 0 0 4 0" stroke-width="2" stroke-linecap="round"/>
+                    </svg>
+                    Thông báo
+                </h3>
                 <div style="font-size: 12px; color: #6b7280;">Mới nhất</div>
             </div>
             <div class="card-body">
@@ -721,7 +802,9 @@
                     Thống kê điểm
                 </div>
                 <div class="chart-placeholder">
-                    <i class="fas fa-chart-bar" style="font-size: 48px; opacity: 0.3;"></i>
+                    <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M4 19h16M7 16V9M12 16V5M17 16v-7" stroke-width="2" stroke-linecap="round"/>
+                    </svg>
                     <p style="margin-top: 15px;">Biểu đồ thống kê sẽ được hiển thị tại đây<br><small>(Cần thêm thư viện Chart.js)</small></p>
                 </div>
             </section>
@@ -733,8 +816,22 @@
                 </div>
 
                 <div class="btn-group">
-                    <button class="btn btn-primary"><i class="fas fa-download"></i> Tải Xuống</button>
-                    <button class="btn btn-secondary"><i class="fas fa-print"></i> In</button>
+                    <button class="btn btn-primary">
+                        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M12 3v12" stroke-width="2" stroke-linecap="round"/>
+                            <path d="m7 10 5 5 5-5" stroke-width="2" stroke-linecap="round"/>
+                            <path d="M5 21h14" stroke-width="2" stroke-linecap="round"/>
+                        </svg>
+                        Tải Xuống
+                    </button>
+                    <button class="btn btn-secondary">
+                        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M6 9V4h12v5" stroke-width="2" stroke-linecap="round"/>
+                            <rect x="6" y="13" width="12" height="7" stroke-width="2" />
+                            <path d="M6 12h12" stroke-width="2" stroke-linecap="round"/>
+                        </svg>
+                        In
+                    </button>
                 </div>
 
                 <div class="table-responsive">
