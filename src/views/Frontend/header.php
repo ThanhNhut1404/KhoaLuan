@@ -1,4 +1,9 @@
 <header class="student-header">
+    <div class="header-left">
+        <a class="logo" href="/KhoaLuan/public/student.php" aria-label="Trang sinh viên">
+            <img class="header-logo" src="/KhoaLuan/public/images/logo1.png" alt="Logo" />
+        </a>
+    </div>
     <div class="header-right">
         <!-- THANH TIM KIEM -->
         <div class="search-box">
@@ -35,6 +40,9 @@
                     </svg>
                 </div>
                 <span class="user-name">Nguyễn Văn A</span>
+                <svg class="user-caret" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                    <path d="M6 9l6 6 6-6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
             </button>
             
             <div class="dropdown-menu" id="userMenu">
@@ -45,7 +53,7 @@
                     </svg>
                     Thông tin cá nhân
                 </a>
-                <a href="#change-password" onclick="closeUserMenu()">
+                <a href="#" onclick="closeUserMenu(); openPasswordModal(); return false;">
                     <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                         <path d="M4 15v4h4l9-9-4-4-9 9Z" stroke-width="2" stroke-linecap="round"/>
                         <path d="M14 6l4 4" stroke-width="2" stroke-linecap="round"/>

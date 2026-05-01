@@ -4,7 +4,7 @@ class StudentController
 {
     public function dashboard()
     {
-        $title = "Cổng điểm rèn luyện sinh viên";
+        $title = "Cổng Điểm rèn luyện Sinh viên";
 
         // file nội dung
         $content = __DIR__ . '/../views/Frontend/dashboard.php';

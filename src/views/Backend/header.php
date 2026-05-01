@@ -5,6 +5,9 @@
                 <path d="M4 7h16M4 12h16M4 17h16" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
             </svg>
         </button>
+        <a href="#" aria-label="Tải lại trang quản trị" onclick="location.reload(); return false;">
+            <img class="admin-logo" src="/KhoaLuan/public/images/logo1.png" alt="Logo" />
+        </a>
     </div>
 
     <div class="header-search">
@@ -32,6 +35,9 @@
                     </svg>
                 </span>
                 <span>Nguyễn Văn A</span>
+                <svg class="admin-user-caret" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                    <path d="M6 9l6 6 6-6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
             </button>
             <div id="userMenu" class="user-dropdown" role="menu">
                 <a href="#" role="menuitem">
@@ -41,7 +47,7 @@
                     </svg>
                     Thông tin cá nhân
                 </a>
-                <a href="#" role="menuitem">
+                <a href="#" role="menuitem" onclick="openAdminPasswordModal(); return false;">
                     <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                         <path d="M4 15v4h4l9-9-4-4-9 9Z" stroke-width="2" stroke-linecap="round"/>
                         <path d="M14 6l4 4" stroke-width="2" stroke-linecap="round"/>

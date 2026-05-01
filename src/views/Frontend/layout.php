@@ -35,8 +35,8 @@
 
         /* HEADER */
         .student-header {
-            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
-            color: white;
+            background: #ffffff;
+            color: var(--primary);
             padding: 0;
             position: fixed;
             top: 0;
@@ -45,7 +45,7 @@
             height: 70px;
             display: flex;
             align-items: center;
-            justify-content: flex-end;
+            justify-content: space-between;
             z-index: 1000;
             box-shadow: 0 2px 10px rgba(0,0,0,0.1);
         }
@@ -54,7 +54,7 @@
             display: flex;
             align-items: center;
             gap: 15px;
-            padding-left: 20px;
+            padding-left: 8px;
         }
 
         .logo {
@@ -63,6 +63,12 @@
             display: flex;
             align-items: center;
             gap: 8px;
+        }
+
+        .header-logo {
+            height: 64px;
+            width: auto;
+            display: block;
         }
 
         /* HEADER CENTER - THANH TIM KIEM */
@@ -84,38 +90,38 @@
         .search-box {
             display: flex;
             align-items: center;
-            background: rgba(255,255,255,0.15);
+            background: #f5f7ff;
             border-radius: 12px;
             padding: 0 12px;
             width: 100%;
             max-width: 400px;
             transition: 0.3s;
-            border: 1px solid rgba(255,255,255,0.2);
+            border: 1px solid #e3e9ff;
         }
 
         .search-box:focus-within {
-            background: rgba(255,255,255,0.25);
-            border-color: rgba(255,255,255,0.3);
+            background: #edf2ff;
+            border-color: #c7d6ff;
         }
 
         .search-input {
             flex: 1;
             border: none;
             background: transparent;
-            color: white;
+            color: var(--primary);
             padding: 8px 12px;
             font-size: 14px;
             outline: none;
         }
 
         .search-input::placeholder {
-            color: rgba(255,255,255,0.7);
+            color: rgba(29, 78, 216, 0.6);
         }
 
         .search-btn {
             background: none;
             border: none;
-            color: white;
+            color: var(--primary);
             cursor: pointer;
             font-size: 16px;
             padding: 4px 8px;
@@ -123,8 +129,8 @@
         }
 
         .search-btn:hover {
-            color: #fff;
-            opacity: 0.8;
+            color: var(--primary-dark);
+            opacity: 1;
         }
 
         /* HEADER RIGHT - ICONS VA USER MENU */
@@ -166,7 +172,7 @@
         }
 
         .header-icon {
-            color: white;
+            color: var(--primary);
             font-size: 20px;
             cursor: pointer;
             transition: 0.3s;
@@ -174,7 +180,7 @@
         }
 
         .header-icon:hover {
-            color: var(--secondary);
+            color: var(--primary-dark);
             transform: scale(1.1);
         }
 
@@ -182,7 +188,7 @@
             display: flex;
             align-items: center;
             gap: 6px;
-            color: white;
+            color: var(--primary);
             font-size: 14px;
             cursor: pointer;
             transition: 0.3s;
@@ -193,8 +199,8 @@
         }
 
         .header-icon-link:hover {
-            color: var(--secondary);
-            background: rgba(255,255,255,0.1);
+            color: var(--primary-dark);
+            background: #eef2ff;
         }
 
         .header-icon-link svg,
@@ -219,7 +225,7 @@
             gap: 8px;
             background: none;
             border: none;
-            color: white;
+            color: var(--primary);
             cursor: pointer;
             font-size: 14px;
             transition: 0.3s;
@@ -228,14 +234,14 @@
         }
 
         .user-btn:hover {
-            background: rgba(255,255,255,0.1);
+            background: #eef2ff;
         }
 
         .user-avatar {
             width: 35px;
             height: 35px;
             border-radius: 50%;
-            background: var(--secondary);
+            background: var(--primary);
             display: flex;
             align-items: center;
             justify-content: center;
@@ -246,6 +252,12 @@
         .user-name {
             font-weight: 500;
             white-space: nowrap;
+        }
+
+        .user-caret {
+            width: 14px;
+            height: 14px;
+            stroke: currentColor;
         }
 
         /* DROPDOWN MENU */
@@ -273,7 +285,7 @@
             align-items: center;
             gap: 10px;
             padding: 12px 16px;
-            color: #333;
+            color: var(--primary);
             text-decoration: none;
             transition: 0.2s;
             font-size: 14px;
@@ -288,15 +300,15 @@
         }
 
         .dropdown-menu a:hover {
-            background: #f0f2f5;
-            color: #2c387e;
+            background: #eef2ff;
+            color: var(--primary-dark);
         }
 
         .dropdown-menu a svg {
             width: 18px;
             height: 18px;
             text-align: center;
-            color: #00a8e8;
+            color: var(--primary);
             stroke: currentColor;
         }
 
@@ -304,6 +316,157 @@
             height: 1px;
             background: #e8ecf3;
             margin: 5px 0;
+        }
+
+        /* CHANGE PASSWORD MODAL */
+        .modal-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(15, 23, 42, 0.35);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 1200;
+            padding: 20px;
+        }
+
+        .modal-overlay.active {
+            display: flex;
+        }
+
+        .modal-card {
+            width: min(520px, 100%);
+            background: #ffffff;
+            border-radius: 16px;
+            box-shadow: 0 24px 60px rgba(15, 23, 42, 0.2);
+            border: 1px solid #e8ecf3;
+            overflow: hidden;
+            animation: modalIn 180ms ease-out;
+        }
+
+        .modal-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 16px 18px;
+            border-bottom: 1px solid #eef2ff;
+            background: #f8faff;
+        }
+
+        .modal-title {
+            font-size: 16px;
+            font-weight: 700;
+            color: var(--primary);
+        }
+
+        .modal-close {
+            border: none;
+            background: transparent;
+            color: var(--primary-dark);
+            font-size: 18px;
+            cursor: pointer;
+            width: 32px;
+            height: 32px;
+            border-radius: 8px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-close:hover {
+            background: #eef2ff;
+        }
+
+        .modal-body {
+            padding: 18px;
+            display: grid;
+            gap: 12px;
+        }
+
+        .modal-field label {
+            display: block;
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--primary-dark);
+            margin-bottom: 6px;
+        }
+
+        .modal-field .req {
+            color: #ef4444;
+            margin-left: 4px;
+        }
+
+        .modal-field input {
+            width: 100%;
+            padding: 12px 14px;
+            border-radius: 12px;
+            border: 1px solid #e3e9ff;
+            background: #fbfdff;
+            font-size: 14px;
+            outline: none;
+        }
+
+        .modal-input-wrap {
+            position: relative;
+        }
+
+        .modal-input-wrap input {
+            padding-right: 44px;
+        }
+
+        .modal-toggle {
+            position: absolute;
+            right: 8px;
+            top: 50%;
+            transform: translateY(-45%);
+            border: none;
+            background: transparent;
+            color: var(--primary-dark);
+            cursor: pointer;
+            padding: 4px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-toggle svg {
+            width: 18px;
+            height: 18px;
+            stroke: currentColor;
+            fill: none;
+        }
+
+        .modal-toggle .eye-off { display: none; }
+        .modal-toggle.is-visible .eye-on { display: none; }
+        .modal-toggle.is-visible .eye-off { display: block; }
+
+        .modal-field input:focus {
+            border-color: #c7d6ff;
+            box-shadow: 0 0 0 4px rgba(29, 78, 216, 0.12);
+        }
+
+        .modal-actions {
+            padding: 0 18px 18px;
+        }
+
+        .modal-save {
+            width: 100%;
+            border: none;
+            border-radius: 12px;
+            padding: 12px 16px;
+            font-size: 14px;
+            font-weight: 700;
+            color: #ffffff;
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            cursor: pointer;
+            box-shadow: 0 10px 24px rgba(29, 78, 216, 0.25);
+        }
+
+        .modal-save:hover { filter: brightness(0.96); }
+
+        @keyframes modalIn {
+            from { transform: translateY(8px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
         }
 
         /* SIDEBAR */
@@ -314,8 +477,8 @@
             width: var(--sidebar-width);
             height: auto;
             max-height: calc(100vh - 90px);
-            background: var(--primary);
-            color: white;
+            background: #ffffff;
+            color: var(--primary);
             padding: 20px 0;
             transition: left 0.3s ease;
             z-index: 999;
@@ -329,7 +492,7 @@
 
         .sidebar-menu {
             list-style: none;
-            padding-top: 14px; /* tạo khoảng cách với nút menu */
+            padding-top: 28px; /* tạo khoảng cách với nút menu */
         }
 
         .sidebar-menu li {
@@ -341,7 +504,7 @@
             align-items: center;
             gap: 12px;
             padding: 12px 16px;
-            color: #d0d5e8;
+            color: var(--primary);
             text-decoration: none;
             transition: 0.3s;
             border-left: 3px solid transparent;
@@ -350,9 +513,9 @@
 
         .sidebar-menu a:hover,
         .sidebar-menu a.active {
-            color: white;
-            background: rgba(255,255,255,0.1);
-            border-left-color: #00a8e8;
+            color: var(--primary-dark);
+            background: #eef2ff;
+            border-left-color: transparent;
         }
 
         .sidebar-menu svg {
@@ -658,6 +821,74 @@
 
 <div class="sidebar-overlay" id="sidebarOverlay" onclick="closeSidebar()"></div>
 
+<div class="modal-overlay" id="passwordModal" aria-hidden="true">
+    <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="passwordModalTitle">
+        <div class="modal-header">
+            <span class="modal-title" id="passwordModalTitle">Đổi mật khẩu</span>
+            <button class="modal-close" type="button" aria-label="Đóng" onclick="closePasswordModal()">✕</button>
+        </div>
+        <div class="modal-body">
+            <div class="modal-field pwd-wrap">
+                <label for="currentPassword">Mật khẩu cũ<span class="req">*</span></label>
+                <div class="modal-input-wrap">
+                    <input id="currentPassword" type="password" placeholder="Nhập mật khẩu cũ" />
+                    <button class="modal-toggle" type="button" aria-label="Hiện mật khẩu" data-target="currentPassword">
+                        <svg class="eye-on" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M2 12s3.5-6 10-6 10 6 10 6-3.5 6-10 6-10-6-10-6Z" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            <circle cx="12" cy="12" r="3" stroke-width="2" />
+                        </svg>
+                        <svg class="eye-off" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M3 3l18 18" stroke-width="2" stroke-linecap="round"/>
+                            <path d="M10.5 6.5A9.9 9.9 0 0 1 12 6c6.5 0 10 6 10 6a18.2 18.2 0 0 1-3.4 4.4" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            <path d="M6.6 6.6A18 18 0 0 0 2 12s3.5 6 10 6c1.8 0 3.4-.4 4.8-1.1" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            <path d="M9.9 9.9a3 3 0 0 0 4.2 4.2" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+            <div class="modal-field pwd-wrap">
+                <label for="newPassword">Mật khẩu mới<span class="req">*</span></label>
+                <div class="modal-input-wrap">
+                    <input id="newPassword" type="password" placeholder="Nhập mật khẩu mới" />
+                    <button class="modal-toggle" type="button" aria-label="Hiện mật khẩu" data-target="newPassword">
+                        <svg class="eye-on" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M2 12s3.5-6 10-6 10 6 10 6-3.5 6-10 6-10-6-10-6Z" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            <circle cx="12" cy="12" r="3" stroke-width="2" />
+                        </svg>
+                        <svg class="eye-off" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M3 3l18 18" stroke-width="2" stroke-linecap="round"/>
+                            <path d="M10.5 6.5A9.9 9.9 0 0 1 12 6c6.5 0 10 6 10 6a18.2 18.2 0 0 1-3.4 4.4" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            <path d="M6.6 6.6A18 18 0 0 0 2 12s3.5 6 10 6c1.8 0 3.4-.4 4.8-1.1" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            <path d="M9.9 9.9a3 3 0 0 0 4.2 4.2" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+            <div class="modal-field pwd-wrap">
+                <label for="confirmPassword">Xác nhận mật khẩu<span class="req">*</span></label>
+                <div class="modal-input-wrap">
+                    <input id="confirmPassword" type="password" placeholder="Nhập lại mật khẩu mới" />
+                    <button class="modal-toggle" type="button" aria-label="Hiện mật khẩu" data-target="confirmPassword">
+                        <svg class="eye-on" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M2 12s3.5-6 10-6 10 6 10 6-3.5 6-10 6-10-6-10-6Z" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            <circle cx="12" cy="12" r="3" stroke-width="2" />
+                        </svg>
+                        <svg class="eye-off" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M3 3l18 18" stroke-width="2" stroke-linecap="round"/>
+                            <path d="M10.5 6.5A9.9 9.9 0 0 1 12 6c6.5 0 10 6 10 6a18.2 18.2 0 0 1-3.4 4.4" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            <path d="M6.6 6.6A18 18 0 0 0 2 12s3.5 6 10 6c1.8 0 3.4-.4 4.8-1.1" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            <path d="M9.9 9.9a3 3 0 0 0 4.2 4.2" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+        </div>
+        <div class="modal-actions">
+            <button class="modal-save" type="button">Lưu</button>
+        </div>
+    </div>
+</div>
+
 <div class="main-content">
     <div class="content-wrapper">
         <?php require $content; ?>
@@ -696,6 +927,20 @@
         setSidebarState(sidebar.classList.contains('active'));
     }
 
+    function openPasswordModal() {
+        const modal = document.getElementById('passwordModal');
+        if (!modal) return;
+        modal.classList.add('active');
+        modal.setAttribute('aria-hidden', 'false');
+    }
+
+    function closePasswordModal() {
+        const modal = document.getElementById('passwordModal');
+        if (!modal) return;
+        modal.classList.remove('active');
+        modal.setAttribute('aria-hidden', 'true');
+    }
+
     window.addEventListener('resize', syncSidebarForViewport);
     setSidebarState(false);
 
@@ -709,6 +954,24 @@
             !toggleBtn.contains(event.target)) {
             closeSidebar();
         }
+    });
+
+    document.addEventListener('keydown', function(event) {
+        if (event.key === 'Escape') {
+            closePasswordModal();
+        }
+    });
+
+    document.querySelectorAll('.modal-toggle').forEach(function(button){
+        button.addEventListener('click', function(){
+            var targetId = button.getAttribute('data-target');
+            var input = document.getElementById(targetId);
+            if (!input) return;
+            var isHidden = input.type === 'password';
+            input.type = isHidden ? 'text' : 'password';
+            button.classList.toggle('is-visible', isHidden);
+            button.setAttribute('aria-label', isHidden ? 'Ẩn mật khẩu' : 'Hiện mật khẩu');
+        });
     });
 </script>
 
