@@ -37,13 +37,12 @@
     }
 
     .student-profile {
-        max-width: 720px;
-        margin-right: auto;
+        max-width: none;
     }
 
     @media (min-width: 992px) {
         .portal-grid {
-            grid-template-columns: minmax(0, 1fr) 260px;
+            grid-template-columns: minmax(0, 1fr) 560px;
             gap: 12px;
         }
 
@@ -607,7 +606,6 @@
                         </svg>
                     </div>
                     <div class="stat-label">Lịch hoạt động</div>
-                    <div class="stat-meta">12 hoạt động</div>
                 </div>
 
                 <div class="stat-card stat-card--center">
@@ -640,7 +638,7 @@
                             <path d="M9 15h6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
                         </svg>
                     </div>
-                    <div class="stat-label">Khai báo minh chứng</div>
+                    <div class="stat-label">Nộp minh chứng</div>
                 </div>
             </div>
         </section>
