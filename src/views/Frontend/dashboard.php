@@ -20,12 +20,40 @@
 
     .portal-aside {
         min-width: 0;
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 20px;
+    }
+
+    .dashboard-top {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 20px;
+        margin-bottom: 30px;
+    }
+
+    .dashboard-top .student-profile {
+        margin-bottom: 0;
+    }
+
+    .student-profile {
+        max-width: 720px;
+        margin-right: auto;
     }
 
     @media (min-width: 992px) {
         .portal-grid {
-            grid-template-columns: minmax(0, 1fr) 360px;
-            gap: 24px;
+            grid-template-columns: minmax(0, 1fr) 260px;
+            gap: 12px;
+        }
+
+        .dashboard-top {
+            grid-template-columns: 1fr;
+        }
+
+        .portal-aside {
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
         }
     }
 
@@ -39,6 +67,16 @@
         box-shadow: 0 2px 8px rgba(0,0,0,0.08);
         border: 1px solid #e8ecf3;
         overflow: hidden;
+    }
+
+    .news-card {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .news-card .card-body {
+        flex: 1;
+        overflow: auto;
     }
 
     .card-header {
@@ -97,109 +135,8 @@
         transform: translateY(-1px);
     }
 
-    .news-date {
-        border-radius: 10px;
-        background: linear-gradient(135deg, #1d4ed8 0%, #1047a1 100%);
-        color: white;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        flex-direction: column;
-        height: 54px;
-        min-width: 54px;
-        line-height: 1;
-    }
-
-    .news-date .m {
-        font-size: 11px;
-        opacity: 0.9;
-        letter-spacing: 0.5px;
-        text-transform: uppercase;
-    }
-
-    .news-date .d {
-        font-size: 18px;
-        font-weight: 800;
-        margin-top: 2px;
-    }
-
-    .news-title {
-        font-size: 13px;
-        font-weight: 700;
-        color: #2c3e50;
-        margin: 0 0 4px 0;
-        line-height: 1.35;
-    }
-
-    .news-meta {
-        font-size: 12px;
-        color: #6b7280;
-        margin: 0;
-    }
-
-    .aside-actions {
-        display: grid;
-        grid-template-columns: repeat(2, minmax(0, 1fr));
-        gap: 10px;
-    }
-
-    .quick-link {
-        display: flex;
-        gap: 10px;
-        align-items: center;
-        padding: 12px;
-        border-radius: 10px;
-        border: 1px solid #e8ecf3;
-        text-decoration: none;
-        color: #2c3e50;
-        transition: 0.2s;
-        background: #fff;
-    }
-
-    .quick-link:hover {
-        border-color: #dce1eb;
-        box-shadow: 0 4px 12px rgba(29, 78, 216, 0.08);
-        transform: translateY(-1px);
-    }
-
-    .quick-link svg {
-        width: 18px;
-        height: 18px;
-        stroke: currentColor;
-    }
-
-    .quick-link .quick-icon {
-        width: 34px;
-        height: 34px;
-        border-radius: 10px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        background: #eef4ff;
-        color: #1d4ed8;
-    }
-
-    .quick-link span {
-        font-size: 13px;
-        font-weight: 700;
-    }
-
-    .student-profile {
-        margin-bottom: 30px;
-    }
-
-    .student-profile.card {
-        border: none;
-    }
-
-    .student-profile .card-header {
-        background: transparent;
-        border-bottom: none;
-        padding-bottom: 6px;
-    }
-
     .student-profile .card-body {
-        padding: 16px;
+        padding: 12px;
     }
 
     .student-profile-grid {
@@ -211,14 +148,14 @@
 
     @media (min-width: 768px) {
         .student-profile-grid {
-            grid-template-columns: 140px 1fr;
+            grid-template-columns: 120px 1fr;
             gap: 18px;
         }
     }
 
     .student-avatar {
-        width: 140px;
-        height: 140px;
+        width: 120px;
+        height: 120px;
         border-radius: 14px;
         background: linear-gradient(135deg, #1d4ed8 0%, #1047a1 100%);
         display: flex;
@@ -334,17 +271,18 @@
 
     .stats-container {
         display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-        gap: 20px;
+        grid-template-columns: repeat(auto-fit, minmax(145px, 1fr));
+        gap: 14px;
         margin-bottom: 30px;
     }
 
     .stat-card {
         background: white;
-        padding: 22px;
+        padding: 16px;
         border-radius: 10px;
         box-shadow: 0 2px 8px rgba(0,0,0,0.08);
         transition: none;
+        position: relative;
     }
 
     .stat-card:hover {
@@ -357,6 +295,24 @@
         color: #00a8e8;
     }
 
+    .stat-card--center {
+        text-align: center;
+    }
+
+    .stat-card--center .stat-icon {
+        display: flex;
+        justify-content: center;
+    }
+
+    .stat-card--meta .stat-meta {
+        position: absolute;
+        right: 12px;
+        top: 10px;
+        font-size: 11px;
+        color: #2c387e;
+        font-weight: 700;
+    }
+
     .stat-icon svg {
         width: 32px;
         height: 32px;
@@ -366,7 +322,7 @@
     .stat-label {
         font-size: 13px;
         color: #888;
-        text-transform: uppercase;
+        text-transform: none;
         letter-spacing: 0.5px;
         margin-bottom: 8px;
     }
@@ -586,98 +542,105 @@
 <div class="portal-grid">
     <div class="portal-main">
         <section id="dashboard">
-            <div class="card student-profile">
-                <div class="card-header">
-                    <h3 class="card-title">Thông tin sinh viên</h3>
-                </div>
-                <div class="card-body">
-                    <div class="student-profile-grid">
-                        <div>
-                            <div class="student-avatar">
-                                <?php if (!empty($student['avatar_url'])): ?>
-                                    <img src="<?= htmlspecialchars($student['avatar_url']) ?>" alt="Avatar">
-                                <?php else: ?>
-                                    <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                        <path d="M12 12a4 4 0 1 0-4-4 4 4 0 0 0 4 4Z" stroke-width="2" stroke-linecap="round"/>
-                                        <path d="M4 20c1.6-3 5-4 8-4s6.4 1 8 4" stroke-width="2" stroke-linecap="round"/>
-                                    </svg>
-                                <?php endif; ?>
+            <div class="dashboard-top">
+                <div class="card student-profile">
+                    <div class="card-header">
+                        <h3 class="card-title">Thông tin sinh viên</h3>
+                    </div>
+                    <div class="card-body">
+                        <div class="student-profile-grid">
+                            <div>
+                                <div class="student-avatar">
+                                    <?php if (!empty($student['avatar_url'])): ?>
+                                        <img src="<?= htmlspecialchars($student['avatar_url']) ?>" alt="Avatar">
+                                    <?php else: ?>
+                                        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                            <path d="M12 12a4 4 0 1 0-4-4 4 4 0 0 0 4 4Z" stroke-width="2" stroke-linecap="round"/>
+                                            <path d="M4 20c1.6-3 5-4 8-4s6.4 1 8 4" stroke-width="2" stroke-linecap="round"/>
+                                        </svg>
+                                    <?php endif; ?>
+                                </div>
                             </div>
-                        </div>
 
-                        <div>
-                            <div class="student-name">
-                                <?= htmlspecialchars($student['ho_ten'] ?? '') ?>
-                            </div>
-                            <div class="student-fields">
-                                <div class="student-field"><div class="k">MSSV:</div><div class="v"><?= htmlspecialchars($student['mssv'] ?? '') ?></div></div>
-                                <div class="student-field"><div class="k">Họ tên:</div><div class="v"><?= htmlspecialchars($student['ho_ten'] ?? '') ?></div></div>
-                                <div class="student-field"><div class="k">Giới tính:</div><div class="v"><?= htmlspecialchars($student['gioi_tinh'] ?? '') ?></div></div>
-                                <div class="student-field"><div class="k">Ngày sinh:</div><div class="v"><?= htmlspecialchars($student['ngay_sinh'] ?? '') ?></div></div>
-                                <div class="student-field"><div class="k">Nơi sinh:</div><div class="v"><?= htmlspecialchars($student['noi_sinh'] ?? '') ?></div></div>
-                                <div class="student-field"><div class="k">Trạng thái:</div><div class="v"><?= htmlspecialchars($student['trang_thai'] ?? '') ?></div></div>
-                                <div class="student-field"><div class="k">Sinh viên năm thứ:</div><div class="v"><?= htmlspecialchars($student['nam_thu'] ?? '') ?></div></div>
-                                <div class="student-field"><div class="k">Lớp học:</div><div class="v"><?= htmlspecialchars($student['lop_hoc'] ?? '') ?></div></div>
-                                <div class="student-field"><div class="k">Khóa học:</div><div class="v"><?= htmlspecialchars($student['khoa_hoc'] ?? '') ?></div></div>
-                                <div class="student-field"><div class="k">Bậc đào tạo:</div><div class="v"><?= htmlspecialchars($student['bac_dao_tao'] ?? '') ?></div></div>
-                                <div class="student-field"><div class="k">Loại hình đào tạo:</div><div class="v"><?= htmlspecialchars($student['loai_hinh_dao_tao'] ?? '') ?></div></div>
-                                <div class="student-field"><div class="k">Ngành:</div><div class="v"><?= htmlspecialchars($student['nganh'] ?? '') ?></div></div>
+                            <div>
+                                <div class="student-name">
+                                    <?= htmlspecialchars($student['ho_ten'] ?? '') ?>
+                                </div>
+                                <div class="student-fields">
+                                    <div class="student-field"><div class="k">MSSV:</div><div class="v"><?= htmlspecialchars($student['mssv'] ?? '') ?></div></div>
+                                    <div class="student-field"><div class="k">Họ tên:</div><div class="v"><?= htmlspecialchars($student['ho_ten'] ?? '') ?></div></div>
+                                    <div class="student-field"><div class="k">Giới tính:</div><div class="v"><?= htmlspecialchars($student['gioi_tinh'] ?? '') ?></div></div>
+                                    <div class="student-field"><div class="k">Ngày sinh:</div><div class="v"><?= htmlspecialchars($student['ngay_sinh'] ?? '') ?></div></div>
+                                    <div class="student-field"><div class="k">Nơi sinh:</div><div class="v"><?= htmlspecialchars($student['noi_sinh'] ?? '') ?></div></div>
+                                    <div class="student-field"><div class="k">Trạng thái:</div><div class="v"><?= htmlspecialchars($student['trang_thai'] ?? '') ?></div></div>
+                                    <div class="student-field"><div class="k">Sinh viên năm thứ:</div><div class="v"><?= htmlspecialchars($student['nam_thu'] ?? '') ?></div></div>
+                                    <div class="student-field"><div class="k">Lớp học:</div><div class="v"><?= htmlspecialchars($student['lop_hoc'] ?? '') ?></div></div>
+                                    <div class="student-field"><div class="k">Khóa học:</div><div class="v"><?= htmlspecialchars($student['khoa_hoc'] ?? '') ?></div></div>
+                                    <div class="student-field"><div class="k">Bậc đào tạo:</div><div class="v"><?= htmlspecialchars($student['bac_dao_tao'] ?? '') ?></div></div>
+                                    <div class="student-field"><div class="k">Loại hình đào tạo:</div><div class="v"><?= htmlspecialchars($student['loai_hinh_dao_tao'] ?? '') ?></div></div>
+                                    <div class="student-field"><div class="k">Ngành:</div><div class="v"><?= htmlspecialchars($student['nganh'] ?? '') ?></div></div>
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
+
             </div>
 
             <!-- THỐNG KÊ -->
             <div class="stats-container">
-                <div class="stat-card">
-                    <div class="stat-icon">
-                        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <path d="m12 2 3 6 6 1-4 4 1 6-6-3-6 3 1-6-4-4 6-1 3-6Z" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                        </svg>
-                    </div>
-                    <div class="stat-label">Điểm Tổng Hợp</div>
-                    <div class="stat-value">85.5</div>
-                    <p style="margin: 5px 0 0 0; font-size: 12px; color: #666;">Trên 100</p>
-                </div>
-
-                <div class="stat-card">
+                <div class="stat-card stat-card--center">
                     <div class="stat-icon">
                         <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                             <circle cx="12" cy="12" r="9" stroke-width="2" />
-                            <path d="m8 12 3 3 5-6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            <path d="m9 12 2 2 4-4" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
                         </svg>
                     </div>
-                    <div class="stat-label">Số Hoạt Động</div>
-                    <div class="stat-value">12</div>
-                    <p style="margin: 5px 0 0 0; font-size: 12px; color: #666;">Hoạt động</p>
+                    <div class="stat-label">Kết quả rèn luyện</div>
                 </div>
 
-                <div class="stat-card">
+                <div class="stat-card stat-card--center stat-card--meta">
                     <div class="stat-icon">
                         <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <path d="M8 4h8v4a4 4 0 1 1-8 0V4Z" stroke-width="2" />
-                            <path d="M6 4H4v2a4 4 0 0 0 4 4" stroke-width="2" />
-                            <path d="M18 4h2v2a4 4 0 0 1-4 4" stroke-width="2" />
-                            <path d="M12 12v4" stroke-width="2" stroke-linecap="round" />
-                            <path d="M8 20h8" stroke-width="2" stroke-linecap="round" />
+                            <rect x="3" y="5" width="18" height="16" rx="2" stroke-width="2" />
+                            <path d="M16 3v4M8 3v4M3 11h18" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
                         </svg>
                     </div>
-                    <div class="stat-label">Xếp Hạng</div>
-                    <div class="stat-value">Giỏi</div>
-                    <p style="margin: 5px 0 0 0; font-size: 12px; color: #666;">Loại điểm</p>
+                    <div class="stat-label">Lịch hoạt động</div>
+                    <div class="stat-meta">12 hoạt động</div>
                 </div>
 
-                <div class="stat-card">
+                <div class="stat-card stat-card--center">
                     <div class="stat-icon">
                         <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <circle cx="12" cy="12" r="9" stroke-width="2" />
-                            <path d="M12 7v5l3 2" stroke-width="2" stroke-linecap="round" />
+                            <rect x="6" y="4" width="12" height="16" rx="2" stroke-width="2" />
+                            <path d="M9 8h6M9 12h6M9 16h4" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
                         </svg>
                     </div>
-                    <div class="stat-label">Cập Nhật Lần Cuối</div>
-                    <div class="stat-value">Hôm nay</div>
-                    <p style="margin: 5px 0 0 0; font-size: 12px; color: #666;">21:30</p>
+                    <div class="stat-label">Đăng ký hoạt động</div>
+                </div>
+
+                <div class="stat-card stat-card--center">
+                    <div class="stat-icon">
+                        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M7 3h7l5 5v13a1 1 0 0 1-1 1H7a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1Z" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            <path d="M14 3v5h5" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            <path d="M9 12h6M9 16h6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                    </div>
+                    <div class="stat-label">Phiếu đánh giá</div>
+                </div>
+
+                <div class="stat-card stat-card--center">
+                    <div class="stat-icon">
+                        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M7 3h7l5 5v13a1 1 0 0 1-1 1H7a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1Z" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            <path d="M14 3v5h5" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            <path d="M12 12v6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            <path d="M9 15h6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                    </div>
+                    <div class="stat-label">Khai báo minh chứng</div>
                 </div>
             </div>
         </section>
@@ -688,7 +651,7 @@
     </div>
 
     <aside class="portal-aside">
-        <div class="card" style="margin-bottom: 20px;">
+        <div class="card">
             <div class="card-header">
                 <h3 class="card-title">
                     <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -740,7 +703,7 @@
             </div>
         </div>
 
-        <div class="card">
+        <div class="card news-card">
             <div class="card-header">
                 <h3 class="card-title">
                     <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -906,3 +869,24 @@
         </div>
     </div>
 </div>
+
+<script>
+    (function() {
+        function syncAsideCardHeights() {
+            var profileCard = document.querySelector('.student-profile');
+            var asideCards = document.querySelectorAll('.portal-aside .card');
+
+            if (!profileCard || asideCards.length === 0) {
+                return;
+            }
+
+            var height = profileCard.offsetHeight + 'px';
+            asideCards.forEach(function(card) {
+                card.style.height = height;
+            });
+        }
+
+        window.addEventListener('load', syncAsideCardHeights);
+        window.addEventListener('resize', syncAsideCardHeights);
+    })();
+</script>
