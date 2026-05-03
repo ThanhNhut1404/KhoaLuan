@@ -29,7 +29,7 @@
         display: grid;
         grid-template-columns: 1fr;
         gap: 20px;
-        margin-bottom: 30px;
+        margin-bottom: 16px;
     }
 
     .dashboard-top .student-profile {
@@ -51,8 +51,7 @@
         }
 
         .portal-aside {
-            grid-template-columns: 1fr 1fr;
-            gap: 16px;
+            grid-template-columns: 1fr;
         }
     }
 
@@ -256,6 +255,10 @@
         flex-direction: column;
     }
 
+    .scores-section--progress {
+        max-width: 320px;
+    }
+
     /* Thu gọn thẻ "Chi Tiết Điểm Rèn Luyện": dài quá thì cuộn để xem */
     .scores-section--scroll .table-responsive {
         max-height: 320px;
@@ -272,7 +275,7 @@
         display: grid;
         grid-template-columns: repeat(auto-fit, minmax(145px, 1fr));
         gap: 14px;
-        margin-bottom: 30px;
+        margin-bottom: 8px;
     }
 
     .stat-card {
@@ -340,7 +343,7 @@
 
     .scores-section {
         background: white;
-        padding: 25px;
+        padding: 20px;
         border-radius: 10px;
         box-shadow: 0 2px 8px rgba(0,0,0,0.08);
         margin-bottom: 30px;
@@ -649,58 +652,6 @@
     </div>
 
     <aside class="portal-aside">
-        <div class="card">
-            <div class="card-header">
-                <h3 class="card-title">
-                    <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <path d="M13 2 4 14h7l-1 8 9-12h-7l1-8Z" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                    </svg>
-                    Thao tác nhanh
-                </h3>
-            </div>
-            <div class="card-body">
-                <div class="aside-actions">
-                    <a class="quick-link" href="#scores">
-                        <span class="quick-icon">
-                            <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                <path d="M4 19h16M7 16V9M12 16V5M17 16v-7" stroke-width="2" stroke-linecap="round"/>
-                            </svg>
-                        </span>
-                        <span>Xem điểm</span>
-                    </a>
-                    <a class="quick-link" href="#profile">
-                        <span class="quick-icon">
-                            <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                <path d="M4 5h16v14H4z" stroke-width="2" stroke-linecap="round"/>
-                                <path d="M8 9h8M8 13h5" stroke-width="2" stroke-linecap="round"/>
-                            </svg>
-                        </span>
-                        <span>Hồ sơ</span>
-                    </a>
-                    <a class="quick-link" href="#contact">
-                        <span class="quick-icon">
-                            <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                <path d="M4 12a8 8 0 0 1 16 0" stroke-width="2" stroke-linecap="round"/>
-                                <path d="M4 12v3a2 2 0 0 0 2 2h2v-6H6a2 2 0 0 0-2 2Z" stroke-width="2" stroke-linecap="round"/>
-                                <path d="M20 12v3a2 2 0 0 1-2 2h-2v-6h2a2 2 0 0 1 2 2Z" stroke-width="2" stroke-linecap="round"/>
-                            </svg>
-                        </span>
-                        <span>Hỗ trợ</span>
-                    </a>
-                    <a class="quick-link" href="#history">
-                        <span class="quick-icon">
-                            <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                <path d="M3 12a9 9 0 1 0 3-6.7" stroke-width="2" stroke-linecap="round"/>
-                                <path d="M3 4v5h5" stroke-width="2" stroke-linecap="round"/>
-                                <path d="M12 7v5l3 2" stroke-width="2" stroke-linecap="round"/>
-                            </svg>
-                        </span>
-                        <span>Lịch sử</span>
-                    </a>
-                </div>
-            </div>
-        </div>
-
         <div class="card news-card">
             <div class="card-header">
                 <h3 class="card-title">
@@ -760,7 +711,7 @@
             <!-- BIỂU ĐỒ (THỐNG KÊ ĐIỂM) -->
             <section class="scores-section scores-section--compact scores-section--fill">
                 <div class="section-title">
-                    Thống kê điểm
+                    Hoạt động đã đăng ký
                 </div>
                 <div class="chart-placeholder">
                     <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -770,98 +721,30 @@
                 </div>
             </section>
 
-            <!-- BẢNG CHI TIẾT -->
-            <section class="scores-section scores-section--compact scores-section--scroll">
-                <div class="section-title">
-                    Kết quả rèn luyện
-                </div>
-
-                <div class="btn-group">
-                    <button class="btn btn-primary">
-                        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <path d="M12 3v12" stroke-width="2" stroke-linecap="round"/>
-                            <path d="m7 10 5 5 5-5" stroke-width="2" stroke-linecap="round"/>
-                            <path d="M5 21h14" stroke-width="2" stroke-linecap="round"/>
-                        </svg>
-                        Tải Xuống
-                    </button>
-                    <button class="btn btn-secondary">
-                        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <path d="M6 9V4h12v5" stroke-width="2" stroke-linecap="round"/>
-                            <rect x="6" y="13" width="12" height="7" stroke-width="2" />
-                            <path d="M6 12h12" stroke-width="2" stroke-linecap="round"/>
-                        </svg>
-                        In
-                    </button>
-                </div>
-
-                <div class="table-responsive">
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>STT</th>
-                                <th>Tiêu Chí Đánh Giá</th>
-                                <th>Mô Tả</th>
-                                <th>Điểm</th>
-                                <th>Ghi Chú</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td>1</td>
-                                <td><strong>Học Tập</strong></td>
-                                <td>Thái độ, kết quả học tập</td>
-                                <td><span class="score-badge score-excellent">9.0</span></td>
-                                <td>Xuất sắc</td>
-                            </tr>
-                            <tr>
-                                <td>2</td>
-                                <td><strong>Kỷ Luật</strong></td>
-                                <td>Tuân thủ nội quy, luật lệ</td>
-                                <td><span class="score-badge score-excellent">8.5</span></td>
-                                <td>Tốt</td>
-                            </tr>
-                            <tr>
-                                <td>3</td>
-                                <td><strong>Hoạt Động Tập Thể</strong></td>
-                                <td>Tham gia các hoạt động</td>
-                                <td><span class="score-badge score-good">8.0</span></td>
-                                <td>Tốt</td>
-                            </tr>
-                            <tr>
-                                <td>4</td>
-                                <td><strong>Công Tác Xã Hội</strong></td>
-                                <td>Đóng góp cho cộng đồng</td>
-                                <td><span class="score-badge score-good">7.5</span></td>
-                                <td>Khá</td>
-                            </tr>
-                            <tr>
-                                <td>5</td>
-                                <td><strong>Đạo Đức</strong></td>
-                                <td>Hành vi, thái độ đạo đức</td>
-                                <td><span class="score-badge score-excellent">9.5</span></td>
-                                <td>Xuất sắc</td>
-                            </tr>
-                            <tr>
-                                <td>6</td>
-                                <td><strong>Sức Khỏe</strong></td>
-                                <td>Rèn luyện thể chất</td>
-                                <td><span class="score-badge score-average">7.0</span></td>
-                                <td>Khá</td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-            </section>
-
             <!-- TIẾN ĐỘ RÈN LUYỆN -->
-            <section class="scores-section scores-section--compact scores-section--fill">
+            <section class="scores-section scores-section--compact scores-section--fill scores-section--progress">
                 <div class="section-title">
                     Tiến độ rèn luyện
                 </div>
                 <div class="chart-placeholder">
                     <p style="margin: 0;">Tiến độ sẽ hiển thị tại đây</p>
                     <small>(Sẽ nối dữ liệu sau)</small>
+                </div>
+            </section>
+
+            <!-- BIỂU ĐỒ KẾT QUẢ RÈN LUYỆN -->
+            <section class="scores-section scores-section--compact scores-section--fill">
+                <div class="section-title">
+                    Kết quả rèn luyện
+                </div>
+                <div class="chart-placeholder">
+                    <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M4 19h16" stroke-width="2" stroke-linecap="round"/>
+                        <path d="M7 16V9" stroke-width="2" stroke-linecap="round"/>
+                        <path d="M12 16V6" stroke-width="2" stroke-linecap="round"/>
+                        <path d="M17 16v-4" stroke-width="2" stroke-linecap="round"/>
+                    </svg>
+                    <p style="margin-top: 15px;">Biểu đồ cột sẽ được hiển thị tại đây<br><small>(Cần thêm thư viện Chart.js)</small></p>
                 </div>
             </section>
         </div>
