@@ -538,8 +538,7 @@
             transition: transform 0.2s ease;
         }
 
-        .sidebar-menu .has-submenu:hover .submenu-caret,
-        .sidebar-menu .has-submenu:focus-within .submenu-caret {
+        .sidebar-menu .has-submenu.open .submenu-caret {
             transform: rotate(180deg);
         }
 
@@ -550,8 +549,7 @@
             display: none;
         }
 
-        .sidebar-menu .has-submenu:hover .submenu,
-        .sidebar-menu .has-submenu:focus-within .submenu {
+        .sidebar-menu .has-submenu.open .submenu {
             display: block;
         }
 
@@ -1054,6 +1052,16 @@
             input.type = isHidden ? 'text' : 'password';
             button.classList.toggle('is-visible', isHidden);
             button.setAttribute('aria-label', isHidden ? 'Ẩn mật khẩu' : 'Hiện mật khẩu');
+        });
+    });
+
+    document.querySelectorAll('.sidebar-menu .has-submenu > a').forEach(function(trigger) {
+        trigger.addEventListener('click', function(event) {
+            event.preventDefault();
+            var item = trigger.closest('.has-submenu');
+            if (item) {
+                item.classList.toggle('open');
+            }
         });
     });
 </script>
