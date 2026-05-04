@@ -231,8 +231,15 @@
 
     @media (min-width: 992px) {
         .scores-grid {
-            grid-template-columns: repeat(3, minmax(0, 1fr));
+            grid-template-columns: minmax(0, 1fr) minmax(0, 0.85fr) minmax(0, 1.15fr);
             gap: 24px;
+        }
+    }
+
+    @media (min-width: 992px) {
+        .scores-section--registered {
+            max-width: none;
+            width: 100%;
         }
     }
 
@@ -255,8 +262,16 @@
         flex-direction: column;
     }
 
+
     .scores-section--progress {
         max-width: 320px;
+    }
+
+    @media (min-width: 992px) {
+        .scores-section--progress {
+            max-width: none;
+            width: 100%;
+        }
     }
 
     /* Thu gọn thẻ "Chi Tiết Điểm Rèn Luyện": dài quá thì cuộn để xem */
@@ -709,7 +724,7 @@
     <div class="portal-full">
         <div id="scores" class="scores-grid">
             <!-- BIỂU ĐỒ (THỐNG KÊ ĐIỂM) -->
-            <section class="scores-section scores-section--compact scores-section--fill">
+            <section class="scores-section scores-section--compact scores-section--fill scores-section--registered">
                 <div class="section-title">
                     Hoạt động đã đăng ký
                 </div>
