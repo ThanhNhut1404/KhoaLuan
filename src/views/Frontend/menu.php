@@ -25,7 +25,7 @@
             </a>
             <ul class="submenu">
                 <li><a href="#student-info" onclick="closeSidebar()">Thông tin sinh viên</a></li>
-                <li><a href="#change-password" onclick="closeSidebar()">Đổi mật khẩu</a></li>
+                <li><a href="#" onclick="closeSidebar(); openPasswordModal(); return false;">Đổi mật khẩu</a></li>
             </ul>
         </li>
         <li class="has-submenu">
