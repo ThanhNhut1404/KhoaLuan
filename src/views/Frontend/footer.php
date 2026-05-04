@@ -3,23 +3,22 @@
         <div class="footer-content">
             <div class="footer-section">
                 <div class="footer-heading">
-                    <div class="footer-brand">Sinh viên Portal</div>
+                    <div class="footer-brand">UniDRL</div>
                 </div>
-                <p class="footer-text">Hệ thống quản lý điểm rèn luyện sinh viên — cung cấp thông tin và công cụ quản lý minh bạch, nhanh chóng.</p>
+                <p class="footer-text">Hệ thống quản lý điểm rèn luyện sinh viên – minh bạch, nhanh chóng, hiệu quả.</p>
 
                 <div class="footer-social" aria-hidden="true">
                     <a href="#" title="Facebook"><i class="fab fa-facebook-f"></i></a>
                     <a href="#" title="YouTube"><i class="fab fa-youtube"></i></a>
-                    <a href="#" title="LinkedIn"><i class="fab fa-linkedin-in"></i></a>
                 </div>
             </div>
 
             <div class="footer-section">
                 <div class="footer-heading"><i class="fas fa-envelope"></i> <span>Liên hệ</span></div>
                 <ul class="footer-contact">
-                    <li><a href="mailto:contact@student.edu.vn">contact@student.edu.vn</a></li>
+                    <li><a href="mailto:contact@tdu.edu.vn">contact@tdu.edu.vn</a></li>
                     <li><a href="tel:0123456789">0123.456.789</a></li>
-                    <li>Phòng Công tác Sinh viên — Trường Đại học</li>
+                    <li>Phòng Công tác Chính trị - Quản lý Sinh viên</li>
                 </ul>
             </div>
 
@@ -34,7 +33,7 @@
         </div>
 
         <div class="footer-bottom">
-            <p>&copy; <?= date('Y') ?> Trường Đại học. Bản quyền thuộc về Phòng Công tác Sinh viên.
+            <p>&copy; <?= date('Y') ?> Bản quyền thuộc về Sinh viên thực hiện đề tài.
                 <span class="footer-bottom-sep">•</span>
                 <a href="#">Điều khoản</a>
                 <span class="footer-bottom-sep">•</span>

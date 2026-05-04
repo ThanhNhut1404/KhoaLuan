@@ -59,9 +59,13 @@
         grid-column: 1 / -1;
     }
 
+    .portal-full--stats {
+        margin-top: -14px;
+    }
+
     .card {
         background: white;
-        border-radius: 10px;
+        border-radius: 8px;
         box-shadow: 0 2px 8px rgba(0,0,0,0.08);
         border: 1px solid #e8ecf3;
         overflow: hidden;
@@ -121,7 +125,7 @@
         grid-template-columns: 54px 1fr;
         gap: 12px;
         padding: 10px;
-        border-radius: 10px;
+        border-radius: 8px;
         border: 1px solid #f0f2f5;
         transition: 0.2s;
         background: #fff;
@@ -154,7 +158,7 @@
     .student-avatar {
         width: 120px;
         height: 120px;
-        border-radius: 14px;
+        border-radius: 10px;
         background: linear-gradient(135deg, #1d4ed8 0%, #1047a1 100%);
         display: flex;
         align-items: center;
@@ -232,7 +236,7 @@
     @media (min-width: 992px) {
         .scores-grid {
             grid-template-columns: minmax(0, 1fr) minmax(0, 0.85fr) minmax(0, 1.15fr);
-            gap: 24px;
+            gap: 20px;
         }
     }
 
@@ -293,10 +297,16 @@
         margin-bottom: 8px;
     }
 
+    @media (min-width: 1200px) {
+        .stats-container {
+            grid-template-columns: repeat(6, minmax(0, 1fr));
+        }
+    }
+
     .stat-card {
         background: white;
         padding: 16px;
-        border-radius: 10px;
+        border-radius: 8px;
         box-shadow: 0 2px 8px rgba(0,0,0,0.08);
         transition: none;
         position: relative;
@@ -359,10 +369,14 @@
     .scores-section {
         background: white;
         padding: 20px;
-        border-radius: 10px;
+        border-radius: 8px;
         box-shadow: 0 2px 8px rgba(0,0,0,0.08);
         margin-bottom: 30px;
         height: 100%;
+    }
+
+    .scores-grid .scores-section {
+        margin-bottom: 0;
     }
 
     .section-title {
@@ -451,7 +465,7 @@
     .info-item {
         background: white;
         padding: 18px;
-        border-radius: 10px;
+        border-radius: 8px;
         border: 1px solid #e8ecf3;
         box-shadow: 0 1px 3px rgba(0,0,0,0.05);
     }
@@ -510,7 +524,7 @@
     .chart-placeholder {
         background: #f8f9fb;
         padding: 40px;
-        border-radius: 10px;
+        border-radius: 8px;
         border: 1px solid #e8ecf3;
         text-align: center;
         color: #aaa;
@@ -604,61 +618,6 @@
 
             </div>
 
-            <!-- THỐNG KÊ -->
-            <div class="stats-container">
-                <div class="stat-card stat-card--center">
-                    <div class="stat-icon">
-                        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <circle cx="12" cy="12" r="9" stroke-width="2" />
-                            <path d="m9 12 2 2 4-4" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                        </svg>
-                    </div>
-                    <div class="stat-label">Kết quả rèn luyện</div>
-                </div>
-
-                <div class="stat-card stat-card--center stat-card--meta">
-                    <div class="stat-icon">
-                        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <rect x="3" y="5" width="18" height="16" rx="2" stroke-width="2" />
-                            <path d="M16 3v4M8 3v4M3 11h18" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                        </svg>
-                    </div>
-                    <div class="stat-label">Lịch hoạt động</div>
-                </div>
-
-                <div class="stat-card stat-card--center">
-                    <div class="stat-icon">
-                        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <rect x="6" y="4" width="12" height="16" rx="2" stroke-width="2" />
-                            <path d="M9 8h6M9 12h6M9 16h4" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                        </svg>
-                    </div>
-                    <div class="stat-label">Đăng ký hoạt động</div>
-                </div>
-
-                <div class="stat-card stat-card--center">
-                    <div class="stat-icon">
-                        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <path d="M7 3h7l5 5v13a1 1 0 0 1-1 1H7a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1Z" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                            <path d="M14 3v5h5" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                            <path d="M9 12h6M9 16h6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                        </svg>
-                    </div>
-                    <div class="stat-label">Phiếu đánh giá</div>
-                </div>
-
-                <div class="stat-card stat-card--center">
-                    <div class="stat-icon">
-                        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <path d="M7 3h7l5 5v13a1 1 0 0 1-1 1H7a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1Z" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                            <path d="M14 3v5h5" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                            <path d="M12 12v6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                            <path d="M9 15h6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                        </svg>
-                    </div>
-                    <div class="stat-label">Nộp minh chứng</div>
-                </div>
-            </div>
         </section>
 
         <section id="history"></section>
@@ -720,6 +679,75 @@
             </div>
         </div>
     </aside>
+
+    <div class="portal-full portal-full--stats">
+        <!-- THỐNG KÊ -->
+        <div class="stats-container">
+            <div class="stat-card stat-card--center">
+                <div class="stat-icon">
+                    <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <circle cx="12" cy="12" r="9" stroke-width="2" />
+                        <path d="m9 12 2 2 4-4" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                </div>
+                <div class="stat-label">Kết quả rèn luyện</div>
+            </div>
+
+            <div class="stat-card stat-card--center stat-card--meta">
+                <div class="stat-icon">
+                    <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <rect x="3" y="5" width="18" height="16" rx="2" stroke-width="2" />
+                        <path d="M16 3v4M8 3v4M3 11h18" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                </div>
+                <div class="stat-label">Lịch hoạt động</div>
+            </div>
+
+            <div class="stat-card stat-card--center">
+                <div class="stat-icon">
+                    <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <rect x="6" y="4" width="12" height="16" rx="2" stroke-width="2" />
+                        <path d="M9 8h6M9 12h6M9 16h4" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                </div>
+                <div class="stat-label">Đăng ký hoạt động</div>
+            </div>
+
+            <div class="stat-card stat-card--center">
+                <div class="stat-icon">
+                    <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M7 3h7l5 5v13a1 1 0 0 1-1 1H7a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1Z" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        <path d="M14 3v5h5" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        <path d="M9 12h6M9 16h6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                </div>
+                <div class="stat-label">Phiếu đánh giá</div>
+            </div>
+
+            <div class="stat-card stat-card--center">
+                <div class="stat-icon">
+                    <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M7 3h7l5 5v13a1 1 0 0 1-1 1H7a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1Z" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        <path d="M14 3v5h5" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        <path d="M12 12v6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        <path d="M9 15h6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                </div>
+                <div class="stat-label">Nộp minh chứng</div>
+            </div>
+
+            <div class="stat-card stat-card--center">
+                <div class="stat-icon">
+                    <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <rect x="3" y="6" width="18" height="14" rx="2" stroke-width="2" />
+                        <path d="M3 10h18" stroke-width="2" stroke-linecap="round" />
+                        <path d="M15 14h3" stroke-width="2" stroke-linecap="round" />
+                    </svg>
+                </div>
+                <div class="stat-label">Công nợ</div>
+            </div>
+        </div>
+    </div>
 
     <div class="portal-full">
         <div id="scores" class="scores-grid">
