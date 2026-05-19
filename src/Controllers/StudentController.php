@@ -13,6 +13,41 @@ class StudentController
         require __DIR__ . '/../views/Frontend/layout.php';
     }
 
+    public function profile()
+    {
+        $title = "Thông tin cá nhân";
+
+        // Dữ liệu mẫu, thay bằng DB sau
+        $student = [
+            'mssv' => '227060072',
+            'ho_ten' => 'Huynh Thanh Nhut',
+            'ngay_sinh' => '14/04/2004',
+            'gioi_tinh' => 'Nam',
+            'lop_hoc' => 'DHCNTT17A',
+            'khoa_hoc' => 'Khoa 17 (2022)',
+            'bac_dao_tao' => 'Dai hoc',
+            'loai_hinh_dao_tao' => 'Chinh quy',
+            'nganh' => 'Cong nghe thong tin',
+            'khoa' => 'Khoa Ky thuat Cong nghe',
+            'co_so' => 'Truong Dai hoc Tay Do',
+            'ngay_vao_truong' => '17/9/2022',
+            'ma_ho_so' => '220892',
+            'trang_thai' => 'Dang hoc',
+            'dan_toc' => 'Kinh',
+            'ton_giao' => 'Khong',
+            'so_cmnd' => '###########',
+            'ngay_cap_cmnd' => '18/11/2021',
+            'noi_cap_cmnd' => 'Tinh Hau Giang',
+            'so_dien_thoai' => '09xx xxx xxx',
+            'email' => 'student@example.com',
+            'noi_sinh' => 'Tinh Hau Giang',
+            'avatar' => ''
+        ];
+
+        $content = __DIR__ . '/../views/Frontend/profile.php';
+        require __DIR__ . '/../views/Frontend/layout.php';
+    }
+
     public function login()
     {
         // hiển thị form login

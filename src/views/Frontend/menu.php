@@ -1,6 +1,6 @@
 <div class="sidebar" id="sidebar">
     <ul class="sidebar-menu">
-        <li><a href="#dashboard" onclick="closeSidebar()">
+        <li><a href="/KhoaLuan/public/student.php" onclick="closeSidebar()">
             <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <path d="M3 12h8V3H3v9Zm10 9h8v-7h-8v7ZM3 21h8v-7H3v7Zm10-9h8V3h-8v9Z" stroke-width="2" stroke-linecap="round"/>
             </svg>
@@ -24,7 +24,7 @@
                 </svg>
             </a>
             <ul class="submenu">
-                <li><a href="#student-info" onclick="closeSidebar()">Thông tin sinh viên</a></li>
+                <li><a href="/KhoaLuan/public/student.php?action=profile" onclick="closeSidebar()">Thông tin sinh viên</a></li>
                 <li><a href="#" onclick="closeSidebar(); openPasswordModal(); return false;">Đổi mật khẩu</a></li>
             </ul>
         </li>

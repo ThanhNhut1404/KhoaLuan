@@ -13,6 +13,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $action === 'login') {
 
 if ($action === 'login') {
 	$controller->login();
+} elseif ($action === 'profile') {
+	$controller->profile();
 } else {
 	$controller->dashboard();
 }
