@@ -15,6 +15,12 @@ if ($action === 'login') {
 	$controller->login();
 } elseif ($action === 'profile') {
 	$controller->profile();
+} elseif ($action === 'phieudanhgia') {
+	$controller->phieudanhgia();
+} elseif ($action === 'lichhoatdong') {
+	$controller->lichhoatdong();
+} elseif ($action === 'dangkyhoatdong') {
+	$controller->dangkyhoatdong();
 } else {
 	$controller->dashboard();
 }

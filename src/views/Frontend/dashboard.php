@@ -312,6 +312,12 @@
         position: relative;
     }
 
+    .stat-card--link {
+        display: block;
+        text-decoration: none;
+        color: inherit;
+    }
+
     .stat-card:hover {
         transform: none;
         box-shadow: 0 2px 8px rgba(0,0,0,0.08);
@@ -693,7 +699,7 @@
                 <div class="stat-label">Kết quả rèn luyện</div>
             </div>
 
-            <div class="stat-card stat-card--center stat-card--meta">
+            <a class="stat-card stat-card--center stat-card--meta stat-card--link" href="/KhoaLuan/public/student.php?action=lichhoatdong">
                 <div class="stat-icon">
                     <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                         <rect x="3" y="5" width="18" height="16" rx="2" stroke-width="2" />
@@ -701,9 +707,9 @@
                     </svg>
                 </div>
                 <div class="stat-label">Lịch hoạt động</div>
-            </div>
+            </a>
 
-            <div class="stat-card stat-card--center">
+            <a class="stat-card stat-card--center stat-card--link" href="/KhoaLuan/public/student.php?action=dangkyhoatdong">
                 <div class="stat-icon">
                     <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                         <rect x="6" y="4" width="12" height="16" rx="2" stroke-width="2" />
@@ -711,9 +717,9 @@
                     </svg>
                 </div>
                 <div class="stat-label">Đăng ký hoạt động</div>
-            </div>
+            </a>
 
-            <div class="stat-card stat-card--center">
+            <a class="stat-card stat-card--center stat-card--link" href="/KhoaLuan/public/student.php?action=phieudanhgia">
                 <div class="stat-icon">
                     <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                         <path d="M7 3h7l5 5v13a1 1 0 0 1-1 1H7a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1Z" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
@@ -722,7 +728,7 @@
                     </svg>
                 </div>
                 <div class="stat-label">Phiếu đánh giá</div>
-            </div>
+            </a>
 
             <div class="stat-card stat-card--center">
                 <div class="stat-icon">
@@ -744,7 +750,7 @@
                         <path d="M15 14h3" stroke-width="2" stroke-linecap="round" />
                     </svg>
                 </div>
-                <div class="stat-label">Công nợ</div>
+                <div class="stat-label">Điểm danh hoạt động</div>
             </div>
         </div>
     </div>

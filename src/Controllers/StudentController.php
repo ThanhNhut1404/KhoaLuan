@@ -48,6 +48,39 @@ class StudentController
         require __DIR__ . '/../views/Frontend/layout.php';
     }
 
+    public function phieudanhgia()
+    {
+        $title = "Phiếu đánh giá";
+
+        $student = [
+            'ho_ten' => 'Nguyen Van A',
+            'mssv' => '2213405678',
+            'lop' => 'D19CNTT01',
+            'khoa' => 'Khoa Cong nghe thong tin',
+            'hoc_ky' => '2',
+            'nam_hoc' => '2024 - 2025'
+        ];
+
+        $content = __DIR__ . '/../views/Frontend/phieudanhgia.php';
+        require __DIR__ . '/../views/Frontend/layout.php';
+    }
+
+    public function lichhoatdong()
+    {
+        $title = "Lịch hoạt động";
+
+        $content = __DIR__ . '/../views/Frontend/lichhoatdong.php';
+        require __DIR__ . '/../views/Frontend/layout.php';
+    }
+
+    public function dangkyhoatdong()
+    {
+        $title = "Đăng ký hoạt động";
+
+        $content = __DIR__ . '/../views/Frontend/dangkyhoatdong.php';
+        require __DIR__ . '/../views/Frontend/layout.php';
+    }
+
     public function login()
     {
         // hiển thị form login

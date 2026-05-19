@@ -40,10 +40,10 @@
                 </svg>
             </a>
             <ul class="submenu">
-                <li><a href="#activities-new" onclick="closeSidebar()">Đăng ký hoạt động</a></li>
+                <li><a href="/KhoaLuan/public/student.php?action=dangkyhoatdong" onclick="closeSidebar()">Đăng ký hoạt động</a></li>
                 <li><a href="#activities-registered" onclick="closeSidebar()">Hoạt động đã đăng ký</a></li>
                 <li><a href="#activities-joined" onclick="closeSidebar()">Hoạt động đã tham gia</a></li>
-                <li><a href="#activities-calendar" onclick="closeSidebar()">Lịch hoạt động</a></li>
+                <li><a href="/KhoaLuan/public/student.php?action=lichhoatdong" onclick="closeSidebar()">Lịch hoạt động</a></li>
             </ul>
         </li>
         <li class="has-submenu">
@@ -60,7 +60,7 @@
             </a>
             <ul class="submenu">
                 <li><a href="#evidence" onclick="closeSidebar()">Khai báo minh chứng</a></li>
-                <li><a href="#evaluation" onclick="closeSidebar()">Phiếu đánh giá</a></li>
+                <li><a href="/KhoaLuan/public/student.php?action=phieudanhgia" onclick="closeSidebar()">Phiếu đánh giá</a></li>
                 <li><a href="#discipline-result" onclick="closeSidebar()">Kết quả rèn luyện</a></li>
             </ul>
         </li>

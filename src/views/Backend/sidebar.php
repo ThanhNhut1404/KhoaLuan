@@ -10,15 +10,15 @@
         opacity: 0.8;
     }
     .nav-sub {
-        margin-left: 30px;
+        margin-left: 18px;
         display: none;
-        gap: 6px;
+        gap: 4px;
     }
     .nav-item.open .nav-sub { display: grid; }
     .nav-item.open .nav-caret { transform: rotate(180deg); }
     .nav-caret { transition: transform 0.2s ease; }
     .nav-sub a {
-        padding: 6px 8px;
+        padding: 4px 8px;
         font-size: 13px;
         color: #cbd5f5;
         text-decoration: none;
