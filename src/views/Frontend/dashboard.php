@@ -689,7 +689,7 @@
     <div class="portal-full portal-full--stats">
         <!-- THỐNG KÊ -->
         <div class="stats-container">
-            <div class="stat-card stat-card--center">
+            <a class="stat-card stat-card--center stat-card--link" href="/KhoaLuan/public/student.php?action=ketquarenluyen">
                 <div class="stat-icon">
                     <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                         <circle cx="12" cy="12" r="9" stroke-width="2" />
@@ -697,7 +697,7 @@
                     </svg>
                 </div>
                 <div class="stat-label">Kết quả rèn luyện</div>
-            </div>
+            </a>
 
             <a class="stat-card stat-card--center stat-card--meta stat-card--link" href="/KhoaLuan/public/student.php?action=lichhoatdong">
                 <div class="stat-icon">

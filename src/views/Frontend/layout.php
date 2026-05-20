@@ -544,8 +544,8 @@
 
         .sidebar-menu .submenu {
             list-style: none;
-            margin: 4px 0 8px 0;
-            padding: 0 0 0 12px;
+            margin: 2px 0 6px 0;
+            padding: 0 0 0 8px;
             display: none;
         }
 
@@ -554,7 +554,7 @@
         }
 
         .sidebar-menu .submenu a {
-            padding: 10px 16px 10px 36px;
+            padding: 8px 16px 8px 28px;
             font-size: 13px;
         }
 

@@ -81,6 +81,14 @@ class StudentController
         require __DIR__ . '/../views/Frontend/layout.php';
     }
 
+    public function ketquarenluyen()
+    {
+        $title = "Kết quả rèn luyện";
+
+        $content = __DIR__ . '/../views/Frontend/ketquarenluyen.php';
+        require __DIR__ . '/../views/Frontend/layout.php';
+    }
+
     public function login()
     {
         // hiển thị form login
