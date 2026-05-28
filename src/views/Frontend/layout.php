@@ -6,6 +6,8 @@
     <title><?= $title ?? 'Hệ thống quản lý điểm rèn luyện' ?></title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
+        @import url('https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap');
+
         * {
             margin: 0;
             padding: 0;
@@ -21,11 +23,12 @@
             --danger: #e74c3c;
             --light: #ecf0f1;
             --dark: #2c3e50;
-            --sidebar-width: 240px;
+            --text-muted: #6b7280;
+            --sidebar-width: 210px;
         }
 
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: 'Manrope', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background: #f0f2f5;
             color: #333;
             display: flex;
@@ -108,14 +111,14 @@
             flex: 1;
             border: none;
             background: transparent;
-            color: var(--primary);
+            color: var(--text-muted);
             padding: 8px 12px;
             font-size: 14px;
             outline: none;
         }
 
         .search-input::placeholder {
-            color: rgba(29, 78, 216, 0.6);
+            color: rgba(107, 114, 128, 0.7);
         }
 
         .search-btn {
@@ -188,7 +191,7 @@
             display: flex;
             align-items: center;
             gap: 6px;
-            color: var(--primary);
+            color: var(--text-muted);
             font-size: 14px;
             cursor: pointer;
             transition: 0.3s;
@@ -198,9 +201,17 @@
             white-space: nowrap;
         }
 
+        .header-icon-link span {
+            color: var(--text-muted);
+        }
+
         .header-icon-link:hover {
-            color: var(--primary-dark);
+            color: var(--primary);
             background: #eef2ff;
+        }
+
+        .header-icon-link:hover span {
+            color: var(--primary);
         }
 
         .header-icon-link svg,
@@ -214,6 +225,12 @@
             stroke: currentColor;
         }
 
+        .header-icon-link svg,
+        .header-icon svg,
+        .search-btn svg {
+            color: var(--primary);
+        }
+
         /* USER DROPDOWN */
         .user-dropdown {
             position: relative;
@@ -225,12 +242,16 @@
             gap: 8px;
             background: none;
             border: none;
-            color: var(--primary);
+            color: var(--text-muted);
             cursor: pointer;
             font-size: 14px;
             transition: 0.3s;
             padding: 5px 10px;
             border-radius: 20px;
+        }
+
+        .user-btn svg {
+            color: var(--primary);
         }
 
         .user-btn:hover {
@@ -285,7 +306,7 @@
             align-items: center;
             gap: 10px;
             padding: 12px 16px;
-            color: var(--primary);
+            color: var(--text-muted);
             text-decoration: none;
             transition: 0.2s;
             font-size: 14px;
@@ -301,7 +322,7 @@
 
         .dropdown-menu a:hover {
             background: #eef2ff;
-            color: var(--primary-dark);
+            color: var(--primary);
         }
 
         .dropdown-menu a svg {
@@ -478,7 +499,7 @@
             height: auto;
             max-height: calc(100vh - 90px);
             background: #ffffff;
-            color: var(--primary);
+            color: var(--text-muted);
             padding: 20px 0;
             transition: left 0.3s ease;
             z-index: 999;
@@ -504,7 +525,7 @@
             align-items: center;
             gap: 12px;
             padding: 12px 16px;
-            color: var(--primary);
+            color: var(--text-muted);
             text-decoration: none;
             transition: 0.3s;
             border-left: 3px solid transparent;
@@ -513,7 +534,7 @@
 
         .sidebar-menu a:hover,
         .sidebar-menu a.active {
-            color: var(--primary-dark);
+            color: var(--primary);
             background: #eef2ff;
             border-left-color: transparent;
         }
@@ -523,6 +544,10 @@
             height: 20px;
             text-align: center;
             stroke: currentColor;
+        }
+
+        .sidebar-menu svg {
+            color: var(--primary);
         }
 
         .sidebar-menu .has-submenu {
@@ -910,6 +935,7 @@
             sidebar.classList.remove('active');
             document.body.classList.remove('sidebar-open');
             overlay.classList.remove('active');
+            closeSidebarSubmenus();
         }
     }
 
@@ -919,7 +945,14 @@
     }
 
     function closeSidebar() {
+        closeSidebarSubmenus();
         setSidebarState(false);
+    }
+
+    function closeSidebarSubmenus() {
+        document.querySelectorAll('.sidebar-menu .has-submenu.open').forEach(function(item) {
+            item.classList.remove('open');
+        });
     }
 
     function syncSidebarForViewport() {

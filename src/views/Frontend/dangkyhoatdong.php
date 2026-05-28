@@ -8,6 +8,30 @@
         gap: 16px;
     }
 
+    .activity-page-title {
+        font-size: 18px;
+        font-weight: 800;
+        color: #1d4ed8;
+        text-transform: none;
+        letter-spacing: 0.6px;
+    }
+
+    .activity-panel {
+        background: #ffffff;
+        border: 1px solid #e8ecf3;
+        border-radius: 8px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+    }
+
+    .activity-panel__header {
+        padding: 12px 14px;
+        border-bottom: 1px solid #e5e7eb;
+    }
+
+    .activity-panel__body {
+        padding: 12px;
+    }
+
     .activity-toolbar {
         display: grid;
         gap: 12px;
@@ -15,21 +39,21 @@
 
     .activity-filters {
         display: grid;
-        grid-template-columns: minmax(220px, 1.4fr) repeat(4, minmax(140px, 1fr)) auto;
+        grid-template-columns: minmax(220px, 1.4fr) repeat(5, minmax(140px, 1fr)) auto;
         gap: 12px;
         align-items: end;
-        background: #ffffff;
-        border: 1px solid #e8ecf3;
-        border-radius: 12px;
-        padding: 12px;
-        box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+        background: transparent;
+        border: none;
+        border-radius: 0;
+        padding: 0 8px 0 0;
+        box-shadow: none;
     }
 
     .filter-field {
         display: grid;
         gap: 6px;
         font-size: 12px;
-        color: #4b5563;
+        color: #1d4ed8;
         font-weight: 600;
     }
 
@@ -71,6 +95,7 @@
         display: flex;
         gap: 10px;
         align-items: center;
+        justify-self: end;
     }
 
     .filter-btn {
@@ -78,7 +103,7 @@
         border-radius: 10px;
         border: 1px solid #e5e7eb;
         background: #fff;
-        color: #1f2937;
+        color: #1d4ed8;
         font-size: 13px;
         font-weight: 700;
         cursor: pointer;
@@ -98,7 +123,7 @@
         align-items: center;
         background: #ffffff;
         border: 1px solid #e8ecf3;
-        border-radius: 12px;
+        border-radius: 8px;
         padding: 10px 12px;
         font-size: 12px;
     }
@@ -137,7 +162,7 @@
         background: #fff;
         font-size: 12px;
         font-weight: 600;
-        color: #1f2937;
+        color: #1d4ed8;
     }
 
     .activity-grid {
@@ -148,7 +173,7 @@
 
     .activity-card {
         background: #ffffff;
-        border-radius: 14px;
+        border-radius: 8px;
         border: 1px solid #e8ecf3;
         box-shadow: 0 2px 10px rgba(0,0,0,0.06);
         overflow: hidden;
@@ -181,20 +206,6 @@
         border: 1px solid #bdebd3;
     }
 
-    .activity-like {
-        position: absolute;
-        top: 10px;
-        right: 10px;
-        width: 28px;
-        height: 28px;
-        border-radius: 50%;
-        background: rgba(255,255,255,0.9);
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 14px;
-        color: #64748b;
-    }
 
     .activity-body {
         padding: 12px 14px 14px;
@@ -221,6 +232,11 @@
         display: flex;
         align-items: center;
         gap: 6px;
+    }
+
+    .meta-label {
+        color: #9ca3af;
+        font-weight: 700;
     }
 
     .activity-score {
@@ -256,9 +272,9 @@
     .activity-btn {
         padding: 6px 12px;
         border-radius: 8px;
-        border: 1px solid #c7d2fe;
-        background: #fff;
-        color: #1d4ed8;
+        border: 1px solid #16a34a;
+        background: #16a34a;
+        color: #ffffff;
         font-size: 12px;
         font-weight: 700;
         cursor: pointer;
@@ -316,45 +332,53 @@
 
 <div class="activity-page">
     <div class="activity-toolbar">
-        <div class="activity-filters">
-            <div class="filter-field">
-                <span>Tìm kiếm hoạt động</span>
-                <div class="filter-input">
-                    <input type="text" placeholder="Tìm kiếm hoạt động..." />
+        <div class="activity-panel">
+            <div class="activity-panel__header">
+                <div class="activity-page-title">Đăng ký hoạt động</div>
+            </div>
+            <div class="activity-panel__body">
+                <div class="activity-filters">
+                    <div class="filter-field">
+                        <span>Tìm kiếm hoạt động</span>
+                        <div class="filter-input">
+                            <input type="text" placeholder="Tìm kiếm hoạt động..." />
+                        </div>
+                    </div>
+                    <div class="filter-field">
+                        <span>Đơn vị tổ chức</span>
+                        <div class="filter-input">
+                            <input type="text" placeholder="Nhập đơn vị tổ chức..." />
+                        </div>
+                    </div>
+                    <div class="filter-field">
+                        <span>Loại hoạt động</span>
+                        <div class="filter-select">Tất cả <span>v</span></div>
+                    </div>
+                    <div class="filter-field">
+                        <span>Học kỳ</span>
+                        <div class="filter-select">Học kỳ 2 (2024 - 2025) <span>v</span></div>
+                    </div>
+                    <div class="filter-field">
+                        <span>Trạng thái</span>
+                        <div class="filter-select">Đang mở <span>v</span></div>
+                    </div>
+                    <div class="filter-actions">
+                        <button class="filter-btn" type="button">Đặt lại</button>
+                        <button class="filter-btn primary" type="button">Lọc & Tìm kiếm</button>
+                    </div>
                 </div>
-            </div>
-            <div class="filter-field">
-                <span>Loại hoạt động</span>
-                <div class="filter-select">Tất cả <span>v</span></div>
-            </div>
-            <div class="filter-field">
-                <span>Hình thức</span>
-                <div class="filter-select">Tất cả <span>v</span></div>
-            </div>
-            <div class="filter-field">
-                <span>Học kỳ</span>
-                <div class="filter-select">Học kỳ 2 (2024 - 2025) <span>v</span></div>
-            </div>
-            <div class="filter-field">
-                <span>Trạng thái</span>
-                <div class="filter-select">Đang mở <span>v</span></div>
-            </div>
-            <div class="filter-actions">
-                <button class="filter-btn" type="button">Đặt lại</button>
-                <button class="filter-btn primary" type="button">Lọc</button>
             </div>
         </div>
 
         <div class="activity-tabs">
             <div class="activity-tab active">Tất cả</div>
+            <div class="activity-tab">Học tập</div>
+            <div class="activity-tab">Đạo đức</div>
+            <div class="activity-tab">Thể lực</div>
             <div class="activity-tab">Tình nguyện</div>
-            <div class="activity-tab">Học thuật</div>
-            <div class="activity-tab">Văn hóa - Văn nghệ</div>
-            <div class="activity-tab">Thể thao</div>
-            <div class="activity-tab">Kỹ năng</div>
+            <div class="activity-tab">Hội nhập</div>
             <div class="activity-tab">Khác</div>
             <div class="activity-sort">
-                <span>Sắp xếp</span>
                 <div class="sort-select">Mới nhất</div>
             </div>
         </div>
@@ -365,18 +389,17 @@
             <div class="activity-cover">
                 <img src="https://images.unsplash.com/photo-1469474968028-56623f02e42e?auto=format&fit=crop&w=900&q=60" alt="Hoạt động" />
                 <span class="activity-badge">Đang mở</span>
-                <span class="activity-like">♡</span>
             </div>
             <div class="activity-body">
                 <div class="activity-title">Chiến dịch Mùa hè xanh 2024</div>
                 <div class="activity-meta">
-                    <span>Đoàn trường Đại học ABC</span>
-                    <span>20/06/2024 - 25/06/2024</span>
-                    <span>TP. Hồ Chí Minh</span>
+                    <span><span class="meta-label">Đơn vị:</span> Đoàn trường Đại học ABC</span>
+                    <span><span class="meta-label">Thời gian:</span> 20/06/2024 - 25/06/2024</span>
+                    <span><span class="meta-label">Địa điểm:</span> TP. Hồ Chí Minh</span>
                 </div>
                 <div class="activity-score">
-                    <div>Điểm DRL<br><strong>10 điểm</strong></div>
-                    <div>Còn lại<br><strong>45 / 100</strong></div>
+                    <div><span class="meta-label">Điểm cộng:</span><br><strong>10 điểm</strong></div>
+                    <div><span class="meta-label">Còn lại:</span><br><strong>45 / 100</strong></div>
                 </div>
                 <div class="activity-footer">
                     <span class="activity-tag">Tình nguyện</span>
@@ -389,18 +412,17 @@
             <div class="activity-cover">
                 <img src="https://images.unsplash.com/photo-1522202176988-66273c2fd55f?auto=format&fit=crop&w=900&q=60" alt="Hoạt động" />
                 <span class="activity-badge">Đang mở</span>
-                <span class="activity-like">♡</span>
             </div>
             <div class="activity-body">
                 <div class="activity-title">Hội thảo: AI và tương lai nghề nghiệp</div>
                 <div class="activity-meta">
-                    <span>Khoa Công nghệ thông tin</span>
-                    <span>15/05/2024 - 15/05/2024</span>
-                    <span>Hội trường B, Cơ sở 1</span>
+                    <span><span class="meta-label">Đơn vị:</span> Khoa Công nghệ thông tin</span>
+                    <span><span class="meta-label">Thời gian:</span> 15/05/2024 - 15/05/2024</span>
+                    <span><span class="meta-label">Địa điểm:</span> Hội trường B, Cơ sở 1</span>
                 </div>
                 <div class="activity-score">
-                    <div>Điểm DRL<br><strong>8 điểm</strong></div>
-                    <div>Còn lại<br><strong>120 / 150</strong></div>
+                    <div><span class="meta-label">Điểm cộng:</span><br><strong>8 điểm</strong></div>
+                    <div><span class="meta-label">Còn lại:</span><br><strong>120 / 150</strong></div>
                 </div>
                 <div class="activity-footer">
                     <span class="activity-tag">Học thuật</span>
@@ -413,18 +435,17 @@
             <div class="activity-cover">
                 <img src="https://images.unsplash.com/photo-1489515217757-5fd1be406fef?auto=format&fit=crop&w=900&q=60" alt="Hoạt động" />
                 <span class="activity-badge">Đang mở</span>
-                <span class="activity-like">♡</span>
             </div>
             <div class="activity-body">
                 <div class="activity-title">Giải bóng đá sinh viên mở rộng 2024</div>
                 <div class="activity-meta">
-                    <span>Hội Sinh viên</span>
-                    <span>10/05/2024 - 30/05/2024</span>
-                    <span>Sân bóng đá trường ABC</span>
+                    <span><span class="meta-label">Đơn vị:</span> Hội Sinh viên</span>
+                    <span><span class="meta-label">Thời gian:</span> 10/05/2024 - 30/05/2024</span>
+                    <span><span class="meta-label">Địa điểm:</span> Sân bóng đá trường ABC</span>
                 </div>
                 <div class="activity-score">
-                    <div>Điểm DRL<br><strong>6 điểm</strong></div>
-                    <div>Còn lại<br><strong>8 / 16 đội</strong></div>
+                    <div><span class="meta-label">Điểm cộng:</span><br><strong>6 điểm</strong></div>
+                    <div><span class="meta-label">Còn lại:</span><br><strong>8 / 16 đội</strong></div>
                 </div>
                 <div class="activity-footer">
                     <span class="activity-tag">Thể thao</span>
@@ -437,18 +458,17 @@
             <div class="activity-cover">
                 <img src="https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?auto=format&fit=crop&w=900&q=60" alt="Hoạt động" />
                 <span class="activity-badge">Đang mở</span>
-                <span class="activity-like">♡</span>
             </div>
             <div class="activity-body">
                 <div class="activity-title">Hiến máu nhân đạo đợt 1/2024</div>
                 <div class="activity-meta">
-                    <span>Đoàn trường Đại học ABC</span>
-                    <span>08/05/2024 - 08/05/2024</span>
-                    <span>Giảng đường A, Cơ sở 1</span>
+                    <span><span class="meta-label">Đơn vị:</span> Đoàn trường Đại học ABC</span>
+                    <span><span class="meta-label">Thời gian:</span> 08/05/2024 - 08/05/2024</span>
+                    <span><span class="meta-label">Địa điểm:</span> Giảng đường A, Cơ sở 1</span>
                 </div>
                 <div class="activity-score">
-                    <div>Điểm DRL<br><strong>7 điểm</strong></div>
-                    <div>Còn lại<br><strong>60 / 100</strong></div>
+                    <div><span class="meta-label">Điểm cộng:</span><br><strong>7 điểm</strong></div>
+                    <div><span class="meta-label">Còn lại:</span><br><strong>60 / 100</strong></div>
                 </div>
                 <div class="activity-footer">
                     <span class="activity-tag">Tình nguyện</span>
@@ -461,18 +481,17 @@
             <div class="activity-cover">
                 <img src="https://images.unsplash.com/photo-1483412033650-1015ddeb83d1?auto=format&fit=crop&w=900&q=60" alt="Hoạt động" />
                 <span class="activity-badge">Đang mở</span>
-                <span class="activity-like">♡</span>
             </div>
             <div class="activity-body">
                 <div class="activity-title">Đêm văn nghệ chào tân sinh viên K15</div>
                 <div class="activity-meta">
-                    <span>Hội Sinh viên</span>
-                    <span>25/05/2024 - 25/05/2024</span>
-                    <span>Hội trường lớn</span>
+                    <span><span class="meta-label">Đơn vị:</span> Hội Sinh viên</span>
+                    <span><span class="meta-label">Thời gian:</span> 25/05/2024 - 25/05/2024</span>
+                    <span><span class="meta-label">Địa điểm:</span> Hội trường lớn</span>
                 </div>
                 <div class="activity-score">
-                    <div>Điểm DRL<br><strong>5 điểm</strong></div>
-                    <div>Còn lại<br><strong>30 / 80</strong></div>
+                    <div><span class="meta-label">Điểm cộng:</span><br><strong>5 điểm</strong></div>
+                    <div><span class="meta-label">Còn lại:</span><br><strong>30 / 80</strong></div>
                 </div>
                 <div class="activity-footer">
                     <span class="activity-tag">Văn hóa - Văn nghệ</span>
@@ -485,18 +504,17 @@
             <div class="activity-cover">
                 <img src="https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?auto=format&fit=crop&w=900&q=60" alt="Hoạt động" />
                 <span class="activity-badge">Đang mở</span>
-                <span class="activity-like">♡</span>
             </div>
             <div class="activity-body">
                 <div class="activity-title">Workshop: Kỹ năng thuyết trình hiệu quả</div>
                 <div class="activity-meta">
-                    <span>Trung tâm Kỹ năng mềm</span>
-                    <span>18/05/2024 - 18/05/2024</span>
-                    <span>Phòng B.302</span>
+                    <span><span class="meta-label">Đơn vị:</span> Trung tâm Kỹ năng mềm</span>
+                    <span><span class="meta-label">Thời gian:</span> 18/05/2024 - 18/05/2024</span>
+                    <span><span class="meta-label">Địa điểm:</span> Phòng B.302</span>
                 </div>
                 <div class="activity-score">
-                    <div>Điểm DRL<br><strong>6 điểm</strong></div>
-                    <div>Còn lại<br><strong>25 / 40</strong></div>
+                    <div><span class="meta-label">Điểm cộng:</span><br><strong>6 điểm</strong></div>
+                    <div><span class="meta-label">Còn lại:</span><br><strong>25 / 40</strong></div>
                 </div>
                 <div class="activity-footer">
                     <span class="activity-tag">Kỹ năng</span>
@@ -509,18 +527,17 @@
             <div class="activity-cover">
                 <img src="https://images.unsplash.com/photo-1453928582365-b6ad33cbcf64?auto=format&fit=crop&w=900&q=60" alt="Hoạt động" />
                 <span class="activity-badge">Đang mở</span>
-                <span class="activity-like">♡</span>
             </div>
             <div class="activity-body">
                 <div class="activity-title">Cuộc thi Nhiếp ảnh: Khoảnh khắc sinh viên</div>
                 <div class="activity-meta">
-                    <span>Câu lạc bộ Nhiếp ảnh</span>
-                    <span>01/05/2024 - 20/05/2024</span>
-                    <span>Online</span>
+                    <span><span class="meta-label">Đơn vị:</span> Câu lạc bộ Nhiếp ảnh</span>
+                    <span><span class="meta-label">Thời gian:</span> 01/05/2024 - 20/05/2024</span>
+                    <span><span class="meta-label">Địa điểm:</span> Online</span>
                 </div>
                 <div class="activity-score">
-                    <div>Điểm DRL<br><strong>6 điểm</strong></div>
-                    <div>Còn lại<br><strong>30 / 120</strong></div>
+                    <div><span class="meta-label">Điểm cộng:</span><br><strong>6 điểm</strong></div>
+                    <div><span class="meta-label">Còn lại:</span><br><strong>30 / 120</strong></div>
                 </div>
                 <div class="activity-footer">
                     <span class="activity-tag">Khác</span>
@@ -533,18 +550,17 @@
             <div class="activity-cover">
                 <img src="https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?auto=format&fit=crop&w=900&q=60" alt="Hoạt động" />
                 <span class="activity-badge">Sắp diễn ra</span>
-                <span class="activity-like">♡</span>
             </div>
             <div class="activity-body">
                 <div class="activity-title">Ngày hội "Vì môi trường xanh"</div>
                 <div class="activity-meta">
-                    <span>CLB Môi trường xanh</span>
-                    <span>28/05/2024 - 28/05/2024</span>
-                    <span>Công viên 23/9, Quận 1</span>
+                    <span><span class="meta-label">Đơn vị:</span> CLB Môi trường xanh</span>
+                    <span><span class="meta-label">Thời gian:</span> 28/05/2024 - 28/05/2024</span>
+                    <span><span class="meta-label">Địa điểm:</span> Công viên 23/9, Quận 1</span>
                 </div>
                 <div class="activity-score">
-                    <div>Điểm DRL<br><strong>8 điểm</strong></div>
-                    <div>Còn lại<br><strong>90 / 120</strong></div>
+                    <div><span class="meta-label">Điểm cộng:</span><br><strong>8 điểm</strong></div>
+                    <div><span class="meta-label">Còn lại:</span><br><strong>90 / 120</strong></div>
                 </div>
                 <div class="activity-footer">
                     <span class="activity-tag">Tình nguyện</span>

@@ -12,19 +12,31 @@
         gap: 16px;
     }
 
-    .result-header {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        flex-wrap: wrap;
-        gap: 12px;
+
+    .result-panel {
+        background: #ffffff;
+        border: 1px solid #e8ecf3;
+        border-radius: 8px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.06);
     }
 
-    .result-title {
-        font-size: 20px;
+    .result-panel__header {
+        padding: 12px 14px;
+        border-bottom: 1px solid #e5e7eb;
+    }
+
+    .result-panel__body {
+        padding: 12px 14px;
+    }
+
+
+    .result-page-title {
+        font-size: 18px;
         font-weight: 800;
         color: #1d4ed8;
         margin: 0;
+        letter-spacing: 0.6px;
+        text-transform: none;
     }
 
     .result-subtitle {
@@ -66,8 +78,8 @@
     }
 
     .result-card,
-    .result-note,
-    .result-table-card {
+    .result-table-card,
+    .result-filter {
         background: #ffffff;
         border-radius: 12px;
         border: 1px solid #e8ecf3;
@@ -81,11 +93,17 @@
         min-height: 96px;
     }
 
+    .result-card .score-row {
+        display: flex;
+        align-items: baseline;
+        gap: 6px;
+    }
+
     .result-card .label {
         font-size: 11px;
         font-weight: 700;
         color: #94a3b8;
-        text-transform: uppercase;
+        text-transform: none;
         letter-spacing: 0.3px;
     }
 
@@ -112,26 +130,61 @@
         padding: 4px 10px;
     }
 
-    .result-note {
-        padding: 12px 16px;
+    .result-filter {
+        padding: 14px 16px;
         display: grid;
-        gap: 6px;
-        background: #f8fafc;
+        gap: 10px;
+        min-height: 96px;
     }
 
-    .result-note .label {
+    .result-filter .label {
+        font-size: 11px;
         font-weight: 700;
-        color: #1d4ed8;
-        font-size: 12px;
+        color: #94a3b8;
+        text-transform: none;
+        letter-spacing: 0.3px;
     }
 
-    .result-note input {
+    .result-filter select {
         border: 1px solid #e2e8f0;
         padding: 8px 10px;
         border-radius: 8px;
         font-size: 13px;
         background: #ffffff;
         outline: none;
+        color: #1f2937;
+        max-width: 140px;
+        width: 100%;
+    }
+
+    .result-filter-actions {
+        display: flex;
+        gap: 8px;
+        align-items: center;
+    }
+
+    .result-filter-controls {
+        display: flex;
+        gap: 8px;
+        align-items: center;
+        flex-wrap: wrap;
+    }
+
+    .result-filter-btn {
+        border: 1px solid #e2e8f0;
+        border-radius: 8px;
+        padding: 6px 12px;
+        font-size: 12px;
+        font-weight: 700;
+        cursor: pointer;
+        background: #ffffff;
+        color: #1d4ed8;
+    }
+
+    .result-filter-btn.primary {
+        background: #1d4ed8;
+        border-color: #1d4ed8;
+        color: #ffffff;
     }
 
     .result-table-card {
@@ -145,7 +198,7 @@
     .year-header {
         padding: 12px 16px;
         font-weight: 700;
-        color: #1f2937;
+        color: #1d4ed8;
         background: #f8fafc;
         font-size: 13px;
         display: flex;
@@ -168,10 +221,24 @@
         border-right: 1px solid #eef2f7;
     }
 
+    .result-table th:first-child,
+    .result-table td:first-child {
+        width: 20%;
+    }
+
+    .result-table th:nth-child(2),
+    .result-table th:nth-child(3),
+    .result-table th:nth-child(4),
+    .result-table td:nth-child(2),
+    .result-table td:nth-child(3),
+    .result-table td:nth-child(4) {
+        text-align: center;
+    }
+
     .result-table th {
         background: #f4f6fb;
         color: #475569;
-        font-weight: 600;
+        font-weight: 700;
         font-size: 12px;
         text-transform: uppercase;
         letter-spacing: 0.3px;
@@ -230,10 +297,6 @@
     }
 
     @media (max-width: 768px) {
-        .result-header {
-            align-items: flex-start;
-        }
-
         .result-table th,
         .result-table td {
             padding: 10px 8px;
@@ -242,30 +305,39 @@
 </style>
 
 <div class="result-page">
-    <div class="result-header">
-        <div>
-            <h1 class="result-title">Kết quả rèn luyện</h1>
-            <div class="result-subtitle">Tổng hợp điểm rèn luyện theo từng học kỳ</div>
+    <div class="result-panel">
+        <div class="result-panel__header">
+            <h1 class="result-page-title">Kết quả rèn luyện</h1>
         </div>
-        <button class="btn-primary" type="button">
-            <i class="fa-solid fa-file-pdf"></i>
-            In bảng điểm
-        </button>
-    </div>
-
-    <div class="result-cards">
-        <div class="result-card">
-            <div class="label">Điểm học kỳ này</div>
-            <div class="value">84.50</div>
-            <div class="sub">/100</div>
-        </div>
-        <div class="result-card">
-            <div class="label">Xếp loại hiện tại</div>
-            <div class="badge">Tốt</div>
-        </div>
-        <div class="result-note">
-            <div class="label">Ghi chú</div>
-            <input type="text" placeholder="Nhập ghi chú" />
+        <div class="result-panel__body">
+            <div class="result-cards">
+                <div class="result-card">
+                    <div class="label">Điểm học kỳ này</div>
+                    <div class="score-row">
+                        <div class="value">84.50</div>
+                        <div class="sub">/100</div>
+                    </div>
+                </div>
+                <div class="result-card">
+                    <div class="label">Xếp loại hiện tại</div>
+                    <div class="badge">Tốt</div>
+                </div>
+                <div class="result-filter">
+                    <div class="label">Học kỳ</div>
+                    <div class="result-filter-controls">
+                        <select>
+                            <option>Tất cả</option>
+                            <option>Học kỳ 1</option>
+                            <option>Học kỳ 2</option>
+                            <option>Học kỳ 3</option>
+                        </select>
+                        <div class="result-filter-actions">
+                            <button class="result-filter-btn" type="button">Đặt lại</button>
+                            <button class="result-filter-btn primary" type="button">Lọc</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 

@@ -5,7 +5,7 @@
     <title><?= $title ?></title>
 
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap');
 
         :root {
             --ink: #1f2937;
@@ -22,7 +22,7 @@
 
         body {
             margin: 0;
-            font-family: 'Space Grotesk', system-ui, sans-serif;
+            font-family: 'Manrope', system-ui, sans-serif;
             background: var(--bg);
             color: var(--ink);
         }

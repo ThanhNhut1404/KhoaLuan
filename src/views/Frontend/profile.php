@@ -8,44 +8,72 @@
 ?>
 
 <style>
+    @import url('https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap');
+
+    :root {
+        --ink: #0f172a;
+        --muted: #64748b;
+        --accent: #1d4ed8;
+        --accent-soft: rgba(29, 78, 216, 0.12);
+        --line: #e5e7eb;
+        --card: #ffffff;
+        --shadow: 0 12px 30px rgba(15, 23, 42, 0.08);
+    }
+
     .profile-shell {
+        position: relative;
         display: grid;
-        gap: 16px;
-        max-width: 1100px;
+        gap: 14px;
+        max-width: 980px;
         margin: 0 auto;
+        padding: 16px;
+        border-radius: 20px;
+        font-family: 'Manrope', 'Segoe UI', Tahoma, sans-serif;
     }
 
     .profile-card {
-        background: #ffffff;
-        border-radius: 14px;
-        border: 1px solid #e8ecf3;
-        box-shadow: 0 4px 14px rgba(15, 23, 42, 0.06);
+        background: var(--card);
+        border-radius: 10px;
+        border: 1px solid var(--line);
+    }
+
+    .profile-card-header {
+        padding: 12px 18px;
+        border-bottom: 1px solid var(--line);
+    }
+
+    .profile-card-title {
+        font-size: 16px;
+        font-weight: 800;
+        color: var(--accent);
+        letter-spacing: 0.4px;
     }
 
     .profile-hero {
-        padding: 16px 18px;
+        padding: 18px 20px;
         display: grid;
-        gap: 14px;
+        gap: 12px;
+        border-bottom: 1px solid var(--line);
     }
 
     .profile-hero__row {
         display: grid;
         grid-template-columns: auto 1fr auto;
-        gap: 16px;
+        gap: 18px;
         align-items: center;
     }
 
     .profile-avatar {
-        width: 82px;
-        height: 82px;
-        border-radius: 16px;
-        background: linear-gradient(135deg, #e2e8f0 0%, #c7d2fe 100%);
+        width: 96px;
+        height: 96px;
+        border-radius: 20px;
+        background: linear-gradient(135deg, #e2e8f0 0%, #dbeafe 100%);
         display: flex;
         align-items: center;
         justify-content: center;
         overflow: hidden;
         border: 2px solid #ffffff;
-        box-shadow: 0 6px 14px rgba(15, 23, 42, 0.12);
+        box-shadow: 0 8px 18px rgba(15, 23, 42, 0.12);
     }
 
     .profile-avatar img {
@@ -56,31 +84,32 @@
     }
 
     .profile-avatar span {
-        font-size: 28px;
+        font-size: 26px;
         font-weight: 800;
-        color: #1d4ed8;
+        color: var(--accent);
     }
 
     .profile-name {
-        font-size: 18px;
+        font-size: 20px;
         font-weight: 800;
-        color: #1f2937;
+        color: var(--ink);
         display: flex;
         align-items: center;
         gap: 8px;
     }
 
     .profile-badge {
-        padding: 2px 8px;
+        padding: 2px 10px;
         border-radius: 999px;
-        background: #e0f2fe;
-        color: #1d4ed8;
+        background: var(--accent-soft);
+        color: var(--accent);
         font-size: 10px;
         font-weight: 700;
+        letter-spacing: 0.4px;
     }
 
     .profile-meta {
-        color: #64748b;
+        color: var(--muted);
         font-size: 12px;
         display: flex;
         gap: 12px;
@@ -97,8 +126,8 @@
 
     .action-btn {
         border-radius: 999px;
-        border: 1px solid #dbe3f5;
-        padding: 8px 14px;
+        border: 1px solid var(--line);
+        padding: 8px 16px;
         font-size: 12px;
         font-weight: 700;
         cursor: pointer;
@@ -106,63 +135,102 @@
         align-items: center;
         gap: 8px;
         background: #ffffff;
-        color: #1f2937;
+        color: var(--ink);
+        transition: 0.2s ease;
+    }
+
+    .action-btn:hover {
+        border-color: rgba(29, 78, 216, 0.35);
+        color: var(--accent);
+        background: #eef4ff;
     }
 
     .action-btn.primary {
-        background: #1d4ed8;
+        background: var(--accent);
         color: #ffffff;
-        border-color: #1d4ed8;
+        border-color: var(--accent);
+        box-shadow: 0 10px 20px rgba(29, 78, 216, 0.2);
+    }
+
+    .action-btn.primary:hover {
+        background: #1b3fb5;
+        color: #ffffff;
+        border-color: #1b3fb5;
+    }
+
+    .action-btn.link {
+        color: var(--accent);
+        border-color: rgba(29, 78, 216, 0.2);
+    }
+
+    .action-btn.link:hover {
+        background: #e8f0ff;
+        border-color: rgba(29, 78, 216, 0.4);
     }
 
     .profile-section {
-        padding: 14px 16px 16px 16px;
+        padding: 16px 18px 18px 18px;
         display: grid;
         gap: 12px;
     }
 
+    .profile-section + .profile-section {
+        border-top: 1px solid var(--line);
+    }
+
     .section-title {
-        font-size: 13px;
-        font-weight: 700;
-        color: #1f2937;
+        font-size: 12px;
+        font-weight: 800;
+        color: var(--ink);
         display: flex;
         align-items: center;
         gap: 8px;
+        text-transform: uppercase;
+        letter-spacing: 0.6px;
     }
 
     .section-title .dot {
-        width: 28px;
-        height: 28px;
+        width: 26px;
+        height: 26px;
         border-radius: 8px;
-        background: #eef2ff;
-        color: #1d4ed8;
+        background: var(--accent-soft);
+        color: var(--accent);
         display: inline-flex;
         align-items: center;
         justify-content: center;
-        font-weight: 700;
-        font-size: 12px;
+        font-weight: 800;
+        font-size: 11px;
+    }
+
+    .section-title .dot svg {
+        width: 14px;
+        height: 14px;
+        stroke: currentColor;
     }
 
     .info-grid {
         display: grid;
         grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-        gap: 10px 16px;
+        gap: 12px 16px;
         font-size: 12px;
     }
 
     .info-item {
-        display: grid;
-        gap: 4px;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 6px;
+        align-items: baseline;
     }
 
     .info-item span:first-child {
-        color: #94a3b8;
+        color: var(--muted);
         font-weight: 600;
         font-size: 11px;
+        text-transform: none;
     }
 
     .info-item span:last-child {
-        color: #1f2937;
+        color: var(--ink);
         font-weight: 700;
     }
 
@@ -178,9 +246,9 @@
         padding: 10px 12px;
         border-radius: 12px;
         background: #f8fafc;
-        border: 1px solid #edf2f7;
+        border: 1px solid #eef2f7;
         font-size: 12px;
-        color: #1f2937;
+        color: var(--ink);
         font-weight: 700;
     }
 
@@ -188,13 +256,19 @@
         width: 30px;
         height: 30px;
         border-radius: 10px;
-        background: #eef2ff;
-        color: #1d4ed8;
+        background: var(--accent-soft);
+        color: var(--accent);
         display: inline-flex;
         align-items: center;
         justify-content: center;
         font-size: 12px;
         font-weight: 800;
+    }
+
+    .contact-icon svg {
+        width: 14px;
+        height: 14px;
+        stroke: currentColor;
     }
 
     @media (max-width: 900px) {
@@ -210,105 +284,148 @@
 </style>
 
 <div class="profile-shell">
-    <section class="profile-card profile-hero">
-        <div class="profile-hero__row">
-            <div class="profile-avatar">
-                <?php if ($hasAvatar): ?>
-                    <img src="<?= htmlspecialchars($avatar, ENT_QUOTES, 'UTF-8') ?>" alt="Avatar" />
-                <?php else: ?>
-                    <span><?= htmlspecialchars(substr($fullName, 0, 1), ENT_QUOTES, 'UTF-8') ?></span>
-                <?php endif; ?>
-            </div>
-            <div>
-                <div class="profile-name">
-                    <?= htmlspecialchars($fullName, ENT_QUOTES, 'UTF-8') ?>
-                    <span class="profile-badge">DANG HOC</span>
+    <section class="profile-card">
+        <div class="profile-card-header">
+            <div class="profile-card-title">Thông tin sinh viên</div>
+        </div>
+        <div class="profile-hero">
+            <div class="profile-hero__row">
+                <div class="profile-avatar">
+                    <?php if ($hasAvatar): ?>
+                        <img src="<?= htmlspecialchars($avatar, ENT_QUOTES, 'UTF-8') ?>" alt="Avatar" />
+                    <?php else: ?>
+                        <span><?= htmlspecialchars(substr($fullName, 0, 1), ENT_QUOTES, 'UTF-8') ?></span>
+                    <?php endif; ?>
                 </div>
-                <div class="profile-meta">
-                    <span>MSSV: <?= htmlspecialchars($mssv, ENT_QUOTES, 'UTF-8') ?></span>
-                    <span>&#8226;</span>
+                <div>
+                    <div class="profile-name">
+                        <?= htmlspecialchars($fullName, ENT_QUOTES, 'UTF-8') ?>
+                        <span class="profile-badge">DANG HOC</span>
+                    </div>
+                    <div class="profile-meta">
+                        <span>MSSV: <?= htmlspecialchars($mssv, ENT_QUOTES, 'UTF-8') ?></span>
+                        <span>&#8226;</span>
+                        <span><?= htmlspecialchars($student['nganh'] ?? 'Cong nghe thong tin', ENT_QUOTES, 'UTF-8') ?></span>
+                        <span>&#8226;</span>
+                        <span>Nien khoa <?= htmlspecialchars($student['khoa_hoc'] ?? '2021 - 2025', ENT_QUOTES, 'UTF-8') ?></span>
+                    </div>
+                </div>
+                <div class="profile-actions">
+                    <button class="action-btn primary" type="button">Chỉnh sửa thông tin</button>
+                    <button class="action-btn link" type="button" onclick="openPasswordModal()">Đổi mật khẩu</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="profile-section">
+            <div class="section-title">
+                <span class="dot">
+                    <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                        <circle cx="12" cy="7" r="4" stroke-width="2" />
+                        <path d="M4 20c1.6-3 5-4 8-4s6.4 1 8 4" stroke-width="2" stroke-linecap="round"/>
+                    </svg>
+                </span>
+                Thông tin cơ bản
+            </div>
+            <div class="info-grid">
+                <div class="info-item">
+                    <span>Ngày sinh</span>
+                    <span><?= htmlspecialchars($student['ngay_sinh'] ?? '20/05/2003', ENT_QUOTES, 'UTF-8') ?></span>
+                </div>
+                <div class="info-item">
+                    <span>Giới tính</span>
+                    <span><?= htmlspecialchars($student['gioi_tinh'] ?? 'Nam', ENT_QUOTES, 'UTF-8') ?></span>
+                </div>
+                <div class="info-item">
+                    <span>Nơi sinh</span>
+                    <span><?= htmlspecialchars($student['noi_sinh'] ?? 'TP. Ho Chi Minh', ENT_QUOTES, 'UTF-8') ?></span>
+                </div>
+                <div class="info-item">
+                    <span>Dân tộc</span>
+                    <span><?= htmlspecialchars($student['dan_toc'] ?? 'Kinh', ENT_QUOTES, 'UTF-8') ?></span>
+                </div>
+                <div class="info-item">
+                    <span>Tôn giáo</span>
+                    <span><?= htmlspecialchars($student['ton_giao'] ?? 'Không', ENT_QUOTES, 'UTF-8') ?></span>
+                </div>
+            </div>
+        </div>
+
+        <div class="profile-section">
+            <div class="section-title">
+                <span class="dot">
+                    <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                        <path d="M3 7l9-4 9 4-9 4-9-4Z" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        <path d="M7 10v5c0 2 4 4 5 4s5-2 5-4v-5" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                </span>
+                Thông tin học tập
+            </div>
+            <div class="info-grid">
+                <div class="info-item">
+                    <span>Lớp</span>
+                    <span><?= htmlspecialchars($lop, ENT_QUOTES, 'UTF-8') ?></span>
+                </div>
+                <div class="info-item">
+                    <span>Ngành</span>
                     <span><?= htmlspecialchars($student['nganh'] ?? 'Cong nghe thong tin', ENT_QUOTES, 'UTF-8') ?></span>
-                    <span>&#8226;</span>
-                    <span>Nien khoa <?= htmlspecialchars($student['khoa_hoc'] ?? '2021 - 2025', ENT_QUOTES, 'UTF-8') ?></span>
+                </div>
+                <div class="info-item">
+                    <span>Bậc đào tạo</span>
+                    <span><?= htmlspecialchars($student['bac_dao_tao'] ?? 'Đại học', ENT_QUOTES, 'UTF-8') ?></span>
+                </div>
+                <div class="info-item">
+                    <span>Loại hình đào tạo</span>
+                    <span><?= htmlspecialchars($student['loai_hinh_dao_tao'] ?? 'Chính quy', ENT_QUOTES, 'UTF-8') ?></span>
+                </div>
+                <div class="info-item">
+                    <span>Khóa học</span>
+                    <span><?= htmlspecialchars($student['khoa_hoc'] ?? 'Khoa 2021', ENT_QUOTES, 'UTF-8') ?></span>
+                </div>
+                <div class="info-item">
+                    <span>Năm thứ</span>
+                    <span><?= htmlspecialchars($student['nam_thu'] ?? 'Nam 3', ENT_QUOTES, 'UTF-8') ?></span>
                 </div>
             </div>
-            <div class="profile-actions">
-                <button class="action-btn primary" type="button">Chinh sua thong tin</button>
-                <button class="action-btn" type="button">Doi mat khau</button>
-            </div>
         </div>
-    </section>
 
-    <section class="profile-card profile-section">
-        <div class="section-title"><span class="dot">i</span>Thong tin co ban</div>
-        <div class="info-grid">
-            <div class="info-item">
-                <span>Ngay sinh</span>
-                <span><?= htmlspecialchars($student['ngay_sinh'] ?? '20/05/2003', ENT_QUOTES, 'UTF-8') ?></span>
+        <div class="profile-section">
+            <div class="section-title">
+                <span class="dot">
+                    <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                        <rect x="3" y="5" width="18" height="14" rx="2" stroke-width="2" />
+                        <path d="m4 7 8 6 8-6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                </span>
+                Thông tin liên lạc
             </div>
-            <div class="info-item">
-                <span>Gioi tinh</span>
-                <span><?= htmlspecialchars($student['gioi_tinh'] ?? 'Nam', ENT_QUOTES, 'UTF-8') ?></span>
-            </div>
-            <div class="info-item">
-                <span>Noi sinh</span>
-                <span><?= htmlspecialchars($student['noi_sinh'] ?? 'TP. Ho Chi Minh', ENT_QUOTES, 'UTF-8') ?></span>
-            </div>
-            <div class="info-item">
-                <span>Dan toc</span>
-                <span><?= htmlspecialchars($student['dan_toc'] ?? 'Kinh', ENT_QUOTES, 'UTF-8') ?></span>
-            </div>
-            <div class="info-item">
-                <span>Ton giao</span>
-                <span><?= htmlspecialchars($student['ton_giao'] ?? 'Khong', ENT_QUOTES, 'UTF-8') ?></span>
-            </div>
-        </div>
-    </section>
-
-    <section class="profile-card profile-section">
-        <div class="section-title"><span class="dot">+</span>Thong tin hoc tap</div>
-        <div class="info-grid">
-            <div class="info-item">
-                <span>Lop</span>
-                <span><?= htmlspecialchars($lop, ENT_QUOTES, 'UTF-8') ?></span>
-            </div>
-            <div class="info-item">
-                <span>Nganh</span>
-                <span><?= htmlspecialchars($student['nganh'] ?? 'Cong nghe thong tin', ENT_QUOTES, 'UTF-8') ?></span>
-            </div>
-            <div class="info-item">
-                <span>Bac dao tao</span>
-                <span><?= htmlspecialchars($student['bac_dao_tao'] ?? 'Dai hoc', ENT_QUOTES, 'UTF-8') ?></span>
-            </div>
-            <div class="info-item">
-                <span>Loai hinh dao tao</span>
-                <span><?= htmlspecialchars($student['loai_hinh_dao_tao'] ?? 'Chinh quy', ENT_QUOTES, 'UTF-8') ?></span>
-            </div>
-            <div class="info-item">
-                <span>Khoa hoc</span>
-                <span><?= htmlspecialchars($student['khoa_hoc'] ?? 'Khoa 2021', ENT_QUOTES, 'UTF-8') ?></span>
-            </div>
-            <div class="info-item">
-                <span>Nam thu</span>
-                <span><?= htmlspecialchars($student['nam_thu'] ?? 'Nam 3', ENT_QUOTES, 'UTF-8') ?></span>
-            </div>
-        </div>
-    </section>
-
-    <section class="profile-card profile-section">
-        <div class="section-title"><span class="dot">@</span>Thong tin lien lac</div>
-        <div class="contact-row">
-            <div class="contact-pill">
-                <span class="contact-icon">@</span>
-                <?= htmlspecialchars($student['email'] ?? 'student@example.com', ENT_QUOTES, 'UTF-8') ?>
-            </div>
-            <div class="contact-pill">
-                <span class="contact-icon">P</span>
-                <?= htmlspecialchars($student['so_dien_thoai'] ?? '0123 456 789', ENT_QUOTES, 'UTF-8') ?>
-            </div>
-            <div class="contact-pill">
-                <span class="contact-icon">A</span>
-                <?= htmlspecialchars($student['dia_chi_thuong_tru'] ?? '123 Duong 3/2, TP. Can Tho', ENT_QUOTES, 'UTF-8') ?>
+            <div class="contact-row">
+                <div class="contact-pill">
+                    <span class="contact-icon">
+                        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                            <rect x="3" y="5" width="18" height="14" rx="2" stroke-width="2" />
+                            <path d="m4 7 8 6 8-6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                    </span>
+                    <?= htmlspecialchars($student['email'] ?? 'student@example.com', ENT_QUOTES, 'UTF-8') ?>
+                </div>
+                <div class="contact-pill">
+                    <span class="contact-icon">
+                        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                            <path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7 12.7 12.7 0 0 0 .7 2.8 2 2 0 0 1-.5 2.1l-1.2 1.2a16 16 0 0 0 6 6l1.2-1.2a2 2 0 0 1 2.1-.5 12.7 12.7 0 0 0 2.8.7 2 2 0 0 1 1.7 2Z" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                    </span>
+                    <?= htmlspecialchars($student['so_dien_thoai'] ?? '0123 456 789', ENT_QUOTES, 'UTF-8') ?>
+                </div>
+                <div class="contact-pill">
+                    <span class="contact-icon">
+                        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                            <path d="M12 21s7-5.3 7-11a7 7 0 1 0-14 0c0 5.7 7 11 7 11Z" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            <circle cx="12" cy="10" r="2" stroke-width="2" />
+                        </svg>
+                    </span>
+                    <?= htmlspecialchars($student['dia_chi_thuong_tru'] ?? '123 Duong 3/2, TP. Can Tho', ENT_QUOTES, 'UTF-8') ?>
+                </div>
             </div>
         </div>
     </section>

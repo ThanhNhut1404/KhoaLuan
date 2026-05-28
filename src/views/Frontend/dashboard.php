@@ -325,7 +325,7 @@
 
     .stat-icon {
         margin-bottom: 12px;
-        color: #00a8e8;
+        color: #1d4ed8;
     }
 
     .stat-card--center {
@@ -354,10 +354,15 @@
 
     .stat-label {
         font-size: 13px;
-        color: #888;
+        color: #6b7280;
         text-transform: none;
         letter-spacing: 0.5px;
         margin-bottom: 8px;
+        transition: color 0.2s ease;
+    }
+
+    .stat-card:hover .stat-label {
+        color: #1d4ed8;
     }
 
     .stat-value {
@@ -635,10 +640,6 @@
         <div class="card news-card">
             <div class="card-header">
                 <h3 class="card-title">
-                    <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <path d="M18 8a6 6 0 1 0-12 0c0 7-3 7-3 7h18s-3 0-3-7Z" stroke-width="2" stroke-linecap="round"/>
-                        <path d="M10 21a2 2 0 0 0 4 0" stroke-width="2" stroke-linecap="round"/>
-                    </svg>
                     Thông báo
                 </h3>
                 <div style="font-size: 12px; color: #6b7280;">Mới nhất</div>
@@ -692,8 +693,10 @@
             <a class="stat-card stat-card--center stat-card--link" href="/KhoaLuan/public/student.php?action=ketquarenluyen">
                 <div class="stat-icon">
                     <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <circle cx="12" cy="12" r="9" stroke-width="2" />
-                        <path d="m9 12 2 2 4-4" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        <path d="M4 19h16" stroke-width="2" stroke-linecap="round"/>
+                        <path d="M7 16V9" stroke-width="2" stroke-linecap="round"/>
+                        <path d="M12 16V5" stroke-width="2" stroke-linecap="round"/>
+                        <path d="M17 16v-7" stroke-width="2" stroke-linecap="round"/>
                     </svg>
                 </div>
                 <div class="stat-label">Kết quả rèn luyện</div>
@@ -704,6 +707,7 @@
                     <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                         <rect x="3" y="5" width="18" height="16" rx="2" stroke-width="2" />
                         <path d="M16 3v4M8 3v4M3 11h18" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        <path d="M8.5 15l2 2 4-4" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
                     </svg>
                 </div>
                 <div class="stat-label">Lịch hoạt động</div>
@@ -713,7 +717,9 @@
                 <div class="stat-icon">
                     <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                         <rect x="6" y="4" width="12" height="16" rx="2" stroke-width="2" />
-                        <path d="M9 8h6M9 12h6M9 16h4" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        <path d="M9 8h6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        <path d="M9 12h4" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        <path d="m9 16 2 2 4-4" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
                     </svg>
                 </div>
                 <div class="stat-label">Đăng ký hoạt động</div>
@@ -739,15 +745,15 @@
                         <path d="M9 15h6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
                     </svg>
                 </div>
-                <div class="stat-label">Nộp minh chứng</div>
+                <div class="stat-label">Hoạt động đã đăng ký</div>
             </div>
 
             <div class="stat-card stat-card--center">
                 <div class="stat-icon">
                     <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <rect x="3" y="6" width="18" height="14" rx="2" stroke-width="2" />
-                        <path d="M3 10h18" stroke-width="2" stroke-linecap="round" />
-                        <path d="M15 14h3" stroke-width="2" stroke-linecap="round" />
+                        <circle cx="12" cy="7" r="3" stroke-width="2" />
+                        <path d="M5 20c1.6-3 5-4 7-4s5.4 1 7 4" stroke-width="2" stroke-linecap="round"/>
+                        <path d="m16 11 1.5 1.5 3-3" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
                     </svg>
                 </div>
                 <div class="stat-label">Điểm danh hoạt động</div>
