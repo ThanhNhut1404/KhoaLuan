@@ -22,58 +22,15 @@
 
     .result-title {
         font-size: 20px;
-        font-weight: 700;
+        font-weight: 800;
         color: #1d4ed8;
         margin: 0;
     }
 
-    .filter-card,
-    .table-card,
-    .summary-card,
-    .note-card {
-        background: #ffffff;
-        border-radius: 10px;
-        border: 1px solid #e8ecf3;
-        box-shadow: 0 2px 10px rgba(15, 23, 42, 0.06);
-    }
-
-    .filter-card {
-        padding: 16px;
-        display: grid;
-        gap: 12px;
-    }
-
-    .filter-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-        gap: 12px;
-    }
-
-    .filter-field label {
+    .result-subtitle {
         font-size: 12px;
-        font-weight: 600;
         color: #6b7280;
-        display: block;
-        margin-bottom: 6px;
-    }
-
-    .filter-field select {
-        width: 100%;
-        padding: 8px 12px;
-        border-radius: 8px;
-        border: 1px solid #d7deea;
-        background: #f8fafc;
-        font-size: 13px;
-        color: #1f2937;
-        outline: none;
-    }
-
-    .filter-actions {
-        display: flex;
-        align-items: center;
-        justify-content: flex-end;
-        gap: 10px;
-        flex-wrap: wrap;
+        margin: 4px 0 0 0;
     }
 
     .btn-primary,
@@ -91,45 +48,124 @@
     }
 
     .btn-primary {
-        background: #1d4ed8;
-        color: #ffffff;
-        box-shadow: 0 4px 10px rgba(29, 78, 216, 0.2);
+        background: #ffffff;
+        color: #1f2937;
+        border: 1px solid #e2e8f0;
+        box-shadow: 0 6px 16px rgba(15, 23, 42, 0.06);
     }
 
     .btn-primary:hover {
-        background: #1746c6;
+        border-color: #cbd5f5;
+        transform: translateY(-1px);
     }
 
-    .btn-light {
+    .result-cards {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+        gap: 12px;
+    }
+
+    .result-card,
+    .result-note,
+    .result-table-card {
+        background: #ffffff;
+        border-radius: 12px;
+        border: 1px solid #e8ecf3;
+        box-shadow: 0 4px 14px rgba(15, 23, 42, 0.06);
+    }
+
+    .result-card {
+        padding: 14px 16px;
+        display: grid;
+        gap: 6px;
+        min-height: 96px;
+    }
+
+    .result-card .label {
+        font-size: 11px;
+        font-weight: 700;
+        color: #94a3b8;
+        text-transform: uppercase;
+        letter-spacing: 0.3px;
+    }
+
+    .result-card .value {
+        font-size: 22px;
+        font-weight: 800;
+        color: #1d4ed8;
+    }
+
+    .result-card .sub {
+        font-size: 12px;
+        color: #94a3b8;
+    }
+
+    .result-card .badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        font-size: 12px;
+        font-weight: 700;
+        color: #0f172a;
+        background: #ecfdf3;
+        border-radius: 999px;
+        padding: 4px 10px;
+    }
+
+    .result-note {
+        padding: 12px 16px;
+        display: grid;
+        gap: 6px;
         background: #f8fafc;
-        color: #1f2937;
-        border: 1px solid #d7deea;
     }
 
-    .table-card {
+    .result-note .label {
+        font-weight: 700;
+        color: #1d4ed8;
+        font-size: 12px;
+    }
+
+    .result-note input {
+        border: 1px solid #e2e8f0;
+        padding: 8px 10px;
+        border-radius: 8px;
+        font-size: 13px;
+        background: #ffffff;
+        outline: none;
+    }
+
+    .result-table-card {
         overflow: hidden;
     }
 
-    .table-card-header {
+    .year-block {
+        border-top: 1px solid #eef2f7;
+    }
+
+    .year-header {
         padding: 12px 16px;
-        border-bottom: 1px solid #e8ecf3;
-        background: #f8fafc;
-        font-size: 14px;
         font-weight: 700;
         color: #1f2937;
+        background: #f8fafc;
+        font-size: 13px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
     }
 
     .result-table {
         width: 100%;
         border-collapse: collapse;
         font-size: 13px;
+        border: 1px solid #e8ecf3;
     }
 
     .result-table th,
     .result-table td {
         padding: 10px 12px;
-        text-align: center;
+        text-align: left;
         border-bottom: 1px solid #eef2f7;
+        border-right: 1px solid #eef2f7;
     }
 
     .result-table th {
@@ -137,6 +173,8 @@
         color: #475569;
         font-weight: 600;
         font-size: 12px;
+        text-transform: uppercase;
+        letter-spacing: 0.3px;
     }
 
     .result-table td {
@@ -147,233 +185,157 @@
         border-bottom: none;
     }
 
-    .score-good {
-        color: #10b981;
+    .result-table th:last-child,
+    .result-table td:last-child {
+        border-right: none;
+    }
+
+    .score-pill {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-width: 60px;
+        padding: 4px 10px;
+        border-radius: 999px;
         font-weight: 700;
-    }
-
-    .score-warn {
-        color: #f59e0b;
-        font-weight: 700;
-    }
-
-    .score-best {
-        color: #2563eb;
-        font-weight: 700;
-    }
-
-    .score-bad {
-        color: #ef4444;
-        font-weight: 700;
-    }
-
-    .summary-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-        gap: 12px;
-    }
-
-    .summary-card {
-        padding: 14px;
-        display: grid;
-        gap: 6px;
-        text-align: center;
-    }
-
-    .summary-title {
         font-size: 12px;
-        font-weight: 600;
-        color: #64748b;
+        background: #f1f5f9;
+        color: #1f2937;
     }
 
-    .summary-value {
-        font-size: 22px;
-        font-weight: 800;
+    .pill-excellent {
+        background: #e7f6ed;
+        color: #047857;
+    }
+
+    .pill-good {
+        background: #e0f2fe;
         color: #1d4ed8;
     }
 
-    .summary-value.success {
-        color: #10b981;
+    .pill-fair {
+        background: #fef3c7;
+        color: #b45309;
     }
 
-    .summary-value.danger {
-        color: #ef4444;
-    }
-
-    .note-card {
-        padding: 12px 16px;
-        display: grid;
-        gap: 6px;
-        background: #f8fafc;
-    }
-
-    .note-title {
+    .score-text {
         font-weight: 700;
-        color: #1d4ed8;
-        font-size: 13px;
+        color: #111827;
     }
 
-    .note-text {
+    .note-muted {
+        color: #94a3b8;
         font-size: 12px;
-        color: #475569;
-        line-height: 1.5;
-    }
-
-    .note-text ul {
-        padding-left: 18px;
-        margin: 0;
-        display: grid;
-        gap: 4px;
+        font-style: italic;
     }
 
     @media (max-width: 768px) {
-        .filter-actions {
-            justify-content: stretch;
+        .result-header {
+            align-items: flex-start;
         }
 
-        .btn-primary,
-        .btn-light {
-            width: 100%;
-            justify-content: center;
+        .result-table th,
+        .result-table td {
+            padding: 10px 8px;
         }
     }
 </style>
 
 <div class="result-page">
     <div class="result-header">
-        <h1 class="result-title">Kết quả rèn luyện</h1>
+        <div>
+            <h1 class="result-title">Kết quả rèn luyện</h1>
+            <div class="result-subtitle">Tổng hợp điểm rèn luyện theo từng học kỳ</div>
+        </div>
+        <button class="btn-primary" type="button">
+            <i class="fa-solid fa-file-pdf"></i>
+            In bảng điểm
+        </button>
     </div>
 
-    <div class="filter-card">
-        <div class="filter-grid">
-            <div class="filter-field">
-                <label for="namHoc">Năm học</label>
-                <select id="namHoc" name="namHoc">
-                    <option selected><?= $filters['nam_hoc']; ?></option>
-                    <option>2022 - 2023</option>
-                    <option>2021 - 2022</option>
-                </select>
-            </div>
-            <div class="filter-field">
-                <label for="hocKy">Học kỳ</label>
-                <select id="hocKy" name="hocKy">
-                    <option selected><?= $filters['hoc_ky']; ?></option>
-                    <option>Học kỳ 1</option>
-                    <option>Học kỳ 2</option>
-                </select>
-            </div>
-            <div class="filter-field">
-                <label for="lop">Lớp</label>
-                <select id="lop" name="lop">
-                    <option selected><?= $filters['lop']; ?></option>
-                    <option>DHCNTT17A</option>
-                    <option>DHCNTT17B</option>
-                </select>
-            </div>
+    <div class="result-cards">
+        <div class="result-card">
+            <div class="label">Điểm học kỳ này</div>
+            <div class="value">84.50</div>
+            <div class="sub">/100</div>
         </div>
-        <div class="filter-actions">
-            <button class="btn-primary" type="button">
-                <i class="fa-solid fa-magnifying-glass"></i>
-                Lọc kết quả
-            </button>
-            <button class="btn-light" type="button">
-                <i class="fa-solid fa-file-export"></i>
-                Xuất Excel
-            </button>
+        <div class="result-card">
+            <div class="label">Xếp loại hiện tại</div>
+            <div class="badge">Tốt</div>
+        </div>
+        <div class="result-note">
+            <div class="label">Ghi chú</div>
+            <input type="text" placeholder="Nhập ghi chú" />
         </div>
     </div>
 
-    <div class="table-card">
-        <div class="table-card-header">Bảng kết quả rèn luyện</div>
-        <div class="table-card-body">
+    <div class="result-table-card">
+        <div class="year-block">
+            <div class="year-header">Năm học 2023 - 2024</div>
             <table class="result-table">
                 <thead>
                     <tr>
                         <th>Học kỳ</th>
-                        <th>Năm học</th>
-                        <th>Điểm rèn luyện (/100)</th>
+                        <th>Điểm</th>
                         <th>Xếp loại</th>
-                        <th>Ghi chú / Điểm trừ</th>
+                        <th>Ghi chú</th>
                     </tr>
                 </thead>
                 <tbody>
                     <tr>
-                        <td>Học kỳ 1</td>
-                        <td>2021 - 2022</td>
-                        <td class="score-warn">78</td>
-                        <td class="score-warn">Khá</td>
-                        <td>-</td>
+                        <td>Học kỳ 3 (2023-2024)</td>
+                        <td class="score-text">97,00</td>
+                        <td><span class="score-pill pill-excellent">Xuất sắc</span></td>
+                        <td>Khen thưởng HK</td>
                     </tr>
                     <tr>
-                        <td>Học kỳ 2</td>
-                        <td>2021 - 2022</td>
-                        <td class="score-warn">82</td>
-                        <td class="score-warn">Khá</td>
-                        <td>-</td>
+                        <td>Học kỳ 2 (2023-2024)</td>
+                        <td class="score-text">87,00</td>
+                        <td><span class="score-pill pill-good">Tốt</span></td>
+                        <td class="note-muted">Không có ghi chú</td>
                     </tr>
                     <tr>
-                        <td>Học kỳ 1</td>
-                        <td>2022 - 2023</td>
-                        <td class="score-good">88</td>
-                        <td class="score-good">Tốt</td>
-                        <td>-</td>
-                    </tr>
-                    <tr>
-                        <td>Học kỳ 2</td>
-                        <td>2022 - 2023</td>
-                        <td class="score-good">85</td>
-                        <td class="score-good">Tốt</td>
-                        <td class="score-bad">Điểm trừ: -5 (Đi muộn 2 lần)</td>
-                    </tr>
-                    <tr>
-                        <td>Học kỳ 1</td>
-                        <td>2023 - 2024</td>
-                        <td class="score-best">90</td>
-                        <td class="score-best">Xuất sắc</td>
-                        <td>-</td>
-                    </tr>
-                    <tr>
-                        <td>Học kỳ 2</td>
-                        <td>2023 - 2024</td>
-                        <td class="score-good">85</td>
-                        <td class="score-good">Tốt</td>
-                        <td>-</td>
+                        <td>Học kỳ 1 (2023-2024)</td>
+                        <td class="score-text">82,00</td>
+                        <td><span class="score-pill pill-good">Tốt</span></td>
+                        <td class="note-muted">Không có ghi chú</td>
                     </tr>
                 </tbody>
             </table>
         </div>
-    </div>
 
-    <div class="summary-grid">
-        <div class="summary-card">
-            <div class="summary-title">Điểm rèn luyện trung bình</div>
-            <div class="summary-value">84.7</div>
-            <div class="summary-title">/100</div>
-        </div>
-        <div class="summary-card">
-            <div class="summary-title">Xếp loại trung bình</div>
-            <div class="summary-value success">Tốt</div>
-        </div>
-        <div class="summary-card">
-            <div class="summary-title">Tổng điểm trừ</div>
-            <div class="summary-value danger">-5</div>
-        </div>
-        <div class="note-card">
-            <div class="note-title">
-                <i class="fa-solid fa-circle-info"></i>
-                Điểm rèn luyện được tính dựa trên các hoạt động đã tham gia và quy chế rèn luyện hiện hành.
-            </div>
-        </div>
-    </div>
-
-    <div class="note-card">
-        <div class="note-title">Ghi chú:</div>
-        <div class="note-text">
-            <ul>
-                <li>Thang điểm rèn luyện: 0 - 100 điểm.</li>
-                <li>Xếp loại: Xuất sắc (≥90), Tốt (80 - 89), Khá (65 - 79), Trung bình (50 - 64), Yếu (<50).</li>
-                <li>Điểm trừ được áp dụng theo quy định của nhà trường.</li>
-            </ul>
+        <div class="year-block">
+            <div class="year-header">Năm học 2022 - 2023</div>
+            <table class="result-table">
+                <thead>
+                    <tr>
+                        <th>Học kỳ</th>
+                        <th>Điểm</th>
+                        <th>Xếp loại</th>
+                        <th>Ghi chú</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Học kỳ 3 (2022-2023)</td>
+                        <td class="score-text">83,00</td>
+                        <td><span class="score-pill pill-good">Tốt</span></td>
+                        <td class="note-muted">Không có ghi chú</td>
+                    </tr>
+                    <tr>
+                        <td>Học kỳ 2 (2022-2023)</td>
+                        <td class="score-text">78,00</td>
+                        <td><span class="score-pill pill-fair">Khá</span></td>
+                        <td class="note-muted">Không có ghi chú</td>
+                    </tr>
+                    <tr>
+                        <td>Học kỳ 1 (2022-2023)</td>
+                        <td class="score-text">76,00</td>
+                        <td><span class="score-pill pill-fair">Khá</span></td>
+                        <td class="note-muted">Không có ghi chú</td>
+                    </tr>
+                </tbody>
+            </table>
         </div>
     </div>
 </div>

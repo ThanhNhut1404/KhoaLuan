@@ -59,7 +59,7 @@
                 </svg>
             </a>
             <ul class="submenu">
-                <li><a href="#evidence" onclick="closeSidebar()">Khai báo minh chứng</a></li>
+                <li><a href="#evidence" onclick="closeSidebar()">Điểm danh hoạt động</a></li>
                 <li><a href="/KhoaLuan/public/student.php?action=phieudanhgia" onclick="closeSidebar()">Phiếu đánh giá</a></li>
                 <li><a href="/KhoaLuan/public/student.php?action=ketquarenluyen" onclick="closeSidebar()">Kết quả rèn luyện</a></li>
             </ul>
