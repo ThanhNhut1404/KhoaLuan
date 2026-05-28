@@ -5,10 +5,12 @@ $error = $error ?? '';
 ?>
 
 <style>
+    @import url('https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap');
+
     :root{ --brand:#1d4ed8; --brand-2:#0ea5e9; --muted:#6b7280; --ink:#0f172a; }
     * { box-sizing: border-box; }
 
-    body { margin: 0; font-family: Arial, sans-serif; color: var(--ink); }
+    body { margin: 0; font-family: 'Manrope', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; color: var(--ink); }
 
     .login-wrapper {
         min-height: 100vh;
@@ -41,7 +43,7 @@ $error = $error ?? '';
         background: rgba(255, 255, 255, 0.78);
         border-bottom:1px solid #eef2ff;
         padding:0 28px;
-        height: 64px;
+        height: 56px;
         display:flex;
         align-items:center;
         justify-content:space-between;
@@ -60,7 +62,7 @@ $error = $error ?? '';
     }
 
     .header-logo {
-        height: 100%;
+        height: 40px;
         width: auto;
         display: block;
     }
@@ -84,7 +86,8 @@ $error = $error ?? '';
         display:grid;
         grid-template-columns: minmax(280px, 1.1fr) minmax(320px, 0.9fr);
         gap:36px;
-        align-items:stretch;
+        align-items:start;
+        justify-items:end;
         padding:52px;
     }
 
@@ -131,8 +134,11 @@ $error = $error ?? '';
     .login-card {
         background:#fff;
         border-radius:18px;
-        padding:30px 32px 32px;
-        min-height:520px;
+        padding:14px 16px 16px;
+        min-height:0;
+        max-width:400px;
+        width:100%;
+        margin:0 0 0 auto;
         box-shadow:0 24px 54px rgba(13,38,76,0.14);
         border:1px solid #eef2ff;
         animation: rise 420ms ease-out;
@@ -155,15 +161,13 @@ $error = $error ?? '';
     }
 
     .card-sub { font-size:13px; color:var(--muted); margin-bottom:16px; text-align:center; }
-    .form-row { margin-bottom:12px; }
+    .form-row { margin-bottom:10px; }
     .form-label { display:block; font-size:13px; color:var(--ink); margin-bottom:6px; font-weight:600; }
     .form-control { width:100%; padding:12px 14px; border-radius:12px; border:1px solid #e6eef8; font-size:14px; background:#fbfdff; transition: border-color 0.2s ease, box-shadow 0.2s ease; }
     .form-control:focus { outline:none; border-color:#bfdbfe; box-shadow:0 0 0 4px rgba(29,78,216,0.12); }
-    .form-actions { display:flex; flex-direction:column; gap:10px; margin-top:16px; }
+    .form-actions { display:flex; flex-direction:column; gap:8px; margin-top:12px; }
     .btn-login { background:linear-gradient(135deg,#16a34a,#22c55e); color:#fff; padding:12px 18px; border-radius:12px; border:none; cursor:pointer; font-weight:800; letter-spacing:0.2px; box-shadow:0 10px 24px rgba(34,197,94,0.25); transition: transform 0.15s ease, box-shadow 0.15s ease; width:100%; }
     .btn-login:hover { filter: brightness(0.95); }
-    .btn-face { background:linear-gradient(135deg,var(--brand),#0b63c9); color:#ffffff; padding:12px 18px; border-radius:12px; border:none; cursor:pointer; font-weight:800; width:100%; box-shadow:0 10px 24px rgba(29,78,216,0.25); transition: transform 0.15s ease, box-shadow 0.15s ease; }
-    .btn-face:hover { filter: brightness(0.95); }
     .pwd-wrap { position: relative; }
     .toggle-btn {
         position: absolute;
@@ -190,29 +194,131 @@ $error = $error ?? '';
     .toggle-btn .eye-off { display: none; }
     .toggle-btn.is-visible .eye-on { display: none; }
     .toggle-btn.is-visible .eye-off { display: block; }
-    .or-text {
+    .helper-row { display:flex; gap:10px; align-items:center; justify-content: space-between; font-size:13px; color:var(--muted); }
+    .captcha-row { display:flex; gap:10px; align-items:center; margin-top:10px; }
+    .captcha-input { flex: 0 0 140px; }
+    .captcha-refresh {
+        width:40px;
+        height:40px;
+        border-radius:10px;
+        border:1px solid #e6eef8;
+        background:#ffffff;
+        color:var(--brand);
+        cursor:pointer;
+        display:inline-flex;
+        align-items:center;
+        justify-content:center;
+        transition: 0.2s ease;
+    }
+    .captcha-refresh:hover { background:#eef2ff; }
+    .captcha-refresh svg { width:18px; height:18px; stroke: currentColor; fill: none; }
+    .captcha-image {
+        height:40px;
+        min-width:150px;
+        border-radius:10px;
+        border:1px dashed #cbd5f5;
+        background:#f8faff;
+        color:var(--muted);
+        font-size:12px;
+        font-weight:600;
+        display:flex;
+        align-items:center;
+        justify-content:center;
+        letter-spacing:1px;
+        user-select:none;
+    }
+    .modal-overlay {
+        position: fixed;
+        inset: 0;
+        background: rgba(15, 23, 42, 0.35);
+        display: none;
+        align-items: center;
+        justify-content: center;
+        z-index: 1200;
+        padding: 20px;
+    }
+
+    .modal-overlay.active {
+        display: flex;
+    }
+
+    .modal-card {
+        width: min(420px, 100%);
+        background: #ffffff;
+        border-radius: 16px;
+        box-shadow: 0 24px 60px rgba(15, 23, 42, 0.2);
+        border: 1px solid #e8ecf3;
+        overflow: hidden;
+        animation: modalIn 180ms ease-out;
+    }
+
+    .modal-header {
         display: flex;
         align-items: center;
-        gap: 10px;
-        margin: 6px 0;
-        color: var(--muted);
-        font-size: 12px;
+        justify-content: space-between;
+        padding: 14px 16px;
+        border-bottom: 1px solid #eef2ff;
+        background: #f8faff;
+    }
+
+    .modal-title {
+        font-size: 16px;
+        font-weight: 700;
+        color: var(--brand);
+    }
+
+    .modal-close {
+        border: none;
+        background: transparent;
+        color: var(--brand);
+        font-size: 18px;
+        cursor: pointer;
+        width: 32px;
+        height: 32px;
+        border-radius: 8px;
+        display: inline-flex;
+        align-items: center;
         justify-content: center;
     }
 
-    .or-text::before,
-    .or-text::after {
-        content: "";
-        flex: 1;
-        height: 1px;
-        background: #e6eef8;
+    .modal-close:hover { background: #eef2ff; }
+
+    .modal-body {
+        padding: 16px;
+        display: grid;
+        gap: 12px;
     }
-    .helper-row { display:flex; gap:10px; align-items:center; justify-content: space-between; font-size:13px; color:var(--muted); }
+
+    .modal-note {
+        font-size: 13px;
+        color: var(--muted);
+        line-height: 1.5;
+    }
+
+    .modal-actions {
+        padding: 0 16px 16px;
+    }
+
+    .modal-btn {
+        width: 100%;
+        border: none;
+        border-radius: 12px;
+        padding: 12px 16px;
+        font-size: 14px;
+        font-weight: 700;
+        color: #ffffff;
+        background: linear-gradient(135deg, var(--brand), #0b63c9);
+        cursor: pointer;
+        box-shadow: 0 10px 24px rgba(29, 78, 216, 0.25);
+    }
+
+    .modal-btn:hover { filter: brightness(0.96); }
     .error { color:#b91c1c; background:#fff1f2; padding:8px 10px; border-radius:10px; border:1px solid #fecaca; margin-bottom:12px; }
 
     @keyframes floaty { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-6px); } }
     @keyframes rise { from { transform: translateY(8px); opacity:0; } to { transform: translateY(0); opacity:1; } }
     @keyframes drift { 0%, 100% { transform: translateY(0px) scale(1); } 50% { transform: translateY(12px) scale(1.03); } }
+    @keyframes modalIn { from { transform: translateY(8px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
 
     @media (max-width: 980px) {
         .login-page { grid-template-columns: 1fr; padding:28px; }
@@ -280,7 +386,7 @@ $error = $error ?? '';
 
             <form method="post" action="/student.php?action=login">
                 <div class="form-row">
-                    <label class="form-label" for="mssv">MSSV</label>
+                    <label class="form-label" for="mssv">Mã số sinh viên</label>
                     <input id="mssv" name="mssv" class="form-control" type="text" placeholder="Nhập MSSV" required autofocus />
                 </div>
 
@@ -305,18 +411,46 @@ $error = $error ?? '';
 
                 <div class="form-row helper-row">
                     <label style="display:flex; align-items:center; gap:8px;"><input type="checkbox" name="remember" /> Ghi nhớ đăng nhập</label>
-                    <a href="#" style="color:var(--brand); text-decoration:none; font-weight:600; margin-left:auto;">Quên mật khẩu?</a>
+                    <button type="button" class="forgot-link" onclick="openForgotModal()" style="color:var(--brand); text-decoration:none; font-weight:600; margin-left:auto; background:none; border:none; padding:0; cursor:pointer;">Quên mật khẩu?</button>
+                </div>
+
+                <div class="form-row captcha-row">
+                    <input class="form-control captcha-input" type="text" placeholder="Nhập mã" aria-label="Nhập mã xác thực" />
+                    <button class="captcha-refresh" type="button" aria-label="Tải lại mã">
+                        <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M20 12a8 8 0 1 1-2.34-5.66" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                            <path d="M20 4v6h-6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                        </svg>
+                    </button>
+                    <div class="captcha-image" aria-label="Mã xác thực">CAPTCHA</div>
                 </div>
 
                 <div class="form-actions">
                     <button class="btn-login" type="submit">Đăng nhập</button>
-                    <div class="or-text">hoặc</div>
-                    <button class="btn-face" type="button">Đăng nhập bằng khuôn mặt</button>
                     <div style="font-size:13px; color:var(--muted); text-align:center;">Chưa có tài khoản? <a href="#" style="color:var(--brand); text-decoration:none; font-weight:700;">Liên hệ</a></div>
                 </div>
             </form>
         </aside>
     </main>
+</div>
+
+<div class="modal-overlay" id="forgotModal" aria-hidden="true">
+    <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="forgotTitle">
+        <div class="modal-header">
+            <div class="modal-title" id="forgotTitle">Quên mật khẩu</div>
+            <button class="modal-close" type="button" aria-label="Đóng" onclick="closeForgotModal()">&times;</button>
+        </div>
+        <div class="modal-body">
+            <div class="modal-note">Nhập email của bạn để nhận mã OTP đặt lại mật khẩu.</div>
+            <div class="form-row">
+                <label class="form-label" for="forgotEmail">Địa chỉ Email</label>
+                <input id="forgotEmail" class="form-control" type="email" placeholder="Nhập email" />
+            </div>
+        </div>
+        <div class="modal-actions">
+            <button class="modal-btn" type="button">Gửi mã OTP</button>
+        </div>
+    </div>
 </div>
 
 <script>
@@ -331,4 +465,28 @@ $error = $error ?? '';
             btn.setAttribute('aria-label', isHidden ? 'Ẩn mật khẩu' : 'Hiện mật khẩu');
         });
     })();
+
+    function openForgotModal() {
+        var modal = document.getElementById('forgotModal');
+        if (!modal) return;
+        modal.classList.add('active');
+        modal.setAttribute('aria-hidden', 'false');
+        var emailInput = document.getElementById('forgotEmail');
+        if (emailInput) emailInput.focus();
+    }
+
+    function closeForgotModal() {
+        var modal = document.getElementById('forgotModal');
+        if (!modal) return;
+        modal.classList.remove('active');
+        modal.setAttribute('aria-hidden', 'true');
+    }
+
+    document.addEventListener('click', function(event) {
+        var modal = document.getElementById('forgotModal');
+        if (!modal) return;
+        if (event.target === modal) {
+            closeForgotModal();
+        }
+    });
 </script>

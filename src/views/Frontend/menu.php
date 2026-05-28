@@ -41,8 +41,8 @@
             </a>
             <ul class="submenu">
                 <li><a href="/KhoaLuan/public/student.php?action=dangkyhoatdong" onclick="closeSidebar()">Đăng ký hoạt động</a></li>
-                <li><a href="#activities-registered" onclick="closeSidebar()">Hoạt động đã đăng ký</a></li>
-                <li><a href="#activities-joined" onclick="closeSidebar()">Hoạt động đã tham gia</a></li>
+                <li><a href="/KhoaLuan/public/student.php?action=hoatdongdangky" onclick="closeSidebar()">Hoạt động đã đăng ký</a></li>
+                <li><a href="/KhoaLuan/public/student.php?action=hoatdongdathamgia" onclick="closeSidebar()">Hoạt động đã tham gia</a></li>
                 <li><a href="/KhoaLuan/public/student.php?action=lichhoatdong" onclick="closeSidebar()">Lịch hoạt động</a></li>
             </ul>
         </li>

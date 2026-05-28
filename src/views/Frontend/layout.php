@@ -586,7 +586,7 @@
         /* MAIN CONTENT */
         .main-content {
             flex: 1;
-            margin-top: 70px;
+            margin-top: 56px;
             margin-bottom: 60px;
             padding: 30px 20px;
         }

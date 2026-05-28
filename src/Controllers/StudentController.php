@@ -81,6 +81,22 @@ class StudentController
         require __DIR__ . '/../views/Frontend/layout.php';
     }
 
+    public function hoatdongdathamgia()
+    {
+        $title = "Hoạt động đã tham gia";
+
+        $content = __DIR__ . '/../views/Frontend/hoatdongdathamgia.php';
+        require __DIR__ . '/../views/Frontend/layout.php';
+    }
+
+    public function hoatdongdangky()
+    {
+        $title = "Hoạt động đã đăng ký";
+
+        $content = __DIR__ . '/../views/Frontend/hoatdongdangky.php';
+        require __DIR__ . '/../views/Frontend/layout.php';
+    }
+
     public function ketquarenluyen()
     {
         $title = "Kết quả rèn luyện";

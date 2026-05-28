@@ -725,6 +725,7 @@
                 <div class="stat-label">Đăng ký hoạt động</div>
             </a>
 
+
             <a class="stat-card stat-card--center stat-card--link" href="/KhoaLuan/public/student.php?action=phieudanhgia">
                 <div class="stat-icon">
                     <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -736,7 +737,7 @@
                 <div class="stat-label">Phiếu đánh giá</div>
             </a>
 
-            <div class="stat-card stat-card--center">
+            <a class="stat-card stat-card--center stat-card--link" href="/KhoaLuan/public/student.php?action=hoatdongdangky">
                 <div class="stat-icon">
                     <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                         <path d="M7 3h7l5 5v13a1 1 0 0 1-1 1H7a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1Z" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
@@ -746,7 +747,7 @@
                     </svg>
                 </div>
                 <div class="stat-label">Hoạt động đã đăng ký</div>
-            </div>
+            </a>
 
             <div class="stat-card stat-card--center">
                 <div class="stat-icon">
