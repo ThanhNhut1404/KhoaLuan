@@ -45,7 +45,7 @@
             top: 0;
             left: 0;
             right: 0;
-            height: 70px;
+            height: 62px;
             display: flex;
             align-items: center;
             justify-content: space-between;
@@ -69,7 +69,7 @@
         }
 
         .header-logo {
-            height: 64px;
+            height: 52px;
             width: auto;
             display: block;
         }

@@ -153,7 +153,7 @@
         background: #ffffff;
         outline: none;
         color: #1f2937;
-        max-width: 140px;
+        max-width: 250px;
         width: 100%;
     }
 
@@ -226,6 +226,21 @@
         width: 20%;
     }
 
+    .result-table td:first-child {
+        font-weight: 600;
+        color: #111827;
+    }
+
+    .result-table th:nth-child(2),
+    .result-table td:nth-child(2) {
+        width: 120px;
+    }
+
+    .result-table th:nth-child(3),
+    .result-table td:nth-child(3) {
+        width: 150px;
+    }
+
     .result-table th:nth-child(2),
     .result-table th:nth-child(3),
     .result-table th:nth-child(4),
@@ -235,8 +250,12 @@
         text-align: center;
     }
 
+    .result-table td:nth-child(4) {
+        color: #ef4444;
+    }
+
     .result-table th {
-        background: #f4f6fb;
+        background: #edf2f7;
         color: #475569;
         font-weight: 700;
         font-size: 12px;
@@ -290,10 +309,28 @@
         color: #111827;
     }
 
-    .note-muted {
+    .result-table td.note-muted {
         color: #94a3b8;
         font-size: 12px;
         font-style: italic;
+    }
+
+    .summary-row {
+        background: #edf2f7;
+    }
+
+    .result-table tr.summary-row td {
+        font-weight: 700;
+        color: #111827;
+        background: #edf2f7;
+        border-top: 2px solid #cbd5e1;
+    }
+
+    .result-table tr.summary-row td:first-child {
+        font-weight: 700;
+        color: #475569;
+        font-size: 12px;
+        letter-spacing: 0.3px;
     }
 
     @media (max-width: 768px) {
@@ -372,6 +409,12 @@
                         <td><span class="score-pill pill-good">Tốt</span></td>
                         <td class="note-muted">Không có ghi chú</td>
                     </tr>
+                    <tr class="summary-row">
+                        <td>ĐIỂM TRUNG BÌNH:</td>
+                        <td class="score-text">88,67</td>
+                        <td><span class="score-pill pill-good">Tốt</span></td>
+                        <td></td>
+                    </tr>
                 </tbody>
             </table>
         </div>
@@ -405,6 +448,12 @@
                         <td class="score-text">76,00</td>
                         <td><span class="score-pill pill-fair">Khá</span></td>
                         <td class="note-muted">Không có ghi chú</td>
+                    </tr>
+                    <tr class="summary-row">
+                        <td>ĐIỂM TRUNG BÌNH:</td>
+                        <td class="score-text">79,00</td>
+                        <td><span class="score-pill pill-fair">Khá</span></td>
+                        <td></td>
                     </tr>
                 </tbody>
             </table>
