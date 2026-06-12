@@ -125,7 +125,7 @@
     }
 
     .action-btn {
-        border-radius: 999px;
+        border-radius: 10px;
         border: 1px solid var(--line);
         padding: 8px 16px;
         font-size: 12px;
@@ -311,7 +311,7 @@
                     </div>
                 </div>
                 <div class="profile-actions">
-                    <button class="action-btn primary" type="button">Chỉnh sửa thông tin</button>
+                    <button id="openEditBtn" class="action-btn primary" type="button">Chỉnh sửa thông tin</button>
                     <button class="action-btn link" type="button" onclick="openPasswordModal()">Đổi mật khẩu</button>
                 </div>
             </div>
@@ -329,23 +329,23 @@
             </div>
             <div class="info-grid">
                 <div class="info-item">
-                    <span>Ngày sinh</span>
+                    <span>Ngày sinh:</span>
                     <span><?= htmlspecialchars($student['ngay_sinh'] ?? '20/05/2003', ENT_QUOTES, 'UTF-8') ?></span>
                 </div>
                 <div class="info-item">
-                    <span>Giới tính</span>
+                    <span>Giới tính:</span>
                     <span><?= htmlspecialchars($student['gioi_tinh'] ?? 'Nam', ENT_QUOTES, 'UTF-8') ?></span>
                 </div>
                 <div class="info-item">
-                    <span>Nơi sinh</span>
+                    <span>Nơi sinh:</span>
                     <span><?= htmlspecialchars($student['noi_sinh'] ?? 'TP. Ho Chi Minh', ENT_QUOTES, 'UTF-8') ?></span>
                 </div>
                 <div class="info-item">
-                    <span>Dân tộc</span>
+                    <span>Dân tộc:</span>
                     <span><?= htmlspecialchars($student['dan_toc'] ?? 'Kinh', ENT_QUOTES, 'UTF-8') ?></span>
                 </div>
                 <div class="info-item">
-                    <span>Tôn giáo</span>
+                    <span>Tôn giáo:</span>
                     <span><?= htmlspecialchars($student['ton_giao'] ?? 'Không', ENT_QUOTES, 'UTF-8') ?></span>
                 </div>
             </div>
@@ -363,27 +363,27 @@
             </div>
             <div class="info-grid">
                 <div class="info-item">
-                    <span>Lớp</span>
+                    <span>Lớp:</span>
                     <span><?= htmlspecialchars($lop, ENT_QUOTES, 'UTF-8') ?></span>
                 </div>
                 <div class="info-item">
-                    <span>Ngành</span>
+                    <span>Ngành:</span>
                     <span><?= htmlspecialchars($student['nganh'] ?? 'Cong nghe thong tin', ENT_QUOTES, 'UTF-8') ?></span>
                 </div>
                 <div class="info-item">
-                    <span>Bậc đào tạo</span>
+                    <span>Bậc đào tạo:</span>
                     <span><?= htmlspecialchars($student['bac_dao_tao'] ?? 'Đại học', ENT_QUOTES, 'UTF-8') ?></span>
                 </div>
                 <div class="info-item">
-                    <span>Loại hình đào tạo</span>
+                    <span>Loại hình đào tạo:</span>
                     <span><?= htmlspecialchars($student['loai_hinh_dao_tao'] ?? 'Chính quy', ENT_QUOTES, 'UTF-8') ?></span>
                 </div>
                 <div class="info-item">
-                    <span>Khóa học</span>
+                    <span>Khóa học:</span>
                     <span><?= htmlspecialchars($student['khoa_hoc'] ?? 'Khoa 2021', ENT_QUOTES, 'UTF-8') ?></span>
                 </div>
                 <div class="info-item">
-                    <span>Năm thứ</span>
+                    <span>Năm thứ:</span>
                     <span><?= htmlspecialchars($student['nam_thu'] ?? 'Nam 3', ENT_QUOTES, 'UTF-8') ?></span>
                 </div>
             </div>
@@ -429,4 +429,17 @@
             </div>
         </div>
     </section>
+    <?php include __DIR__ . '/edit_profile.php'; ?>
 </div>
+
+<script>
+    (function(){
+        const openBtn = document.getElementById('openEditBtn');
+        if (openBtn) openBtn.addEventListener('click', function(){ if (typeof openEditProfileModal === 'function') openEditProfileModal(); });
+        // close when clicking outside edit modal
+        window.addEventListener('click', function(e){
+            const modal = document.getElementById('editProfileModal');
+            if (modal && e.target === modal && typeof closeEditProfileModal === 'function') closeEditProfileModal();
+        });
+    })();
+</script>
