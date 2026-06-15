@@ -640,14 +640,18 @@
         <div class="card news-card">
             <div class="card-header">
                 <h3 class="card-title">
+                    <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" style="width: 16px; height: 16px; color: #1d4ed8; stroke: currentColor; margin-right: 4px;">
+                        <path d="M18 8a6 6 0 1 0-12 0c0 7-3 7-3 7h18s-3 0-3-7Z" stroke-width="2" stroke-linecap="round"/>
+                        <path d="M10 21a2 2 0 0 0 4 0" stroke-width="2" stroke-linecap="round"/>
+                    </svg>
                     Thông báo
                 </h3>
-                <div style="font-size: 12px; color: #6b7280;">Mới nhất</div>
+                <a href="/KhoaLuan/public/student.php?action=thongbao" style="font-size: 12px; color: var(--primary); text-decoration: none; font-weight: 700; display: flex; align-items: center; gap: 4px;">Xem tất cả <i class="fa-solid fa-angle-right"></i></a>
             </div>
             <div class="card-body">
                 <ul class="news-list">
                     <li>
-                        <a class="news-item" href="#" style="text-decoration:none;">
+                        <a class="news-item" href="/KhoaLuan/public/student.php?action=thongbao" style="text-decoration:none;">
                             <div class="news-date"><div class="m">Th4</div><div class="d">24</div></div>
                             <div>
                                 <p class="news-title">Thông báo cập nhật điểm rèn luyện học kỳ I</p>
@@ -656,7 +660,7 @@
                         </a>
                     </li>
                     <li>
-                        <a class="news-item" href="#" style="text-decoration:none;">
+                        <a class="news-item" href="/KhoaLuan/public/student.php?action=thongbao" style="text-decoration:none;">
                             <div class="news-date"><div class="m">Th4</div><div class="d">22</div></div>
                             <div>
                                 <p class="news-title">Hướng dẫn đăng ký hoạt động ngoại khóa</p>
@@ -665,7 +669,7 @@
                         </a>
                     </li>
                     <li>
-                        <a class="news-item" href="#" style="text-decoration:none;">
+                        <a class="news-item" href="/KhoaLuan/public/student.php?action=thongbao" style="text-decoration:none;">
                             <div class="news-date"><div class="m">Th4</div><div class="d">18</div></div>
                             <div>
                                 <p class="news-title">Lịch tiếp nhận minh chứng điểm rèn luyện</p>
@@ -674,7 +678,7 @@
                         </a>
                     </li>
                     <li>
-                        <a class="news-item" href="#" style="text-decoration:none;">
+                        <a class="news-item" href="/KhoaLuan/public/student.php?action=thongbao" style="text-decoration:none;">
                             <div class="news-date"><div class="m">Th4</div><div class="d">10</div></div>
                             <div>
                                 <p class="news-title">Nhắc hạn hoàn tất khảo sát học kỳ</p>

@@ -16,19 +16,19 @@
                 <div class="activity-detail-summary">
                     <div class="activity-detail-summary-grid">
                         <div class="activity-detail-summary-item">
-                            <div class="activity-detail-summary-label">Đơn vị</div>
+                            <div class="activity-detail-summary-label"><i class="fa-solid fa-university" style="margin-right: 6px;"></i>Đơn vị</div>
                             <div class="activity-detail-summary-value" id="activityDetailUnit"></div>
                         </div>
                         <div class="activity-detail-summary-item">
-                            <div class="activity-detail-summary-label">Thời gian</div>
+                            <div class="activity-detail-summary-label"><i class="fa-solid fa-calendar-days" style="margin-right: 6px;"></i>Thời gian</div>
                             <div class="activity-detail-summary-value" id="activityDetailTime"></div>
                         </div>
                         <div class="activity-detail-summary-item">
-                            <div class="activity-detail-summary-label">Địa điểm</div>
+                            <div class="activity-detail-summary-label"><i class="fa-solid fa-location-dot" style="margin-right: 6px;"></i>Địa điểm</div>
                             <div class="activity-detail-summary-value" id="activityDetailLocation"></div>
                         </div>
                         <div class="activity-detail-summary-item">
-                            <div class="activity-detail-summary-label">Trạng thái</div>
+                            <div class="activity-detail-summary-label"><i class="fa-solid fa-tag" style="margin-right: 6px;"></i>Trạng thái</div>
                             <div class="activity-detail-summary-value" id="activityDetailTag"></div>
                         </div>
                     </div>
@@ -36,39 +36,39 @@
             </div>
 
             <div class="activity-detail-grid">
-                <div class="detail-box">
-                    <div class="detail-label">Quyền lợi</div>
+                <div class="detail-box benefits-box">
+                    <div class="detail-label"><i class="fa-solid fa-gift"></i>Quyền lợi</div>
                     <div class="detail-value" id="activityDetailBenefits"></div>
                 </div>
                 <div class="detail-box">
-                    <div class="detail-label">Trang phục</div>
+                    <div class="detail-label"><i class="fa-solid fa-shirt"></i>Trang phục</div>
                     <div class="detail-value" id="activityDetailClothing"></div>
                 </div>
-                <div class="detail-box">
-                    <div class="detail-label">Đối tượng</div>
+                <div class="detail-box audience-box">
+                    <div class="detail-label"><i class="fa-solid fa-users"></i>Đối tượng</div>
                     <div class="detail-value" id="activityDetailAudience"></div>
                 </div>
                 <div class="detail-box">
-                    <div class="detail-label">Nội dung</div>
+                    <div class="detail-label"><i class="fa-solid fa-file-lines"></i>Nội dung</div>
                     <div class="detail-value" id="activityDetailContent"></div>
                 </div>
-                <div class="detail-box stat-box">
-                    <div class="detail-label">Điểm cộng</div>
+                <div class="detail-box stat-box point-box">
+                    <div class="detail-label"><i class="fa-solid fa-circle-plus"></i>Điểm cộng</div>
                     <div class="detail-value" id="activityDetailPoint"></div>
                 </div>
-                <div class="detail-box stat-box">
-                    <div class="detail-label">Còn lại</div>
+                <div class="detail-box stat-box remaining-box">
+                    <div class="detail-label"><i class="fa-solid fa-user-clock"></i>Còn lại</div>
                     <div class="detail-value" id="activityDetailRemaining"></div>
                 </div>
-                <div class="detail-box full-width">
-                    <div class="detail-label">Liên hệ</div>
+                <div class="detail-box full-width contact-box">
+                    <div class="detail-label"><i class="fa-solid fa-address-card"></i>Liên hệ</div>
                     <div class="detail-contact">
                         <div class="detail-contact-item">
-                            <div class="detail-label">Người đại diện</div>
+                            <div class="detail-label"><i class="fa-solid fa-user-tie"></i>Người đại diện</div>
                             <div class="detail-value" id="activityDetailContactName"></div>
                         </div>
                         <div class="detail-contact-item">
-                            <div class="detail-label">Số điện thoại</div>
+                            <div class="detail-label"><i class="fa-solid fa-phone"></i>Số điện thoại</div>
                             <div class="detail-value" id="activityDetailContactPhone"></div>
                         </div>
                     </div>
@@ -99,7 +99,29 @@
             setText('activityDetailUnit', card.dataset.unit);
             setText('activityDetailTime', card.dataset.time);
             setText('activityDetailLocation', card.dataset.location);
-            setText('activityDetailTag', card.dataset.tag);
+            
+            // Set tag and apply category-based badge styling
+            const tagEl = document.getElementById('activityDetailTag');
+            if (tagEl) {
+                tagEl.textContent = card.dataset.tag || '';
+                tagEl.className = 'activity-detail-summary-value activity-badge-inline';
+                
+                const tagLower = (card.dataset.tag || '').toLowerCase();
+                if (tagLower.includes('tình nguyện')) {
+                    tagEl.classList.add('badge-tinhnguyen');
+                } else if (tagLower.includes('học thuật')) {
+                    tagEl.classList.add('badge-hocthuat');
+                } else if (tagLower.includes('thể thao')) {
+                    tagEl.classList.add('badge-thethao');
+                } else if (tagLower.includes('văn hóa')) {
+                    tagEl.classList.add('badge-vanhoa');
+                } else if (tagLower.includes('kỹ năng')) {
+                    tagEl.classList.add('badge-kynang');
+                } else {
+                    tagEl.classList.add('badge-khac');
+                }
+            }
+
             setText('activityDetailBenefits', card.dataset.benefits);
             setText('activityDetailClothing', card.dataset.clothing);
             setText('activityDetailAudience', card.dataset.audience);

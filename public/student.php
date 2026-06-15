@@ -27,6 +27,8 @@ if ($action === 'login') {
 	$controller->hoatdongdangky();
 } elseif ($action === 'ketquarenluyen') {
 	$controller->ketquarenluyen();
+} elseif ($action === 'thongbao') {
+	$controller->thongbao();
 } else {
 	$controller->dashboard();
 }

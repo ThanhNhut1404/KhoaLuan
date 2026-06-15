@@ -22,7 +22,7 @@
             </svg>
             <span>Trang chủ</span>
         </a>
-        <a href="#" class="header-icon-link" title="Thông báo">
+        <a href="/KhoaLuan/public/student.php?action=thongbao" class="header-icon-link" title="Thông báo">
             <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <path d="M18 8a6 6 0 1 0-12 0c0 7-3 7-3 7h18s-3 0-3-7Z" stroke-width="2" stroke-linecap="round"/>
                 <path d="M10 21a2 2 0 0 0 4 0" stroke-width="2" stroke-linecap="round"/>

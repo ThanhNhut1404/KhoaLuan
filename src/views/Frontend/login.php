@@ -84,22 +84,25 @@ $error = $error ?? '';
     .login-page {
         flex:1;
         display:grid;
-        grid-template-columns: minmax(280px, 1.1fr) minmax(320px, 0.9fr);
-        gap:36px;
-        align-items:start;
-        justify-items:end;
-        padding:52px;
+        grid-template-columns: minmax(280px, 1.15fr) minmax(320px, 0.85fr);
+        gap:48px;
+        align-items:center;
+        justify-content:center;
+        max-width:1200px;
+        margin:0 auto;
+        padding:40px 24px;
+        width:100%;
     }
 
     .login-left {
-        padding:36px 40px;
+        padding:48px 52px;
         border-radius:18px;
         background: linear-gradient(135deg, #f1f7ff 0%, #ffffff 65%);
-        min-height:520px;
+        min-height:550px;
         display:flex;
         flex-direction:column;
         justify-content:center;
-        gap:18px;
+        gap:24px;
         position:relative;
         overflow:hidden;
         box-shadow: inset 0 1px 0 #ffffff, 0 18px 36px rgba(2,6,23,0.06);
@@ -117,35 +120,39 @@ $error = $error ?? '';
     }
 
     .welcome-title {
-        font-size:44px;
+        font-size:52px;
         color: var(--ink);
         margin:0;
         letter-spacing:1.6px;
         text-transform: uppercase;
+        line-height: 1.15;
     }
 
-    .welcome-sub { color:var(--muted); font-size:15px; max-width:46ch; line-height:1.7; }
-    .welcome-list { display:grid; gap:8px; margin:0; padding:0; list-style:none; color:#334155; font-size:14px; }
-    .welcome-list li { display:flex; gap:8px; align-items:center; }
-    .welcome-dot { width:8px; height:8px; border-radius:50%; background:linear-gradient(135deg,var(--brand),var(--brand-2)); }
+    .welcome-sub { color:var(--muted); font-size:16.5px; max-width:46ch; line-height:1.7; }
+    .welcome-list { display:grid; gap:10px; margin:0; padding:0; list-style:none; color:#334155; font-size:15.5px; }
+    .welcome-list li { display:flex; gap:10px; align-items:center; }
+    .welcome-dot { width:10px; height:10px; border-radius:50%; background:linear-gradient(135deg,var(--brand),var(--brand-2)); }
 
-    .illustration { width:100%; max-width:380px; margin-top:8px; animation: floaty 6s ease-in-out infinite; }
+    .illustration { width:100%; max-width:440px; margin-top:12px; animation: floaty 6s ease-in-out infinite; }
 
     .login-card {
         background:#fff;
         border-radius:18px;
-        padding:14px 16px 16px;
-        min-height:0;
+        padding:34px 28px;
+        min-height:550px;
         max-width:400px;
         width:100%;
-        margin:0 0 0 auto;
+        margin:0;
         box-shadow:0 24px 54px rgba(13,38,76,0.14);
         border:1px solid #eef2ff;
         animation: rise 420ms ease-out;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
     }
 
     .login-card h3 {
-        margin:0 0 8px 0;
+        margin:0 0 16px 0;
         color:var(--brand);
         text-align:center;
         text-transform:uppercase;
@@ -157,15 +164,15 @@ $error = $error ?? '';
         display: block;
         height: 66px;
         width: auto;
-        margin: -12px auto 10px;
+        margin: -8px auto 16px;
     }
 
     .card-sub { font-size:13px; color:var(--muted); margin-bottom:16px; text-align:center; }
-    .form-row { margin-bottom:10px; }
+    .form-row { margin-bottom:14px; }
     .form-label { display:block; font-size:13px; color:var(--ink); margin-bottom:6px; font-weight:600; }
     .form-control { width:100%; padding:12px 14px; border-radius:12px; border:1px solid #e6eef8; font-size:14px; background:#fbfdff; transition: border-color 0.2s ease, box-shadow 0.2s ease; }
     .form-control:focus { outline:none; border-color:#bfdbfe; box-shadow:0 0 0 4px rgba(29,78,216,0.12); }
-    .form-actions { display:flex; flex-direction:column; gap:8px; margin-top:12px; }
+    .form-actions { display:flex; flex-direction:column; gap:8px; margin-top:18px; }
     .btn-login { background:linear-gradient(135deg,#16a34a,#22c55e); color:#fff; padding:12px 18px; border-radius:12px; border:none; cursor:pointer; font-weight:800; letter-spacing:0.2px; box-shadow:0 10px 24px rgba(34,197,94,0.25); transition: transform 0.15s ease, box-shadow 0.15s ease; width:100%; }
     .btn-login:hover { filter: brightness(0.95); }
     .pwd-wrap { position: relative; }
@@ -323,7 +330,7 @@ $error = $error ?? '';
     @media (max-width: 980px) {
         .login-page { grid-template-columns: 1fr; padding:28px; }
         .login-left { order:1; }
-        .login-card { order:2; }
+        .login-card { order:2; margin: 0 auto; }
     }
     @media (max-width:480px) {
         .login-header { padding:0 14px; height: 58px; }
@@ -414,15 +421,18 @@ $error = $error ?? '';
                     <button type="button" class="forgot-link" onclick="openForgotModal()" style="color:var(--brand); text-decoration:none; font-weight:600; margin-left:auto; background:none; border:none; padding:0; cursor:pointer;">Quên mật khẩu?</button>
                 </div>
 
-                <div class="form-row captcha-row">
-                    <input class="form-control captcha-input" type="text" placeholder="Nhập mã" aria-label="Nhập mã xác thực" />
-                    <button class="captcha-refresh" type="button" aria-label="Tải lại mã">
-                        <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                            <path d="M20 12a8 8 0 1 1-2.34-5.66" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
-                            <path d="M20 4v6h-6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
-                        </svg>
-                    </button>
-                    <div class="captcha-image" aria-label="Mã xác thực">CAPTCHA</div>
+                <div class="form-row">
+                    <label class="form-label" for="captchaInput">Nhập mã</label>
+                    <div class="captcha-row">
+                        <input id="captchaInput" class="form-control captcha-input" type="text" placeholder="Nhập mã" aria-label="Nhập mã xác thực" />
+                        <button class="captcha-refresh" type="button" aria-label="Tải lại mã">
+                            <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M20 12a8 8 0 1 1-2.34-5.66" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                                <path d="M20 4v6h-6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                            </svg>
+                        </button>
+                        <div class="captcha-image" aria-label="Mã xác thực">CAPTCHA</div>
+                    </div>
                 </div>
 
                 <div class="form-actions">

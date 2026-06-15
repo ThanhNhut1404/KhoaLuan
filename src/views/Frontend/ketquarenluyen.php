@@ -88,8 +88,10 @@
 
     .result-card {
         padding: 14px 16px;
-        display: grid;
-        gap: 6px;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        gap: 8px;
         min-height: 96px;
     }
 
@@ -97,6 +99,8 @@
         display: flex;
         align-items: baseline;
         gap: 6px;
+        flex: 1;
+        align-items: center;
     }
 
     .result-card .label {
@@ -108,26 +112,35 @@
     }
 
     .result-card .value {
-        font-size: 22px;
-        font-weight: 800;
+        font-size: 40px;
+        font-weight: 900;
         color: #1d4ed8;
+        line-height: 1;
+        letter-spacing: -1px;
     }
 
     .result-card .sub {
-        font-size: 12px;
+        font-size: 16px;
+        font-weight: 600;
         color: #94a3b8;
+        align-self: flex-end;
+        padding-bottom: 4px;
     }
 
     .result-card .badge {
         display: inline-flex;
         align-items: center;
+        justify-content: center;
         gap: 6px;
-        font-size: 12px;
-        font-weight: 700;
-        color: #0f172a;
+        font-size: 22px;
+        font-weight: 900;
+        color: #047857;
         background: #ecfdf3;
-        border-radius: 999px;
-        padding: 4px 10px;
+        border: 2px solid #6ee7b7;
+        border-radius: 12px;
+        padding: 10px 18px;
+        width: fit-content;
+        letter-spacing: 0.5px;
     }
 
     .result-filter {

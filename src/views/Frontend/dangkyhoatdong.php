@@ -203,7 +203,7 @@
 
     .activity-detail-summary-label {
         font-size: 11px;
-        text-transform: uppercase;
+        text-transform: none;
         letter-spacing: 0.6px;
         font-weight: 800;
         color: #1d4ed8;
@@ -234,7 +234,7 @@
 
     .detail-label {
         font-size: 11px;
-        text-transform: uppercase;
+        text-transform: none;
         letter-spacing: 0.6px;
         font-weight: 800;
         color: #1d4ed8;
@@ -483,7 +483,7 @@
 
     .activity-detail-summary-label {
         font-size: 11px;
-        text-transform: uppercase;
+        text-transform: none;
         letter-spacing: 0.6px;
         font-weight: 800;
         color: #1d4ed8;
@@ -514,7 +514,7 @@
 
     .detail-label {
         font-size: 11px;
-        text-transform: uppercase;
+        text-transform: none;
         letter-spacing: 0.6px;
         font-weight: 800;
         color: #1d4ed8;
@@ -585,20 +585,90 @@
 
     /* icon uses SVG data URI */
 
-    .stat-box {
+    .stat-box.point-box {
+        background: linear-gradient(90deg, #f0fdf4 0%, #fafdfb 100%);
+        border-color: #86efac;
+        box-shadow: 0 1px 0 rgba(22, 163, 74, 0.03);
+    }
+
+    .stat-box.point-box .detail-label {
+        color: #15803d;
+    }
+
+    .stat-box.point-box .detail-value {
+        color: #166534;
+    }
+
+    .stat-box.remaining-box {
         background: linear-gradient(90deg, #fff7ed 0%, #fffaf0 100%);
         border-color: #fcd34d;
         box-shadow: 0 1px 0 rgba(245, 158, 11, 0.03);
     }
 
-    .stat-box .detail-label {
+    .stat-box.remaining-box .detail-label {
         color: #b45309;
     }
 
-    .stat-box .detail-value {
+    .stat-box.remaining-box .detail-value {
         color: #92400e;
-        font-weight: 800;
     }
+
+    .detail-label::before {
+        display: none !important;
+    }
+
+    .detail-label i {
+        margin-right: 8px;
+        font-size: 13px;
+        width: 14px;
+        text-align: center;
+    }
+
+    /* Highlighted Detail Boxes */
+    .detail-box.benefits-box {
+        background: linear-gradient(135deg, #f0f9ff 0%, #ffffff 100%);
+        border-color: #bae6fd;
+        box-shadow: 0 4px 12px rgba(14, 165, 233, 0.04);
+    }
+    .detail-box.benefits-box .detail-label {
+        color: #0284c7;
+    }
+    
+    .detail-box.audience-box {
+        background: linear-gradient(135deg, #faf5ff 0%, #ffffff 100%);
+        border-color: #e9d5ff;
+        box-shadow: 0 4px 12px rgba(168, 85, 247, 0.04);
+    }
+    .detail-box.audience-box .detail-label {
+        color: #9333ea;
+    }
+
+    .detail-box.contact-box {
+        background: #f8fafc;
+        border-color: #e2e8f0;
+    }
+    .detail-box.contact-box .detail-label {
+        color: #475569;
+    }
+
+    /* Inline status badges in modal */
+    .activity-badge-inline {
+        display: inline-flex;
+        align-items: center;
+        padding: 4px 12px;
+        border-radius: 999px;
+        font-size: 12px !important;
+        font-weight: 800;
+        border: 1px solid currentColor;
+        margin-top: 4px;
+        width: fit-content;
+    }
+    .badge-tinhnguyen { color: #16a34a; background: #f0fdf4; border-color: #bbf7d0; }
+    .badge-hocthuat { color: #2563eb; background: #eff6ff; border-color: #bfdbfe; }
+    .badge-thethao { color: #f97316; background: #fff7ed; border-color: #ffedd5; }
+    .badge-vanhoa { color: #db2777; background: #fdf2f8; border-color: #fce7f3; }
+    .badge-kynang { color: #7c3aed; background: #faf5ff; border-color: #f3e8ff; }
+    .badge-khac { color: #0f766e; background: #f0fdfa; border-color: #ccfbf1; }
 
     /* Card visual improvements */
     .activity-grid {
@@ -643,6 +713,7 @@
     .activity-title { font-size:16px; font-weight:800; color:#0f172a; }
     .activity-meta { font-size:13px; color:#475569; display:flex; flex-direction:column; gap:6px; }
     .activity-meta span { display:flex; gap:6px; align-items:center; flex-wrap:wrap; }
+    .activity-meta i { color: var(--primary); font-size: 13px; width: 16px; text-align: center; }
 
     .activity-score { display:grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap:8px; }
     .activity-score > div {
@@ -757,9 +828,9 @@
             <div class="activity-body">
                 <div class="activity-title">Chiến dịch Mùa hè xanh 2024</div>
                 <div class="activity-meta">
-                    <span><span class="meta-label">Đơn vị:</span> Đoàn trường Đại học ABC</span>
-                    <span><span class="meta-label">Thời gian:</span> 20/06/2024 - 25/06/2024</span>
-                    <span><span class="meta-label">Địa điểm:</span> TP. Hồ Chí Minh</span>
+                    <span><i class="fa-solid fa-university"></i><span class="meta-label">Đơn vị:</span> Đoàn trường Đại học ABC</span>
+                    <span><i class="fa-solid fa-calendar-days"></i><span class="meta-label">Thời gian:</span> 7h - ngày 25/06/2024</span>
+                    <span><i class="fa-solid fa-location-dot"></i><span class="meta-label">Địa điểm:</span> TP. Hồ Chí Minh</span>
                 </div>
                 <div class="activity-score">
                     <div><span class="meta-label">Điểm cộng:</span><br><strong>10 điểm</strong></div>
@@ -795,9 +866,9 @@
             <div class="activity-body">
                 <div class="activity-title">Hội thảo: AI và tương lai nghề nghiệp</div>
                 <div class="activity-meta">
-                    <span><span class="meta-label">Đơn vị:</span> Khoa Công nghệ thông tin</span>
-                    <span><span class="meta-label">Thời gian:</span> 15/05/2024 - 15/05/2024</span>
-                    <span><span class="meta-label">Địa điểm:</span> Hội trường B, Cơ sở 1</span>
+                    <span><i class="fa-solid fa-university"></i><span class="meta-label">Đơn vị:</span> Khoa Công nghệ thông tin</span>
+                    <span><i class="fa-solid fa-calendar-days"></i><span class="meta-label">Thời gian:</span> 15/05/2024 - 15/05/2024</span>
+                    <span><i class="fa-solid fa-location-dot"></i><span class="meta-label">Địa điểm:</span> Hội trường B, Cơ sở 1</span>
                 </div>
                 <div class="activity-score">
                     <div><span class="meta-label">Điểm cộng:</span><br><strong>8 điểm</strong></div>
@@ -833,9 +904,9 @@
             <div class="activity-body">
                 <div class="activity-title">Giải bóng đá sinh viên mở rộng 2024</div>
                 <div class="activity-meta">
-                    <span><span class="meta-label">Đơn vị:</span> Hội Sinh viên</span>
-                    <span><span class="meta-label">Thời gian:</span> 10/05/2024 - 30/05/2024</span>
-                    <span><span class="meta-label">Địa điểm:</span> Sân bóng đá trường ABC</span>
+                    <span><i class="fa-solid fa-university"></i><span class="meta-label">Đơn vị:</span> Hội Sinh viên</span>
+                    <span><i class="fa-solid fa-calendar-days"></i><span class="meta-label">Thời gian:</span> 10/05/2024 - 30/05/2024</span>
+                    <span><i class="fa-solid fa-location-dot"></i><span class="meta-label">Địa điểm:</span> Sân bóng đá trường ABC</span>
                 </div>
                 <div class="activity-score">
                     <div><span class="meta-label">Điểm cộng:</span><br><strong>6 điểm</strong></div>
@@ -871,9 +942,9 @@
             <div class="activity-body">
                 <div class="activity-title">Hiến máu nhân đạo đợt 1/2024</div>
                 <div class="activity-meta">
-                    <span><span class="meta-label">Đơn vị:</span> Đoàn trường Đại học ABC</span>
-                    <span><span class="meta-label">Thời gian:</span> 08/05/2024 - 08/05/2024</span>
-                    <span><span class="meta-label">Địa điểm:</span> Giảng đường A, Cơ sở 1</span>
+                    <span><i class="fa-solid fa-university"></i><span class="meta-label">Đơn vị:</span> Đoàn trường Đại học ABC</span>
+                    <span><i class="fa-solid fa-calendar-days"></i><span class="meta-label">Thời gian:</span> 08/05/2024 - 08/05/2024</span>
+                    <span><i class="fa-solid fa-location-dot"></i><span class="meta-label">Địa điểm:</span> Giảng đường A, Cơ sở 1</span>
                 </div>
                 <div class="activity-score">
                     <div><span class="meta-label">Điểm cộng:</span><br><strong>7 điểm</strong></div>
@@ -909,9 +980,9 @@
             <div class="activity-body">
                 <div class="activity-title">Đêm văn nghệ chào tân sinh viên K15</div>
                 <div class="activity-meta">
-                    <span><span class="meta-label">Đơn vị:</span> Hội Sinh viên</span>
-                    <span><span class="meta-label">Thời gian:</span> 25/05/2024 - 25/05/2024</span>
-                    <span><span class="meta-label">Địa điểm:</span> Hội trường lớn</span>
+                    <span><i class="fa-solid fa-university"></i><span class="meta-label">Đơn vị:</span> Hội Sinh viên</span>
+                    <span><i class="fa-solid fa-calendar-days"></i><span class="meta-label">Thời gian:</span> 25/05/2024 - 25/05/2024</span>
+                    <span><i class="fa-solid fa-location-dot"></i><span class="meta-label">Địa điểm:</span> Hội trường lớn</span>
                 </div>
                 <div class="activity-score">
                     <div><span class="meta-label">Điểm cộng:</span><br><strong>5 điểm</strong></div>
@@ -947,9 +1018,9 @@
             <div class="activity-body">
                 <div class="activity-title">Workshop: Kỹ năng thuyết trình hiệu quả</div>
                 <div class="activity-meta">
-                    <span><span class="meta-label">Đơn vị:</span> Trung tâm Kỹ năng mềm</span>
-                    <span><span class="meta-label">Thời gian:</span> 18/05/2024 - 18/05/2024</span>
-                    <span><span class="meta-label">Địa điểm:</span> Phòng B.302</span>
+                    <span><i class="fa-solid fa-university"></i><span class="meta-label">Đơn vị:</span> Trung tâm Kỹ năng mềm</span>
+                    <span><i class="fa-solid fa-calendar-days"></i><span class="meta-label">Thời gian:</span> 18/05/2024 - 18/05/2024</span>
+                    <span><i class="fa-solid fa-location-dot"></i><span class="meta-label">Địa điểm:</span> Phòng B.302</span>
                 </div>
                 <div class="activity-score">
                     <div><span class="meta-label">Điểm cộng:</span><br><strong>6 điểm</strong></div>
@@ -985,9 +1056,9 @@
             <div class="activity-body">
                 <div class="activity-title">Cuộc thi Nhiếp ảnh: Khoảnh khắc sinh viên</div>
                 <div class="activity-meta">
-                    <span><span class="meta-label">Đơn vị:</span> Câu lạc bộ Nhiếp ảnh</span>
-                    <span><span class="meta-label">Thời gian:</span> 01/05/2024 - 20/05/2024</span>
-                    <span><span class="meta-label">Địa điểm:</span> Online</span>
+                    <span><i class="fa-solid fa-university"></i><span class="meta-label">Đơn vị:</span> Câu lạc bộ Nhiếp ảnh</span>
+                    <span><i class="fa-solid fa-calendar-days"></i><span class="meta-label">Thời gian:</span> 01/05/2024 - 20/05/2024</span>
+                    <span><i class="fa-solid fa-location-dot"></i><span class="meta-label">Địa điểm:</span> Online</span>
                 </div>
                 <div class="activity-score">
                     <div><span class="meta-label">Điểm cộng:</span><br><strong>6 điểm</strong></div>
@@ -1023,9 +1094,9 @@
             <div class="activity-body">
                 <div class="activity-title">Ngày hội "Vì môi trường xanh"</div>
                 <div class="activity-meta">
-                    <span><span class="meta-label">Đơn vị:</span> CLB Môi trường xanh</span>
-                    <span><span class="meta-label">Thời gian:</span> 28/05/2024 - 28/05/2024</span>
-                    <span><span class="meta-label">Địa điểm:</span> Công viên 23/9, Quận 1</span>
+                    <span><i class="fa-solid fa-university"></i><span class="meta-label">Đơn vị:</span> CLB Môi trường xanh</span>
+                    <span><i class="fa-solid fa-calendar-days"></i><span class="meta-label">Thời gian:</span> 28/05/2024 - 28/05/2024</span>
+                    <span><i class="fa-solid fa-location-dot"></i><span class="meta-label">Địa điểm:</span> Công viên 23/9, Quận 1</span>
                 </div>
                 <div class="activity-score">
                     <div><span class="meta-label">Điểm cộng:</span><br><strong>8 điểm</strong></div>

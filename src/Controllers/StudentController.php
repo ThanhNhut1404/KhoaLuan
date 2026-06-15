@@ -105,6 +105,14 @@ class StudentController
         require __DIR__ . '/../views/Frontend/layout.php';
     }
 
+    public function thongbao()
+    {
+        $title = "Thông báo";
+
+        $content = __DIR__ . '/../views/Frontend/thongbao.php';
+        require __DIR__ . '/../views/Frontend/layout.php';
+    }
+
     public function login()
     {
         // hiển thị form login
