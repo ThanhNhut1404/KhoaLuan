@@ -201,7 +201,7 @@ $error = $error ?? '';
     .toggle-btn .eye-off { display: none; }
     .toggle-btn.is-visible .eye-on { display: none; }
     .toggle-btn.is-visible .eye-off { display: block; }
-    .helper-row { display:flex; gap:10px; align-items:center; justify-content: space-between; font-size:13px; color:var(--muted); }
+    .helper-row { display:flex; gap:10px; align-items:center; justify-content: space-between; font-size:13px; color:var(--muted); margin-top:8px; }
     .captcha-row { display:flex; gap:10px; align-items:center; margin-top:10px; }
     .captcha-input { flex: 0 0 140px; }
     .captcha-refresh {
@@ -354,7 +354,7 @@ $error = $error ?? '';
 
     <main class="login-page">
         <section class="login-left">
-            <h1 class="welcome-title">Chào mừng trở lại!</h1>
+            <h1 class="welcome-title">Chào mừng<br/>trở lại!</h1>
             <p class="welcome-sub">Đăng nhập để truy cập điểm rèn luyện, hồ sơ học tập và thông báo mới nhất. Hệ thống bảo mật nhiều lớp để bảo vệ tài khoản của bạn.</p>
             <ul class="welcome-list">
                 <li><span class="welcome-dot"></span>Tra cứu điểm rèn luyện nhanh chóng</li>
@@ -418,7 +418,7 @@ $error = $error ?? '';
 
                 <div class="form-row helper-row">
                     <label style="display:flex; align-items:center; gap:8px;"><input type="checkbox" name="remember" /> Ghi nhớ đăng nhập</label>
-                    <button type="button" class="forgot-link" onclick="openForgotModal()" style="color:var(--brand); text-decoration:none; font-weight:600; margin-left:auto; background:none; border:none; padding:0; cursor:pointer;">Quên mật khẩu?</button>
+                    <button type="button" class="forgot-link" onclick="openForgotModal()" style="color:var(--brand); text-decoration:none; font-weight:600; background:none; border:none; padding:0; cursor:pointer;">Quên mật khẩu?</button>
                 </div>
 
                 <div class="form-row">
@@ -444,24 +444,7 @@ $error = $error ?? '';
     </main>
 </div>
 
-<div class="modal-overlay" id="forgotModal" aria-hidden="true">
-    <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="forgotTitle">
-        <div class="modal-header">
-            <div class="modal-title" id="forgotTitle">Quên mật khẩu</div>
-            <button class="modal-close" type="button" aria-label="Đóng" onclick="closeForgotModal()">&times;</button>
-        </div>
-        <div class="modal-body">
-            <div class="modal-note">Nhập email của bạn để nhận mã OTP đặt lại mật khẩu.</div>
-            <div class="form-row">
-                <label class="form-label" for="forgotEmail">Địa chỉ Email</label>
-                <input id="forgotEmail" class="form-control" type="email" placeholder="Nhập email" />
-            </div>
-        </div>
-        <div class="modal-actions">
-            <button class="modal-btn" type="button">Gửi mã OTP</button>
-        </div>
-    </div>
-</div>
+<?php include __DIR__ . '/forgot_password.php'; ?>
 
 <script>
     (function(){

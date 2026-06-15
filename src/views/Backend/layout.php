@@ -352,16 +352,16 @@
         .sidebar .brand {
             display: flex;
             align-items: center;
-            gap: 10px;
-            padding: 10px 12px;
+            gap: 8px;
+            padding: 6px 8px;
             border-radius: 12px;
             background: rgba(255,255,255,0.08);
-            margin-bottom: 16px;
+            margin-bottom: 8px;
         }
 
         .brand-badge {
-            width: 36px;
-            height: 36px;
+            width: 30px;
+            height: 30px;
             border-radius: 10px;
             background: linear-gradient(135deg, var(--brand), var(--brand-2));
             display: inline-flex;
@@ -371,19 +371,54 @@
             color: white;
         }
 
-        .nav { display: grid; gap: 6px; }
+        .nav { display: grid; gap: 1px; }
         .nav a {
             color: #dbeafe;
             text-decoration: none;
             display: flex;
             align-items: center;
-            gap: 12px;
-            padding: 10px 12px;
+            gap: 10px;
+            padding: 8px 10px;
             border-radius: 10px;
             transition: background 0.15s ease, color 0.15s ease;
         }
 
+        .nav-sub {
+            margin-left: 8px;
+            display: none;
+            gap: 1px;
+        }
+
+        .nav-item.open .nav-sub { display: grid; }
+        .nav-sub a {
+            display: block;
+            padding: 4px 10px;
+            margin-left: 16px;
+            font-size: 13px;
+            color: #cbd5f5;
+            text-decoration: none;
+            border-radius: 8px;
+            transition: background 0.15s ease, color 0.15s ease;
+        }
+
+        .nav-sub a:hover { background: rgba(255,255,255,0.08); color: #ffffff; }
         .nav a:hover { background: rgba(255,255,255,0.12); color: #ffffff; }
+        .nav-section {
+            margin: 10px 0 4px;
+            padding: 0 12px;
+            font-size: 11px;
+            font-weight: 700;
+            color: rgba(203, 213, 245, 0.72);
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+        }
+        .nav a.active,
+        .nav-sub a.active { background: rgba(255,255,255,0.16); color: #ffffff; }
+        .nav-item { position: relative; }
+        .nav-item > a { display: flex; align-items: center; gap: 10px; }
+        .nav-caret { margin-left: auto; opacity: 0.8; transition: transform 0.2s ease; }
+        .nav-item.open .nav-caret { transform: rotate(180deg); }
+        .sidebar.collapsed .nav-sub { display: none; }
         .nav .nav-text { white-space: nowrap; }
         .sidebar.collapsed .nav-text,
         .sidebar.collapsed .brand-text { display: none; }
@@ -479,8 +514,30 @@
         var userBtn = document.getElementById('userMenuBtn');
         var userMenu = document.getElementById('userMenu');
         if (!toggle || !sidebar) return;
+
+        function closeSidebarSubmenus() {
+            document.querySelectorAll('.sidebar .nav-item.open').forEach(function(item) {
+                item.classList.remove('open');
+            });
+        }
+
         toggle.addEventListener('click', function(){
-            sidebar.classList.toggle('collapsed');
+            var isCollapsed = sidebar.classList.toggle('collapsed');
+            if (isCollapsed) {
+                closeSidebarSubmenus();
+            }
+        });
+
+        document.querySelectorAll('.sidebar .nav-item > a').forEach(function(trigger) {
+            var item = trigger.closest('.nav-item');
+            var submenu = item && item.querySelector('.nav-sub');
+
+            if (!item || !submenu) return;
+
+            trigger.addEventListener('click', function(event) {
+                event.preventDefault();
+                item.classList.toggle('open');
+            });
         });
 
         if (userBtn && userMenu) {
