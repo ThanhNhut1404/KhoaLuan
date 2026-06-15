@@ -33,6 +33,7 @@
                 </svg>
             </a>
             <div class="nav-sub">
+                <a href="#"><span class="nav-text">Tạo tài khoản</span></a>
                 <a href="#"><span class="nav-text">Danh sách khoa</span></a>
                 <a href="#"><span class="nav-text">Danh sách bộ môn</span></a>
             </div>
@@ -50,6 +51,7 @@
                 </svg>
             </a>
             <div class="nav-sub">
+                <a href="#"><span class="nav-text">Tạo ngành học</span></a>
                 <a href="#"><span class="nav-text">Danh sách ngành học</span></a>
             </div>
         </div>
@@ -67,7 +69,8 @@
                 </svg>
             </a>
             <div class="nav-sub">
-                <a href="#"><span class="nav-text">Danh sách lớp</span></a>
+                <a href="#"><span class="nav-text">Tạo lớp học</span></a>
+                <a href="#"><span class="nav-text">Danh sách lớp học</span></a>
             </div>
         </div>
 
@@ -84,7 +87,8 @@
                 </svg>
             </a>
             <div class="nav-sub">
-                <a href="#"><span class="nav-text">Danh sách niên khóa</span></a>
+                <a href="?page=create_year"><span class="nav-text">Tạo niên khóa</span></a>
+                <a href="?page=list_year"><span class="nav-text">Danh sách niên khóa</span></a>
             </div>
         </div>
 
@@ -100,7 +104,8 @@
                 </svg>
             </a>
             <div class="nav-sub">
-                <a href="#"><span class="nav-text">Danh sách học kỳ</span></a>
+                <a href="?page=create_semester"><span class="nav-text">Tạo học kỳ</span></a>
+                <a href="?page=list_semester"><span class="nav-text">Danh sách học kỳ</span></a>
             </div>
         </div>
 
@@ -116,6 +121,7 @@
                 </svg>
             </a>
             <div class="nav-sub">
+                <a href="#"><span class="nav-text">Tạo tài khoản</span></a>
                 <a href="#"><span class="nav-text">Danh sách sinh viên</span></a>
             </div>
         </div>
@@ -131,6 +137,7 @@
                 </svg>
             </a>
             <div class="nav-sub">
+                <a href="#"><span class="nav-text">Tạo đoàn trường</span></a>
                 <a href="#"><span class="nav-text">Danh sách đoàn trường</span></a>
             </div>
         </div>
@@ -149,6 +156,7 @@
                 </svg>
             </a>
             <div class="nav-sub">
+                <a href="#"><span class="nav-text">Tạo tiêu chí điểm</span></a>
                 <a href="#"><span class="nav-text">Danh sách tiêu chí điểm</span></a>
             </div>
         </div>
@@ -164,7 +172,8 @@
                 </svg>
             </a>
             <div class="nav-sub">
-                <a href="#"><span class="nav-text">Danh sách hoạt động</span></a>
+                <a href="?page=create_activity"><span class="nav-text">Tạo hoạt động</span></a>
+                <a href="?page=list_activity"><span class="nav-text">Danh sách hoạt động</span></a>
             </div>
         </div>
 
@@ -192,23 +201,42 @@
                 </svg>
                 <span class="nav-text">Quản lý thống kê</span>
             </a>
+            <div class="nav-sub">
+                <a href="#"><span class="nav-text">Danh sách thống kê</span></a>
+            </div>
         </div>
 
-        <a href="#">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <circle cx="12" cy="8" r="3" stroke="#cbd5f5" stroke-width="2" />
-                <path d="M5 20v-2a7 7 0 0 1 14 0v2" stroke="#cbd5f5" stroke-width="2" stroke-linecap="round" />
-            </svg>
-            <span class="nav-text">Quản lý tài khoản</span>
-        </a>
+        <div class="nav-item">
+            <a href="#">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <circle cx="12" cy="8" r="3" stroke="#cbd5f5" stroke-width="2" />
+                    <path d="M5 20v-2a7 7 0 0 1 14 0v2" stroke="#cbd5f5" stroke-width="2" stroke-linecap="round" />
+                </svg>
+                <span class="nav-text">Quản lý tài khoản</span>
+                <svg class="nav-caret" width="14" height="14" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M6 9l6 6 6-6" stroke="#cbd5f5" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+            </a>
+            <div class="nav-sub">
+                <a href="?page=accounts"><span class="nav-text">Danh sách tài khoản</span></a>
+            </div>
+        </div>
 
-        <a href="#">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M12 2l7 4v6c0 6-7 10-7 10S5 12 5 8V6l7-4Z" stroke="#cbd5f5" stroke-width="2" fill="none" />
-                <path d="M8 10h8" stroke="#cbd5f5" stroke-width="2" stroke-linecap="round" />
-                <path d="M12 14h.01" stroke="#cbd5f5" stroke-width="2" stroke-linecap="round" />
-            </svg>
-            <span class="nav-text">Quản lý phân quyền</span>
-        </a>
+        <div class="nav-item">
+            <a href="#">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M12 2l7 4v6c0 6-7 10-7 10S5 12 5 8V6l7-4Z" stroke="#cbd5f5" stroke-width="2" fill="none" />
+                    <path d="M8 10h8" stroke="#cbd5f5" stroke-width="2" stroke-linecap="round" />
+                    <path d="M12 14h.01" stroke="#cbd5f5" stroke-width="2" stroke-linecap="round" />
+                </svg>
+                <span class="nav-text">Quản lý phân quyền</span>
+                <svg class="nav-caret" width="14" height="14" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M6 9l6 6 6-6" stroke="#cbd5f5" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+            </a>
+            <div class="nav-sub">
+                <a href="?page=roles"><span class="nav-text">Danh sách phân quyền</span></a>
+            </div>
+        </div>
     </nav>
 </div>
