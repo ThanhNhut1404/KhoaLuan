@@ -12,6 +12,20 @@
         'Tối'
     ];
 
+    $activity_types = $activity_types ?? [
+        'Văn hóa',
+        'Thể thao',
+        'Tình nguyện',
+        'Hội thảo'
+    ];
+
+    $activity_levels = $activity_levels ?? [
+        'Trường',
+        'Khoa',
+        'Lớp',
+        'Liên trường'
+    ];
+
     $formData = $formData ?? [];
     $errors = $errors ?? [];
 ?>
@@ -65,10 +79,10 @@
                     <!-- Thời gian hoạt động -->
                     <div class="form-field">
                         <label class="field-label" for="activity_period">
-                            Thời gian hoạt động <span class="required">*</span>
+                            Ca hoạt động <span class="required">*</span>
                         </label>
                         <select id="activity_period" name="activity_period" class="field-input" required>
-                            <option value="">-- Chọn thời gian hoạt động --</option>
+                            <option value="">-- Chọn ca hoạt động --</option>
                             <?php foreach ($time_slots as $slot): ?>
                                 <option value="<?= htmlspecialchars($slot) ?>" <?= (isset($formData['activity_period']) && $formData['activity_period'] === $slot) ? 'selected' : '' ?>>
                                     <?= htmlspecialchars($slot) ?>
@@ -169,6 +183,42 @@
                         <small class="field-hint">Định dạng: dd/mm/yyyy</small>
                         <?php if(isset($errors['end_date'])): ?>
                             <span class="field-error"><?= $errors['end_date'] ?></span>
+                        <?php endif; ?>
+                    </div>
+
+                    <!-- Loại hoạt động -->
+                    <div class="form-field">
+                        <label class="field-label" for="activity_type">
+                            Loại hoạt động <span class="required">*</span>
+                        </label>
+                        <select id="activity_type" name="activity_type" class="field-input" required>
+                            <option value="">-- Chọn loại hoạt động --</option>
+                            <?php foreach ($activity_types as $type): ?>
+                                <option value="<?= htmlspecialchars($type) ?>" <?= (isset($formData['activity_type']) && $formData['activity_type'] === $type) ? 'selected' : '' ?> >
+                                    <?= htmlspecialchars($type) ?>
+                                </option>
+                            <?php endforeach; ?>
+                        </select>
+                        <?php if(isset($errors['activity_type'])): ?>
+                            <span class="field-error"><?= $errors['activity_type'] ?></span>
+                        <?php endif; ?>
+                    </div>
+
+                    <!-- Cấp hoạt động -->
+                    <div class="form-field">
+                        <label class="field-label" for="activity_level">
+                            Cấp hoạt động <span class="required">*</span>
+                        </label>
+                        <select id="activity_level" name="activity_level" class="field-input" required>
+                            <option value="">-- Chọn cấp hoạt động --</option>
+                            <?php foreach ($activity_levels as $level): ?>
+                                <option value="<?= htmlspecialchars($level) ?>" <?= (isset($formData['activity_level']) && $formData['activity_level'] === $level) ? 'selected' : '' ?> >
+                                    <?= htmlspecialchars($level) ?>
+                                </option>
+                            <?php endforeach; ?>
+                        </select>
+                        <?php if(isset($errors['activity_level'])): ?>
+                            <span class="field-error"><?= $errors['activity_level'] ?></span>
                         <?php endif; ?>
                     </div>
 

@@ -69,8 +69,8 @@
                 </svg>
             </a>
             <div class="nav-sub">
-                <a href="#"><span class="nav-text">Tạo lớp học</span></a>
-                <a href="#"><span class="nav-text">Danh sách lớp học</span></a>
+                <a href="?page=create_class"><span class="nav-text">Tạo lớp học</span></a>
+                <a href="?page=list_class"><span class="nav-text">Danh sách lớp học</span></a>
             </div>
         </div>
 
@@ -218,7 +218,8 @@
                 </svg>
             </a>
             <div class="nav-sub">
-                <a href="?page=accounts"><span class="nav-text">Danh sách tài khoản</span></a>
+                <a href="?page=create_account"><span class="nav-text">Cấp tài khoản</span></a>
+                <a href="?page=list_accounts"><span class="nav-text">Danh sách tài khoản</span></a>
             </div>
         </div>
 

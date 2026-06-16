@@ -1,71 +1,65 @@
 <?php
-    $activities = $activities ?? [
+    $classes = $classes ?? [
         [
             'id' => 1,
-            'name' => 'Ngày hội khởi nghiệp',
-            'time' => '09:00',
-            'period' => 'Sáng',
-            'start_date' => '15/07/2025',
-            'end_date' => '15/07/2025',
-            'activity_type' => 'Hội thảo',
-            'activity_level' => 'Trường',
-            'bonus_points' => 10,
-            'capacity' => 120,
+            'code' => 'CNTT01',
+            'name' => 'Công nghệ thông tin A',
+            'department' => 'Khoa CNTT',
+            'academic_year' => '2023 - 2024',
+            'major' => 'Công nghệ Phần mềm',
+            'advisor' => 'Thầy Nguyễn Văn A',
+            'capacity' => 35,
             'status' => 'active',
             'status_label' => 'Đang diễn ra'
         ],
         [
             'id' => 2,
-            'name' => 'Tập huấn kỹ năng mềm',
-            'time' => '13:30',
-            'period' => 'Chiều',
-            'start_date' => '22/07/2025',
-            'end_date' => '22/07/2025',
-            'activity_type' => 'Văn hóa',
-            'activity_level' => 'Khoa',
-            'bonus_points' => 8,
-            'capacity' => 80,
+            'code' => 'DT01',
+            'name' => 'Điện tử 1',
+            'department' => 'Khoa Điện tử',
+            'academic_year' => '2024 - 2025',
+            'major' => 'Hệ thống nhúng',
+            'advisor' => 'Cô Trần Thị B',
+            'capacity' => 28,
             'status' => 'upcoming',
             'status_label' => 'Sắp tới'
         ],
         [
             'id' => 3,
-            'name' => 'Chiến dịch tình nguyện',
-            'time' => '18:00',
-            'period' => 'Tối',
-            'start_date' => '10/08/2025',
-            'end_date' => '12/08/2025',
-            'activity_type' => 'Tình nguyện',
-            'activity_level' => 'Lớp',
-            'bonus_points' => 15,
-            'capacity' => 150,
+            'code' => 'MX01',
+            'name' => 'Mạng máy tính 1',
+            'department' => 'Khoa CNTT',
+            'academic_year' => '2023 - 2024',
+            'major' => 'Mạng và Truyền thông',
+            'advisor' => 'Thầy Phạm Văn C',
+            'capacity' => 32,
             'status' => 'completed',
             'status_label' => 'Đã hoàn thành'
         ]
     ];
 
     $current_page = isset($_GET['page_num']) ? (int)$_GET['page_num'] : 1;
-    $total_items = count($activities);
+    $total_items = count($classes);
     $items_per_page = 10;
     $total_pages = ceil($total_items / $items_per_page);
 ?>
 
-<div class="list-activity-page">
+<div class="list-class-page">
     <div class="page-panel">
         <div class="panel-header">
             <div class="header-content">
-                <h2 class="panel-title">DANH SÁCH HOẠT ĐỘNG</h2>
+                <h2 class="panel-title">DANH SÁCH LỚP HỌC</h2>
             </div>
         </div>
 
         <div class="panel-body">
-            <?php if (empty($activities)): ?>
+            <?php if (empty($classes)): ?>
                 <div class="empty-state">
                     <svg width="48" height="48" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                         <path d="M9 13h6M9 17h3M5 21h14a2 2 0 0 0 2-2V5a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
                     </svg>
-                    <h3>Chưa có hoạt động nào</h3>
-                    <p>Hãy tạo một hoạt động để bắt đầu</p>
+                    <h3>Chưa có lớp học nào</h3>
+                    <p>Hãy tạo lớp học đầu tiên để bắt đầu</p>
                 </div>
             <?php else: ?>
                 <div class="table-wrapper">
@@ -73,49 +67,45 @@
                         <thead>
                             <tr>
                                 <th class="col-stt">STT</th>
-                                <th class="col-name">TÊN HOẠT ĐỘNG</th>
-                                <th class="col-time">GIỜ</th>
-                                <th class="col-period">CA HOẠT ĐỘNG</th>
-                                <th class="col-start">NGÀY BẮT ĐẦU</th>
-                                <th class="col-end">NGÀY KẾT THÚC</th>
-                                <th class="col-type">LOẠI HOẠT ĐỘNG</th>
-                                <th class="col-level">CẤP HOẠT ĐỘNG</th>
-                                <th class="col-bonus">ĐIỂM CỘNG</th>
+                                <th class="col-code">MÃ LỚP</th>
+                                <th class="col-name">TÊN LỚP</th>
+                                <th class="col-department">KHOA</th>
+                                <th class="col-year">NIÊN KHÓA</th>
+                                <th class="col-major">CHUYÊN NGÀNH</th>
+                                <th class="col-advisor">CỐ VẤN</th>
                                 <th class="col-capacity">SỐ LƯỢNG</th>
                                 <th class="col-status">TRẠNG THÁI</th>
                                 <th class="col-action">THAO TÁC</th>
                             </tr>
                         </thead>
                         <tbody>
-                            <?php foreach ($activities as $index => $activity): ?>
+                            <?php foreach ($classes as $index => $class): ?>
                                 <tr>
                                     <td class="col-stt">0<?= $index + 1 ?></td>
-                                    <td class="col-name"><?= htmlspecialchars($activity['name']) ?></td>
-                                    <td class="col-time"><?= htmlspecialchars($activity['time']) ?></td>
-                                    <td class="col-period"><?= htmlspecialchars($activity['period']) ?></td>
-                                    <td class="col-start"><?= htmlspecialchars($activity['start_date']) ?></td>
-                                    <td class="col-end"><?= htmlspecialchars($activity['end_date']) ?></td>
-                                    <td class="col-type"><?= htmlspecialchars($activity['activity_type'] ?? '') ?></td>
-                                    <td class="col-level"><?= htmlspecialchars($activity['activity_level'] ?? '') ?></td>
-                                    <td class="col-bonus"><?= htmlspecialchars($activity['bonus_points']) ?></td>
-                                    <td class="col-capacity"><?= htmlspecialchars($activity['capacity']) ?></td>
+                                    <td class="col-code"><?= htmlspecialchars($class['code']) ?></td>
+                                    <td class="col-name"><?= htmlspecialchars($class['name']) ?></td>
+                                    <td class="col-department"><?= htmlspecialchars($class['department']) ?></td>
+                                    <td class="col-year"><?= htmlspecialchars($class['academic_year']) ?></td>
+                                    <td class="col-major"><?= htmlspecialchars($class['major']) ?></td>
+                                    <td class="col-advisor"><?= htmlspecialchars($class['advisor']) ?></td>
+                                    <td class="col-capacity"><?= htmlspecialchars($class['capacity']) ?></td>
                                     <td class="col-status">
-                                        <span class="status-badge status-<?= $activity['status'] ?>">
+                                        <span class="status-badge status-<?= $class['status'] ?>">
                                             <svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
                                                 <circle cx="12" cy="12" r="3" />
                                             </svg>
-                                            <?= htmlspecialchars($activity['status_label']) ?>
+                                            <?= htmlspecialchars($class['status_label']) ?>
                                         </span>
                                     </td>
                                     <td class="col-action">
                                         <div class="action-group">
-                                            <button class="action-btn edit" title="Chỉnh sửa" onclick="editActivity(<?= $activity['id'] ?>)">
+                                            <button class="action-btn edit" title="Chỉnh sửa" onclick="editClass(<?= $class['id'] ?>)">
                                                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                                                     <path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
                                                     <path d="M15.5 3.5a2.121 2.121 0 1 1 3 3L18 7.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
                                                 </svg>
                                             </button>
-                                            <button class="action-btn delete" title="Xóa" onclick="deleteActivity(<?= $activity['id'] ?>)">
+                                            <button class="action-btn delete" title="Xóa" onclick="deleteClass(<?= $class['id'] ?>)">
                                                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                                                     <path d="M19 7l-1 12a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2l-1-12M9 7V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v3M9 11v6M15 11v6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
                                                 </svg>
@@ -130,11 +120,11 @@
 
                 <div class="pagination-container">
                     <div class="pagination-info">
-                        Hiển thị 1 - <?= min($items_per_page, $total_items) ?> của <?= $total_items ?> hoạt động
+                        Hiển thị 1 - <?= min($items_per_page, $total_items) ?> của <?= $total_items ?> lớp học
                     </div>
                     <div class="pagination">
                         <?php if ($current_page > 1): ?>
-                            <a href="?page=list_activity&page_num=<?= $current_page - 1 ?>" class="pagination-btn prev">
+                            <a href="?page=list_class&page_num=<?= $current_page - 1 ?>" class="pagination-btn prev">
                                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                                     <path d="M15 19l-7-7 7-7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
                                 </svg>
@@ -142,13 +132,13 @@
                         <?php endif; ?>
 
                         <?php for ($i = 1; $i <= $total_pages; $i++): ?>
-                            <a href="?page=list_activity&page_num=<?= $i ?>" class="pagination-btn <?= $i === $current_page ? 'active' : '' ?>">
+                            <a href="?page=list_class&page_num=<?= $i ?>" class="pagination-btn <?= $i === $current_page ? 'active' : '' ?>">
                                 <?= $i ?>
                             </a>
                         <?php endfor; ?>
 
                         <?php if ($current_page < $total_pages): ?>
-                            <a href="?page=list_activity&page_num=<?= $current_page + 1 ?>" class="pagination-btn next">
+                            <a href="?page=list_class&page_num=<?= $current_page + 1 ?>" class="pagination-btn next">
                                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                                     <path d="M9 5l7 7-7 7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
                                 </svg>
@@ -162,7 +152,7 @@
 </div>
 
 <style>
-    .list-activity-page {
+    .list-class-page {
         display: grid;
         gap: 0;
         padding: 24px;
@@ -285,41 +275,30 @@
         width: 35px;
     }
 
+    .col-code {
+        width: 10%;
+        white-space: nowrap;
+    }
+
     .col-name {
         width: 18%;
     }
 
-    .col-time,
-    .col-period,
-    .col-start,
-    .col-end,
-    .col-bonus,
-    .col-capacity,
-    .col-status {
-        text-align: center;
+    .col-department,
+    .col-year,
+    .col-major,
+    .col-advisor {
+        width: 14%;
+    }
+
+    .col-capacity {
+        width: 8%;
         white-space: nowrap;
     }
 
-    .col-time {
-        width: 10%;
-    }
-
-    .col-period {
-        width: 12%;
-    }
-
-    .col-start,
-    .col-end {
-        width: 12%;
-    }
-
-    .col-bonus,
-    .col-capacity {
-        width: 10%;
-    }
-
     .col-status {
-        width: 13%;
+        width: 12%;
+        white-space: nowrap;
     }
 
     .col-action {
@@ -451,13 +430,10 @@
     }
 
     @media (max-width: 1024px) {
-        .col-time,
-        .col-period,
-        .col-start,
-        .col-end,
-        .col-bonus,
-        .col-capacity,
-        .col-status {
+        .col-department,
+        .col-year,
+        .col-major,
+        .col-advisor {
             width: auto;
         }
 
@@ -477,17 +453,17 @@
         }
 
         .data-table {
-            min-width: 900px;
+            min-width: 1000px;
         }
     }
 </style>
 
 <script>
-    function editActivity(id) {
-        console.log('Edit activity:', id);
+    function editClass(id) {
+        console.log('Edit class:', id);
     }
 
-    function deleteActivity(id) {
-        console.log('Delete activity:', id);
+    function deleteClass(id) {
+        console.log('Delete class:', id);
     }
 </script>
