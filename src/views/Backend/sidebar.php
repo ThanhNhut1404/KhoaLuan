@@ -33,7 +33,6 @@
                 </svg>
             </a>
             <div class="nav-sub">
-                <a href="#"><span class="nav-text">Tạo tài khoản</span></a>
                 <a href="#"><span class="nav-text">Danh sách khoa</span></a>
                 <a href="#"><span class="nav-text">Danh sách bộ môn</span></a>
             </div>
@@ -51,8 +50,8 @@
                 </svg>
             </a>
             <div class="nav-sub">
-                <a href="#"><span class="nav-text">Tạo ngành học</span></a>
-                <a href="#"><span class="nav-text">Danh sách ngành học</span></a>
+                <a href="?page=create_major"><span class="nav-text">Tạo ngành học</span></a>
+                <a href="?page=list_major"><span class="nav-text">Danh sách ngành học</span></a>
             </div>
         </div>
 
@@ -121,7 +120,6 @@
                 </svg>
             </a>
             <div class="nav-sub">
-                <a href="#"><span class="nav-text">Tạo tài khoản</span></a>
                 <a href="#"><span class="nav-text">Danh sách sinh viên</span></a>
             </div>
         </div>
@@ -190,7 +188,7 @@
                 </svg>
             </a>
             <div class="nav-sub">
-                <a href="#"><span class="nav-text">Danh sách đánh giá</span></a>
+                <a href="#"><span class="nav-text">Chấm điểm rèn luyện</span></a>
             </div>
         </div>
 
@@ -240,4 +238,5 @@
             </div>
         </div>
     </nav>
+</nav>
 </div>
