@@ -1,3 +1,20 @@
+<style>
+    /* Reduce spacing for main menu items; add extra top gap for first item */
+    .sidebar .sidebar-menu { padding: 10px 0 6px 0; }
+    .sidebar .sidebar-menu li:first-child a { padding-top: 18px; }
+    .sidebar .sidebar-menu li { margin: 0; }
+    .sidebar .sidebar-menu li a {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 8px 12px;
+    }
+    .sidebar .sidebar-menu li a svg { width: 18px; height: 18px; min-width: 18px; }
+    .sidebar .sidebar-menu li a span { font-size: 14px; line-height: 1; }
+    .sidebar .sidebar-menu .has-submenu > a { padding-right: 12px; }
+    .sidebar .sidebar-menu .submenu li a { padding: 6px 28px; font-size: 13px; }
+</style>
+
 <div class="sidebar" id="sidebar">
     <ul class="sidebar-menu">
         <li><a href="/KhoaLuan/public/student.php" onclick="closeSidebar()">
