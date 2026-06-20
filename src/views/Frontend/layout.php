@@ -571,11 +571,20 @@
             list-style: none;
             margin: 2px 0 6px 0;
             padding: 0 0 0 8px;
-            display: none;
+            max-height: 0;
+            overflow: hidden;
+            opacity: 0;
+            transform: translateY(-6px);
+            transition: max-height 320ms cubic-bezier(.2,.8,.2,1), opacity 220ms ease, transform 260ms cubic-bezier(.2,.8,.2,1);
+            pointer-events: none;
         }
 
         .sidebar-menu .has-submenu.open .submenu {
-            display: block;
+            max-height: 480px;
+            opacity: 1;
+            transform: translateY(0);
+            transition-delay: 60ms;
+            pointer-events: auto;
         }
 
         .sidebar-menu .submenu a {
@@ -1007,16 +1016,9 @@
         });
     });
 
-    document.querySelectorAll('.sidebar-menu .has-submenu > a').forEach(function(trigger) {
-        trigger.addEventListener('click', function(event) {
-            event.preventDefault();
-            var item = trigger.closest('.has-submenu');
-            if (item) {
-                item.classList.toggle('open');
-            }
-        });
-    });
 </script>
+
+<script src="/KhoaLuan/public/js/menu.js"></script>
 
 </body>
 </html>

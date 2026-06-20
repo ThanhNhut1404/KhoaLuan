@@ -13,6 +13,11 @@
     .sidebar .sidebar-menu li a span { font-size: 14px; line-height: 1; }
     .sidebar .sidebar-menu .has-submenu > a { padding-right: 12px; }
     .sidebar .sidebar-menu .submenu li a { padding: 6px 28px; font-size: 13px; }
+    /* Submenu slide/opacity transition and caret rotation */
+    .sidebar .sidebar-menu .submenu { max-height: 0; overflow: hidden; opacity: 0; transition: max-height 260ms ease, opacity 180ms ease; }
+    .sidebar .sidebar-menu li.has-submenu.open > .submenu { max-height: 420px; opacity: 1; transition-delay: 80ms; }
+    .sidebar .sidebar-menu .submenu-caret { transition: transform 200ms ease; }
+    .sidebar .sidebar-menu li.has-submenu.open > a .submenu-caret { transform: rotate(180deg); }
 </style>
 
 <div class="sidebar" id="sidebar">
