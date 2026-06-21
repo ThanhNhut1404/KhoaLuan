@@ -385,11 +385,24 @@
 
         .nav-sub {
             margin-left: 8px;
-            display: none;
             gap: 1px;
+            max-height: 0;
+            overflow: hidden;
+            opacity: 0;
+            transform: translateY(-8px);
+            transition: max-height 420ms cubic-bezier(.2,.8,.2,1), opacity 300ms ease, transform 360ms cubic-bezier(.2,.8,.2,1);
+            pointer-events: none;
+            display: block; /* keep layout but hidden via max-height/opacity */
         }
 
-        .nav-item.open .nav-sub { display: grid; }
+        .nav-item.open .nav-sub {
+            max-height: 560px;
+            opacity: 1;
+            transform: translateY(0);
+            transition-delay: 80ms;
+            pointer-events: auto;
+            display: block;
+        }
         .nav-sub a {
             display: block;
             padding: 4px 10px;
@@ -528,17 +541,36 @@
             }
         });
 
-        document.querySelectorAll('.sidebar .nav-item > a').forEach(function(trigger) {
-            var item = trigger.closest('.nav-item');
-            var submenu = item && item.querySelector('.nav-sub');
+        // Accordion: only one nav-item open at a time
+        (function(){
+            var nav = document.querySelector('.sidebar .nav');
+            if(!nav) return;
 
-            if (!item || !submenu) return;
+            var toggles = nav.querySelectorAll('.nav-item > a');
+            toggles.forEach(function(trigger){
+                var item = trigger.closest('.nav-item');
+                var submenu = item && item.querySelector('.nav-sub');
+                if(!item || !submenu) return;
 
-            trigger.addEventListener('click', function(event) {
-                event.preventDefault();
-                item.classList.toggle('open');
+                trigger.addEventListener('click', function(e){
+                    e.preventDefault();
+                    var wasOpen = item.classList.contains('open');
+
+                    // close others
+                    nav.querySelectorAll('.nav-item.open').forEach(function(other){
+                        if(other !== item) other.classList.remove('open');
+                    });
+
+                    // toggle this one
+                    item.classList.toggle('open', !wasOpen);
+                });
             });
-        });
+
+            // open any parent that contains an active link
+            nav.querySelectorAll('.nav-item').forEach(function(it){
+                if(it.querySelector('a.active')) it.classList.add('open');
+            });
+        })();
 
         if (userBtn && userMenu) {
             userBtn.addEventListener('click', function(e){

@@ -574,16 +574,16 @@
             max-height: 0;
             overflow: hidden;
             opacity: 0;
-            transform: translateY(-6px);
-            transition: max-height 320ms cubic-bezier(.2,.8,.2,1), opacity 220ms ease, transform 260ms cubic-bezier(.2,.8,.2,1);
+            transform: translateY(-8px);
+            transition: max-height 420ms cubic-bezier(.2,.8,.2,1), opacity 300ms ease, transform 360ms cubic-bezier(.2,.8,.2,1);
             pointer-events: none;
         }
 
         .sidebar-menu .has-submenu.open .submenu {
-            max-height: 480px;
+            max-height: 560px;
             opacity: 1;
             transform: translateY(0);
-            transition-delay: 60ms;
+            transition-delay: 80ms;
             pointer-events: auto;
         }
 
