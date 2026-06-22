@@ -10,6 +10,21 @@
     $genders = ['male'=>'Nam','female'=>'Nữ','other'=>'Khác'];
     $statuses = ['active'=>'Hoạt động','inactive'=>'Không hoạt động'];
 
+    if (session_status() === PHP_SESSION_NONE) session_start();
+    if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['status']) && is_array($_POST['status'])) {
+        foreach ($_POST['status'] as $id => $newStatus) {
+            foreach ($accounts as &$acct) {
+                if ($acct['id'] == $id) {
+                    $acct['status'] = $newStatus;
+                    $acct['status_label'] = $newStatus === 'active' ? 'Hoạt động' : 'Không hoạt động';
+                }
+            }
+            unset($acct);
+        }
+        $_SESSION['message'] = 'Cập nhật trạng thái thành công';
+        $_SESSION['message_type'] = 'success';
+    }
+
     $current_page = isset($_GET['page_num']) ? (int)$_GET['page_num'] : 1;
     $total_items = count($accounts);
     $items_per_page = 10;
@@ -105,9 +120,13 @@
                                     <td class="col-phone"><?= htmlspecialchars($a['phone']) ?></td>
                                     <td class="col-role"><?= htmlspecialchars($a['role']) ?></td>
                                     <td class="col-status">
-                                        <span class="status-badge status-<?= $a['status'] ?>">
-                                            <?= htmlspecialchars($a['status_label']) ?>
-                                        </span>
+                                        <form method="POST" style="display:inline-block;">
+                                            <input type="hidden" name="_row_id" value="<?= $a['id'] ?>" />
+                                            <select name="status[<?= $a['id'] ?>]" class="status-select" onchange="updateStatusSelect(this)">
+                                                <option value="active" <?= $a['status'] === 'active' ? 'selected' : '' ?>>Hoạt động</option>
+                                                <option value="inactive" <?= $a['status'] === 'inactive' ? 'selected' : '' ?>>Không hoạt động</option>
+                                            </select>
+                                        </form>
                                     </td>
                                     <td class="col-action">
                                         <div class="action-group">
@@ -519,6 +538,12 @@
         border-radius: 8px;
         font-size: 13px;
     }
+
+    /* Status select styling (same as list_major) */
+    .status-select { padding:6px 12px 6px 8px; border-radius:12px; border:1px solid #e5e7eb; background:#f9fafb; font-size:13px; color:#0f2a5a; appearance:none; -webkit-appearance:none; font-weight:700; padding-right:36px; }
+    .status-select option { color:#0f2a5a; }
+    .status-select.active { background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24'%3E%3Cpath d='M6 9l6 6 6-6' stroke='%23065546' stroke-width='2' stroke-linecap='round' stroke-linejoin='round' fill='none'/%3E%3C/svg%3E") no-repeat right 10px center, linear-gradient(90deg, #bbf7d0, #34d399); background-size:12px, auto; color:#065f46; border-color:#34d399; font-weight:700; }
+    .status-select.inactive { background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24'%3E%3Cpath d='M6 9l6 6 6-6' stroke='%237f1d1d' stroke-width='2' stroke-linecap='round' stroke-linejoin='round' fill='none'/%3E%3C/svg%3E") no-repeat right 10px center, linear-gradient(90deg, #fed7d7, #f87171); background-size:12px, auto; color:#7f1d1d; border-color:#f87171; font-weight:700; }
 </style>
 
 <script>
@@ -546,6 +571,20 @@
             r.style.display = show ? '' : 'none';
         });
     }
+
+    function updateStatusSelect(el){
+        var val = el.value;
+        el.classList.remove('active','inactive');
+        el.classList.add(val === 'active' ? 'active' : 'inactive');
+        el.form.submit();
+    }
+
+    document.addEventListener('DOMContentLoaded', function(){
+        document.querySelectorAll('.status-select').forEach(function(s){
+            var val = s.value;
+            s.classList.add(val === 'active' ? 'active' : 'inactive');
+        });
+    });
 
     document.getElementById('applyFilters').addEventListener('click', function(e){ e.preventDefault(); filterAccounts(); });
     document.getElementById('resetFilters').addEventListener('click', function(e){ e.preventDefault(); document.getElementById('filterRole').value=''; document.getElementById('filterStatus').value=''; document.getElementById('filterGender').value=''; filterAccounts(); });

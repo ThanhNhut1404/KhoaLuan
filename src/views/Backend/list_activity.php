@@ -44,6 +44,21 @@
         ]
     ];
 
+    if (session_status() === PHP_SESSION_NONE) session_start();
+    if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['status']) && is_array($_POST['status'])) {
+        foreach ($_POST['status'] as $id => $newStatus) {
+            foreach ($activities as &$act) {
+                if ($act['id'] == $id) {
+                    $act['status'] = $newStatus;
+                    $act['status_label'] = $newStatus === 'active' ? 'Đang diễn ra' : ($newStatus === 'upcoming' ? 'Sắp tới' : 'Đã hoàn thành');
+                }
+            }
+            unset($act);
+        }
+        $_SESSION['message'] = 'Cập nhật trạng thái thành công';
+        $_SESSION['message_type'] = 'success';
+    }
+
     $current_page = isset($_GET['page_num']) ? (int)$_GET['page_num'] : 1;
     $total_items = count($activities);
     $items_per_page = 10;
@@ -100,12 +115,14 @@
                                     <td class="col-bonus"><?= htmlspecialchars($activity['bonus_points']) ?></td>
                                     <td class="col-capacity"><?= htmlspecialchars($activity['capacity']) ?></td>
                                     <td class="col-status">
-                                        <span class="status-badge status-<?= $activity['status'] ?>">
-                                            <svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-                                                <circle cx="12" cy="12" r="3" />
-                                            </svg>
-                                            <?= htmlspecialchars($activity['status_label']) ?>
-                                        </span>
+                                        <form method="POST" style="display:inline-block;">
+                                            <input type="hidden" name="_row_id" value="<?= $activity['id'] ?>" />
+                                            <select name="status[<?= $activity['id'] ?>]" class="status-select" onchange="updateStatusSelect(this)">
+                                                <option value="active" <?= $activity['status'] === 'active' ? 'selected' : '' ?>>Đang diễn ra</option>
+                                                <option value="upcoming" <?= $activity['status'] === 'upcoming' ? 'selected' : '' ?>>Sắp tới</option>
+                                                <option value="completed" <?= $activity['status'] === 'completed' ? 'selected' : '' ?>>Đã hoàn thành</option>
+                                            </select>
+                                        </form>
                                     </td>
                                     <td class="col-action">
                                         <div class="action-group">
@@ -475,11 +492,17 @@
         .table-wrapper {
             overflow-x: auto;
         }
-
+        
         .data-table {
             min-width: 900px;
         }
     }
+    /* Status select styling */
+    .status-select { padding:6px 12px 6px 8px; border-radius:12px; border:1px solid #e5e7eb; background:#f9fafb; font-size:13px; color:#0f2a5a; appearance:none; -webkit-appearance:none; font-weight:700; padding-right:36px; }
+    .status-select.option { color:#0f2a5a; }
+    .status-select.active { background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24'%3E%3Cpath d='M6 9l6 6 6-6' stroke='%23065546' stroke-width='2' stroke-linecap='round' stroke-linejoin='round' fill='none'/%3E%3C/svg%3E") no-repeat right 10px center, linear-gradient(90deg, #bbf7d0, #34d399); background-size:12px, auto; color:#065f46; border-color:#34d399; font-weight:700; }
+    .status-select.upcoming { background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24'%3E%3Cpath d='M6 9l6 6 6-6' stroke='%23613b52' stroke-width='2' stroke-linecap='round' stroke-linejoin='round' fill='none'/%3E%3C/svg%3E") no-repeat right 10px center, linear-gradient(90deg, #fde68a, #f59e0b); background-size:12px, auto; color:#92400e; border-color:#f59e0b; font-weight:700; }
+    .status-select.completed { background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24'%3E%3Cpath d='M6 9l6 6 6-6' stroke='%231e40af' stroke-width='2' stroke-linecap='round' stroke-linejoin='round' fill='none'/%3E%3C/svg%3E") no-repeat right 10px center, linear-gradient(90deg, #dbeafe, #bfdbfe); background-size:12px, auto; color:#1e40af; border-color:#93c5fd; font-weight:700; }
 </style>
 
 <script>
@@ -490,4 +513,17 @@
     function deleteActivity(id) {
         console.log('Delete activity:', id);
     }
+    function updateStatusSelect(el){
+        var val = el.value;
+        el.classList.remove('active','upcoming','completed');
+        el.classList.add(val);
+        el.form.submit();
+    }
+
+    document.addEventListener('DOMContentLoaded', function(){
+        document.querySelectorAll('.status-select').forEach(function(s){
+            var val = s.value;
+            s.classList.add(val);
+        });
+    });
 </script>

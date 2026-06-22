@@ -6,6 +6,24 @@
         ['id'=>3, 'code'=>'CK03', 'name'=>'Cơ khí', 'credits'=>140, 'department'=>'Khoa Cơ khí', 'status'=>'active', 'status_label'=>'Hoạt động']
     ];
 
+    // Handle status updates submitted from the table (auto-submit on change)
+    if (session_status() === PHP_SESSION_NONE) session_start();
+    if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['status']) && is_array($_POST['status'])) {
+        foreach ($_POST['status'] as $id => $newStatus) {
+            // TODO: persist $newStatus for $id to database via model
+            // For now update the local $majors array so UI reflects change immediately
+            foreach ($majors as &$m) {
+                if ($m['id'] == $id) {
+                    $m['status'] = $newStatus;
+                    $m['status_label'] = $newStatus === 'active' ? 'Hoạt động' : 'Không hoạt động';
+                }
+            }
+            unset($m);
+        }
+        $_SESSION['message'] = 'Cập nhật trạng thái thành công';
+        $_SESSION['message_type'] = 'success';
+    }
+
     $current_page = isset($_GET['page_num']) ? (int)$_GET['page_num'] : 1;
     $total_items = count($majors);
     $items_per_page = 6;
@@ -52,12 +70,13 @@
                                     <td class="col-credits"><?= htmlspecialchars($major['credits']) ?></td>
                                     <td class="col-dept"><?= htmlspecialchars($major['department']) ?></td>
                                     <td class="col-status">
-                                        <span class="status-badge status-<?= $major['status'] ?>">
-                                            <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-                                                <circle cx="12" cy="12" r="3" />
-                                            </svg>
-                                            <?= $major['status_label'] ?>
-                                        </span>
+                                        <form method="POST" style="display:inline-block;">
+                                            <input type="hidden" name="_row_id" value="<?= $major['id'] ?>" />
+                                            <select name="status[<?= $major['id'] ?>]" class="status-select" onchange="updateStatusSelect(this)">
+                                                <option value="active" <?= $major['status'] === 'active' ? 'selected' : '' ?>>Hoạt động</option>
+                                                <option value="inactive" <?= $major['status'] === 'inactive' ? 'selected' : '' ?>>Không hoạt động</option>
+                                            </select>
+                                        </form>
                                     </td>
                                     <td class="col-action">
                                         <div class="action-group">
@@ -141,9 +160,35 @@
     .pagination-btn { display:inline-flex; align-items:center; justify-content:center; min-width:32px; height:32px; border:1px solid #e5e7eb; border-radius:6px; background:#fff; color:#6b7280; font-weight:600; text-decoration:none; }
     .pagination-btn.active { background:linear-gradient(180deg,#0f2a5a 0%,#0b1f45 100%); color:#fff; border-color:#0f2a5a; }
     @media (max-width:768px) { .data-table { min-width:900px; } }
+
+    /* Status select in table (higher specificity + !important to override other rules) */
+    .data-table .status-select { padding:6px 12px 6px 8px !important; border-radius:12px !important; border:1px solid #e5e7eb !important; background:#f9fafb !important; font-size:13px !important; color:#0f2a5a !important; appearance:none !important; -webkit-appearance:none !important; font-weight:700 !important; padding-right:36px !important; height:36px !important; line-height:20px !important; box-shadow: inset 0 0 0 1px rgba(0,0,0,0.00) !important; }
+    .data-table .status-select option { color:#0f2a5a !important; }
+    /* keep the arrow visible on gradients by layering the SVG arrow as background-image */
+    .data-table .status-select.active { background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24'%3E%3Cpath d='M6 9l6 6 6-6' stroke='%23065546' stroke-width='2' stroke-linecap='round' stroke-linejoin='round' fill='none'/%3E%3C/svg%3E") no-repeat right 10px center, linear-gradient(90deg, #bbf7d0, #34d399) !important; background-size:12px, auto !important; color:#065f46 !important; border-color:#34d399 !important; font-weight:700 !important; }
+    .data-table .status-select.inactive { background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24'%3E%3Cpath d='M6 9l6 6 6-6' stroke='%237f1d1d' stroke-width='2' stroke-linecap='round' stroke-linejoin='round' fill='none'/%3E%3C/svg%3E") no-repeat right 10px center, linear-gradient(90deg, #fed7d7, #f87171) !important; background-size:12px, auto !important; color:#7f1d1d !important; border-color:#f87171 !important; font-weight:700 !important; }
+    .data-table .status-select:focus { outline: none !important; box-shadow: 0 0 0 3px rgba(52,211,153,0.12) !important; }
+
+    /* Removed status pill — select now shows status color directly */
 </style>
 
 <script>
     function editMajor(id) { alert('Chỉnh sửa ngành #' + id); }
     function deleteMajor(id) { if (confirm('Bạn có chắc chắn muốn xóa ngành này?')) { alert('Xóa ngành #' + id); } }
+
+    function updateStatusSelect(el){
+        var val = el.value;
+        el.classList.remove('active','inactive');
+        el.classList.add(val === 'active' ? 'active' : 'inactive');
+
+        // submit the form after updating style
+        el.form.submit();
+    }
+
+    document.addEventListener('DOMContentLoaded', function(){
+        document.querySelectorAll('.status-select').forEach(function(s){
+            var val = s.value;
+            s.classList.add(val === 'active' ? 'active' : 'inactive');
+        });
+    });
 </script>

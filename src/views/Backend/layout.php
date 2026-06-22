@@ -359,6 +359,25 @@
             margin-bottom: 8px;
         }
 
+        .brand-image {
+            height: 50px;
+            width: auto;
+            display: inline-block;
+            border-radius: 6px;
+        }
+
+        /* Reset any extra spacing that might push the logo down */
+        .brand-text, .brand-title {
+            padding: 0;
+            margin: 0;
+            height: auto;
+            min-height: 0;
+            line-height: 1;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
         .brand-badge {
             width: 30px;
             height: 30px;

@@ -3,10 +3,7 @@
     <div class="brand">
         <div class="brand-text">
             <div class="brand-title" style="font-weight:700;">
-                <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <circle cx="12" cy="12" r="3" stroke-width="2" />
-                    <path d="M19.4 15a1 1 0 0 0 .2 1.1l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1 1 0 0 0-1.1-.2 1 1 0 0 0-.6.9V20a2 2 0 1 1-4 0v-.1a1 1 0 0 0-.6-.9 1 1 0 0 0-1.1.2l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1 1 0 0 0 .2-1.1 1 1 0 0 0-.9-.6H4a2 2 0 1 1 0-4h.1a1 1 0 0 0 .9-.6 1 1 0 0 0-.2-1.1l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1 1 0 0 0 1.1.2 1 1 0 0 0 .6-.9V4a2 2 0 1 1 4 0v.1a1 1 0 0 0 .6.9 1 1 0 0 0 1.1-.2l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1 1 0 0 0-.2 1.1 1 1 0 0 0 .9.6H20a2 2 0 1 1 0 4h-.1a1 1 0 0 0-.5.6Z" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
-                </svg>
+                <img src="/KhoaLuan/public/images/logo2.png" class="brand-image" alt="Logo" />
                 ADMIN
             </div>
         </div>
@@ -154,7 +151,7 @@
                 </svg>
             </a>
             <div class="nav-sub">
-                <a href="#"><span class="nav-text">Tạo tiêu chí điểm</span></a>
+                <a href="?page=setup_criteria"><span class="nav-text">Thiết lập tiêu chí</span></a>
                 <a href="#"><span class="nav-text">Danh sách tiêu chí điểm</span></a>
             </div>
         </div>

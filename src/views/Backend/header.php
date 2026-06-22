@@ -5,9 +5,7 @@
                 <path d="M4 7h16M4 12h16M4 17h16" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
             </svg>
         </button>
-        <a href="#" aria-label="Tải lại trang quản trị" onclick="location.reload(); return false;">
-            <img class="admin-logo" src="/KhoaLuan/public/images/logo1.png" alt="Logo" />
-        </a>
+        <!-- header logo removed per design: logo now shown in sidebar -->
     </div>
 
     <div class="header-search">

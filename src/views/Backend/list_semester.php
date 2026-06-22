@@ -39,6 +39,21 @@
         ]
     ];
 
+    if (session_status() === PHP_SESSION_NONE) session_start();
+    if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['status']) && is_array($_POST['status'])) {
+        foreach ($_POST['status'] as $id => $newStatus) {
+            foreach ($semesters as &$s) {
+                if ($s['id'] == $id) {
+                    $s['status'] = $newStatus;
+                    $s['status_label'] = $newStatus === 'active' ? 'Đang diễn ra' : ($newStatus === 'upcoming' ? 'Sắp tới' : 'Đã hoàn thành');
+                }
+            }
+            unset($s);
+        }
+        $_SESSION['message'] = 'Cập nhật trạng thái thành công';
+        $_SESSION['message_type'] = 'success';
+    }
+
     $current_page = isset($_GET['page_num']) ? (int)$_GET['page_num'] : 1;
     $total_items = count($semesters);
     $items_per_page = 10;
@@ -91,12 +106,14 @@
                                         <?= htmlspecialchars($semester['academic_year']) ?>
                                     </td>
                                     <td class="col-status">
-                                        <span class="status-badge status-<?= $semester['status'] ?>">
-                                            <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-                                                <circle cx="12" cy="12" r="3" />
-                                            </svg>
-                                            <?= $semester['status_label'] ?>
-                                        </span>
+                                        <form method="POST" style="display:inline-block;">
+                                            <input type="hidden" name="_row_id" value="<?= $semester['id'] ?>" />
+                                            <select name="status[<?= $semester['id'] ?>]" class="status-select" onchange="updateStatusSelect(this)">
+                                                <option value="active" <?= $semester['status'] === 'active' ? 'selected' : '' ?>>Đang diễn ra</option>
+                                                <option value="upcoming" <?= $semester['status'] === 'upcoming' ? 'selected' : '' ?>>Sắp tới</option>
+                                                <option value="completed" <?= $semester['status'] === 'completed' ? 'selected' : '' ?>>Đã hoàn thành</option>
+                                            </select>
+                                        </form>
                                     </td>
                                     <td class="col-action">
                                         <div class="action-group">
@@ -300,6 +317,14 @@
     .data-table tbody tr:hover {
         background-color: #f0f1f3;
     }
+
+    /* Status select in table (higher specificity + !important to override other rules) */
+    .data-table .status-select { padding:6px 12px 6px 8px !important; border-radius:12px !important; border:1px solid #e5e7eb !important; background:#f9fafb !important; font-size:13px !important; color:#0f2a5a !important; appearance:none !important; -webkit-appearance:none !important; font-weight:700 !important; padding-right:36px !important; height:36px !important; line-height:20px !important; box-shadow: inset 0 0 0 1px rgba(0,0,0,0.00) !important; }
+    .data-table .status-select option { color:#0f2a5a !important; }
+    .data-table .status-select.active { background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24'%3E%3Cpath d='M6 9l6 6 6-6' stroke='%23065546' stroke-width='2' stroke-linecap='round' stroke-linejoin='round' fill='none'/%3E%3C/svg%3E") no-repeat right 10px center, linear-gradient(90deg, #bbf7d0, #34d399) !important; background-size:12px, auto !important; color:#065f46 !important; border-color:#34d399 !important; font-weight:700 !important; }
+    .data-table .status-select.upcoming { background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24'%3E%3Cpath d='M6 9l6 6 6-6' stroke='%23613b52' stroke-width='2' stroke-linecap='round' stroke-linejoin='round' fill='none'/%3E%3C/svg%3E") no-repeat right 10px center, linear-gradient(90deg, #fde68a, #f59e0b) !important; background-size:12px, auto !important; color:#92400e !important; border-color:#f59e0b !important; font-weight:700 !important; }
+    .data-table .status-select.completed { background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24'%3E%3Cpath d='M6 9l6 6 6-6' stroke='%231e40af' stroke-width='2' stroke-linecap='round' stroke-linejoin='round' fill='none'/%3E%3C/svg%3E") no-repeat right 10px center, linear-gradient(90deg, #dbeafe, #bfdbfe) !important; background-size:12px, auto !important; color:#1e40af !important; border-color:#93c5fd !important; font-weight:700 !important; }
+    .data-table .status-select:focus { outline: none !important; box-shadow: 0 0 0 3px rgba(52,211,153,0.12) !important; }
 
     .data-table td {
         padding: 12px 14px;
@@ -515,6 +540,23 @@
 </style>
 
 <script>
+    function updateStatusSelect(el){
+        var val = el.value;
+        el.classList.remove('active','upcoming','completed');
+        el.classList.add(val);
+        el.style.fontWeight = '700';
+        var form = el.closest('form');
+        if(form) form.submit();
+    }
+
+    document.addEventListener('DOMContentLoaded', function(){
+        document.querySelectorAll('.status-select').forEach(function(s){
+            var val = s.value;
+            s.classList.add(val);
+            s.style.fontWeight = '700';
+        });
+    });
+
     function editSemester(id) {
         // TODO: Implement edit functionality
         console.log('Edit semester:', id);
