@@ -483,7 +483,7 @@
 
 <script>
     function editClass(id) {
-        console.log('Edit class:', id);
+        window.location.href = '?page=edit_class&id=' + id;
     }
 
     function deleteClass(id) {

@@ -507,7 +507,7 @@
 
 <script>
     function editActivity(id) {
-        console.log('Edit activity:', id);
+        window.location.href = '?page=edit_activity&id=' + id;
     }
 
     function deleteActivity(id) {

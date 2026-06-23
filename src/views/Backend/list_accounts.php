@@ -589,6 +589,6 @@
     document.getElementById('applyFilters').addEventListener('click', function(e){ e.preventDefault(); filterAccounts(); });
     document.getElementById('resetFilters').addEventListener('click', function(e){ e.preventDefault(); document.getElementById('filterRole').value=''; document.getElementById('filterStatus').value=''; document.getElementById('filterGender').value=''; filterAccounts(); });
 
-    function editAccount(id){ alert('Chỉnh sửa tài khoản #' + id); }
+    function editAccount(id){ window.location.href = '?page=edit_account&id=' + id; }
     function deleteAccount(id){ if(confirm('Bạn có chắc chắn muốn xóa tài khoản này?')) alert('Xóa tài khoản #' + id); }
 </script>

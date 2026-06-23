@@ -26,22 +26,6 @@
                         <?php endif; ?>
                     </div>
 
-                    <!-- Trạng thái -->
-                    <div class="form-field">
-                        <label class="field-label" for="status">
-                            Trạng thái <span class="required">*</span>
-                        </label>
-                        <select id="status" name="status" class="field-input" required>
-                            <option value="">-- Chọn trạng thái --</option>
-                            <option value="upcoming" <?= (isset($formData['status']) && $formData['status'] === 'upcoming') ? 'selected' : '' ?>>Sắp tới</option>
-                            <option value="active" <?= (isset($formData['status']) && $formData['status'] === 'active') ? 'selected' : '' ?>>Đang diễn ra</option>
-                            <option value="completed" <?= (isset($formData['status']) && $formData['status'] === 'completed') ? 'selected' : '' ?>>Đã hoàn thành</option>
-                        </select>
-                        <?php if(isset($errors['status'])): ?>
-                            <span class="field-error"><?= $errors['status'] ?></span>
-                        <?php endif; ?>
-                    </div>
-
                     <!-- Ngày bắt đầu -->
                     <div class="form-field">
                         <label class="field-label" for="start_date">
@@ -58,6 +42,22 @@
                         <small class="field-hint">Định dạng: dd/mm/yyyy</small>
                         <?php if(isset($errors['start_date'])): ?>
                             <span class="field-error"><?= $errors['start_date'] ?></span>
+                        <?php endif; ?>
+                    </div>
+
+                    <!-- Trạng thái -->
+                    <div class="form-field">
+                        <label class="field-label" for="status">
+                            Trạng thái <span class="required">*</span>
+                        </label>
+                        <select id="status" name="status" class="field-input" required>
+                            <option value="">-- Chọn trạng thái --</option>
+                            <option value="upcoming" <?= (isset($formData['status']) && $formData['status'] === 'upcoming') ? 'selected' : '' ?>>Sắp tới</option>
+                            <option value="active" <?= (isset($formData['status']) && $formData['status'] === 'active') ? 'selected' : '' ?>>Đang diễn ra</option>
+                            <option value="completed" <?= (isset($formData['status']) && $formData['status'] === 'completed') ? 'selected' : '' ?>>Đã hoàn thành</option>
+                        </select>
+                        <?php if(isset($errors['status'])): ?>
+                            <span class="field-error"><?= $errors['status'] ?></span>
                         <?php endif; ?>
                     </div>
 

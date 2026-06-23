@@ -506,12 +506,12 @@
         }
     }
 
-    /* Status select in table (higher specificity + !important to override other rules) */
-    .data-table .status-select { padding:6px 12px 6px 8px !important; border-radius:12px !important; border:1px solid #e5e7eb !important; background:#f9fafb !important; font-size:13px !important; color:#0f2a5a !important; appearance:none !important; -webkit-appearance:none !important; font-weight:700 !important; padding-right:36px !important; height:36px !important; line-height:20px !important; box-shadow: inset 0 0 0 1px rgba(0,0,0,0.00) !important; }
-    .data-table .status-select option { color:#0f2a5a !important; }
-    .data-table .status-select.active { background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24'%3E%3Cpath d='M6 9l6 6 6-6' stroke='%23065546' stroke-width='2' stroke-linecap='round' stroke-linejoin='round' fill='none'/%3E%3C/svg%3E") no-repeat right 10px center, linear-gradient(90deg, #bbf7d0, #34d399) !important; background-size:12px, auto !important; color:#065f46 !important; border-color:#34d399 !important; font-weight:700 !important; }
-    .data-table .status-select.completed { background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24'%3E%3Cpath d='M6 9l6 6 6-6' stroke='%231e40af' stroke-width='2' stroke-linecap='round' stroke-linejoin='round' fill='none'/%3E%3C/svg%3E") no-repeat right 10px center, linear-gradient(90deg, #dbeafe, #bfdbfe) !important; background-size:12px, auto !important; color:#1e40af !important; border-color:#93c5fd !important; font-weight:700 !important; }
-    .data-table .status-select:focus { outline: none !important; box-shadow: 0 0 0 3px rgba(52,211,153,0.12) !important; }
+    /* Status select styling (matched to list_activity) */
+    .data-table .status-select { padding:6px 12px 6px 8px; border-radius:12px; border:1px solid #e5e7eb; background:#f9fafb; font-size:13px; color:#0f2a5a; appearance:none; -webkit-appearance:none; font-weight:700; padding-right:36px; background-position: right 10px center; background-repeat: no-repeat; }
+    .data-table .status-select option { color:#0f2a5a; }
+    .data-table .status-select.active { background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24'%3E%3Cpath d='M6 9l6 6 6-6' stroke='%23065546' stroke-width='2' stroke-linecap='round' stroke-linejoin='round' fill='none'/%3E%3C/svg%3E") no-repeat right 10px center, linear-gradient(90deg, #bbf7d0, #34d399); background-size:12px, auto; color:#065f46; border-color:#34d399; font-weight:700; }
+    .data-table .status-select.completed { background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24'%3E%3Cpath d='M6 9l6 6 6-6' stroke='%231e40af' stroke-width='2' stroke-linecap='round' stroke-linejoin='round' fill='none'/%3E%3C/svg%3E") no-repeat right 10px center, linear-gradient(90deg, #dbeafe, #bfdbfe); background-size:12px, auto; color:#1e40af; border-color:#93c5fd; font-weight:700; }
+    .data-table .status-select:focus { outline: none; box-shadow: 0 0 0 3px rgba(52,211,153,0.12); }
 
     @media (max-width: 768px) {
         .table-wrapper {
@@ -554,8 +554,7 @@
     });
 
     function editYear(id) {
-        // Implement edit functionality
-        alert('Chỉnh sửa niên khóa #' + id);
+        window.location.href = '?page=edit_year&id=' + id;
     }
 
     function deleteYear(id) {
