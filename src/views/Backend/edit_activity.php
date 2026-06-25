@@ -210,6 +210,7 @@
     .field-label { font-size:12px; font-weight:700; color:#0f2a5a }
     .field-input { padding:10px; border-radius:10px; border:1px solid #e5e7eb; background:#f9fafb; font-size:13px; color:#1f2937 }
     .field-input:focus { outline:none; border-color:#0f2a5a; box-shadow:0 0 0 3px rgba(15,42,90,0.08); background:#fff }
+    .field-hint { font-size: 11px; color: #9ca3af; display: block; }
     .form-actions { display:flex; justify-content:flex-end; gap:12px; padding-top:16px; border-top:1px solid #e8ecf3 }
     .action-btn { padding:8px 20px; border-radius:10px; border:1px solid #e5e7eb; background:#fff; color:#0f2a5a; font-size:13px; font-weight:700; cursor:pointer; display:inline-flex; align-items:center; gap:6px }
     .action-btn:hover { background:#f3f4f6; border-color:#d1d5db }

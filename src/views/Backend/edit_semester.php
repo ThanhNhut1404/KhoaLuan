@@ -35,6 +35,7 @@
                             </option>
                         <?php endforeach; ?>
                     </select>
+                    <small class="field-hint">&nbsp;</small>
                     <?php if(isset($errors['academic_year'])): ?><span class="field-error"><?= $errors['academic_year'] ?></span><?php endif; ?>
                 </div>
 
@@ -62,8 +63,7 @@
                     <?php if(isset($errors['end_date'])): ?><span class="field-error"><?= $errors['end_date'] ?></span><?php endif; ?>
                 </div>
 
-                <!-- Placeholder untuk giữ grid layout -->
-                <div></div>
+                
 
                 <!-- Trạng thái -->
                 <div class="form-field">
@@ -74,6 +74,7 @@
                         <option value="active" <?= (isset($formData['status']) && $formData['status'] === 'active') ? 'selected' : '' ?>>Đang diễn ra</option>
                         <option value="completed" <?= (isset($formData['status']) && $formData['status'] === 'completed') ? 'selected' : '' ?>>Đã hoàn thành</option>
                     </select>
+                    <small class="field-hint">&nbsp;</small>
                     <?php if(isset($errors['status'])): ?><span class="field-error"><?= $errors['status'] ?></span><?php endif; ?>
                 </div>
             </div>
@@ -126,11 +127,10 @@
         grid-template-columns: repeat(2, minmax(0, 1fr));
         gap: 20px;
         margin-bottom: 24px;
+        align-items: start;
     }
 
     .form-field { display: grid; gap: 6px; }
-    /* Use explicit label margin to precisely control spacing between label and input */
-    .form-field .field-label { margin-bottom: 6px; }
 
     .field-label { font-size: 12px; font-weight: 700; color: #0f2a5a; }
 

@@ -111,7 +111,7 @@
                         </thead>
                         <tbody>
                             <?php foreach ($accounts as $index => $a): ?>
-                                <tr data-role="<?= htmlspecialchars($a['role']) ?>" data-status="<?= htmlspecialchars($a['status']) ?>" data-gender="<?= htmlspecialchars($a['gender']) ?>">
+                                <tr data-id="<?= $a['id'] ?>" data-role="<?= htmlspecialchars($a['role']) ?>" data-status="<?= htmlspecialchars($a['status']) ?>" data-gender="<?= htmlspecialchars($a['gender']) ?>">
                                     <td class="col-stt">0<?= $index + 1 ?></td>
                                     <td class="col-fullname"><?= htmlspecialchars($a['full_name']) ?></td>
                                     <td class="col-username"><?= htmlspecialchars($a['username']) ?></td>
@@ -131,7 +131,7 @@
                                     <td class="col-action">
                                         <div class="action-group">
                                             <button class="action-btn edit" title="Chỉnh sửa" onclick="editAccount(<?= $a['id'] ?>)">✎</button>
-                                            <button class="action-btn delete" title="Xóa" onclick="deleteAccount(<?= $a['id'] ?>)">🗑</button>
+                                            <button class="action-btn delete" title="Xóa" onclick="showDeleteConfirm(<?= $a['id'] ?>, 'tài khoản')">🗑</button>
                                         </div>
                                     </td>
                                 </tr>
@@ -590,5 +590,8 @@
     document.getElementById('resetFilters').addEventListener('click', function(e){ e.preventDefault(); document.getElementById('filterRole').value=''; document.getElementById('filterStatus').value=''; document.getElementById('filterGender').value=''; filterAccounts(); });
 
     function editAccount(id){ window.location.href = '?page=edit_account&id=' + id; }
-    function deleteAccount(id){ if(confirm('Bạn có chắc chắn muốn xóa tài khoản này?')) alert('Xóa tài khoản #' + id); }
+
+    
 </script>
+
+<?php include __DIR__ . '/confirm/confirm_delete_modal.php'; ?>

@@ -21,6 +21,7 @@
                             value="<?= isset($formData['year_name']) ? htmlspecialchars($formData['year_name']) : '' ?>"
                             required 
                         />
+                        <small class="field-hint">&nbsp;</small>
                         <?php if(isset($errors['year_name'])): ?>
                             <span class="field-error"><?= $errors['year_name'] ?></span>
                         <?php endif; ?>
@@ -167,6 +168,7 @@
         grid-template-columns: repeat(2, minmax(0, 1fr));
         gap: 20px;
         margin-bottom: 24px;
+        align-items: start;
     }
 
     .form-field {
@@ -189,9 +191,7 @@
     }
 
     .field-input {
-        display: flex;
-        align-items: center;
-        padding: 8px 10px;
+        padding: 10px;
         border-radius: 10px;
         border: 1px solid #e5e7eb;
         background: #f9fafb;
@@ -199,6 +199,8 @@
         color: #1f2937;
         font-family: inherit;
         transition: border-color 0.2s, box-shadow 0.2s;
+        height: 40px;
+        box-sizing: border-box;
     }
 
     .field-input:focus {

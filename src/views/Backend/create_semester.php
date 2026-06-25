@@ -95,8 +95,7 @@
                         <?php endif; ?>
                     </div>
 
-                    <!-- Placeholder untuk giữ grid layout -->
-                    <div></div>
+                    
 
                     <!-- Trạng thái -->
                     <div class="form-field">
@@ -201,14 +200,13 @@
         grid-template-columns: repeat(2, minmax(0, 1fr));
         gap: 20px;
         margin-bottom: 24px;
+        align-items: start; /* ensure fields align to top */
     }
 
     .form-field {
         display: grid;
         gap: 6px;
     }
-    /* Ensure consistent spacing between label and input across all fields */
-    .form-field .field-label { margin-bottom: 6px; }
 
     .field-label {
         font-size: 12px;
