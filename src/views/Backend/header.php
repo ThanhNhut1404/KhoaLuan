@@ -1,3 +1,9 @@
+<?php
+$adminSession = $_SESSION['admin'] ?? [];
+$adminName = $adminSession['TEN_DANG_NHAP'] ?? 'Admin';
+$adminRole = $adminSession['TEN_VAI_TRO'] ?? '';
+?>
+
 <div class="header">
     <div style="display:flex; align-items:center; gap:12px;">
         <button id="sidebarToggle" class="icon-btn" type="button" aria-label="Thu gọn menu">
@@ -32,7 +38,7 @@
                         <path d="M4 20c1.6-3 5-4 8-4s6.4 1 8 4" stroke="#ffffff" stroke-width="2" stroke-linecap="round"/>
                     </svg>
                 </span>
-                <span>Nguyễn Văn A</span>
+                <span><?= htmlspecialchars($adminName) ?><?= $adminRole !== '' ? ' - ' . htmlspecialchars($adminRole) : '' ?></span>
                 <svg class="admin-user-caret" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
                     <path d="M6 9l6 6 6-6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
                 </svg>
@@ -53,7 +59,7 @@
                     Đổi mật khẩu
                 </a>
                 <div class="menu-divider" role="separator" aria-hidden="true"></div>
-                <a href="#" role="menuitem">
+                <a href="/KhoaLuan/public/admin.php?page=logout" role="menuitem">
                     <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                         <path d="M10 17l-1 1a2 2 0 0 1-2.83 0L4 15.83a2 2 0 0 1 0-2.83L6.17 11a2 2 0 0 1 2.83 0l1 1" stroke-width="2" stroke-linecap="round"/>
                         <path d="M7 14h10" stroke-width="2" stroke-linecap="round"/>

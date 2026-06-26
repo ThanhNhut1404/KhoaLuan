@@ -11,6 +11,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $action === 'login') {
 	exit;
 }
 
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && $action === 'change_password') {
+	$controller->handleChangePassword();
+	exit;
+}
+
 if ($action === 'login') {
 	$controller->login();
 } elseif ($action === 'profile') {

@@ -2,7 +2,15 @@
 // Giao diện đăng nhập admin (hai cột, header, responsive)
 $title = 'Đăng nhập quản trị';
 $error = $error ?? '';
+$success = $success ?? '';
+$redirectToAdmin = $redirectToAdmin ?? false;
 ?>
+
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<title><?= htmlspecialchars($title) ?></title>
 
 <style>
     @import url('https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap');
@@ -237,7 +245,14 @@ $error = $error ?? '';
         letter-spacing:1px;
         user-select:none;
     }
-    .error { color:#b91c1c; background:#fff1f2; padding:8px 10px; border-radius:10px; border:1px solid #fecaca; margin-bottom:12px; }
+    .login-message {
+        font-size: 13px;
+        font-weight: 800;
+        text-align: center;
+        margin-bottom: 2px;
+    }
+    .login-message.error { color:#b91c1c; }
+    .login-message.success { color:#15803d; }
     .modal-overlay {
         position: fixed;
         inset: 0;
@@ -330,6 +345,8 @@ $error = $error ?? '';
         .welcome-title { font-size:36px; }
     }
 </style>
+</head>
+<body>
 
 <div class="login-wrapper">
     <header class="login-header">
@@ -379,11 +396,7 @@ $error = $error ?? '';
             <img class="login-logo" src="/KhoaLuan/public/images/logo1.png" alt="Logo" />
             <h3>Đăng nhập quản trị</h3>
 
-            <?php if (!empty($error)): ?>
-                <div class="error"><?= htmlspecialchars($error) ?></div>
-            <?php endif; ?>
-
-            <form method="post" action="#">
+            <form method="post" action="/KhoaLuan/public/admin.php?page=login">
                 <div class="form-row">
                     <label class="form-label" for="admin-user">Tài khoản quản trị</label>
                     <input id="admin-user" name="admin_user" class="form-control" type="text" placeholder="Nhập tài khoản" required autofocus />
@@ -428,6 +441,11 @@ $error = $error ?? '';
                 </div>
 
                 <div class="form-actions">
+                    <?php if (!empty($success)): ?>
+                        <div class="login-message success"><?= htmlspecialchars($success) ?></div>
+                    <?php elseif (!empty($error)): ?>
+                        <div class="login-message error"><?= htmlspecialchars($error) ?></div>
+                    <?php endif; ?>
                     <button class="btn-login" type="submit">Đăng nhập</button>
                     <div style="font-size:13px; color:var(--muted); text-align:center;">Chưa có tài khoản? <a href="#" style="color:var(--brand); text-decoration:none; font-weight:700;">Liên hệ</a></div>
                 </div>
@@ -474,4 +492,12 @@ $error = $error ?? '';
             closeForgotModal();
         }
     });
+
+    <?php if ($redirectToAdmin): ?>
+    window.setTimeout(function() {
+        window.location.href = '/KhoaLuan/public/admin.php';
+    }, 2000);
+    <?php endif; ?>
 </script>
+</body>
+</html>

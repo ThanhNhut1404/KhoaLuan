@@ -1,13 +1,99 @@
 <?php
-    // Get academic years from session or database
-    $academic_years = $academic_years ?? [
-        ['id' => 1, 'name' => '2023 - 2024'],
-        ['id' => 2, 'name' => '2024 - 2025'],
-        ['id' => 3, 'name' => '2022 - 2023']
-    ];
+    use KhoaLuan\QLDRL\Config\Database;
+
+    if (session_status() === PHP_SESSION_NONE) {
+        session_start();
+    }
 
     $formData = $formData ?? [];
     $errors = $errors ?? [];
+    $academic_years = [];
+
+    try {
+        $db = Database::getConnection();
+
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $formData = [
+                'academic_year' => trim($_POST['academic_year'] ?? ''),
+                'semester_name' => trim($_POST['semester_name'] ?? ''),
+                'start_date' => trim($_POST['start_date'] ?? ''),
+                'end_date' => trim($_POST['end_date'] ?? ''),
+                'status' => trim($_POST['status'] ?? ''),
+            ];
+
+            if ($formData['academic_year'] === '') {
+                $errors['academic_year'] = 'Vui long chon nien khoa';
+            }
+
+            if ($formData['semester_name'] === '') {
+                $errors['semester_name'] = 'Vui long nhap ten hoc ky';
+            }
+
+            if ($formData['start_date'] === '') {
+                $errors['start_date'] = 'Vui long chon ngay bat dau';
+            }
+
+            if ($formData['end_date'] === '') {
+                $errors['end_date'] = 'Vui long chon ngay ket thuc';
+            }
+
+            if ($formData['start_date'] !== '' && $formData['end_date'] !== '' && $formData['start_date'] >= $formData['end_date']) {
+                $errors['end_date'] = 'Ngay ket thuc phai sau ngay bat dau';
+            }
+
+            if (!in_array($formData['status'], ['upcoming', 'active', 'completed'], true)) {
+                $errors['status'] = 'Vui long chon trang thai';
+            }
+
+            if (empty($errors)) {
+                $db->beginTransaction();
+
+                $nextBangDrlId = (int) $db->query('SELECT COALESCE(MAX(MA_BANG_DRL), 0) + 1 FROM bang_drl')->fetchColumn();
+                $insertBangDrl = $db->prepare(
+                    'INSERT INTO bang_drl (MA_BANG_DRL, TONG_DIEM, XEP_LOAI, TRANG_THAI_DRL, NGAY_TAO_TB, GHI_CHU)
+                     VALUES (:id, NULL, NULL, NULL, :created_at, NULL)'
+                );
+                $insertBangDrl->execute([
+                    ':id' => $nextBangDrlId,
+                    ':created_at' => date('Y-m-d'),
+                ]);
+
+                $nextSemesterId = (int) $db->query('SELECT COALESCE(MAX(MA_HOC_KY), 0) + 1 FROM hoc_ky')->fetchColumn();
+                $insertSemester = $db->prepare(
+                    'INSERT INTO hoc_ky (MA_HOC_KY, MA_NIEN_KHOA, MA_BANG_DRL, TEN_HOC_KY, THOI_GIAN_BDHK, THOI_GIAN_KTHK, TRANG_THAI_HK)
+                     VALUES (:semester_id, :year_id, :bang_drl_id, :name, :start_date, :end_date, :status)'
+                );
+                $insertSemester->execute([
+                    ':semester_id' => $nextSemesterId,
+                    ':year_id' => (int) $formData['academic_year'],
+                    ':bang_drl_id' => $nextBangDrlId,
+                    ':name' => $formData['semester_name'],
+                    ':start_date' => $formData['start_date'],
+                    ':end_date' => $formData['end_date'],
+                    ':status' => $formData['status'],
+                ]);
+
+                $db->commit();
+
+                $_SESSION['message'] = 'Tao hoc ky thanh cong';
+                $_SESSION['message_type'] = 'success';
+                echo '<script>window.location.href="?page=list_semester";</script>';
+                exit;
+            }
+        }
+
+        $academic_years = $db->query(
+            'SELECT MA_NIEN_KHOA AS id, TEN_NIEN_KHOA AS name
+             FROM nien_khoa
+             ORDER BY MA_NIEN_KHOA DESC'
+        )->fetchAll();
+    } catch (Throwable $exception) {
+        if (isset($db) && $db->inTransaction()) {
+            $db->rollBack();
+        }
+
+        $errors['database'] = $exception->getMessage();
+    }
 ?>
 
 <div class="create-semester-page">
@@ -18,6 +104,12 @@
 
         <div class="panel-body">
             <form id="createSemesterForm" method="POST" action="?page=create_semester">
+                <?php if(isset($errors['database'])): ?>
+                    <div class="alert alert-error">
+                        <?= htmlspecialchars($errors['database']) ?>
+                    </div>
+                <?php endif; ?>
+
                 <div class="form-grid">
                     <!-- Niên khóa -->
                     <div class="form-field">
