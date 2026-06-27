@@ -1,3 +1,17 @@
+<?php
+    $formData = $formData ?? [];
+    $errors = $errors ?? [];
+    $statusOptions = $statusOptions ?? [];
+    if (empty($statusOptions)) {
+        $statusOptions = [
+            ['value' => 'Sắp diễn ra', 'label' => 'Sắp diễn ra'],
+            ['value' => 'Đang diễn ra', 'label' => 'Đang diễn ra'],
+            ['value' => 'Đã kết thúc', 'label' => 'Đã kết thúc'],
+        ];
+    }
+    $formData['status'] = $formData['status'] ?? $statusOptions[0]['value'];
+?>
+
 <div class="create-year-page">
     <div class="page-panel">
         <div class="panel-header">
@@ -16,14 +30,14 @@
                             type="text" 
                             id="year_name" 
                             name="year_name" 
-                            class="field-input" 
+                            class="field-input<?= isset($errors['year_name']) ? ' has-error' : '' ?>" 
                             placeholder="Ví dụ: 2024 - 2025"
-                            value="<?= isset($formData['year_name']) ? htmlspecialchars($formData['year_name']) : '' ?>"
+                            value="<?= htmlspecialchars($formData['year_name'] ?? '') ?>"
                             required 
                         />
                         <small class="field-hint">&nbsp;</small>
                         <?php if(isset($errors['year_name'])): ?>
-                            <span class="field-error"><?= $errors['year_name'] ?></span>
+                            <span class="field-error"><?= htmlspecialchars($errors['year_name']) ?></span>
                         <?php endif; ?>
                     </div>
 
@@ -36,13 +50,13 @@
                             type="date" 
                             id="start_date" 
                             name="start_date" 
-                            class="field-input" 
-                            value="<?= isset($formData['start_date']) ? htmlspecialchars($formData['start_date']) : '' ?>"
+                            class="field-input<?= isset($errors['start_date']) ? ' has-error' : '' ?>" 
+                            value="<?= htmlspecialchars($formData['start_date'] ?? '') ?>"
                             required 
                         />
                         <small class="field-hint">Định dạng: dd/mm/yyyy</small>
                         <?php if(isset($errors['start_date'])): ?>
-                            <span class="field-error"><?= $errors['start_date'] ?></span>
+                            <span class="field-error"><?= htmlspecialchars($errors['start_date']) ?></span>
                         <?php endif; ?>
                     </div>
 
@@ -51,14 +65,16 @@
                         <label class="field-label" for="status">
                             Trạng thái <span class="required">*</span>
                         </label>
-                        <select id="status" name="status" class="field-input" required>
-                            <option value="">-- Chọn trạng thái --</option>
-                            <option value="upcoming" <?= (isset($formData['status']) && $formData['status'] === 'upcoming') ? 'selected' : '' ?>>Sắp tới</option>
-                            <option value="active" <?= (isset($formData['status']) && $formData['status'] === 'active') ? 'selected' : '' ?>>Đang diễn ra</option>
-                            <option value="completed" <?= (isset($formData['status']) && $formData['status'] === 'completed') ? 'selected' : '' ?>>Đã hoàn thành</option>
+                        <select id="status" name="status" class="field-input<?= isset($errors['status']) ? ' has-error' : '' ?>" required>
+                            <?php foreach ($statusOptions as $option): ?>
+                                <option value="<?= htmlspecialchars($option['value']) ?>" <?= (($formData['status'] ?? '') === $option['value']) ? 'selected' : '' ?>>
+                                    <?= htmlspecialchars($option['label']) ?>
+                                </option>
+                            <?php endforeach; ?>
                         </select>
+                        <small class="field-hint">&nbsp;</small>
                         <?php if(isset($errors['status'])): ?>
-                            <span class="field-error"><?= $errors['status'] ?></span>
+                            <span class="field-error"><?= htmlspecialchars($errors['status']) ?></span>
                         <?php endif; ?>
                     </div>
 
@@ -71,13 +87,13 @@
                             type="date" 
                             id="end_date" 
                             name="end_date" 
-                            class="field-input" 
-                            value="<?= isset($formData['end_date']) ? htmlspecialchars($formData['end_date']) : '' ?>"
+                            class="field-input<?= isset($errors['end_date']) ? ' has-error' : '' ?>" 
+                            value="<?= htmlspecialchars($formData['end_date'] ?? '') ?>"
                             required 
                         />
                         <small class="field-hint">Định dạng: dd/mm/yyyy</small>
                         <?php if(isset($errors['end_date'])): ?>
-                            <span class="field-error"><?= $errors['end_date'] ?></span>
+                            <span class="field-error"><?= htmlspecialchars($errors['end_date']) ?></span>
                         <?php endif; ?>
                     </div>
                 </div>
@@ -91,13 +107,6 @@
                         Tạo niên khóa
                     </button>
                 </div>
-
-                <?php if(isset($_SESSION['message'])): ?>
-                    <div class="alert alert-<?= $_SESSION['message_type'] ?? 'info' ?>">
-                        <?= $_SESSION['message'] ?>
-                    </div>
-                    <?php unset($_SESSION['message'], $_SESSION['message_type']); ?>
-                <?php endif; ?>
             </form>
         </div>
     </div>
@@ -210,6 +219,11 @@
         background: #ffffff;
     }
 
+    .field-input.has-error {
+        border-color: #dc2626;
+        background: #fff7f7;
+    }
+
     select.field-input {
         cursor: pointer;
         appearance: none;
@@ -274,32 +288,6 @@
         border-color: #0a1838;
     }
 
-    .alert {
-        margin-top: 16px;
-        padding: 12px 16px;
-        border-radius: 8px;
-        font-size: 13px;
-        border: 1px solid;
-    }
-
-    .alert-success {
-        background: #d1fae5;
-        color: #065f46;
-        border-color: #6ee7b7;
-    }
-
-    .alert-error {
-        background: #fee2e2;
-        color: #991b1b;
-        border-color: #fca5a5;
-    }
-
-    .alert-info {
-        background: #dbeafe;
-        color: #1e3a8a;
-        border-color: #93c5fd;
-    }
-
     @media (max-width: 768px) {
         .form-grid {
             grid-template-columns: 1fr;
@@ -316,16 +304,3 @@
         }
     }
 </style>
-
-<script>
-    document.getElementById('createYearForm')?.addEventListener('submit', function(e) {
-        const startDate = new Date(document.getElementById('start_date').value);
-        const endDate = new Date(document.getElementById('end_date').value);
-
-        if (startDate >= endDate) {
-            e.preventDefault();
-            alert('Ngày bắt đầu phải trước ngày kết thúc!');
-            return false;
-        }
-    });
-</script>

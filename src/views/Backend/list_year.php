@@ -1,54 +1,27 @@
 <?php
-    // Sample data - replace with actual database query
-    $years = $years ?? [
-        [
-            'id' => 1,
-            'name' => '2023 - 2024',
-            'start_date' => '05/09/2023',
-            'end_date' => '30/06/2024',
-            'semesters' => 2,
-            'status' => 'completed',
-            'status_label' => 'Đã hoàn thành'
-        ],
-        [
-            'id' => 2,
-            'name' => '2024 - 2025',
-            'start_date' => '05/09/2024',
-            'end_date' => '30/06/2025',
-            'semesters' => 2,
-            'status' => 'active',
-            'status_label' => 'Đang hoạt động'
-        ],
-        [
-            'id' => 3,
-            'name' => '2022 - 2023',
-            'start_date' => '05/09/2022',
-            'end_date' => '30/06/2023',
-            'semesters' => 2,
-            'status' => 'completed',
-            'status_label' => 'Đã kết thúc'
-        ]
+    $years = $years ?? [];
+    $statusOptions = $statusOptions ?? [
+        ['value' => 'Sắp diễn ra', 'label' => 'Sắp diễn ra'],
+        ['value' => 'Đang hoạt động', 'label' => 'Đang hoạt động'],
+        ['value' => 'Đã hoàn thành', 'label' => 'Đã hoàn thành'],
+    ];
+    $pagination = $pagination ?? [
+        'current_page' => 1,
+        'total_items' => count($years),
+        'items_per_page' => 10,
+        'total_pages' => 1,
+        'from' => empty($years) ? 0 : 1,
+        'to' => count($years),
     ];
 
-    if (session_status() === PHP_SESSION_NONE) session_start();
-    if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['status']) && is_array($_POST['status'])) {
-        foreach ($_POST['status'] as $id => $newStatus) {
-            foreach ($years as &$y) {
-                if ($y['id'] == $id) {
-                    $y['status'] = $newStatus;
-                    $y['status_label'] = $newStatus === 'active' ? 'Đang hoạt động' : 'Đã hoàn thành';
-                }
-            }
-            unset($y);
-        }
-        $_SESSION['message'] = 'Cập nhật trạng thái thành công';
-        $_SESSION['message_type'] = 'success';
-    }
-
-    $current_page = isset($_GET['page_num']) ? (int)$_GET['page_num'] : 1;
-    $total_items = count($years);
-    $items_per_page = 3;
-    $total_pages = ceil($total_items / $items_per_page);
+    $statusClass = function (string $label): string {
+        return match ($label) {
+            'Sắp diễn ra' => 'upcoming',
+            'Đang hoạt động' => 'active',
+            'Đã hoàn thành' => 'completed',
+            default => 'unknown',
+        };
+    };
 ?>
 
 <div class="list-year-page">
@@ -65,8 +38,7 @@
                     <svg width="48" height="48" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                         <path d="M9 13h6M9 17h3M5 21h14a2 2 0 0 0 2-2V5a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
                     </svg>
-                    <h3>Chưa có niên khóa nào</h3>
-                    <p>Hãy tạo niên khóa đầu tiên để bắt đầu</p>
+                    <h3>Chưa có niên khóa nào.</h3>
                 </div>
             <?php else: ?>
                 <div class="table-wrapper">
@@ -83,37 +55,52 @@
                         </thead>
                         <tbody>
                             <?php foreach ($years as $index => $year): ?>
-                                <tr data-id="<?= $year['id'] ?>">
-                                    <td class="col-stt">
-                                        0<?= $index + 1 ?>
-                                    </td>
-                                    <td class="col-name">
-                                        <?= htmlspecialchars($year['name']) ?>
-                                    </td>
-                                    <td class="col-time">
-                                        <?= $year['start_date'] ?> - <?= $year['end_date'] ?>
-                                    </td>
-                                    <td class="col-semester">
-                                        <?= $year['semesters'] ?>
-                                    </td>
+                                <?php
+                                    $rowNumber = (($pagination['current_page'] - 1) * $pagination['items_per_page']) + $index + 1;
+                                    $currentStatus = (string) ($year['status'] ?? '');
+                                    $currentStatusLabel = $year['status_label'] ?? '--';
+                                    $currentStatusClass = $statusClass($currentStatusLabel);
+                                ?>
+                                <tr data-id="<?= (int) $year['id'] ?>">
+                                    <td class="col-stt"><?= str_pad((string) $rowNumber, 2, '0', STR_PAD_LEFT) ?></td>
+                                    <td class="col-name"><?= htmlspecialchars($year['name'] ?? '--') ?></td>
+                                    <td class="col-time"><?= htmlspecialchars($year['time'] ?? '--') ?></td>
+                                    <td class="col-semester"><?= ($year['semesters'] === null || $year['semesters'] === '') ? '--' : htmlspecialchars((string) $year['semesters']) ?></td>
                                     <td class="col-status">
-                                        <form method="POST" style="display:inline-block;">
-                                            <input type="hidden" name="_row_id" value="<?= $year['id'] ?>" />
-                                            <select name="status[<?= $year['id'] ?>]" class="status-select" onchange="updateStatusSelect(this)">
-                                                <option value="active" <?= $year['status'] === 'active' ? 'selected' : '' ?>>Đang hoạt động</option>
-                                                <option value="completed" <?= $year['status'] === 'completed' ? 'selected' : '' ?>>Đã hoàn thành</option>
+                                        <form method="POST" class="inline-form">
+                                            <input type="hidden" name="action" value="update_status" />
+                                            <input type="hidden" name="year_id" value="<?= (int) $year['id'] ?>" />
+                                            <select name="status" class="status-select <?= htmlspecialchars($currentStatusClass) ?>" onchange="this.form.submit()">
+                                                <?php if ($currentStatus === ''): ?>
+                                                    <option value="" selected disabled>--</option>
+                                                <?php endif; ?>
+                                                <?php foreach ($statusOptions as $option): ?>
+                                                    <option value="<?= htmlspecialchars($option['value']) ?>" <?= $currentStatus === $option['value'] ? 'selected' : '' ?>>
+                                                        <?= htmlspecialchars($option['label']) ?>
+                                                    </option>
+                                                <?php endforeach; ?>
                                             </select>
                                         </form>
                                     </td>
                                     <td class="col-action">
                                         <div class="action-group">
-                                            <button class="action-btn edit" title="Chỉnh sửa" onclick="editYear(<?= $year['id'] ?>)">
-                                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                                    <path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
-                                                    <path d="M15.5 3.5a2.121 2.121 0 1 1 3 3L18 7.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
-                                                </svg>
-                                            </button>
-                                            <button class="action-btn delete" title="Xóa" onclick="showDeleteConfirm(<?= $year['id'] ?>, 'niên khóa')">
+                                            <form method="POST" class="inline-form">
+                                                <input type="hidden" name="action" value="edit" />
+                                                <input type="hidden" name="year_id" value="<?= (int) $year['id'] ?>" />
+                                                <button class="action-btn edit" type="submit" title="Chỉnh sửa" aria-label="Chỉnh sửa">
+                                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                        <path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
+                                                        <path d="M15.5 3.5a2.121 2.121 0 1 1 3 3L18 7.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
+                                                    </svg>
+                                                </button>
+                                            </form>
+                                            <button
+                                                class="action-btn delete"
+                                                type="button"
+                                                title="Xóa"
+                                                aria-label="Xóa"
+                                                onclick="showYearDeleteConfirm(<?= (int) $year['id'] ?>)"
+                                            >
                                                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                                                     <path d="M19 7l-1 12a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2l-1-12M9 7V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v3M9 11v6M15 11v6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
                                                 </svg>
@@ -126,37 +113,56 @@
                     </table>
                 </div>
 
-                <!-- Pagination -->
                 <div class="pagination-container">
                     <div class="pagination-info">
-                        Hiển thị 1 - <?= min($items_per_page, $total_items) ?> của <?= $total_items ?> niên khóa
+                        Hiển thị <?= (int) $pagination['from'] ?> - <?= (int) $pagination['to'] ?> của <?= (int) $pagination['total_items'] ?> niên khóa
                     </div>
-                    <div class="pagination">
-                        <?php if ($current_page > 1): ?>
-                            <a href="?page=list_year&page_num=<?= $current_page - 1 ?>" class="pagination-btn prev">
-                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                    <path d="M15 19l-7-7 7-7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
-                                </svg>
-                            </a>
-                        <?php endif; ?>
+                    <?php if ($pagination['total_pages'] > 1): ?>
+                        <div class="pagination">
+                            <?php if ($pagination['current_page'] > 1): ?>
+                                <a href="?page=list_year&page_num=<?= $pagination['current_page'] - 1 ?>" class="pagination-btn prev" aria-label="Trang trước">
+                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                        <path d="M15 19l-7-7 7-7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                                    </svg>
+                                </a>
+                            <?php endif; ?>
 
-                        <?php for ($i = 1; $i <= $total_pages; $i++): ?>
-                            <a href="?page=list_year&page_num=<?= $i ?>" class="pagination-btn <?= $i === $current_page ? 'active' : '' ?>">
-                                <?= $i ?>
-                            </a>
-                        <?php endfor; ?>
+                            <?php for ($i = 1; $i <= $pagination['total_pages']; $i++): ?>
+                                <a href="?page=list_year&page_num=<?= $i ?>" class="pagination-btn <?= $i === $pagination['current_page'] ? 'active' : '' ?>">
+                                    <?= $i ?>
+                                </a>
+                            <?php endfor; ?>
 
-                        <?php if ($current_page < $total_pages): ?>
-                            <a href="?page=list_year&page_num=<?= $current_page + 1 ?>" class="pagination-btn next">
-                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                    <path d="M9 5l7 7-7 7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
-                                </svg>
-                            </a>
-                        <?php endif; ?>
-                    </div>
+                            <?php if ($pagination['current_page'] < $pagination['total_pages']): ?>
+                                <a href="?page=list_year&page_num=<?= $pagination['current_page'] + 1 ?>" class="pagination-btn next" aria-label="Trang sau">
+                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                        <path d="M9 5l7 7-7 7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                                    </svg>
+                                </a>
+                            <?php endif; ?>
+                        </div>
+                    <?php endif; ?>
                 </div>
             <?php endif; ?>
         </div>
+    </div>
+</div>
+
+<div class="modal-overlay" id="yearDeleteModal" aria-hidden="true">
+    <div class="modal-card year-delete-card" role="dialog" aria-modal="true" aria-labelledby="yearDeleteTitle">
+        <div class="modal-header">
+            <span class="modal-title" id="yearDeleteTitle">Xác nhận xóa</span>
+            <button class="modal-close" type="button" aria-label="Đóng" onclick="hideYearDeleteConfirm()">✕</button>
+        </div>
+        <div class="modal-body">
+            <p class="confirm-text">Bạn có chắc chắn muốn xóa niên khóa này không?</p>
+        </div>
+        <form id="yearDeleteForm" method="POST" class="modal-actions">
+            <input type="hidden" name="action" value="delete" />
+            <input type="hidden" name="year_id" id="deleteYearId" value="" />
+            <button class="action-btn secondary" type="button" onclick="hideYearDeleteConfirm()">Hủy</button>
+            <button class="action-btn primary" type="submit">Đồng ý</button>
+        </form>
     </div>
 </div>
 
@@ -165,25 +171,6 @@
         display: grid;
         gap: 0;
         padding: 24px;
-    }
-
-    .page-header {
-        margin-bottom: 0;
-    }
-
-    .page-title {
-        font-size: 20px;
-        font-weight: 800;
-        color: #0f2a5a;
-        text-transform: none;
-        letter-spacing: 0.6px;
-        margin: 0 0 4px 0;
-    }
-
-    .page-subtitle {
-        font-size: 13px;
-        color: #6b7280;
-        margin: 0;
     }
 
     .page-panel {
@@ -213,26 +200,6 @@
         margin: 0;
     }
 
-    .btn-create {
-        display: inline-flex;
-        align-items: center;
-        gap: 6px;
-        padding: 8px 14px;
-        background: linear-gradient(180deg, #0f2a5a 0%, #0b1f45 100%);
-        color: #ffffff;
-        border: none;
-        border-radius: 6px;
-        font-size: 12px;
-        font-weight: 700;
-        cursor: pointer;
-        text-decoration: none;
-        transition: all 0.2s;
-    }
-
-    .btn-create:hover {
-        background: linear-gradient(180deg, #0d2449 0%, #091a3d 100%);
-    }
-
     .panel-body {
         padding: 0;
     }
@@ -256,12 +223,6 @@
         font-size: 16px;
         font-weight: 600;
         color: #6b7280;
-        margin: 0 0 8px 0;
-    }
-
-    .empty-state p {
-        font-size: 13px;
-        color: #9ca3af;
         margin: 0;
     }
 
@@ -291,7 +252,8 @@
         border-right: 1px solid #d1d5db;
     }
 
-    .data-table th:last-child {
+    .data-table th:last-child,
+    .data-table td:last-child {
         border-right: none;
     }
 
@@ -315,83 +277,16 @@
         border-right: 1px solid #e5e7eb;
     }
 
-    .data-table td:last-child {
-        border-right: none;
-    }
+    .col-stt { width: 45px; }
+    .col-name { width: 20%; }
+    .col-time { width: 24%; white-space: nowrap; }
+    .col-semester { width: 12%; }
+    .col-status { width: 18%; }
+    .col-action { width: 10%; }
 
-    .col-stt {
-        width: 45px;
-        text-align: center;
-    }
-
-    .col-name {
-        width: 20%;
-        text-align: center;
-    }
-
-    .col-time {
-        width: 24%;
-        text-align: center;
-        white-space: nowrap;
-    }
-
-    .col-semester {
-        width: 12%;
-        text-align: center;
-    }
-
-    .col-status {
-        width: 18%;
-        text-align: center;
-    }
-
-    .col-action {
-        width: 10%;
-        text-align: center;
-    }
-
-    .stt-badge {
+    .inline-form {
         display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        font-weight: 700;
-        font-size: 12px;
-        color: #0f2a5a;
-    }
-
-    .year-info {
-        font-weight: 600;
-    }
-
-    .status-badge {
-        display: inline-flex;
-        align-items: center;
-        gap: 6px;
-        padding: 6px 12px;
-        border-radius: 999px;
-        font-size: 12px;
-        font-weight: 600;
-        white-space: nowrap;
-    }
-
-    .status-badge svg {
-        width: 10px;
-        height: 10px;
-    }
-
-    .status-active {
-        background: #d1fae5;
-        color: #065f46;
-    }
-
-    .status-completed {
-        background: #dbeafe;
-        color: #1e40af;
-    }
-
-    .status-upcoming {
-        background: #fce7f3;
-        color: #831843;
+        margin: 0;
     }
 
     .action-group {
@@ -413,6 +308,7 @@
         cursor: pointer;
         transition: all 0.2s;
         padding: 0;
+        text-decoration: none;
     }
 
     .action-btn:hover {
@@ -487,81 +383,142 @@
         padding: 0 8px;
     }
 
-    @media (max-width: 1024px) {
-        .col-time {
-            width: 20%;
-        }
-
-        .col-status {
-            width: 18%;
-        }
-
-        .data-table {
-            font-size: 12px;
-        }
-
-        .data-table th,
-        .data-table td {
-            padding: 10px 12px;
-        }
+    .data-table .status-select {
+        min-width: 148px;
+        padding: 6px 36px 6px 10px;
+        border-radius: 12px;
+        border: 1px solid #e5e7eb;
+        background: #f9fafb;
+        font-size: 13px;
+        color: #0f2a5a;
+        appearance: none;
+        -webkit-appearance: none;
+        font-weight: 700;
+        background-position: right 10px center;
+        background-repeat: no-repeat;
     }
 
-    /* Status select styling (matched to list_activity) */
-    .data-table .status-select { padding:6px 12px 6px 8px; border-radius:12px; border:1px solid #e5e7eb; background:#f9fafb; font-size:13px; color:#0f2a5a; appearance:none; -webkit-appearance:none; font-weight:700; padding-right:36px; background-position: right 10px center; background-repeat: no-repeat; }
-    .data-table .status-select option { color:#0f2a5a; }
-    .data-table .status-select.active { background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24'%3E%3Cpath d='M6 9l6 6 6-6' stroke='%23065546' stroke-width='2' stroke-linecap='round' stroke-linejoin='round' fill='none'/%3E%3C/svg%3E") no-repeat right 10px center, linear-gradient(90deg, #bbf7d0, #34d399); background-size:12px, auto; color:#065f46; border-color:#34d399; font-weight:700; }
-    .data-table .status-select.completed { background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24'%3E%3Cpath d='M6 9l6 6 6-6' stroke='%231e40af' stroke-width='2' stroke-linecap='round' stroke-linejoin='round' fill='none'/%3E%3C/svg%3E") no-repeat right 10px center, linear-gradient(90deg, #dbeafe, #bfdbfe); background-size:12px, auto; color:#1e40af; border-color:#93c5fd; font-weight:700; }
-    .data-table .status-select:focus { outline: none; box-shadow: 0 0 0 3px rgba(52,211,153,0.12); }
+    .data-table .status-select.upcoming {
+        background: linear-gradient(90deg, #fef3c7, #fde68a);
+        color: #92400e;
+        border-color: #fbbf24;
+    }
+
+    .data-table .status-select.active {
+        background: linear-gradient(90deg, #bbf7d0, #34d399);
+        color: #065f46;
+        border-color: #34d399;
+    }
+
+    .data-table .status-select.completed {
+        background: linear-gradient(90deg, #dbeafe, #bfdbfe);
+        color: #1e40af;
+        border-color: #93c5fd;
+    }
+
+    .data-table .status-select.unknown {
+        background: #f3f4f6;
+        color: #6b7280;
+    }
+
+    .data-table .status-select:focus {
+        outline: none;
+        box-shadow: 0 0 0 3px rgba(52, 211, 153, 0.12);
+    }
+
+    #yearDeleteModal {
+        display: none;
+    }
+
+    #yearDeleteModal.active {
+        display: grid;
+        place-items: center;
+        position: fixed;
+        inset: 0;
+        z-index: 1200;
+        background: rgba(15, 23, 42, 0.35);
+    }
+
+    .year-delete-card {
+        width: min(520px, calc(100% - 32px));
+    }
+
+    #yearDeleteModal .modal-body {
+        padding: 18px 24px;
+    }
+
+    #yearDeleteModal .confirm-text {
+        font-size: 15px;
+        line-height: 1.55;
+        font-weight: 800;
+        color: #b91c1c;
+        margin: 0;
+        text-align: center;
+        white-space: normal;
+        overflow-wrap: anywhere;
+        word-break: normal;
+    }
+
+    #yearDeleteModal .modal-actions {
+        display: flex;
+        gap: 10px;
+        justify-content: center;
+        padding: 0 18px 18px;
+    }
+
+    #yearDeleteModal .action-btn {
+        width: auto;
+        height: auto;
+        white-space: nowrap;
+        padding: 8px 20px;
+        border-radius: 8px;
+        font-size: 14px;
+        font-weight: 700;
+    }
+
+    #yearDeleteModal .action-btn.secondary {
+        background: #f3f4f6;
+        border-color: #d1d5db;
+        color: #0f2a5a;
+    }
+
+    #yearDeleteModal .action-btn.primary {
+        background: linear-gradient(180deg, #0f2a5a 0%, #0b1f45 100%);
+        border-color: #0f2a5a;
+        color: #ffffff;
+    }
 
     @media (max-width: 768px) {
-        .table-wrapper {
-            overflow-x: auto;
-        }
-
         .data-table {
             min-width: 800px;
         }
 
-        .header-content {
+        .pagination-container {
+            align-items: flex-start;
             flex-direction: column;
             gap: 12px;
-            align-items: flex-start;
-        }
-
-        .btn-create {
-            width: 100%;
-            justify-content: center;
         }
     }
 </style>
 
 <script>
-    function updateStatusSelect(el){
-        var val = el.value;
-        el.classList.remove('active','completed');
-        el.classList.add(val);
-        el.style.fontWeight = '700';
-        var form = el.closest('form');
-        if(form) form.submit();
+    function showYearDeleteConfirm(id) {
+        var modal = document.getElementById('yearDeleteModal');
+        var input = document.getElementById('deleteYearId');
+        if (!modal || !input) return;
+
+        input.value = id;
+        modal.classList.add('active');
+        modal.setAttribute('aria-hidden', 'false');
     }
 
-    document.addEventListener('DOMContentLoaded', function(){
-        document.querySelectorAll('.status-select').forEach(function(s){
-            var val = s.value;
-            s.classList.add(val);
-            s.style.fontWeight = '700';
-        });
-    });
+    function hideYearDeleteConfirm() {
+        var modal = document.getElementById('yearDeleteModal');
+        var input = document.getElementById('deleteYearId');
+        if (!modal || !input) return;
 
-    function editYear(id) {
-        window.location.href = '?page=edit_year&id=' + id;
-    }
-
-    function deleteYear(id) {
-        if (confirm('Bạn có chắc chắn muốn xóa niên khóa này?')) {
-            // Implement delete functionality
-            alert('Xóa niên khóa #' + id);
-        }
+        input.value = '';
+        modal.classList.remove('active');
+        modal.setAttribute('aria-hidden', 'true');
     }
 </script>
-<?php include __DIR__ . '/confirm/confirm_delete_modal.php'; ?>

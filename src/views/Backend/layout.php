@@ -366,6 +366,12 @@
             font-weight: 800;
             box-shadow: 0 14px 34px rgba(15, 23, 42, 0.18);
             animation: toastIn 180ms ease-out;
+            transition: opacity 180ms ease, transform 180ms ease;
+        }
+
+        .admin-toast.is-hiding {
+            opacity: 0;
+            transform: translateY(-8px);
         }
 
         .admin-toast.success {
@@ -592,6 +598,20 @@
                 }
             });
         }
+    })();
+
+    (function(){
+        var toast = document.querySelector('.admin-toast');
+        if (!toast) return;
+
+        window.setTimeout(function() {
+            toast.classList.add('is-hiding');
+            window.setTimeout(function() {
+                if (toast && toast.parentNode) {
+                    toast.parentNode.removeChild(toast);
+                }
+            }, 220);
+        }, 3000);
     })();
 
     <?php if (!empty($redirectToAdminLogin)): ?>

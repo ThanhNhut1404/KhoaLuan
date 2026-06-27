@@ -130,155 +130,31 @@ class StudentController
         $mssv = trim($_POST['mssv'] ?? '');
         $password = $_POST['password'] ?? '';
 
-        // TODO: Thay bằng kiểm tra DB thực sự sau này
-        // Mẫu: MSSV = "test" và password = "password"
-        if ($mssv === 'test' && $password === 'password') {
-            // đặt session
-            $_SESSION['student'] = [
-                'mssv' => $mssv,
-                'ho_ten' => 'Sinh viên mẫu'
-            ];
+        $authController = new \KhoaLuan\QLDRL\Controllers\AuthController();
+        $state = $authController->loginStudent($mssv, $password);
+
+        if ($state['redirect']) {
             header('Location: /student.php');
             exit;
         }
 
-        // lỗi xác thực: hiển thị lại form với biến $error
-        $error = 'MSSV hoặc mật khẩu không đúng.';
+        $error = $state['error'];
         $content = __DIR__ . '/../views/Frontend/login.php';
         require __DIR__ . '/../views/Frontend/layout.php';
     }
 
     public function handleChangePassword()
     {
-        $changePasswordErrors = [];
-        $openChangePasswordModal = true;
-        $passwordToast = null;
-        $redirectToStudentLogin = false;
-
-        $currentPassword = $_POST['current_password'] ?? '';
-        $newPassword = $_POST['new_password'] ?? '';
-        $confirmPassword = $_POST['confirm_password'] ?? '';
         $tenDangNhap = $_SESSION['student']['TEN_DANG_NHAP'] ?? ($_SESSION['student']['mssv'] ?? '');
+        $passwordController = new \KhoaLuan\QLDRL\Controllers\PasswordController();
+        $state = $passwordController->changePassword($tenDangNhap, $_POST, true);
 
-        if ($currentPassword === '') {
-            $changePasswordErrors['current_password'] = 'Vui lòng nhập mật khẩu cũ.';
-            $this->renderWithPasswordState($changePasswordErrors, $openChangePasswordModal, $passwordToast, $redirectToStudentLogin);
-            return;
-        }
-
-        if ($newPassword === '') {
-            $changePasswordErrors['new_password'] = 'Vui lòng nhập mật khẩu mới.';
-            $this->renderWithPasswordState($changePasswordErrors, $openChangePasswordModal, $passwordToast, $redirectToStudentLogin);
-            return;
-        }
-
-        if ($confirmPassword === '') {
-            $changePasswordErrors['confirm_password'] = 'Vui lòng xác nhận mật khẩu mới.';
-            $this->renderWithPasswordState($changePasswordErrors, $openChangePasswordModal, $passwordToast, $redirectToStudentLogin);
-            return;
-        }
-
-        $pdo = Database::getConnection();
-        $accountStatement = $pdo->prepare(
-            'SELECT MAT_KHAU
-             FROM nguoi_dung
-             WHERE TEN_DANG_NHAP = :ten_dang_nhap
-             LIMIT 1'
+        $this->renderWithPasswordState(
+            $state['errors'],
+            $state['openModal'],
+            $state['toast'],
+            $state['redirectToLogin']
         );
-        $accountStatement->execute(['ten_dang_nhap' => $tenDangNhap]);
-        $account = $accountStatement->fetch();
-
-        if (!$account || $currentPassword !== $account['MAT_KHAU']) {
-            $changePasswordErrors['current_password'] = 'Mật khẩu cũ không chính xác.';
-            $this->renderWithPasswordState($changePasswordErrors, $openChangePasswordModal, $passwordToast, $redirectToStudentLogin);
-            return;
-        }
-
-        $passwordError = $this->validateNewPassword($newPassword, $currentPassword, $tenDangNhap);
-        if ($passwordError !== null) {
-            $changePasswordErrors['new_password'] = $passwordError;
-            $this->renderWithPasswordState($changePasswordErrors, $openChangePasswordModal, $passwordToast, $redirectToStudentLogin);
-            return;
-        }
-
-        if ($newPassword !== $confirmPassword) {
-            $changePasswordErrors['confirm_password'] = 'Mật khẩu xác nhận không khớp.';
-            $this->renderWithPasswordState($changePasswordErrors, $openChangePasswordModal, $passwordToast, $redirectToStudentLogin);
-            return;
-        }
-
-        $updateStatement = $pdo->prepare(
-            'UPDATE nguoi_dung
-             SET MAT_KHAU = :mat_khau
-             WHERE TEN_DANG_NHAP = :ten_dang_nhap'
-        );
-        $updated = $updateStatement->execute([
-            'mat_khau' => $newPassword,
-            'ten_dang_nhap' => $tenDangNhap,
-        ]);
-
-        $openChangePasswordModal = false;
-
-        if (!$updated || $updateStatement->rowCount() < 1) {
-            $passwordToast = [
-                'type' => 'error',
-                'message' => 'Đổi mật khẩu thất bại. Vui lòng thử lại sau.',
-            ];
-            $this->renderWithPasswordState($changePasswordErrors, $openChangePasswordModal, $passwordToast, $redirectToStudentLogin);
-            return;
-        }
-
-        $passwordToast = [
-            'type' => 'success',
-            'message' => 'Đổi mật khẩu thành công.',
-        ];
-        $redirectToStudentLogin = true;
-
-        $_SESSION = [];
-        if (ini_get('session.use_cookies')) {
-            $params = session_get_cookie_params();
-            setcookie(session_name(), '', time() - 42000, $params['path'], $params['domain'], $params['secure'], $params['httponly']);
-        }
-        session_destroy();
-
-        $this->renderWithPasswordState($changePasswordErrors, $openChangePasswordModal, $passwordToast, $redirectToStudentLogin);
-    }
-
-    private function validateNewPassword(string $newPassword, string $oldPassword, string $tenDangNhap): ?string
-    {
-        if (strlen($newPassword) < 8) {
-            return 'Mật khẩu phải có ít nhất 8 ký tự.';
-        }
-
-        if (!preg_match('/[A-Z]/', $newPassword)) {
-            return 'Mật khẩu phải có ít nhất 1 chữ in hoa.';
-        }
-
-        if (!preg_match('/[a-z]/', $newPassword)) {
-            return 'Mật khẩu phải có ít nhất 1 chữ thường.';
-        }
-
-        if (!preg_match('/[0-9]/', $newPassword)) {
-            return 'Mật khẩu phải có ít nhất 1 chữ số.';
-        }
-
-        if (!preg_match('/[^A-Za-z0-9]/', $newPassword)) {
-            return 'Mật khẩu phải có ít nhất 1 ký tự đặc biệt.';
-        }
-
-        if (preg_match('/\s/', $newPassword)) {
-            return 'Mật khẩu không được chứa khoảng trắng.';
-        }
-
-        if ($tenDangNhap !== '' && stripos($newPassword, $tenDangNhap) !== false) {
-            return 'Mật khẩu không được chứa tên đăng nhập.';
-        }
-
-        if ($newPassword === $oldPassword) {
-            return 'Mật khẩu mới phải khác mật khẩu cũ.';
-        }
-
-        return null;
     }
 
     private function renderWithPasswordState(array $changePasswordErrors, bool $openChangePasswordModal, ?array $passwordToast, bool $redirectToStudentLogin)
