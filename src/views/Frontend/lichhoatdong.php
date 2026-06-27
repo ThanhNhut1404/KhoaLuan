@@ -268,22 +268,22 @@
 <div class="calendar-page">
     <h2 class="calendar-title">Lịch hoạt động</h2>
 
-    <div class="calendar-card">
-        <div class="calendar-header">
+    <div class="calendar-card card">
+        <div class="calendar-header card-header">
             <div class="month-label">Tháng 5, 2025 <span>v</span></div>
             <div class="calendar-controls">
                 <label class="date-picker">
-                    <input type="date" value="2026-05-28" aria-label="Chọn ngày" />
+                    <input class="form-control" type="date" value="2026-05-28" aria-label="Chọn ngày" />
                 </label>
-                <button class="date-now-btn" type="button">Hiện tại</button>
+                <button class="date-now-btn btn btn-primary" type="button">Hiện tại</button>
                 <div class="calendar-nav">
-                    <button class="nav-btn" type="button">&#x2039;</button>
-                    <button class="nav-btn" type="button">&#x203A;</button>
+                    <button class="nav-btn btn btn-outline-secondary" type="button">&#x2039;</button>
+                    <button class="nav-btn btn btn-outline-secondary" type="button">&#x203A;</button>
                 </div>
             </div>
         </div>
 
-        <div class="schedule-table">
+        <div class="schedule-table table-responsive">
             <div class="schedule-cell schedule-header schedule-label">Ca hoạt động</div>
             <div class="schedule-cell schedule-header schedule-day"><span class="day">Thứ 2</span><span class="date">25/05/2026</span></div>
             <div class="schedule-cell schedule-header schedule-day"><span class="day">Thứ 3</span><span class="date">26/05/2026</span></div>

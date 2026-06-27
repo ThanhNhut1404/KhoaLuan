@@ -25,14 +25,14 @@
 ?>
 
 <div class="list-year-page">
-    <div class="page-panel">
-        <div class="panel-header">
+    <div class="page-panel card">
+        <div class="panel-header card-header">
             <div class="header-content">
                 <h2 class="panel-title">DANH SÁCH NIÊN KHÓA</h2>
             </div>
         </div>
 
-        <div class="panel-body">
+        <div class="panel-body card-body">
             <?php if (empty($years)): ?>
                 <div class="empty-state">
                     <svg width="48" height="48" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -42,7 +42,7 @@
                 </div>
             <?php else: ?>
                 <div class="table-wrapper">
-                    <table class="data-table">
+                    <table class="data-table table table-hover table-bordered align-middle">
                         <thead>
                             <tr>
                                 <th class="col-stt">STT</th>
@@ -70,7 +70,7 @@
                                         <form method="POST" class="inline-form">
                                             <input type="hidden" name="action" value="update_status" />
                                             <input type="hidden" name="year_id" value="<?= (int) $year['id'] ?>" />
-                                            <select name="status" class="status-select <?= htmlspecialchars($currentStatusClass) ?>" onchange="this.form.submit()">
+                                            <select name="status" class="status-select <?= htmlspecialchars($currentStatusClass) ?> form-select" onchange="this.form.submit()">
                                                 <?php if ($currentStatus === ''): ?>
                                                     <option value="" selected disabled>--</option>
                                                 <?php endif; ?>
@@ -87,7 +87,7 @@
                                             <form method="POST" class="inline-form">
                                                 <input type="hidden" name="action" value="edit" />
                                                 <input type="hidden" name="year_id" value="<?= (int) $year['id'] ?>" />
-                                                <button class="action-btn edit" type="submit" title="Chỉnh sửa" aria-label="Chỉnh sửa">
+                                                <button class="action-btn edit btn btn-outline-primary" type="submit" title="Chỉnh sửa" aria-label="Chỉnh sửa">
                                                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                                                         <path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
                                                         <path d="M15.5 3.5a2.121 2.121 0 1 1 3 3L18 7.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
@@ -95,7 +95,7 @@
                                                 </button>
                                             </form>
                                             <button
-                                                class="action-btn delete"
+                                                class="action-btn delete btn btn-danger"
                                                 type="button"
                                                 title="Xóa"
                                                 aria-label="Xóa"
@@ -118,9 +118,9 @@
                         Hiển thị <?= (int) $pagination['from'] ?> - <?= (int) $pagination['to'] ?> của <?= (int) $pagination['total_items'] ?> niên khóa
                     </div>
                     <?php if ($pagination['total_pages'] > 1): ?>
-                        <div class="pagination">
+                        <div class="pagination mb-0">
                             <?php if ($pagination['current_page'] > 1): ?>
-                                <a href="?page=list_year&page_num=<?= $pagination['current_page'] - 1 ?>" class="pagination-btn prev" aria-label="Trang trước">
+                                <a href="?page=list_year&page_num=<?= $pagination['current_page'] - 1 ?>" class="pagination-btn prev page-link page-item" aria-label="Trang trước">
                                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                                         <path d="M15 19l-7-7 7-7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
                                     </svg>
@@ -128,13 +128,13 @@
                             <?php endif; ?>
 
                             <?php for ($i = 1; $i <= $pagination['total_pages']; $i++): ?>
-                                <a href="?page=list_year&page_num=<?= $i ?>" class="pagination-btn <?= $i === $pagination['current_page'] ? 'active' : '' ?>">
+                                <a href="?page=list_year&page_num=<?= $i ?>" class="pagination-btn page-link page-item <?= $i === $pagination['current_page'] ? 'active' : '' ?>">
                                     <?= $i ?>
                                 </a>
                             <?php endfor; ?>
 
                             <?php if ($pagination['current_page'] < $pagination['total_pages']): ?>
-                                <a href="?page=list_year&page_num=<?= $pagination['current_page'] + 1 ?>" class="pagination-btn next" aria-label="Trang sau">
+                                <a href="?page=list_year&page_num=<?= $pagination['current_page'] + 1 ?>" class="pagination-btn next page-link page-item" aria-label="Trang sau">
                                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                                         <path d="M9 5l7 7-7 7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
                                     </svg>
@@ -148,11 +148,11 @@
     </div>
 </div>
 
-<div class="modal-overlay" id="yearDeleteModal" aria-hidden="true">
-    <div class="modal-card year-delete-card" role="dialog" aria-modal="true" aria-labelledby="yearDeleteTitle">
+<div class="modal-overlay modal" id="yearDeleteModal" aria-hidden="true">
+    <div class="modal-card modal-content year-delete-card" role="dialog" aria-modal="true" aria-labelledby="yearDeleteTitle">
         <div class="modal-header">
             <span class="modal-title" id="yearDeleteTitle">Xác nhận xóa</span>
-            <button class="modal-close" type="button" aria-label="Đóng" onclick="hideYearDeleteConfirm()">✕</button>
+            <button class="modal-close btn btn-light" type="button" aria-label="Đóng" onclick="hideYearDeleteConfirm()">✕</button>
         </div>
         <div class="modal-body">
             <p class="confirm-text">Bạn có chắc chắn muốn xóa niên khóa này không?</p>
@@ -160,8 +160,8 @@
         <form id="yearDeleteForm" method="POST" class="modal-actions">
             <input type="hidden" name="action" value="delete" />
             <input type="hidden" name="year_id" id="deleteYearId" value="" />
-            <button class="action-btn secondary" type="button" onclick="hideYearDeleteConfirm()">Hủy</button>
-            <button class="action-btn primary" type="submit">Đồng ý</button>
+            <button class="action-btn secondary btn btn-outline-secondary" type="button" onclick="hideYearDeleteConfirm()">Hủy</button>
+            <button class="action-btn primary btn btn-primary" type="submit">Đồng ý</button>
         </form>
     </div>
 </div>

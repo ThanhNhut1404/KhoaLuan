@@ -2,7 +2,9 @@
 <html lang="vi">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <title><?= $title ?></title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
 
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap');
@@ -30,6 +32,9 @@
         .container {
             display: flex;
             min-height: 100vh;
+            max-width: none;
+            padding-left: 0;
+            padding-right: 0;
         }
 
         .sidebar {
@@ -58,6 +63,90 @@
         }
 
         .content { padding: 22px; }
+
+        .card.page-panel,
+        .page-panel.card {
+            display: block;
+            background: #ffffff;
+            border: 1px solid #e8ecf3;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+            overflow: hidden;
+        }
+
+        .card-header.panel-header,
+        .panel-header.card-header {
+            padding: 12px 14px;
+            border-bottom: 1px solid #e5e7eb;
+            background: #f9fafb;
+        }
+
+        .card-body.panel-body,
+        .panel-body.card-body {
+            padding: 20px;
+        }
+
+        .form-control.field-input,
+        .form-select.field-input {
+            display: block;
+            width: 100%;
+            padding: 10px;
+            border-radius: 10px;
+            border-color: #e5e7eb;
+            background-color: #f9fafb;
+            font-size: 13px;
+            color: #1f2937;
+            min-height: 40px;
+        }
+
+        .form-control.field-input:focus,
+        .form-select.field-input:focus {
+            border-color: #0f2a5a;
+            box-shadow: 0 0 0 3px rgba(15, 42, 90, 0.08);
+            background-color: #ffffff;
+        }
+
+        .form-label.field-label {
+            margin-bottom: 0;
+        }
+
+        .btn.action-btn {
+            font-size: 13px;
+            font-weight: 700;
+        }
+
+        .table.data-table {
+            margin-bottom: 0;
+            font-size: 13px;
+        }
+
+        .form-grid.row {
+            display: grid;
+            margin-left: 0;
+            margin-right: 0;
+            --bs-gutter-x: 0;
+            --bs-gutter-y: 0;
+        }
+
+        .form-grid.row > .form-field {
+            width: auto;
+            max-width: none;
+            padding-left: 0;
+            padding-right: 0;
+            margin-top: 0;
+            flex: initial;
+        }
+
+        .pagination .page-link.pagination-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            min-width: 32px;
+            height: 32px;
+            border-radius: 6px;
+            font-size: 12px;
+            font-weight: 600;
+        }
 
         .icon-btn {
             border: 1px solid var(--line);
@@ -110,6 +199,14 @@
             width: 100%;
             font-size: 14px;
             color: #0f2a5a;
+            padding: 0;
+            min-height: auto;
+            box-shadow: none;
+        }
+
+        .header-search input:focus {
+            box-shadow: none;
+            border: none;
         }
 
         .header-search input::placeholder { color: #94a3b8; }
@@ -153,6 +250,10 @@
         }
 
         .admin-user-btn:hover { background: #f1f5f9; }
+
+        .admin-user-btn.dropdown-toggle::after {
+            display: none;
+        }
 
         .admin-user-avatar {
             width: 28px;
@@ -235,6 +336,10 @@
             border: 1px solid var(--line);
             overflow: hidden;
             animation: modalIn 180ms ease-out;
+        }
+
+        .modal-card.modal-content {
+            display: block;
         }
 
         .modal-header {
@@ -513,7 +618,7 @@
     </div>
 <?php endif; ?>
 
-<div class="container">
+<div class="container admin-container container-fluid">
     <?php include 'sidebar.php'; ?>
 
     <div class="main">
@@ -526,6 +631,7 @@
 
 <?php include __DIR__ . '/change_password_modal.php'; ?>
 
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 <script>
     (function(){
         var toggle = document.getElementById('sidebarToggle');

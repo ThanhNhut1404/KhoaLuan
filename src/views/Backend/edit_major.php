@@ -70,35 +70,35 @@
 ?>
 
 <div class="edit-major-page">
-    <div class="page-panel">
-        <div class="panel-header">
+    <div class="page-panel card">
+        <div class="panel-header card-header">
             <h2 class="panel-title">CHỈNH SỬA NGÀNH HỌC</h2>
         </div>
 
-        <div class="panel-body">
+        <div class="panel-body card-body">
             <form id="editMajorForm" method="POST" action="?page=edit_major&id=<?= $id ?>">
                 <div class="form-grid">
                     <div class="form-field">
-                        <label class="field-label" for="major_code">Mã ngành <span class="required">*</span></label>
-                        <input type="text" id="major_code" name="major_code" class="field-input" placeholder="Ví dụ: CNTT01" value="<?= $formData['major_code'] ?? '' ?>" required />
+                        <label class="field-label form-label" for="major_code">Mã ngành <span class="required">*</span></label>
+                        <input type="text" id="major_code" name="major_code" class="field-input form-control" placeholder="Ví dụ: CNTT01" value="<?= $formData['major_code'] ?? '' ?>" required />
                         <?php if(isset($errors['major_code'])): ?><span class="field-error"><?= $errors['major_code'] ?></span><?php endif; ?>
                     </div>
 
                     <div class="form-field">
-                        <label class="field-label" for="major_name">Tên ngành <span class="required">*</span></label>
-                        <input type="text" id="major_name" name="major_name" class="field-input" placeholder="Nhập tên ngành học" value="<?= $formData['major_name'] ?? '' ?>" required />
+                        <label class="field-label form-label" for="major_name">Tên ngành <span class="required">*</span></label>
+                        <input type="text" id="major_name" name="major_name" class="field-input form-control" placeholder="Nhập tên ngành học" value="<?= $formData['major_name'] ?? '' ?>" required />
                         <?php if(isset($errors['major_name'])): ?><span class="field-error"><?= $errors['major_name'] ?></span><?php endif; ?>
                     </div>
 
                     <div class="form-field">
-                        <label class="field-label" for="total_credits">Số tín chỉ <span class="required">*</span></label>
-                        <input type="number" id="total_credits" name="total_credits" class="field-input" placeholder="Ví dụ: 120" value="<?= $formData['total_credits'] ?? '' ?>" min="1" required />
+                        <label class="field-label form-label" for="total_credits">Số tín chỉ <span class="required">*</span></label>
+                        <input type="number" id="total_credits" name="total_credits" class="field-input form-control" placeholder="Ví dụ: 120" value="<?= $formData['total_credits'] ?? '' ?>" min="1" required />
                         <?php if(isset($errors['total_credits'])): ?><span class="field-error"><?= $errors['total_credits'] ?></span><?php endif; ?>
                     </div>
 
                     <div class="form-field">
-                        <label class="field-label" for="department">Khoa trực thuộc <span class="required">*</span></label>
-                        <select id="department" name="department" class="field-input" required>
+                        <label class="field-label form-label" for="department">Khoa trực thuộc <span class="required">*</span></label>
+                        <select id="department" name="department" class="field-input form-select" required>
                             <option value="">-- Chọn khoa quản lý --</option>
                             <?php foreach ($departments as $dept): ?>
                                 <option value="<?= htmlspecialchars($dept) ?>" <?= (isset($formData['department']) && $formData['department'] === $dept) ? 'selected' : '' ?>><?= htmlspecialchars($dept) ?></option>
@@ -108,13 +108,13 @@
                     </div>
 
                     <div class="form-field" style="grid-column: 1 / -1;">
-                        <label class="field-label" for="description">Mô tả</label>
-                        <textarea id="description" name="description" class="field-input textarea-input" rows="4" placeholder="Nhập mô tả ngành học"><?= $formData['description'] ?? '' ?></textarea>
+                        <label class="field-label form-label" for="description">Mô tả</label>
+                        <textarea id="description" name="description" class="field-input textarea-input form-control" rows="4" placeholder="Nhập mô tả ngành học"><?= $formData['description'] ?? '' ?></textarea>
                     </div>
 
                     <div class="form-field">
-                        <label class="field-label" for="status">Trạng thái <span class="required">*</span></label>
-                        <select id="status" name="status" class="field-input" required>
+                        <label class="field-label form-label" for="status">Trạng thái <span class="required">*</span></label>
+                        <select id="status" name="status" class="field-input form-select" required>
                             <option value="active" <?= (isset($formData['status']) && $formData['status'] === 'active') ? 'selected' : '' ?>>Hoạt động</option>
                             <option value="inactive" <?= (isset($formData['status']) && $formData['status'] === 'inactive') ? 'selected' : '' ?>>Không hoạt động</option>
                         </select>
@@ -122,8 +122,8 @@
                 </div>
 
                 <div class="form-actions">
-                    <a href="?page=list_major" class="action-btn secondary">Hủy</a>
-                    <button type="submit" class="action-btn primary">Cập nhật ngành học</button>
+                    <a href="?page=list_major" class="action-btn secondary btn btn-outline-secondary">Hủy</a>
+                    <button type="submit" class="action-btn primary btn btn-primary">Cập nhật ngành học</button>
                 </div>
 
                 <?php if(isset($_SESSION['message'])): ?>

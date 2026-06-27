@@ -134,11 +134,11 @@
     #editProfileModal .modal-icon:hover { background: #eef2ff; }
 </style>
 
-<div class="modal-overlay" id="editProfileModal" aria-hidden="true">
-    <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="editProfileTitle">
+<div class="modal-overlay modal" id="editProfileModal" aria-hidden="true">
+    <div class="modal-card modal-content" role="dialog" aria-modal="true" aria-labelledby="editProfileTitle">
         <div class="modal-header">
             <span class="modal-title" id="editProfileTitle">Chỉnh sửa thông tin sinh viên</span>
-            <button class="modal-close" type="button" aria-label="Đóng" onclick="closeEditProfileModal()">✕</button>
+            <button class="modal-close btn btn-light" type="button" aria-label="Đóng" onclick="closeEditProfileModal()">✕</button>
         </div>
 
         <form id="editProfileForm" class="modal-body" method="post" action="" enctype="multipart/form-data">
@@ -152,7 +152,7 @@
                     <?php endif; ?>
                 </div>
                 <div class="avatar-meta">
-                    <button type="button" class="avatar-upload-btn" onclick="document.getElementById('avatarInput').click()">
+                    <button type="button" class="avatar-upload-btn btn btn-outline-secondary" onclick="document.getElementById('avatarInput').click()">
                         <svg viewBox="0 0 24 24" width="16" height="16" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
                             <path d="M12 16V4" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
                             <path d="M8 8l4-4 4 4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
@@ -161,31 +161,31 @@
                         Tải ảnh lên
                     </button>
                     <div class="avatar-hint">Chọn ảnh từ máy để thay đổi avatar. JPG, PNG hoặc WEBP.</div>
-                    <input id="avatarInput" name="avatar" type="file" accept="image/*" style="display:none" />
+                    <input class="form-control" id="avatarInput" name="avatar" type="file" accept="image/*" style="display:none" />
                 </div>
             </div>
             <div class="form-grid">
                 <div class="modal-field">
-                    <label>Họ và tên</label>
-                    <input name="ho_ten" value="<?= htmlspecialchars($student['ho_ten'] ?? '', ENT_QUOTES, 'UTF-8') ?>" />
+                    <label class="form-label">Họ và tên</label>
+                    <input class="form-control" name="ho_ten" value="<?= htmlspecialchars($student['ho_ten'] ?? '', ENT_QUOTES, 'UTF-8') ?>" />
                 </div>
                 <div class="modal-field">
-                    <label>MSSV</label>
-                    <input name="mssv" value="<?= htmlspecialchars($student['mssv'] ?? '', ENT_QUOTES, 'UTF-8') ?>" />
+                    <label class="form-label">MSSV</label>
+                    <input class="form-control" name="mssv" value="<?= htmlspecialchars($student['mssv'] ?? '', ENT_QUOTES, 'UTF-8') ?>" />
                 </div>
                 <div class="modal-field">
-                    <label>Lớp</label>
-                    <input name="lop_hoc" value="<?= htmlspecialchars($student['lop_hoc'] ?? '', ENT_QUOTES, 'UTF-8') ?>" />
+                    <label class="form-label">Lớp</label>
+                    <input class="form-control" name="lop_hoc" value="<?= htmlspecialchars($student['lop_hoc'] ?? '', ENT_QUOTES, 'UTF-8') ?>" />
                 </div>
                 <div class="modal-field">
-                    <label>Ngành</label>
-                    <input name="nganh" value="<?= htmlspecialchars($student['nganh'] ?? '', ENT_QUOTES, 'UTF-8') ?>" />
+                    <label class="form-label">Ngành</label>
+                    <input class="form-control" name="nganh" value="<?= htmlspecialchars($student['nganh'] ?? '', ENT_QUOTES, 'UTF-8') ?>" />
                 </div>
                 <div class="modal-field">
-                    <label>Ngày sinh</label>
+                    <label class="form-label">Ngày sinh</label>
                     <div class="modal-input-wrap">
-                        <input id="ngaySinh" name="ngay_sinh" type="date" value="<?= htmlspecialchars($ngay_sinh_val ?: ($student['ngay_sinh'] ?? ''), ENT_QUOTES, 'UTF-8') ?>" />
-                        <button type="button" class="modal-icon" aria-label="Chọn ngày" onclick="openDatePicker('ngaySinh')">
+                        <input class="form-control" id="ngaySinh" name="ngay_sinh" type="date" value="<?= htmlspecialchars($ngay_sinh_val ?: ($student['ngay_sinh'] ?? ''), ENT_QUOTES, 'UTF-8') ?>" />
+                        <button type="button" class="modal-icon btn btn-light" aria-label="Chọn ngày" onclick="openDatePicker('ngaySinh')">
                             <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" width="18" height="18">
                                 <rect x="3" y="4" width="18" height="18" rx="2" stroke-width="2" stroke="currentColor"/>
                                 <path d="M16 2v4M8 2v4" stroke-width="2" stroke="currentColor" stroke-linecap="round"/>
@@ -194,43 +194,43 @@
                     </div>
                 </div>
                 <div class="modal-field">
-                    <label>Giới tính</label>
-                    <select name="gioi_tinh">
+                    <label class="form-label">Giới tính</label>
+                    <select class="form-select" name="gioi_tinh">
                         <option <?= (isset($student['gioi_tinh']) && $student['gioi_tinh'] === 'Nam') ? 'selected' : '' ?>>Nam</option>
                         <option <?= (isset($student['gioi_tinh']) && $student['gioi_tinh'] === 'Nữ') ? 'selected' : '' ?>>Nữ</option>
                         <option <?= (isset($student['gioi_tinh']) && $student['gioi_tinh'] === 'Khác') ? 'selected' : '' ?>>Khác</option>
                     </select>
                 </div>
                 <div class="modal-field">
-                    <label>Nơi sinh</label>
-                    <input name="noi_sinh" value="<?= htmlspecialchars($student['noi_sinh'] ?? '', ENT_QUOTES, 'UTF-8') ?>" />
+                    <label class="form-label">Nơi sinh</label>
+                    <input class="form-control" name="noi_sinh" value="<?= htmlspecialchars($student['noi_sinh'] ?? '', ENT_QUOTES, 'UTF-8') ?>" />
                 </div>
                 <div class="modal-field">
-                    <label>Dân tộc</label>
-                    <input name="dan_toc" value="<?= htmlspecialchars($student['dan_toc'] ?? '', ENT_QUOTES, 'UTF-8') ?>" />
+                    <label class="form-label">Dân tộc</label>
+                    <input class="form-control" name="dan_toc" value="<?= htmlspecialchars($student['dan_toc'] ?? '', ENT_QUOTES, 'UTF-8') ?>" />
                 </div>
                 <div class="modal-field">
-                    <label>Tôn giáo</label>
-                    <input name="ton_giao" value="<?= htmlspecialchars($student['ton_giao'] ?? '', ENT_QUOTES, 'UTF-8') ?>" />
+                    <label class="form-label">Tôn giáo</label>
+                    <input class="form-control" name="ton_giao" value="<?= htmlspecialchars($student['ton_giao'] ?? '', ENT_QUOTES, 'UTF-8') ?>" />
                 </div>
                 <div class="modal-field">
-                    <label>Email</label>
-                    <input name="email" value="<?= htmlspecialchars($student['email'] ?? '', ENT_QUOTES, 'UTF-8') ?>" />
+                    <label class="form-label">Email</label>
+                    <input class="form-control" name="email" value="<?= htmlspecialchars($student['email'] ?? '', ENT_QUOTES, 'UTF-8') ?>" />
                 </div>
                 <div class="modal-field">
-                    <label>Số điện thoại</label>
-                    <input name="so_dien_thoai" value="<?= htmlspecialchars($student['so_dien_thoai'] ?? '', ENT_QUOTES, 'UTF-8') ?>" />
+                    <label class="form-label">Số điện thoại</label>
+                    <input class="form-control" name="so_dien_thoai" value="<?= htmlspecialchars($student['so_dien_thoai'] ?? '', ENT_QUOTES, 'UTF-8') ?>" />
                 </div>
                 <div class="modal-field full">
-                    <label>Địa chỉ thường trú</label>
-                    <textarea name="dia_chi_thuong_tru"><?= htmlspecialchars($student['dia_chi_thuong_tru'] ?? '', ENT_QUOTES, 'UTF-8') ?></textarea>
+                    <label class="form-label">Địa chỉ thường trú</label>
+                    <textarea class="form-control" name="dia_chi_thuong_tru"><?= htmlspecialchars($student['dia_chi_thuong_tru'] ?? '', ENT_QUOTES, 'UTF-8') ?></textarea>
                 </div>
             </div>
         </form>
 
         <div class="modal-actions">
-            <button class="btn-cancel" type="button" onclick="closeEditProfileModal()">Hủy</button>
-            <button class="modal-save" type="submit" form="editProfileForm">Lưu</button>
+            <button class="btn-cancel btn btn-outline-secondary" type="button" onclick="closeEditProfileModal()">Hủy</button>
+            <button class="modal-save btn btn-primary" type="submit" form="editProfileForm">Lưu</button>
         </div>
     </div>
 </div>

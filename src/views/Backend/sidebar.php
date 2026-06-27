@@ -9,7 +9,7 @@
         </div>
     </div>
 <hr class="sidebar-divider">
-    <nav class="nav">
+    <nav class="nav flex-column">
         <a href="?page=dashboard" class="<?php echo $currentPage === 'dashboard' ? 'active' : ''; ?>">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <path d="M4 13h6V4H4v9Zm10 7h6v-7h-6v7ZM4 21h6v-5H4v5Zm10-9h6V3h-6v9Z" stroke="#cbd5f5" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>

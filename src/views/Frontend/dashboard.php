@@ -25,6 +25,17 @@
         gap: 20px;
     }
 
+    .portal-grid,
+    .portal-main,
+    .portal-aside,
+    .portal-full,
+    .news-card,
+    .news-list,
+    .news-item {
+        min-width: 0;
+        max-width: 100%;
+    }
+
     .dashboard-top {
         display: grid;
         grid-template-columns: 1fr;
@@ -63,7 +74,7 @@
         margin-top: -14px;
     }
 
-    .card {
+    .portal-grid .card {
         background: white;
         border-radius: 8px;
         box-shadow: 0 2px 8px rgba(0,0,0,0.08);
@@ -81,7 +92,7 @@
         overflow: auto;
     }
 
-    .card-header {
+    .portal-grid .card-header {
         display: flex;
         align-items: center;
         justify-content: space-between;
@@ -90,7 +101,7 @@
         border-bottom: 1px solid #e8ecf3;
     }
 
-    .card-title {
+    .portal-grid .card-title {
         display: flex;
         align-items: center;
         gap: 10px;
@@ -101,14 +112,14 @@
         margin: 0;
     }
 
-    .card-title svg {
+    .portal-grid .card-title svg {
         width: 16px;
         height: 16px;
         color: #00a8e8;
         stroke: currentColor;
     }
 
-    .card-body {
+    .portal-grid .card-body {
         padding: 14px 16px;
     }
 
@@ -408,17 +419,17 @@
         overflow-x: auto;
     }
 
-    table {
+    .portal-grid table {
         width: 100%;
         border-collapse: collapse;
     }
 
-    thead {
+    .portal-grid thead {
         background: #f8f9fb;
         border-bottom: 2px solid #e0e6f0;
     }
 
-    th {
+    .portal-grid th {
         padding: 15px;
         text-align: left;
         color: #1d4ed8;
@@ -426,13 +437,13 @@
         font-size: 14px;
     }
 
-    td {
+    .portal-grid td {
         padding: 12px 15px;
         border-bottom: 1px solid #f0f2f5;
         color: #555;
     }
 
-    tbody tr:hover {
+    .portal-grid tbody tr:hover {
         background: #f8f9fb;
     }
 
@@ -496,14 +507,14 @@
         color: #1d4ed8;
     }
 
-    .btn-group {
+    .portal-grid .btn-group {
         display: flex;
         gap: 10px;
         margin-bottom: 20px;
         flex-wrap: wrap;
     }
 
-    .btn {
+    .portal-grid .btn {
         padding: 10px 20px;
         border: none;
         border-radius: 6px;
@@ -513,22 +524,22 @@
         font-weight: 600;
     }
 
-    .btn-primary {
+    .portal-grid .btn-primary {
         background: #1d4ed8;
         color: white;
     }
 
-    .btn-primary:hover {
+    .portal-grid .btn-primary:hover {
         background: #1047a1;
         box-shadow: 0 3px 8px rgba(29, 78, 216, 0.2);
     }
 
-    .btn-secondary {
+    .portal-grid .btn-secondary {
         background: #e8ecf3;
         color: #1d4ed8;
     }
 
-    .btn-secondary:hover {
+    .portal-grid .btn-secondary:hover {
         background: #dce1eb;
     }
 
@@ -549,7 +560,7 @@
         stroke: currentColor;
     }
 
-    .btn svg {
+    .portal-grid .btn svg {
         width: 16px;
         height: 16px;
         margin-right: 6px;
@@ -569,6 +580,38 @@
     @media (max-width: 768px) {
         .stats-container {
             grid-template-columns: 1fr;
+        }
+
+        .portal-grid .card-header {
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .news-item {
+            grid-template-columns: 48px minmax(0, 1fr);
+        }
+
+        .news-item > div {
+            min-width: 0;
+        }
+
+        .news-item,
+        .news-item * {
+            max-width: 100%;
+        }
+
+        .news-card .card-header a {
+            white-space: normal;
+        }
+
+        .news-title,
+        .news-meta {
+            display: block;
+            min-width: 0;
+            max-width: 100%;
+            white-space: normal;
+            overflow-wrap: anywhere;
+            word-break: break-word;
         }
 
         .table-responsive {
@@ -651,7 +694,7 @@
             <div class="card-body">
                 <ul class="news-list">
                     <li>
-                        <a class="news-item" href="/KhoaLuan/public/student.php?action=thongbao" style="text-decoration:none;">
+                        <a class="news-item list-group-item" href="/KhoaLuan/public/student.php?action=thongbao" style="text-decoration:none;">
                             <div class="news-date"><div class="m">Th4</div><div class="d">24</div></div>
                             <div>
                                 <p class="news-title">Thông báo cập nhật điểm rèn luyện học kỳ I</p>
@@ -660,7 +703,7 @@
                         </a>
                     </li>
                     <li>
-                        <a class="news-item" href="/KhoaLuan/public/student.php?action=thongbao" style="text-decoration:none;">
+                        <a class="news-item list-group-item" href="/KhoaLuan/public/student.php?action=thongbao" style="text-decoration:none;">
                             <div class="news-date"><div class="m">Th4</div><div class="d">22</div></div>
                             <div>
                                 <p class="news-title">Hướng dẫn đăng ký hoạt động ngoại khóa</p>
@@ -669,7 +712,7 @@
                         </a>
                     </li>
                     <li>
-                        <a class="news-item" href="/KhoaLuan/public/student.php?action=thongbao" style="text-decoration:none;">
+                        <a class="news-item list-group-item" href="/KhoaLuan/public/student.php?action=thongbao" style="text-decoration:none;">
                             <div class="news-date"><div class="m">Th4</div><div class="d">18</div></div>
                             <div>
                                 <p class="news-title">Lịch tiếp nhận minh chứng điểm rèn luyện</p>
@@ -678,7 +721,7 @@
                         </a>
                     </li>
                     <li>
-                        <a class="news-item" href="/KhoaLuan/public/student.php?action=thongbao" style="text-decoration:none;">
+                        <a class="news-item list-group-item" href="/KhoaLuan/public/student.php?action=thongbao" style="text-decoration:none;">
                             <div class="news-date"><div class="m">Th4</div><div class="d">10</div></div>
                             <div>
                                 <p class="news-title">Nhắc hạn hoàn tất khảo sát học kỳ</p>
@@ -694,7 +737,7 @@
     <div class="portal-full portal-full--stats">
         <!-- THỐNG KÊ -->
         <div class="stats-container">
-            <a class="stat-card stat-card--center stat-card--link" href="/KhoaLuan/public/student.php?action=ketquarenluyen">
+            <a class="stat-card card stat-card--center stat-card--link" href="/KhoaLuan/public/student.php?action=ketquarenluyen">
                 <div class="stat-icon">
                     <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                         <path d="M4 19h16" stroke-width="2" stroke-linecap="round"/>
@@ -706,7 +749,7 @@
                 <div class="stat-label">Kết quả rèn luyện</div>
             </a>
 
-            <a class="stat-card stat-card--center stat-card--meta stat-card--link" href="/KhoaLuan/public/student.php?action=lichhoatdong">
+            <a class="stat-card card stat-card--center stat-card--meta stat-card--link" href="/KhoaLuan/public/student.php?action=lichhoatdong">
                 <div class="stat-icon">
                     <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                         <rect x="3" y="5" width="18" height="16" rx="2" stroke-width="2" />
@@ -717,7 +760,7 @@
                 <div class="stat-label">Lịch hoạt động</div>
             </a>
 
-            <a class="stat-card stat-card--center stat-card--link" href="/KhoaLuan/public/student.php?action=dangkyhoatdong">
+            <a class="stat-card card stat-card--center stat-card--link" href="/KhoaLuan/public/student.php?action=dangkyhoatdong">
                 <div class="stat-icon">
                     <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                         <rect x="6" y="4" width="12" height="16" rx="2" stroke-width="2" />
@@ -730,7 +773,7 @@
             </a>
 
 
-            <a class="stat-card stat-card--center stat-card--link" href="/KhoaLuan/public/student.php?action=phieudanhgia">
+            <a class="stat-card card stat-card--center stat-card--link" href="/KhoaLuan/public/student.php?action=phieudanhgia">
                 <div class="stat-icon">
                     <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                         <path d="M7 3h7l5 5v13a1 1 0 0 1-1 1H7a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1Z" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
@@ -741,7 +784,7 @@
                 <div class="stat-label">Phiếu đánh giá</div>
             </a>
 
-            <a class="stat-card stat-card--center stat-card--link" href="/KhoaLuan/public/student.php?action=hoatdongdangky">
+            <a class="stat-card card stat-card--center stat-card--link" href="/KhoaLuan/public/student.php?action=hoatdongdangky">
                 <div class="stat-icon">
                     <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                         <path d="M7 3h7l5 5v13a1 1 0 0 1-1 1H7a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1Z" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
@@ -753,7 +796,7 @@
                 <div class="stat-label">Hoạt động đã đăng ký</div>
             </a>
 
-            <div class="stat-card stat-card--center">
+            <div class="stat-card card stat-card--center">
                 <div class="stat-icon">
                     <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                         <circle cx="12" cy="7" r="3" stroke-width="2" />
@@ -769,7 +812,7 @@
     <div class="portal-full">
         <div id="scores" class="scores-grid">
             <!-- BIỂU ĐỒ (THỐNG KÊ ĐIỂM) -->
-            <section class="scores-section scores-section--compact scores-section--fill scores-section--registered">
+            <section class="scores-section scores-section--compact scores-section--fill scores-section--registered card">
                 <div class="section-title">
                     Hoạt động đã đăng ký
                 </div>
@@ -782,7 +825,7 @@
             </section>
 
             <!-- TIẾN ĐỘ RÈN LUYỆN -->
-            <section class="scores-section scores-section--compact scores-section--fill scores-section--progress">
+            <section class="scores-section scores-section--compact scores-section--fill scores-section--progress card">
                 <div class="section-title">
                     Tiến độ rèn luyện
                 </div>
@@ -793,7 +836,7 @@
             </section>
 
             <!-- BIỂU ĐỒ KẾT QUẢ RÈN LUYỆN -->
-            <section class="scores-section scores-section--compact scores-section--fill">
+            <section class="scores-section scores-section--compact scores-section--fill card">
                 <div class="section-title">
                     Kết quả rèn luyện
                 </div>

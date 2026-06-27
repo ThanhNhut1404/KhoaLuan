@@ -134,17 +134,17 @@
 <div class="joined-page">
     <h2 class="joined-title">Hoạt động đã tham gia</h2>
 
-    <div class="joined-card">
+    <div class="joined-card card">
         <div class="joined-toolbar">
             <label class="term-select">
-                <select name="term" aria-label="Chọn học kỳ">
+                <select class="form-select" name="term" aria-label="Chọn học kỳ">
                     <option value="2024-2025-1">Học kỳ 1 (2024-2025)</option>
                     <option value="2024-2025-2" selected>Học kỳ 2 (2024-2025)</option>
                     <option value="2025-2026-1">Học kỳ 1 (2025-2026)</option>
                 </select>
             </label>
         </div>
-        <table class="joined-table">
+        <div class="table-responsive"><table class="joined-table table table-hover table-bordered align-middle">
             <thead>
                 <tr>
                     <th class="cell-center">STT</th>
@@ -165,8 +165,8 @@
                             <td><?= htmlspecialchars($activity['type'] ?? '') ?></td>
                             <td><?= htmlspecialchars($activity['time'] ?? '') ?></td>
                             <td><?= htmlspecialchars($activity['location'] ?? '') ?></td>
-                            <td><span class="badge level"><?= htmlspecialchars($activity['level'] ?? '') ?></span></td>
-                            <td class="cell-center"><span class="badge score"><?= htmlspecialchars($activity['score'] ?? '') ?></span></td>
+                            <td><span class="badge level rounded-pill"><?= htmlspecialchars($activity['level'] ?? '') ?></span></td>
+                            <td class="cell-center"><span class="badge score rounded-pill"><?= htmlspecialchars($activity['score'] ?? '') ?></span></td>
                         </tr>
                     <?php endforeach; ?>
                 <?php else: ?>
@@ -175,6 +175,6 @@
                     </tr>
                 <?php endif; ?>
             </tbody>
-        </table>
+        </table></div>
     </div>
 </div>

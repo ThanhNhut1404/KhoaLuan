@@ -3,11 +3,11 @@ $changePasswordErrors = $changePasswordErrors ?? [];
 $openChangePasswordModal = $openChangePasswordModal ?? false;
 ?>
 
-<div class="modal-overlay<?= $openChangePasswordModal ? ' active' : '' ?>" id="adminPasswordModal" aria-hidden="<?= $openChangePasswordModal ? 'false' : 'true' ?>">
-    <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="adminPasswordModalTitle">
+<div class="modal-overlay modal<?= $openChangePasswordModal ? ' active' : '' ?>" id="adminPasswordModal" aria-hidden="<?= $openChangePasswordModal ? 'false' : 'true' ?>">
+    <div class="modal-card modal-content" role="dialog" aria-modal="true" aria-labelledby="adminPasswordModalTitle">
         <div class="modal-header">
             <span class="modal-title" id="adminPasswordModalTitle">Đổi mật khẩu</span>
-            <button class="modal-close" type="button" aria-label="Đóng" onclick="closeAdminPasswordModal()">✕</button>
+            <button class="modal-close btn btn-light" type="button" aria-label="Đóng" onclick="closeAdminPasswordModal()">✕</button>
         </div>
         <form method="post" action="/KhoaLuan/public/admin.php?page=change_password">
             <div class="modal-body">
@@ -76,7 +76,7 @@ $openChangePasswordModal = $openChangePasswordModal ?? false;
             </div>
             </div>
             <div class="modal-actions">
-                <button class="modal-save" type="submit">Lưu</button>
+                <button class="modal-save btn btn-primary" type="submit">Lưu</button>
             </div>
         </form>
     </div>

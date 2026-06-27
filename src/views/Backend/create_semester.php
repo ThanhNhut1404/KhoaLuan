@@ -97,12 +97,12 @@
 ?>
 
 <div class="create-semester-page">
-    <div class="page-panel">
-        <div class="panel-header">
+    <div class="page-panel card">
+        <div class="panel-header card-header">
             <h2 class="panel-title">TẠO HỌC KỲ</h2>
         </div>
 
-        <div class="panel-body">
+        <div class="panel-body card-body">
             <form id="createSemesterForm" method="POST" action="?page=create_semester">
                 <?php if(isset($errors['database'])): ?>
                     <div class="alert alert-error">
@@ -113,10 +113,10 @@
                 <div class="form-grid">
                     <!-- Niên khóa -->
                     <div class="form-field">
-                        <label class="field-label" for="academic_year">
+                        <label class="field-label form-label" for="academic_year">
                             Niên khóa <span class="required">*</span>
                         </label>
-                        <select id="academic_year" name="academic_year" class="field-input" required>
+                        <select id="academic_year" name="academic_year" class="field-input form-select" required>
                             <option value="">-- Chọn niên khóa --</option>
                             <?php foreach ($academic_years as $year): ?>
                                 <option value="<?= $year['id'] ?>" <?= (isset($formData['academic_year']) && $formData['academic_year'] == $year['id']) ? 'selected' : '' ?>>
@@ -131,14 +131,14 @@
 
                     <!-- Tên học kỳ -->
                     <div class="form-field">
-                        <label class="field-label" for="semester_name">
+                        <label class="field-label form-label" for="semester_name">
                             Tên học kỳ <span class="required">*</span>
                         </label>
                         <input 
                             type="text" 
                             id="semester_name" 
                             name="semester_name" 
-                            class="field-input" 
+                            class="field-input form-control" 
                             placeholder="Nhập tên học kỳ"
                             value="<?= isset($formData['semester_name']) ? htmlspecialchars($formData['semester_name']) : '' ?>"
                             required 
@@ -151,14 +151,14 @@
 
                     <!-- Ngày bắt đầu -->
                     <div class="form-field">
-                        <label class="field-label" for="start_date">
+                        <label class="field-label form-label" for="start_date">
                             Ngày bắt đầu <span class="required">*</span>
                         </label>
                         <input 
                             type="date" 
                             id="start_date" 
                             name="start_date" 
-                            class="field-input" 
+                            class="field-input form-control" 
                             value="<?= isset($formData['start_date']) ? htmlspecialchars($formData['start_date']) : '' ?>"
                             required 
                         />
@@ -170,14 +170,14 @@
 
                     <!-- Ngày kết thúc -->
                     <div class="form-field">
-                        <label class="field-label" for="end_date">
+                        <label class="field-label form-label" for="end_date">
                             Ngày kết thúc <span class="required">*</span>
                         </label>
                         <input 
                             type="date" 
                             id="end_date" 
                             name="end_date" 
-                            class="field-input" 
+                            class="field-input form-control" 
                             value="<?= isset($formData['end_date']) ? htmlspecialchars($formData['end_date']) : '' ?>"
                             required 
                         />
@@ -191,10 +191,10 @@
 
                     <!-- Trạng thái -->
                     <div class="form-field">
-                        <label class="field-label" for="status">
+                        <label class="field-label form-label" for="status">
                             Trạng thái <span class="required">*</span>
                         </label>
-                        <select id="status" name="status" class="field-input" required>
+                        <select id="status" name="status" class="field-input form-select" required>
                             <option value="">-- Chọn trạng thái --</option>
                             <option value="upcoming" <?= (isset($formData['status']) && $formData['status'] === 'upcoming') ? 'selected' : '' ?>>Sắp tới</option>
                             <option value="active" <?= (isset($formData['status']) && $formData['status'] === 'active') ? 'selected' : '' ?>>Đang diễn ra</option>
@@ -208,10 +208,10 @@
 
                 <!-- Form Actions -->
                 <div class="form-actions">
-                    <a href="?page=list_semester" class="action-btn secondary">
+                    <a href="?page=list_semester" class="action-btn secondary btn btn-outline-secondary">
                         Hủy
                     </a>
-                    <button type="submit" class="action-btn primary">
+                    <button type="submit" class="action-btn primary btn btn-primary">
                         Tạo học kỳ
                     </button>
                 </div>

@@ -13,24 +13,24 @@
 ?>
 
 <div class="create-year-page">
-    <div class="page-panel">
-        <div class="panel-header">
+    <div class="page-panel card">
+        <div class="panel-header card-header">
             <h2 class="panel-title">TẠO NIÊN KHÓA</h2>
         </div>
 
-        <div class="panel-body">
+        <div class="panel-body card-body">
             <form id="createYearForm" method="POST" action="?page=create_year">
                 <div class="form-grid">
                     <!-- Tên niên khóa -->
                     <div class="form-field">
-                        <label class="field-label" for="year_name">
+                        <label class="field-label form-label" for="year_name">
                             Tên niên khóa <span class="required">*</span>
                         </label>
                         <input 
                             type="text" 
                             id="year_name" 
                             name="year_name" 
-                            class="field-input<?= isset($errors['year_name']) ? ' has-error' : '' ?>" 
+                            class="field-input<?= isset($errors['year_name']) ? ' has-error' : '' ?> form-control" 
                             placeholder="Ví dụ: 2024 - 2025"
                             value="<?= htmlspecialchars($formData['year_name'] ?? '') ?>"
                             required 
@@ -43,14 +43,14 @@
 
                     <!-- Ngày bắt đầu -->
                     <div class="form-field">
-                        <label class="field-label" for="start_date">
+                        <label class="field-label form-label" for="start_date">
                             Ngày bắt đầu <span class="required">*</span>
                         </label>
                         <input 
                             type="date" 
                             id="start_date" 
                             name="start_date" 
-                            class="field-input<?= isset($errors['start_date']) ? ' has-error' : '' ?>" 
+                            class="field-input<?= isset($errors['start_date']) ? ' has-error' : '' ?> form-control" 
                             value="<?= htmlspecialchars($formData['start_date'] ?? '') ?>"
                             required 
                         />
@@ -62,10 +62,10 @@
 
                     <!-- Trạng thái -->
                     <div class="form-field">
-                        <label class="field-label" for="status">
+                        <label class="field-label form-label" for="status">
                             Trạng thái <span class="required">*</span>
                         </label>
-                        <select id="status" name="status" class="field-input<?= isset($errors['status']) ? ' has-error' : '' ?>" required>
+                        <select id="status" name="status" class="field-input<?= isset($errors['status']) ? ' has-error' : '' ?> form-select" required>
                             <?php foreach ($statusOptions as $option): ?>
                                 <option value="<?= htmlspecialchars($option['value']) ?>" <?= (($formData['status'] ?? '') === $option['value']) ? 'selected' : '' ?>>
                                     <?= htmlspecialchars($option['label']) ?>
@@ -80,14 +80,14 @@
 
                     <!-- Ngày kết thúc -->
                     <div class="form-field">
-                        <label class="field-label" for="end_date">
+                        <label class="field-label form-label" for="end_date">
                             Ngày kết thúc <span class="required">*</span>
                         </label>
                         <input 
                             type="date" 
                             id="end_date" 
                             name="end_date" 
-                            class="field-input<?= isset($errors['end_date']) ? ' has-error' : '' ?>" 
+                            class="field-input<?= isset($errors['end_date']) ? ' has-error' : '' ?> form-control" 
                             value="<?= htmlspecialchars($formData['end_date'] ?? '') ?>"
                             required 
                         />
@@ -100,10 +100,10 @@
 
                 <!-- Form Actions -->
                 <div class="form-actions">
-                    <a href="?page=list_year" class="action-btn secondary">
+                    <a href="?page=list_year" class="action-btn secondary btn btn-outline-secondary">
                         Hủy
                     </a>
-                    <button type="submit" class="action-btn primary">
+                    <button type="submit" class="action-btn primary btn btn-primary">
                         Tạo niên khóa
                     </button>
                 </div>

@@ -45,8 +45,8 @@
         margin: 4px 0 0 0;
     }
 
-    .btn-primary,
-    .btn-light {
+    .result-page .btn-primary,
+    .result-page .btn-light {
         border: none;
         border-radius: 8px;
         padding: 8px 14px;
@@ -59,14 +59,14 @@
         transition: 0.2s ease;
     }
 
-    .btn-primary {
+    .result-page .btn-primary {
         background: #ffffff;
         color: #1f2937;
         border: 1px solid #e2e8f0;
         box-shadow: 0 6px 16px rgba(15, 23, 42, 0.06);
     }
 
-    .btn-primary:hover {
+    .result-page .btn-primary:hover {
         border-color: #cbd5f5;
         transform: translateY(-1px);
     }
@@ -347,6 +347,20 @@
     }
 
     @media (max-width: 768px) {
+        .result-cards {
+            grid-template-columns: minmax(0, 1fr);
+        }
+
+        .result-card,
+        .result-filter {
+            min-width: 0;
+        }
+
+        .result-filter-controls,
+        .result-filter-actions {
+            width: 100%;
+        }
+
         .result-table th,
         .result-table td {
             padding: 10px 8px;
@@ -355,35 +369,35 @@
 </style>
 
 <div class="result-page">
-    <div class="result-panel">
-        <div class="result-panel__header">
+    <div class="result-panel card">
+        <div class="result-panel__header card-header">
             <h1 class="result-page-title">Kết quả rèn luyện</h1>
         </div>
-        <div class="result-panel__body">
+        <div class="result-panel__body card-body">
             <div class="result-cards">
-                <div class="result-card">
+                <div class="result-card card">
                     <div class="label">Điểm học kỳ này</div>
                     <div class="score-row">
                         <div class="value">84.50</div>
                         <div class="sub">/100</div>
                     </div>
                 </div>
-                <div class="result-card">
+                <div class="result-card card">
                     <div class="label">Xếp loại hiện tại</div>
-                    <div class="badge">Tốt</div>
+                    <div class="badge rounded-pill">Tốt</div>
                 </div>
                 <div class="result-filter">
                     <div class="label">Học kỳ</div>
                     <div class="result-filter-controls">
-                        <select>
+                        <select class="form-select">
                             <option>Tất cả</option>
                             <option>Học kỳ 1</option>
                             <option>Học kỳ 2</option>
                             <option>Học kỳ 3</option>
                         </select>
                         <div class="result-filter-actions">
-                            <button class="result-filter-btn" type="button">Đặt lại</button>
-                            <button class="result-filter-btn primary" type="button">Lọc</button>
+                            <button class="result-filter-btn btn btn-outline-secondary" type="button">Đặt lại</button>
+                            <button class="result-filter-btn primary btn btn-primary" type="button">Lọc</button>
                         </div>
                     </div>
                 </div>
@@ -391,10 +405,10 @@
         </div>
     </div>
 
-    <div class="result-table-card">
+    <div class="result-table-card card">
         <div class="year-block">
             <div class="year-header">Năm học 2023 - 2024</div>
-            <table class="result-table">
+            <div class="table-responsive"><table class="result-table table table-hover table-bordered align-middle">
                 <thead>
                     <tr>
                         <th>Học kỳ</th>
@@ -407,34 +421,34 @@
                     <tr>
                         <td>Học kỳ 3 (2023-2024)</td>
                         <td class="score-text">97,00</td>
-                        <td><span class="score-pill pill-excellent">Xuất sắc</span></td>
+                        <td><span class="score-pill badge rounded-pill pill-excellent">Xuất sắc</span></td>
                         <td>Khen thưởng HK</td>
                     </tr>
                     <tr>
                         <td>Học kỳ 2 (2023-2024)</td>
                         <td class="score-text">87,00</td>
-                        <td><span class="score-pill pill-good">Tốt</span></td>
+                        <td><span class="score-pill badge rounded-pill pill-good">Tốt</span></td>
                         <td class="note-muted">Không có ghi chú</td>
                     </tr>
                     <tr>
                         <td>Học kỳ 1 (2023-2024)</td>
                         <td class="score-text">82,00</td>
-                        <td><span class="score-pill pill-good">Tốt</span></td>
+                        <td><span class="score-pill badge rounded-pill pill-good">Tốt</span></td>
                         <td class="note-muted">Không có ghi chú</td>
                     </tr>
                     <tr class="summary-row">
                         <td>ĐIỂM TRUNG BÌNH:</td>
                         <td class="score-text">88,67</td>
-                        <td><span class="score-pill pill-good">Tốt</span></td>
+                        <td><span class="score-pill badge rounded-pill pill-good">Tốt</span></td>
                         <td></td>
                     </tr>
                 </tbody>
-            </table>
+            </table></div>
         </div>
 
         <div class="year-block">
             <div class="year-header">Năm học 2022 - 2023</div>
-            <table class="result-table">
+            <div class="table-responsive"><table class="result-table table table-hover table-bordered align-middle">
                 <thead>
                     <tr>
                         <th>Học kỳ</th>
@@ -447,29 +461,29 @@
                     <tr>
                         <td>Học kỳ 3 (2022-2023)</td>
                         <td class="score-text">83,00</td>
-                        <td><span class="score-pill pill-good">Tốt</span></td>
+                        <td><span class="score-pill badge rounded-pill pill-good">Tốt</span></td>
                         <td class="note-muted">Không có ghi chú</td>
                     </tr>
                     <tr>
                         <td>Học kỳ 2 (2022-2023)</td>
                         <td class="score-text">78,00</td>
-                        <td><span class="score-pill pill-fair">Khá</span></td>
+                        <td><span class="score-pill badge rounded-pill pill-fair">Khá</span></td>
                         <td class="note-muted">Không có ghi chú</td>
                     </tr>
                     <tr>
                         <td>Học kỳ 1 (2022-2023)</td>
                         <td class="score-text">76,00</td>
-                        <td><span class="score-pill pill-fair">Khá</span></td>
+                        <td><span class="score-pill badge rounded-pill pill-fair">Khá</span></td>
                         <td class="note-muted">Không có ghi chú</td>
                     </tr>
                     <tr class="summary-row">
                         <td>ĐIỂM TRUNG BÌNH:</td>
                         <td class="score-text">79,00</td>
-                        <td><span class="score-pill pill-fair">Khá</span></td>
+                        <td><span class="score-pill badge rounded-pill pill-fair">Khá</span></td>
                         <td></td>
                     </tr>
                 </tbody>
-            </table>
+            </table></div>
         </div>
     </div>
 </div>

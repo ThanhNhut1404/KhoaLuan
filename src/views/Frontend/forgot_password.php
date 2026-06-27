@@ -2,11 +2,11 @@
 // Modal quên mật khẩu cho sinh viên
 ?>
 
-<div class="modal-overlay" id="forgotModal" aria-hidden="true">
-    <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="forgotTitle">
+<div class="modal-overlay modal" id="forgotModal" aria-hidden="true">
+    <div class="modal-card modal-content" role="dialog" aria-modal="true" aria-labelledby="forgotTitle">
         <div class="modal-header">
             <div class="modal-title" id="forgotTitle">Quên mật khẩu</div>
-            <button class="modal-close" type="button" aria-label="Đóng" onclick="closeForgotModal()">&times;</button>
+            <button class="modal-close btn btn-light" type="button" aria-label="Đóng" onclick="closeForgotModal()">&times;</button>
         </div>
         <div class="modal-body">
             <div class="modal-note">Nhập email của bạn để nhận mã OTP đặt lại mật khẩu.</div>
@@ -16,7 +16,7 @@
             </div>
         </div>
         <div class="modal-actions">
-            <button class="modal-btn" type="button">Gửi mã OTP</button>
+            <button class="modal-btn btn btn-primary" type="button">Gửi mã OTP</button>
         </div>
     </div>
 </div>

@@ -13,8 +13,8 @@
 ?>
 
 <div class="edit-activity-page">
-    <div class="page-panel"><div class="panel-header"><h2 class="panel-title">CHỈNH SỬA HOẠT ĐỘNG</h2></div>
-    <div class="panel-body">
+    <div class="page-panel card"><div class="panel-header card-header"><h2 class="panel-title">CHỈNH SỬA HOẠT ĐỘNG</h2></div>
+    <div class="panel-body card-body">
         <?php
             $organizing_units = $organizing_units ?? [
                 'Đoàn trường',
@@ -32,15 +32,15 @@
             <div class="form-grid">
                 <!-- Tên hoạt động -->
                 <div class="form-field">
-                    <label class="field-label" for="activity_name">Tên hoạt động <span class="required">*</span></label>
-                    <input type="text" id="activity_name" name="activity_name" class="field-input" placeholder="Nhập tên hoạt động" value="<?= htmlspecialchars($formData['name'] ?? ($formData['activity_name'] ?? '')) ?>" required />
+                    <label class="field-label form-label" for="activity_name">Tên hoạt động <span class="required">*</span></label>
+                    <input type="text" id="activity_name" name="activity_name" class="field-input form-control" placeholder="Nhập tên hoạt động" value="<?= htmlspecialchars($formData['name'] ?? ($formData['activity_name'] ?? '')) ?>" required />
                     <?php if(isset($errors['activity_name'])): ?><span class="field-error"><?= $errors['activity_name'] ?></span><?php endif; ?>
                 </div>
 
                 <!-- Đơn vị tổ chức -->
                 <div class="form-field">
-                    <label class="field-label" for="organizing_unit">Đơn vị tổ chức <span class="required">*</span></label>
-                    <select id="organizing_unit" name="organizing_unit" class="field-input" required>
+                    <label class="field-label form-label" for="organizing_unit">Đơn vị tổ chức <span class="required">*</span></label>
+                    <select id="organizing_unit" name="organizing_unit" class="field-input form-select" required>
                         <option value="">-- Chọn đơn vị tổ chức --</option>
                         <?php foreach ($organizing_units as $unit): ?>
                             <option value="<?= htmlspecialchars($unit) ?>" <?= (isset($formData['organizing_unit']) && $formData['organizing_unit'] === $unit) ? 'selected' : '' ?>><?= htmlspecialchars($unit) ?></option>
@@ -51,8 +51,8 @@
 
                 <!-- Ca hoạt động -->
                 <div class="form-field">
-                    <label class="field-label" for="activity_period">Ca hoạt động <span class="required">*</span></label>
-                    <select id="activity_period" name="activity_period" class="field-input" required>
+                    <label class="field-label form-label" for="activity_period">Ca hoạt động <span class="required">*</span></label>
+                    <select id="activity_period" name="activity_period" class="field-input form-select" required>
                         <option value="">-- Chọn ca hoạt động --</option>
                         <?php foreach ($time_slots as $slot): ?>
                             <option value="<?= htmlspecialchars($slot) ?>" <?= (isset($formData['activity_period']) && $formData['activity_period'] === $slot) ? 'selected' : '' ?>><?= htmlspecialchars($slot) ?></option>
@@ -63,45 +63,45 @@
 
                 <!-- Upload background -->
                 <div class="form-field">
-                    <label class="field-label" for="background_image">Upload background</label>
-                    <input type="file" id="background_image" name="background_image" class="field-input" accept="image/*" />
+                    <label class="field-label form-label" for="background_image">Upload background</label>
+                    <input type="file" id="background_image" name="background_image" class="field-input form-control" accept="image/*" />
                     <?php if(isset($errors['background_image'])): ?><span class="field-error"><?= $errors['background_image'] ?></span><?php endif; ?>
                 </div>
 
                 <!-- Giờ -->
                 <div class="form-field">
-                    <label class="field-label" for="activity_time">Giờ <span class="required">*</span></label>
-                    <input type="time" id="activity_time" name="activity_time" class="field-input" value="<?= htmlspecialchars($formData['time'] ?? $formData['activity_time'] ?? '') ?>" required />
+                    <label class="field-label form-label" for="activity_time">Giờ <span class="required">*</span></label>
+                    <input type="time" id="activity_time" name="activity_time" class="field-input form-control" value="<?= htmlspecialchars($formData['time'] ?? $formData['activity_time'] ?? '') ?>" required />
                     <?php if(isset($errors['activity_time'])): ?><span class="field-error"><?= $errors['activity_time'] ?></span><?php endif; ?>
                 </div>
 
                 <!-- Địa điểm -->
                 <div class="form-field">
-                    <label class="field-label" for="location">Địa điểm <span class="required">*</span></label>
-                    <input type="text" id="location" name="location" class="field-input" placeholder="Nhập địa điểm" value="<?= htmlspecialchars($formData['location'] ?? '') ?>" required />
+                    <label class="field-label form-label" for="location">Địa điểm <span class="required">*</span></label>
+                    <input type="text" id="location" name="location" class="field-input form-control" placeholder="Nhập địa điểm" value="<?= htmlspecialchars($formData['location'] ?? '') ?>" required />
                     <?php if(isset($errors['location'])): ?><span class="field-error"><?= $errors['location'] ?></span><?php endif; ?>
                 </div>
 
                 <!-- Ngày bắt đầu -->
                 <div class="form-field">
-                    <label class="field-label" for="start_date">Ngày bắt đầu <span class="required">*</span></label>
-                    <input type="date" id="start_date" name="start_date" class="field-input" value="<?= htmlspecialchars($formData['start_date'] ?? '') ?>" required />
+                    <label class="field-label form-label" for="start_date">Ngày bắt đầu <span class="required">*</span></label>
+                    <input type="date" id="start_date" name="start_date" class="field-input form-control" value="<?= htmlspecialchars($formData['start_date'] ?? '') ?>" required />
                     <small class="field-hint">Định dạng: dd/mm/yyyy</small>
                     <?php if(isset($errors['start_date'])): ?><span class="field-error"><?= $errors['start_date'] ?></span><?php endif; ?>
                 </div>
 
                 <!-- Ngày kết thúc -->
                 <div class="form-field">
-                    <label class="field-label" for="end_date">Ngày kết thúc <span class="required">*</span></label>
-                    <input type="date" id="end_date" name="end_date" class="field-input" value="<?= htmlspecialchars($formData['end_date'] ?? '') ?>" required />
+                    <label class="field-label form-label" for="end_date">Ngày kết thúc <span class="required">*</span></label>
+                    <input type="date" id="end_date" name="end_date" class="field-input form-control" value="<?= htmlspecialchars($formData['end_date'] ?? '') ?>" required />
                     <small class="field-hint">Định dạng: dd/mm/yyyy</small>
                     <?php if(isset($errors['end_date'])): ?><span class="field-error"><?= $errors['end_date'] ?></span><?php endif; ?>
                 </div>
 
                 <!-- Loại hoạt động -->
                 <div class="form-field">
-                    <label class="field-label" for="activity_type">Loại hoạt động <span class="required">*</span></label>
-                    <select id="activity_type" name="activity_type" class="field-input" required>
+                    <label class="field-label form-label" for="activity_type">Loại hoạt động <span class="required">*</span></label>
+                    <select id="activity_type" name="activity_type" class="field-input form-select" required>
                         <option value="">-- Chọn loại hoạt động --</option>
                         <?php foreach ($activity_types as $type): ?>
                             <option value="<?= htmlspecialchars($type) ?>" <?= (isset($formData['activity_type']) && $formData['activity_type'] === $type) ? 'selected' : '' ?>><?= htmlspecialchars($type) ?></option>
@@ -112,8 +112,8 @@
 
                 <!-- Cấp hoạt động -->
                 <div class="form-field">
-                    <label class="field-label" for="activity_level">Cấp hoạt động <span class="required">*</span></label>
-                    <select id="activity_level" name="activity_level" class="field-input" required>
+                    <label class="field-label form-label" for="activity_level">Cấp hoạt động <span class="required">*</span></label>
+                    <select id="activity_level" name="activity_level" class="field-input form-select" required>
                         <option value="">-- Chọn cấp hoạt động --</option>
                         <?php foreach ($activity_levels as $level): ?>
                             <option value="<?= htmlspecialchars($level) ?>" <?= (isset($formData['activity_level']) && $formData['activity_level'] === $level) ? 'selected' : '' ?>><?= htmlspecialchars($level) ?></option>
@@ -124,64 +124,64 @@
 
                 <!-- Đối tượng -->
                 <div class="form-field">
-                    <label class="field-label" for="target_audience">Đối tượng <span class="required">*</span></label>
-                    <input type="text" id="target_audience" name="target_audience" class="field-input" placeholder="Nhập đối tượng" value="<?= htmlspecialchars($formData['target_audience'] ?? '') ?>" required />
+                    <label class="field-label form-label" for="target_audience">Đối tượng <span class="required">*</span></label>
+                    <input type="text" id="target_audience" name="target_audience" class="field-input form-control" placeholder="Nhập đối tượng" value="<?= htmlspecialchars($formData['target_audience'] ?? '') ?>" required />
                     <?php if(isset($errors['target_audience'])): ?><span class="field-error"><?= $errors['target_audience'] ?></span><?php endif; ?>
                 </div>
 
                 <!-- Trang phục -->
                 <div class="form-field">
-                    <label class="field-label" for="dress_code">Trang phục</label>
-                    <input type="text" id="dress_code" name="dress_code" class="field-input" placeholder="Nhập trang phục" value="<?= htmlspecialchars($formData['dress_code'] ?? '') ?>" />
+                    <label class="field-label form-label" for="dress_code">Trang phục</label>
+                    <input type="text" id="dress_code" name="dress_code" class="field-input form-control" placeholder="Nhập trang phục" value="<?= htmlspecialchars($formData['dress_code'] ?? '') ?>" />
                     <?php if(isset($errors['dress_code'])): ?><span class="field-error"><?= $errors['dress_code'] ?></span><?php endif; ?>
                 </div>
 
                 <!-- Nội dung -->
                 <div class="form-field">
-                    <label class="field-label" for="content">Nội dung</label>
-                    <textarea id="content" name="content" class="field-input textarea-input" placeholder="Nhập nội dung hoạt động"><?= isset($formData['content'])?htmlspecialchars($formData['content']):'' ?></textarea>
+                    <label class="field-label form-label" for="content">Nội dung</label>
+                    <textarea id="content" name="content" class="field-input textarea-input form-control" placeholder="Nhập nội dung hoạt động"><?= isset($formData['content'])?htmlspecialchars($formData['content']):'' ?></textarea>
                     <?php if(isset($errors['content'])): ?><span class="field-error"><?= $errors['content'] ?></span><?php endif; ?>
                 </div>
 
                 <!-- Quyền lợi -->
                 <div class="form-field">
-                    <label class="field-label" for="benefits">Quyền lợi</label>
-                    <textarea id="benefits" name="benefits" class="field-input textarea-input" placeholder="Nhập quyền lợi"><?= isset($formData['benefits'])?htmlspecialchars($formData['benefits']):'' ?></textarea>
+                    <label class="field-label form-label" for="benefits">Quyền lợi</label>
+                    <textarea id="benefits" name="benefits" class="field-input textarea-input form-control" placeholder="Nhập quyền lợi"><?= isset($formData['benefits'])?htmlspecialchars($formData['benefits']):'' ?></textarea>
                     <?php if(isset($errors['benefits'])): ?><span class="field-error"><?= $errors['benefits'] ?></span><?php endif; ?>
                 </div>
 
                 <!-- Điểm cộng -->
                 <div class="form-field">
-                    <label class="field-label" for="bonus_points">Điểm cộng</label>
-                    <input type="number" id="bonus_points" name="bonus_points" class="field-input" placeholder="Nhập điểm cộng" value="<?= isset($formData['bonus_points'])?htmlspecialchars($formData['bonus_points']):'' ?>" min="0" />
+                    <label class="field-label form-label" for="bonus_points">Điểm cộng</label>
+                    <input type="number" id="bonus_points" name="bonus_points" class="field-input form-control" placeholder="Nhập điểm cộng" value="<?= isset($formData['bonus_points'])?htmlspecialchars($formData['bonus_points']):'' ?>" min="0" />
                     <?php if(isset($errors['bonus_points'])): ?><span class="field-error"><?= $errors['bonus_points'] ?></span><?php endif; ?>
                 </div>
 
                 <!-- Số lượng -->
                 <div class="form-field">
-                    <label class="field-label" for="capacity">Số lượng</label>
-                    <input type="number" id="capacity" name="capacity" class="field-input" placeholder="Nhập số lượng" value="<?= isset($formData['capacity'])?htmlspecialchars($formData['capacity']):'' ?>" min="0" />
+                    <label class="field-label form-label" for="capacity">Số lượng</label>
+                    <input type="number" id="capacity" name="capacity" class="field-input form-control" placeholder="Nhập số lượng" value="<?= isset($formData['capacity'])?htmlspecialchars($formData['capacity']):'' ?>" min="0" />
                     <?php if(isset($errors['capacity'])): ?><span class="field-error"><?= $errors['capacity'] ?></span><?php endif; ?>
                 </div>
 
                 <!-- Người đại diện -->
                 <div class="form-field">
-                    <label class="field-label" for="representative">Người đại diện</label>
-                    <input type="text" id="representative" name="representative" class="field-input" placeholder="Nhập người đại diện" value="<?= htmlspecialchars($formData['representative'] ?? '') ?>" />
+                    <label class="field-label form-label" for="representative">Người đại diện</label>
+                    <input type="text" id="representative" name="representative" class="field-input form-control" placeholder="Nhập người đại diện" value="<?= htmlspecialchars($formData['representative'] ?? '') ?>" />
                     <?php if(isset($errors['representative'])): ?><span class="field-error"><?= $errors['representative'] ?></span><?php endif; ?>
                 </div>
 
                 <!-- Số điện thoại -->
                 <div class="form-field">
-                    <label class="field-label" for="phone">Số điện thoại</label>
-                    <input type="tel" id="phone" name="phone" class="field-input" placeholder="Nhập số điện thoại" value="<?= htmlspecialchars($formData['phone'] ?? '') ?>" />
+                    <label class="field-label form-label" for="phone">Số điện thoại</label>
+                    <input type="tel" id="phone" name="phone" class="field-input form-control" placeholder="Nhập số điện thoại" value="<?= htmlspecialchars($formData['phone'] ?? '') ?>" />
                     <?php if(isset($errors['phone'])): ?><span class="field-error"><?= $errors['phone'] ?></span><?php endif; ?>
                 </div>
 
                 <!-- Trạng thái -->
                 <div class="form-field">
-                    <label class="field-label" for="status">Trạng thái <span class="required">*</span></label>
-                    <select id="status" name="status" class="field-input" required>
+                    <label class="field-label form-label" for="status">Trạng thái <span class="required">*</span></label>
+                    <select id="status" name="status" class="field-input form-select" required>
                         <option value="">-- Chọn trạng thái --</option>
                         <option value="upcoming" <?= (isset($formData['status']) && $formData['status'] === 'upcoming') ? 'selected' : '' ?>>Sắp tới</option>
                         <option value="active" <?= (isset($formData['status']) && $formData['status'] === 'active') ? 'selected' : '' ?>>Đang diễn ra</option>
@@ -192,8 +192,8 @@
             </div>
 
             <div class="form-actions">
-                <a href="?page=list_activity" class="action-btn secondary">Hủy</a>
-                <button type="submit" class="action-btn primary">Cập nhật hoạt động</button>
+                <a href="?page=list_activity" class="action-btn secondary btn btn-outline-secondary">Hủy</a>
+                <button type="submit" class="action-btn primary btn btn-primary">Cập nhật hoạt động</button>
             </div>
         </form>
     </div></div>

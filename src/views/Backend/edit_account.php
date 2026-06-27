@@ -14,28 +14,28 @@
 ?>
 
 <div class="edit-account-page">
-    <div class="page-panel"><div class="panel-header"><h2 class="panel-title">CHỈNH SỬA TÀI KHOẢN</h2></div>
-    <div class="panel-body">
+    <div class="page-panel card"><div class="panel-header card-header"><h2 class="panel-title">CHỈNH SỬA TÀI KHOẢN</h2></div>
+    <div class="panel-body card-body">
         <form id="editAccountForm" method="POST" action="?page=edit_account&id=<?= $id ?>">
             <div class="form-grid">
                 <!-- Tên người dùng -->
                 <div class="form-field">
-                    <label class="field-label" for="full_name">Tên người dùng <span class="required">*</span></label>
-                    <input type="text" id="full_name" name="full_name" class="field-input" placeholder="Nhập tên người dùng" value="<?= htmlspecialchars($formData['full_name'] ?? '') ?>" required />
+                    <label class="field-label form-label" for="full_name">Tên người dùng <span class="required">*</span></label>
+                    <input type="text" id="full_name" name="full_name" class="field-input form-control" placeholder="Nhập tên người dùng" value="<?= htmlspecialchars($formData['full_name'] ?? '') ?>" required />
                     <?php if(isset($errors['full_name'])): ?><span class="field-error"><?= $errors['full_name'] ?></span><?php endif; ?>
                 </div>
 
                 <!-- Tên tài khoản -->
                 <div class="form-field">
-                    <label class="field-label" for="username">Tên tài khoản <span class="required">*</span></label>
-                    <input type="text" id="username" name="username" class="field-input" placeholder="Nhập tên tài khoản" value="<?= htmlspecialchars($formData['username'] ?? '') ?>" required />
+                    <label class="field-label form-label" for="username">Tên tài khoản <span class="required">*</span></label>
+                    <input type="text" id="username" name="username" class="field-input form-control" placeholder="Nhập tên tài khoản" value="<?= htmlspecialchars($formData['username'] ?? '') ?>" required />
                     <?php if(isset($errors['username'])): ?><span class="field-error"><?= $errors['username'] ?></span><?php endif; ?>
                 </div>
 
                 <!-- Giới tính -->
                 <div class="form-field">
-                    <label class="field-label" for="gender">Giới tính <span class="required">*</span></label>
-                    <select id="gender" name="gender" class="field-input" required>
+                    <label class="field-label form-label" for="gender">Giới tính <span class="required">*</span></label>
+                    <select id="gender" name="gender" class="field-input form-select" required>
                         <option value="">-- Chọn giới tính --</option>
                         <option value="male" <?= (isset($formData['gender']) && $formData['gender'] === 'male') ? 'selected' : '' ?>>Nam</option>
                         <option value="female" <?= (isset($formData['gender']) && $formData['gender'] === 'female') ? 'selected' : '' ?>>Nữ</option>
@@ -46,50 +46,50 @@
 
                 <!-- Ngày sinh -->
                 <div class="form-field">
-                    <label class="field-label" for="birthday">Ngày sinh <span class="required">*</span></label>
-                    <input type="date" id="birthday" name="birthday" class="field-input" value="<?= htmlspecialchars($formData['birthday'] ?? '') ?>" required />
+                    <label class="field-label form-label" for="birthday">Ngày sinh <span class="required">*</span></label>
+                    <input type="date" id="birthday" name="birthday" class="field-input form-control" value="<?= htmlspecialchars($formData['birthday'] ?? '') ?>" required />
                     <?php if(isset($errors['birthday'])): ?><span class="field-error"><?= $errors['birthday'] ?></span><?php endif; ?>
                 </div>
 
                 <!-- Địa chỉ -->
                 <div class="form-field">
-                    <label class="field-label" for="address">Địa chỉ</label>
-                    <input type="text" id="address" name="address" class="field-input" placeholder="Nhập địa chỉ" value="<?= htmlspecialchars($formData['address'] ?? '') ?>" />
+                    <label class="field-label form-label" for="address">Địa chỉ</label>
+                    <input type="text" id="address" name="address" class="field-input form-control" placeholder="Nhập địa chỉ" value="<?= htmlspecialchars($formData['address'] ?? '') ?>" />
                     <?php if(isset($errors['address'])): ?><span class="field-error"><?= $errors['address'] ?></span><?php endif; ?>
                 </div>
 
                 <!-- Email -->
                 <div class="form-field">
-                    <label class="field-label" for="email">Email <span class="required">*</span></label>
-                    <input type="email" id="email" name="email" class="field-input" placeholder="Nhập email" value="<?= htmlspecialchars($formData['email'] ?? '') ?>" required />
+                    <label class="field-label form-label" for="email">Email <span class="required">*</span></label>
+                    <input type="email" id="email" name="email" class="field-input form-control" placeholder="Nhập email" value="<?= htmlspecialchars($formData['email'] ?? '') ?>" required />
                     <?php if(isset($errors['email'])): ?><span class="field-error"><?= $errors['email'] ?></span><?php endif; ?>
                 </div>
 
                 <!-- Số điện thoại -->
                 <div class="form-field">
-                    <label class="field-label" for="phone">Số điện thoại</label>
-                    <input type="tel" id="phone" name="phone" class="field-input" placeholder="Nhập số điện thoại" value="<?= htmlspecialchars($formData['phone'] ?? '') ?>" />
+                    <label class="field-label form-label" for="phone">Số điện thoại</label>
+                    <input type="tel" id="phone" name="phone" class="field-input form-control" placeholder="Nhập số điện thoại" value="<?= htmlspecialchars($formData['phone'] ?? '') ?>" />
                     <?php if(isset($errors['phone'])): ?><span class="field-error"><?= $errors['phone'] ?></span><?php endif; ?>
                 </div>
 
                 <!-- Mật khẩu -->
                 <div class="form-field">
-                    <label class="field-label" for="password">Mật khẩu</label>
-                    <input type="password" id="password" name="password" class="field-input" placeholder="Nhập mật khẩu" />
+                    <label class="field-label form-label" for="password">Mật khẩu</label>
+                    <input type="password" id="password" name="password" class="field-input form-control" placeholder="Nhập mật khẩu" />
                     <?php if(isset($errors['password'])): ?><span class="field-error"><?= $errors['password'] ?></span><?php endif; ?>
                 </div>
 
                 <!-- Xác nhận mật khẩu -->
                 <div class="form-field">
-                    <label class="field-label" for="confirm_password">Xác nhận mật khẩu</label>
-                    <input type="password" id="confirm_password" name="confirm_password" class="field-input" placeholder="Nhập lại mật khẩu" />
+                    <label class="field-label form-label" for="confirm_password">Xác nhận mật khẩu</label>
+                    <input type="password" id="confirm_password" name="confirm_password" class="field-input form-control" placeholder="Nhập lại mật khẩu" />
                     <?php if(isset($errors['confirm_password'])): ?><span class="field-error"><?= $errors['confirm_password'] ?></span><?php endif; ?>
                 </div>
 
                 <!-- Vai trò -->
                 <div class="form-field">
-                    <label class="field-label" for="role">Chọn vai trò <span class="required">*</span></label>
-                    <select id="role" name="role" class="field-input" required>
+                    <label class="field-label form-label" for="role">Chọn vai trò <span class="required">*</span></label>
+                    <select id="role" name="role" class="field-input form-select" required>
                         <option value="">-- Chọn vai trò --</option>
                         <?php foreach ($roles as $role): ?>
                             <option value="<?= $role['id'] ?>" <?= (isset($formData['role']) && $formData['role'] == $role['id']) ? 'selected' : '' ?>><?= htmlspecialchars($role['name']) ?></option>
@@ -100,8 +100,8 @@
 
                 <!-- Trạng thái -->
                 <div class="form-field">
-                    <label class="field-label" for="status">Trạng thái <span class="required">*</span></label>
-                    <select id="status" name="status" class="field-input" required>
+                    <label class="field-label form-label" for="status">Trạng thái <span class="required">*</span></label>
+                    <select id="status" name="status" class="field-input form-select" required>
                         <option value="">-- Chọn trạng thái --</option>
                         <option value="active" <?= (isset($formData['status']) && $formData['status'] === 'active') ? 'selected' : '' ?>>Hoạt động</option>
                         <option value="inactive" <?= (isset($formData['status']) && $formData['status'] === 'inactive') ? 'selected' : '' ?>>Không hoạt động</option>
@@ -110,8 +110,8 @@
                 </div>
             </div>
             <div class="form-actions">
-                <a href="?page=list_accounts" class="action-btn secondary">Hủy</a>
-                <button type="submit" class="action-btn primary">Cập nhật tài khoản</button>
+                <a href="?page=list_accounts" class="action-btn secondary btn btn-outline-secondary">Hủy</a>
+                <button type="submit" class="action-btn primary btn btn-primary">Cập nhật tài khoản</button>
             </div>
         </form>
     </div></div>

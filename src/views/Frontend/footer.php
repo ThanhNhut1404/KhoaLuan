@@ -1,7 +1,7 @@
 <footer class="student-footer">
-    <div class="footer-inner">
-        <div class="footer-content">
-            <div class="footer-section">
+    <div class="footer-inner container-fluid">
+        <div class="footer-content row">
+            <div class="footer-section col-12 col-md-4">
                 <div class="footer-heading">
                     <div class="footer-brand">UniDRL</div>
                 </div>
@@ -13,7 +13,7 @@
                 </div>
             </div>
 
-            <div class="footer-section">
+            <div class="footer-section col-12 col-md-4">
                 <div class="footer-heading"><i class="fas fa-envelope"></i> <span>Liên hệ</span></div>
                 <ul class="footer-contact">
                     <li><a href="mailto:contact@tdu.edu.vn">contact@tdu.edu.vn</a></li>
@@ -22,7 +22,7 @@
                 </ul>
             </div>
 
-            <div class="footer-section">
+            <div class="footer-section col-12 col-md-4">
                 <div class="footer-heading"><i class="fas fa-link"></i> <span>Liên kết nhanh</span></div>
                 <ul class="footer-links">
                     <li><a href="#">Hướng dẫn</a></li>

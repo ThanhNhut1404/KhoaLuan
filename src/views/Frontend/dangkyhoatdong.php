@@ -748,26 +748,69 @@
     .activity-tag--kynang { color:#7c3aed; border-color:#c4b5fd; }
     .activity-tag--khac { color:#0f766e; border-color:#5eead4; }
 
+    @media (max-width: 640px) {
+        .activity-filters {
+            grid-template-columns: minmax(0, 1fr);
+            padding: 0;
+        }
+
+        .filter-actions {
+            display: grid;
+            grid-template-columns: minmax(0, 1fr);
+            justify-self: stretch;
+            width: 100%;
+        }
+
+        .filter-btn {
+            display: inline-flex;
+            justify-content: center;
+            min-width: 0;
+            width: 100%;
+            padding: 8px 10px;
+        }
+
+        .activity-tabs {
+            gap: 8px 10px;
+            overflow: visible;
+        }
+
+        .activity-tab {
+            white-space: normal;
+        }
+
+        .activity-grid {
+            grid-template-columns: minmax(0, 1fr);
+        }
+
+        .activity-card {
+            min-width: 0;
+        }
+
+        .activity-footer {
+            flex-wrap: wrap;
+        }
+    }
+
 </style>
 
 <div class="activity-page">
     <div class="activity-toolbar">
-        <div class="activity-panel">
-            <div class="activity-panel__header">
+        <div class="activity-panel card">
+            <div class="activity-panel__header card-header">
                 <div class="activity-page-title">Đăng ký hoạt động</div>
             </div>
-            <div class="activity-panel__body">
+            <div class="activity-panel__body card-body">
                 <div class="activity-filters">
                     <div class="filter-field">
                         <span>Tìm kiếm hoạt động</span>
                         <div class="filter-input">
-                            <input type="text" placeholder="Tìm kiếm hoạt động..." />
+                            <input class="form-control" type="text" placeholder="Tìm kiếm hoạt động..." />
                         </div>
                     </div>
                     <div class="filter-field">
                         <span>Đơn vị tổ chức</span>
                         <div class="filter-input">
-                            <input type="text" placeholder="Nhập đơn vị tổ chức..." />
+                            <input class="form-control" type="text" placeholder="Nhập đơn vị tổ chức..." />
                         </div>
                     </div>
                     <div class="filter-field">
@@ -783,21 +826,21 @@
                         <div class="filter-select">Đang mở <span>v</span></div>
                     </div>
                     <div class="filter-actions">
-                        <button class="filter-btn" type="button">Đặt lại</button>
-                        <button class="filter-btn primary" type="button">Lọc & Tìm kiếm</button>
+                        <button class="filter-btn btn btn-outline-secondary" type="button">Đặt lại</button>
+                        <button class="filter-btn primary btn btn-primary" type="button">Lọc & Tìm kiếm</button>
                     </div>
                 </div>
             </div>
         </div>
 
-        <div class="activity-tabs">
-            <div class="activity-tab active">Tất cả</div>
-            <div class="activity-tab">Học tập</div>
-            <div class="activity-tab">Đạo đức</div>
-            <div class="activity-tab">Thể lực</div>
-            <div class="activity-tab">Tình nguyện</div>
-            <div class="activity-tab">Hội nhập</div>
-            <div class="activity-tab">Khác</div>
+        <div class="activity-tabs nav nav-pills">
+            <div class="activity-tab active nav-link">Tất cả</div>
+            <div class="activity-tab nav-link">Học tập</div>
+            <div class="activity-tab nav-link">Đạo đức</div>
+            <div class="activity-tab nav-link">Thể lực</div>
+            <div class="activity-tab nav-link">Tình nguyện</div>
+            <div class="activity-tab nav-link">Hội nhập</div>
+            <div class="activity-tab nav-link">Khác</div>
             <div class="activity-sort">
                 <div class="sort-select">Mới nhất</div>
             </div>
@@ -805,7 +848,7 @@
     </div>
 
     <div class="activity-grid">
-        <article class="activity-card" tabindex="0"
+        <article class="activity-card card" tabindex="0"
             data-title="Chiến dịch Mùa hè xanh 2024"
             data-unit="Đoàn trường Đại học ABC"
             data-time="20/06/2024 - 25/06/2024"
@@ -823,7 +866,7 @@
         >
             <div class="activity-cover">
                 <img src="https://images.unsplash.com/photo-1469474968028-56623f02e42e?auto=format&fit=crop&w=900&q=60" alt="Hoạt động" />
-                <span class="activity-badge">Đang mở</span>
+                <span class="activity-badge badge rounded-pill">Đang mở</span>
             </div>
             <div class="activity-body">
                 <div class="activity-title">Chiến dịch Mùa hè xanh 2024</div>
@@ -837,13 +880,13 @@
                     <div><span class="meta-label">Còn lại:</span><br><strong>45 / 100</strong></div>
                 </div>
                 <div class="activity-footer">
-                    <span class="activity-tag activity-tag--tinhnguyen">Tình nguyện</span>
-                    <button class="activity-btn" type="button">Đăng ký</button>
+                    <span class="activity-tag badge rounded-pill activity-tag--tinhnguyen">Tình nguyện</span>
+                    <button class="activity-btn btn btn-primary" type="button">Đăng ký</button>
                 </div>
             </div>
         </article>
 
-        <article class="activity-card" tabindex="0"
+        <article class="activity-card card" tabindex="0"
             data-title="Hội thảo: AI và tương lai nghề nghiệp"
             data-unit="Khoa Công nghệ thông tin"
             data-time="15/05/2024 - 15/05/2024"
@@ -861,7 +904,7 @@
         >
             <div class="activity-cover">
                 <img src="https://images.unsplash.com/photo-1522202176988-66273c2fd55f?auto=format&fit=crop&w=900&q=60" alt="Hoạt động" />
-                <span class="activity-badge">Đang mở</span>
+                <span class="activity-badge badge rounded-pill">Đang mở</span>
             </div>
             <div class="activity-body">
                 <div class="activity-title">Hội thảo: AI và tương lai nghề nghiệp</div>
@@ -875,13 +918,13 @@
                     <div><span class="meta-label">Còn lại:</span><br><strong>120 / 150</strong></div>
                 </div>
                 <div class="activity-footer">
-                    <span class="activity-tag activity-tag--hocthuat">Học thuật</span>
-                    <button class="activity-btn" type="button">Đăng ký</button>
+                    <span class="activity-tag badge rounded-pill activity-tag--hocthuat">Học thuật</span>
+                    <button class="activity-btn btn btn-primary" type="button">Đăng ký</button>
                 </div>
             </div>
         </article>
 
-        <article class="activity-card" tabindex="0"
+        <article class="activity-card card" tabindex="0"
             data-title="Giải bóng đá sinh viên mở rộng 2024"
             data-unit="Hội Sinh viên"
             data-time="10/05/2024 - 30/05/2024"
@@ -899,7 +942,7 @@
         >
             <div class="activity-cover">
                 <img src="https://images.unsplash.com/photo-1489515217757-5fd1be406fef?auto=format&fit=crop&w=900&q=60" alt="Hoạt động" />
-                <span class="activity-badge">Đang mở</span>
+                <span class="activity-badge badge rounded-pill">Đang mở</span>
             </div>
             <div class="activity-body">
                 <div class="activity-title">Giải bóng đá sinh viên mở rộng 2024</div>
@@ -913,13 +956,13 @@
                     <div><span class="meta-label">Còn lại:</span><br><strong>8 / 16 đội</strong></div>
                 </div>
                 <div class="activity-footer">
-                    <span class="activity-tag activity-tag--thethao">Thể thao</span>
-                    <button class="activity-btn" type="button">Đăng ký</button>
+                    <span class="activity-tag badge rounded-pill activity-tag--thethao">Thể thao</span>
+                    <button class="activity-btn btn btn-primary" type="button">Đăng ký</button>
                 </div>
             </div>
         </article>
 
-        <article class="activity-card" tabindex="0"
+        <article class="activity-card card" tabindex="0"
             data-title="Hiến máu nhân đạo đợt 1/2024"
             data-unit="Đoàn trường Đại học ABC"
             data-time="08/05/2024 - 08/05/2024"
@@ -937,7 +980,7 @@
         >
             <div class="activity-cover">
                 <img src="https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?auto=format&fit=crop&w=900&q=60" alt="Hoạt động" />
-                <span class="activity-badge">Đang mở</span>
+                <span class="activity-badge badge rounded-pill">Đang mở</span>
             </div>
             <div class="activity-body">
                 <div class="activity-title">Hiến máu nhân đạo đợt 1/2024</div>
@@ -951,13 +994,13 @@
                     <div><span class="meta-label">Còn lại:</span><br><strong>60 / 100</strong></div>
                 </div>
                 <div class="activity-footer">
-                    <span class="activity-tag activity-tag--tinhnguyen">Tình nguyện</span>
-                    <button class="activity-btn" type="button">Đăng ký</button>
+                    <span class="activity-tag badge rounded-pill activity-tag--tinhnguyen">Tình nguyện</span>
+                    <button class="activity-btn btn btn-primary" type="button">Đăng ký</button>
                 </div>
             </div>
         </article>
 
-        <article class="activity-card" tabindex="0"
+        <article class="activity-card card" tabindex="0"
             data-title="Đêm văn nghệ chào tân sinh viên K15"
             data-unit="Hội Sinh viên"
             data-time="25/05/2024 - 25/05/2024"
@@ -975,7 +1018,7 @@
         >
             <div class="activity-cover">
                 <img src="https://images.unsplash.com/photo-1483412033650-1015ddeb83d1?auto=format&fit=crop&w=900&q=60" alt="Hoạt động" />
-                <span class="activity-badge">Đang mở</span>
+                <span class="activity-badge badge rounded-pill">Đang mở</span>
             </div>
             <div class="activity-body">
                 <div class="activity-title">Đêm văn nghệ chào tân sinh viên K15</div>
@@ -989,13 +1032,13 @@
                     <div><span class="meta-label">Còn lại:</span><br><strong>30 / 80</strong></div>
                 </div>
                 <div class="activity-footer">
-                    <span class="activity-tag activity-tag--vanhoa">Văn hóa - Văn nghệ</span>
-                    <button class="activity-btn" type="button">Đăng ký</button>
+                    <span class="activity-tag badge rounded-pill activity-tag--vanhoa">Văn hóa - Văn nghệ</span>
+                    <button class="activity-btn btn btn-primary" type="button">Đăng ký</button>
                 </div>
             </div>
         </article>
 
-        <article class="activity-card" tabindex="0"
+        <article class="activity-card card" tabindex="0"
             data-title="Workshop: Kỹ năng thuyết trình hiệu quả"
             data-unit="Trung tâm Kỹ năng mềm"
             data-time="18/05/2024 - 18/05/2024"
@@ -1013,7 +1056,7 @@
         >
             <div class="activity-cover">
                 <img src="https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?auto=format&fit=crop&w=900&q=60" alt="Hoạt động" />
-                <span class="activity-badge">Đang mở</span>
+                <span class="activity-badge badge rounded-pill">Đang mở</span>
             </div>
             <div class="activity-body">
                 <div class="activity-title">Workshop: Kỹ năng thuyết trình hiệu quả</div>
@@ -1027,13 +1070,13 @@
                     <div><span class="meta-label">Còn lại:</span><br><strong>25 / 40</strong></div>
                 </div>
                 <div class="activity-footer">
-                    <span class="activity-tag activity-tag--kynang">Kỹ năng</span>
-                    <button class="activity-btn" type="button">Đăng ký</button>
+                    <span class="activity-tag badge rounded-pill activity-tag--kynang">Kỹ năng</span>
+                    <button class="activity-btn btn btn-primary" type="button">Đăng ký</button>
                 </div>
             </div>
         </article>
 
-        <article class="activity-card" tabindex="0"
+        <article class="activity-card card" tabindex="0"
             data-title="Cuộc thi Nhiếp ảnh: Khoảnh khắc sinh viên"
             data-unit="Câu lạc bộ Nhiếp ảnh"
             data-time="01/05/2024 - 20/05/2024"
@@ -1051,7 +1094,7 @@
         >
             <div class="activity-cover">
                 <img src="https://images.unsplash.com/photo-1453928582365-b6ad33cbcf64?auto=format&fit=crop&w=900&q=60" alt="Hoạt động" />
-                <span class="activity-badge">Đang mở</span>
+                <span class="activity-badge badge rounded-pill">Đang mở</span>
             </div>
             <div class="activity-body">
                 <div class="activity-title">Cuộc thi Nhiếp ảnh: Khoảnh khắc sinh viên</div>
@@ -1065,13 +1108,13 @@
                     <div><span class="meta-label">Còn lại:</span><br><strong>30 / 120</strong></div>
                 </div>
                 <div class="activity-footer">
-                    <span class="activity-tag activity-tag--khac">Khác</span>
-                    <button class="activity-btn" type="button">Đăng ký</button>
+                    <span class="activity-tag badge rounded-pill activity-tag--khac">Khác</span>
+                    <button class="activity-btn btn btn-primary" type="button">Đăng ký</button>
                 </div>
             </div>
         </article>
 
-        <article class="activity-card" tabindex="0"
+        <article class="activity-card card" tabindex="0"
             data-title="Ngày hội \"Vì môi trường xanh\""
             data-unit="CLB Môi trường xanh"
             data-time="28/05/2024 - 28/05/2024"
@@ -1089,7 +1132,7 @@
         >
             <div class="activity-cover">
                 <img src="https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?auto=format&fit=crop&w=900&q=60" alt="Hoạt động" />
-                <span class="activity-badge">Sắp diễn ra</span>
+                <span class="activity-badge badge rounded-pill">Sắp diễn ra</span>
             </div>
             <div class="activity-body">
                 <div class="activity-title">Ngày hội "Vì môi trường xanh"</div>
@@ -1103,19 +1146,19 @@
                     <div><span class="meta-label">Còn lại:</span><br><strong>90 / 120</strong></div>
                 </div>
                 <div class="activity-footer">
-                    <span class="activity-tag activity-tag--tinhnguyen">Tình nguyện</span>
-                    <button class="activity-btn" type="button">Đăng ký</button>
+                    <span class="activity-tag badge rounded-pill activity-tag--tinhnguyen">Tình nguyện</span>
+                    <button class="activity-btn btn btn-primary" type="button">Đăng ký</button>
                 </div>
             </div>
         </article>
     </div>
 
-    <div class="activity-pagination">
-        <span class="page-btn">&#x2039;</span>
-        <span class="page-btn active">1</span>
-        <span class="page-btn">2</span>
-        <span class="page-btn">3</span>
-        <span class="page-btn">&#x203A;</span>
+    <div class="activity-pagination pagination">
+        <span class="page-btn page-link page-item">&#x2039;</span>
+        <span class="page-btn active page-link page-item">1</span>
+        <span class="page-btn page-link page-item">2</span>
+        <span class="page-btn page-link page-item">3</span>
+        <span class="page-btn page-link page-item">&#x203A;</span>
     </div>
 </div>
 

@@ -61,14 +61,14 @@
 ?>
 
 <div class="list-semester-page">
-    <div class="page-panel">
-        <div class="panel-header">
+    <div class="page-panel card">
+        <div class="panel-header card-header">
             <div class="header-content">
                 <h2 class="panel-title">DANH SÁCH HỌC KỲ</h2>
             </div>
         </div>
 
-        <div class="panel-body">
+        <div class="panel-body card-body">
             <?php if (empty($semesters)): ?>
                 <div class="empty-state">
                     <svg width="48" height="48" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -79,7 +79,7 @@
                 </div>
             <?php else: ?>
                 <div class="table-wrapper">
-                    <table class="data-table">
+                    <table class="data-table table table-hover table-bordered align-middle">
                         <thead>
                             <tr>
                                 <th class="col-stt">STT</th>
@@ -108,7 +108,7 @@
                                     <td class="col-status">
                                         <form method="POST" style="display:inline-block;">
                                             <input type="hidden" name="_row_id" value="<?= $semester['id'] ?>" />
-                                            <select name="status[<?= $semester['id'] ?>]" class="status-select" onchange="updateStatusSelect(this)">
+                                            <select name="status[<?= $semester['id'] ?>]" class="status-select form-select" onchange="updateStatusSelect(this)">
                                                 <option value="active" <?= $semester['status'] === 'active' ? 'selected' : '' ?>>Đang diễn ra</option>
                                                 <option value="upcoming" <?= $semester['status'] === 'upcoming' ? 'selected' : '' ?>>Sắp tới</option>
                                                 <option value="completed" <?= $semester['status'] === 'completed' ? 'selected' : '' ?>>Đã hoàn thành</option>
@@ -117,13 +117,13 @@
                                     </td>
                                     <td class="col-action">
                                         <div class="action-group">
-                                            <button class="action-btn edit" title="Chỉnh sửa" onclick="editSemester(<?= $semester['id'] ?>)">
+                                            <button class="action-btn edit btn btn-outline-primary" title="Chỉnh sửa" onclick="editSemester(<?= $semester['id'] ?>)">
                                                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                                                     <path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
                                                     <path d="M15.5 3.5a2.121 2.121 0 1 1 3 3L18 7.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
                                                 </svg>
                                             </button>
-                                            <button class="action-btn delete" title="Xóa" onclick="showDeleteConfirm(<?= $semester['id'] ?>, 'học kỳ')">
+                                            <button class="action-btn delete btn btn-danger" title="Xóa" onclick="showDeleteConfirm(<?= $semester['id'] ?>, 'học kỳ')">
                                                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                                                     <path d="M19 7l-1 12a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2l-1-12M9 7V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v3M9 11v6M15 11v6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
                                                 </svg>
@@ -141,9 +141,9 @@
                     <div class="pagination-info">
                         Hiển thị 1 - <?= min($items_per_page, $total_items) ?> của <?= $total_items ?> học kỳ
                     </div>
-                    <div class="pagination">
+                    <div class="pagination mb-0">
                         <?php if ($current_page > 1): ?>
-                            <a href="?page=list_semester&page_num=<?= $current_page - 1 ?>" class="pagination-btn prev">
+                            <a href="?page=list_semester&page_num=<?= $current_page - 1 ?>" class="pagination-btn prev page-link page-item">
                                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                                     <path d="M15 19l-7-7 7-7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
                                 </svg>
@@ -151,13 +151,13 @@
                         <?php endif; ?>
 
                         <?php for ($i = 1; $i <= $total_pages; $i++): ?>
-                            <a href="?page=list_semester&page_num=<?= $i ?>" class="pagination-btn <?= $i === $current_page ? 'active' : '' ?>">
+                            <a href="?page=list_semester&page_num=<?= $i ?>" class="pagination-btn page-link page-item <?= $i === $current_page ? 'active' : '' ?>">
                                 <?= $i ?>
                             </a>
                         <?php endfor; ?>
 
                         <?php if ($current_page < $total_pages): ?>
-                            <a href="?page=list_semester&page_num=<?= $current_page + 1 ?>" class="pagination-btn next">
+                            <a href="?page=list_semester&page_num=<?= $current_page + 1 ?>" class="pagination-btn next page-link page-item">
                                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                                     <path d="M9 5l7 7-7 7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
                                 </svg>

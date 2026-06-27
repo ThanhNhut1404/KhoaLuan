@@ -24,24 +24,24 @@
 ?>
 
 <div class="create-class-page">
-    <div class="page-panel">
-        <div class="panel-header">
+    <div class="page-panel card">
+        <div class="panel-header card-header">
             <h2 class="panel-title">TẠO LỚP HỌC</h2>
         </div>
 
-        <div class="panel-body">
+        <div class="panel-body card-body">
             <form id="createClassForm" method="POST" action="?page=create_class">
                 <div class="form-grid">
                     <!-- Mã lớp học -->
                     <div class="form-field">
-                        <label class="field-label" for="class_code">
+                        <label class="field-label form-label" for="class_code">
                             Mã lớp học <span class="required">*</span>
                         </label>
                         <input
                             type="text"
                             id="class_code"
                             name="class_code"
-                            class="field-input"
+                            class="field-input form-control"
                             placeholder="Nhập mã lớp học"
                             value="<?= isset($formData['class_code']) ? htmlspecialchars($formData['class_code']) : '' ?>"
                             required
@@ -53,14 +53,14 @@
 
                     <!-- Tên lớp -->
                     <div class="form-field">
-                        <label class="field-label" for="class_name">
+                        <label class="field-label form-label" for="class_name">
                             Tên lớp <span class="required">*</span>
                         </label>
                         <input
                             type="text"
                             id="class_name"
                             name="class_name"
-                            class="field-input"
+                            class="field-input form-control"
                             placeholder="Nhập tên lớp"
                             value="<?= isset($formData['class_name']) ? htmlspecialchars($formData['class_name']) : '' ?>"
                             required
@@ -72,10 +72,10 @@
 
                     <!-- Niên khóa -->
                     <div class="form-field">
-                        <label class="field-label" for="academic_year">
+                        <label class="field-label form-label" for="academic_year">
                             Niên khóa <span class="required">*</span>
                         </label>
-                        <select id="academic_year" name="academic_year" class="field-input" required>
+                        <select id="academic_year" name="academic_year" class="field-input form-select" required>
                             <option value="">-- Chọn niên khóa --</option>
                             <?php foreach ($academic_years as $year): ?>
                                 <option value="<?= $year['id'] ?>" <?= (isset($formData['academic_year']) && $formData['academic_year'] == $year['id']) ? 'selected' : '' ?>>
@@ -90,10 +90,10 @@
 
                     <!-- Khoa -->
                     <div class="form-field">
-                        <label class="field-label" for="department">
+                        <label class="field-label form-label" for="department">
                             Khoa <span class="required">*</span>
                         </label>
-                        <select id="department" name="department" class="field-input" required>
+                        <select id="department" name="department" class="field-input form-select" required>
                             <option value="">-- Chọn khoa --</option>
                             <?php foreach ($departments as $department): ?>
                                 <option value="<?= $department['id'] ?>" <?= (isset($formData['department']) && $formData['department'] == $department['id']) ? 'selected' : '' ?>>
@@ -108,10 +108,10 @@
 
                     <!-- Chuyên ngành -->
                     <div class="form-field">
-                        <label class="field-label" for="major">
+                        <label class="field-label form-label" for="major">
                             Chuyên ngành <span class="required">*</span>
                         </label>
-                        <select id="major" name="major" class="field-input" required>
+                        <select id="major" name="major" class="field-input form-select" required>
                             <option value="">-- Chọn chuyên ngành --</option>
                             <?php foreach ($majors as $major): ?>
                                 <option value="<?= $major['id'] ?>" <?= (isset($formData['major']) && $formData['major'] == $major['id']) ? 'selected' : '' ?>>
@@ -126,10 +126,10 @@
 
                     <!-- Cố vấn -->
                     <div class="form-field">
-                        <label class="field-label" for="advisor">
+                        <label class="field-label form-label" for="advisor">
                             Cố vấn <span class="required">*</span>
                         </label>
-                        <select id="advisor" name="advisor" class="field-input" required>
+                        <select id="advisor" name="advisor" class="field-input form-select" required>
                             <option value="">-- Chọn cố vấn --</option>
                             <?php foreach ($advisors as $advisor): ?>
                                 <option value="<?= $advisor['id'] ?>" <?= (isset($formData['advisor']) && $formData['advisor'] == $advisor['id']) ? 'selected' : '' ?>>
@@ -144,14 +144,14 @@
 
                     <!-- Số lượng -->
                     <div class="form-field">
-                        <label class="field-label" for="capacity">
+                        <label class="field-label form-label" for="capacity">
                             Số lượng
                         </label>
                         <input
                             type="number"
                             id="capacity"
                             name="capacity"
-                            class="field-input"
+                            class="field-input form-control"
                             placeholder="Nhập số lượng"
                             value="<?= isset($formData['capacity']) ? htmlspecialchars($formData['capacity']) : '' ?>"
                             min="0"
@@ -163,10 +163,10 @@
 
                     <!-- Trạng thái -->
                     <div class="form-field">
-                        <label class="field-label" for="status">
+                        <label class="field-label form-label" for="status">
                             Trạng thái <span class="required">*</span>
                         </label>
-                        <select id="status" name="status" class="field-input" required>
+                        <select id="status" name="status" class="field-input form-select" required>
                             <option value="">-- Chọn trạng thái --</option>
                             <option value="upcoming" <?= (isset($formData['status']) && $formData['status'] === 'upcoming') ? 'selected' : '' ?>>Sắp tới</option>
                             <option value="active" <?= (isset($formData['status']) && $formData['status'] === 'active') ? 'selected' : '' ?>>Đang diễn ra</option>
@@ -179,13 +179,13 @@
 
                     <!-- Ghi chú -->
                     <div class="form-field">
-                        <label class="field-label" for="notes">
+                        <label class="field-label form-label" for="notes">
                             Ghi chú
                         </label>
                         <textarea
                             id="notes"
                             name="notes"
-                            class="field-input textarea-input"
+                            class="field-input textarea-input form-control"
                             placeholder="Nhập ghi chú"
                         ><?= isset($formData['notes']) ? htmlspecialchars($formData['notes']) : '' ?></textarea>
                         <?php if(isset($errors['notes'])): ?>
@@ -195,10 +195,10 @@
                 </div>
 
                 <div class="form-actions">
-                    <a href="?page=list_class" class="action-btn secondary">
+                    <a href="?page=list_class" class="action-btn secondary btn btn-outline-secondary">
                         Hủy
                     </a>
-                    <button type="submit" class="action-btn primary">
+                    <button type="submit" class="action-btn primary btn btn-primary">
                         Tạo lớp học
                     </button>
                 </div>

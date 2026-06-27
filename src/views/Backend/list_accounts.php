@@ -32,13 +32,13 @@
 ?>
 
 <div class="list-accounts-page">
-    <div class="page-panel">
-        <div class="panel-header">
+    <div class="page-panel card">
+        <div class="panel-header card-header">
             <div class="header-content">
                 <h2 class="panel-title">DANH SÁCH TÀI KHOẢN</h2>
 
                 <div class="actions-right">
-                    <button id="filterToggle" class="btn-create filter-reset">
+                    <button id="filterToggle" class="btn-create filter-reset btn btn-outline-secondary">
                         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                             <path d="M3 5h18M6 12h12M10 19h4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
                         </svg>
@@ -51,7 +51,7 @@
                 <div class="filter-row">
                     <div class="filter-group">
                         <label class="filter-label">Vai trò</label>
-                        <select id="filterRole" class="field-input">
+                        <select id="filterRole" class="field-input form-select">
                             <option value="">Tất cả</option>
                             <?php foreach ($roles as $r): ?>
                                 <option value="<?= htmlspecialchars($r) ?>"><?= htmlspecialchars($r) ?></option>
@@ -61,7 +61,7 @@
 
                     <div class="filter-group">
                         <label class="filter-label">Trạng thái</label>
-                        <select id="filterStatus" class="field-input">
+                        <select id="filterStatus" class="field-input form-select">
                             <option value="">Tất cả</option>
                             <?php foreach ($statuses as $k=>$v): ?>
                                 <option value="<?= $k ?>"><?= $v ?></option>
@@ -71,7 +71,7 @@
 
                     <div class="filter-group">
                         <label class="filter-label">Giới tính</label>
-                        <select id="filterGender" class="field-input">
+                        <select id="filterGender" class="field-input form-select">
                             <option value="">Tất cả</option>
                             <?php foreach ($genders as $k=>$v): ?>
                                 <option value="<?= $k ?>"><?= $v ?></option>
@@ -80,14 +80,14 @@
                     </div>
 
                     <div class="filter-group filter-actions">
-                        <button id="resetFilters" class="btn-create filter-reset">Đặt lại</button>
-                        <button id="applyFilters" class="btn-create filter-apply">Áp dụng</button>
+                        <button id="resetFilters" class="btn-create filter-reset btn btn-outline-secondary">Đặt lại</button>
+                        <button id="applyFilters" class="btn-create filter-apply btn btn-primary">Áp dụng</button>
                     </div>
                 </div>
             </div>
         </div>
 
-        <div class="panel-body">
+        <div class="panel-body card-body">
             <?php if (empty($accounts)): ?>
                 <div class="empty-state">
                     <h3>Chưa có tài khoản nào</h3>
@@ -95,7 +95,7 @@
                 </div>
             <?php else: ?>
                 <div class="table-wrapper">
-                    <table class="data-table" id="accountsTable">
+                    <table class="data-table table table-hover table-bordered align-middle" id="accountsTable">
                         <thead>
                             <tr>
                                 <th class="col-stt">STT</th>
@@ -122,7 +122,7 @@
                                     <td class="col-status">
                                         <form method="POST" style="display:inline-block;">
                                             <input type="hidden" name="_row_id" value="<?= $a['id'] ?>" />
-                                            <select name="status[<?= $a['id'] ?>]" class="status-select" onchange="updateStatusSelect(this)">
+                                            <select name="status[<?= $a['id'] ?>]" class="status-select form-select" onchange="updateStatusSelect(this)">
                                                 <option value="active" <?= $a['status'] === 'active' ? 'selected' : '' ?>>Hoạt động</option>
                                                 <option value="inactive" <?= $a['status'] === 'inactive' ? 'selected' : '' ?>>Không hoạt động</option>
                                             </select>
@@ -130,8 +130,8 @@
                                     </td>
                                     <td class="col-action">
                                         <div class="action-group">
-                                            <button class="action-btn edit" title="Chỉnh sửa" onclick="editAccount(<?= $a['id'] ?>)">✎</button>
-                                            <button class="action-btn delete" title="Xóa" onclick="showDeleteConfirm(<?= $a['id'] ?>, 'tài khoản')">🗑</button>
+                                            <button class="action-btn edit btn btn-outline-primary" title="Chỉnh sửa" onclick="editAccount(<?= $a['id'] ?>)">✎</button>
+                                            <button class="action-btn delete btn btn-danger" title="Xóa" onclick="showDeleteConfirm(<?= $a['id'] ?>, 'tài khoản')">🗑</button>
                                         </div>
                                     </td>
                                 </tr>
@@ -144,17 +144,17 @@
                     <div class="pagination-info">
                         Hiển thị 1 - <?= min($items_per_page, $total_items) ?> của <?= $total_items ?> tài khoản
                     </div>
-                    <div class="pagination">
+                    <div class="pagination mb-0">
                         <?php if ($current_page > 1): ?>
-                            <a href="?page=list_accounts&page_num=<?= $current_page - 1 ?>" class="pagination-btn prev">‹</a>
+                            <a href="?page=list_accounts&page_num=<?= $current_page - 1 ?>" class="pagination-btn prev page-link page-item">‹</a>
                         <?php endif; ?>
 
                         <?php for ($i = 1; $i <= $total_pages; $i++): ?>
-                            <a href="?page=list_accounts&page_num=<?= $i ?>" class="pagination-btn <?= $i === $current_page ? 'active' : '' ?>"><?= $i ?></a>
+                            <a href="?page=list_accounts&page_num=<?= $i ?>" class="pagination-btn page-link page-item <?= $i === $current_page ? 'active' : '' ?>"><?= $i ?></a>
                         <?php endfor; ?>
 
                         <?php if ($current_page < $total_pages): ?>
-                            <a href="?page=list_accounts&page_num=<?= $current_page + 1 ?>" class="pagination-btn next">›</a>
+                            <a href="?page=list_accounts&page_num=<?= $current_page + 1 ?>" class="pagination-btn next page-link page-item">›</a>
                         <?php endif; ?>
                     </div>
                 </div>

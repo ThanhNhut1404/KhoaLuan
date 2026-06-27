@@ -11,24 +11,24 @@
 ?>
 
 <div class="create-major-page">
-    <div class="page-panel">
-        <div class="panel-header">
+    <div class="page-panel card">
+        <div class="panel-header card-header">
             <h2 class="panel-title">TẠO NGÀNH HỌC</h2>
         </div>
 
-        <div class="panel-body">
+        <div class="panel-body card-body">
             <form id="createMajorForm" method="POST" action="?page=create_major">
                 <div class="form-grid">
                     <!-- Mã ngành -->
                     <div class="form-field">
-                        <label class="field-label" for="major_code">
+                        <label class="field-label form-label" for="major_code">
                             Mã ngành <span class="required">*</span>
                         </label>
                         <input
                             type="text"
                             id="major_code"
                             name="major_code"
-                            class="field-input"
+                            class="field-input form-control"
                             placeholder="Ví dụ: CNTT01"
                             value="<?= isset($formData['major_code']) ? htmlspecialchars($formData['major_code']) : '' ?>"
                             required
@@ -40,14 +40,14 @@
 
                     <!-- Tên ngành -->
                     <div class="form-field">
-                        <label class="field-label" for="major_name">
+                        <label class="field-label form-label" for="major_name">
                             Tên ngành <span class="required">*</span>
                         </label>
                         <input
                             type="text"
                             id="major_name"
                             name="major_name"
-                            class="field-input"
+                            class="field-input form-control"
                             placeholder="Nhập tên ngành học"
                             value="<?= isset($formData['major_name']) ? htmlspecialchars($formData['major_name']) : '' ?>"
                             required
@@ -59,14 +59,14 @@
 
                     <!-- Số tín chỉ -->
                     <div class="form-field">
-                        <label class="field-label" for="total_credits">
+                        <label class="field-label form-label" for="total_credits">
                             Số tín chỉ <span class="required">*</span>
                         </label>
                         <input
                             type="number"
                             id="total_credits"
                             name="total_credits"
-                            class="field-input"
+                            class="field-input form-control"
                             placeholder="Ví dụ: 120"
                             value="<?= isset($formData['total_credits']) ? htmlspecialchars($formData['total_credits']) : '' ?>"
                             min="1"
@@ -79,10 +79,10 @@
 
                     <!-- Chọn Khoa trực thuộc -->
                     <div class="form-field">
-                        <label class="field-label" for="department">
+                        <label class="field-label form-label" for="department">
                             Khoa trực thuộc <span class="required">*</span>
                         </label>
-                        <select id="department" name="department" class="field-input" required>
+                        <select id="department" name="department" class="field-input form-select" required>
                             <option value="">-- Chọn khoa quản lý --</option>
                             <?php foreach ($departments as $dept): ?>
                                 <option value="<?= htmlspecialchars($dept) ?>" <?= (isset($formData['department']) && $formData['department'] === $dept) ? 'selected' : '' ?>>
@@ -97,13 +97,13 @@
 
                     <!-- Mô tả -->
                     <div class="form-field" style="grid-column: 1 / -1;">
-                        <label class="field-label" for="description">
+                        <label class="field-label form-label" for="description">
                             Mô tả
                         </label>
                         <textarea
                             id="description"
                             name="description"
-                            class="field-input textarea-input"
+                            class="field-input textarea-input form-control"
                             placeholder="Nhập mô tả ngành học"
                             rows="4"
                         ><?= isset($formData['description']) ? htmlspecialchars($formData['description']) : '' ?></textarea>
@@ -114,10 +114,10 @@
 
                     <!-- Trạng thái -->
                     <div class="form-field">
-                        <label class="field-label" for="status">
+                        <label class="field-label form-label" for="status">
                             Trạng thái <span class="required">*</span>
                         </label>
-                        <select id="status" name="status" class="field-input" required>
+                        <select id="status" name="status" class="field-input form-select" required>
                             <option value="">-- Chọn trạng thái --</option>
                             <option value="active" <?= (isset($formData['status']) && $formData['status'] === 'active') ? 'selected' : '' ?>>Hoạt động</option>
                             <option value="inactive" <?= (isset($formData['status']) && $formData['status'] === 'inactive') ? 'selected' : '' ?>>Không hoạt động</option>
@@ -130,10 +130,10 @@
 
                 <!-- Form Actions -->
                 <div class="form-actions">
-                    <a href="?page=list_major" class="action-btn secondary">
+                    <a href="?page=list_major" class="action-btn secondary btn btn-outline-secondary">
                         Hủy
                     </a>
-                    <button type="submit" class="action-btn primary">
+                    <button type="submit" class="action-btn primary btn btn-primary">
                         Tạo ngành học
                     </button>
                 </div>

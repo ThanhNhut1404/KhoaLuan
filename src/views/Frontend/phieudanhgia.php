@@ -329,7 +329,7 @@
 <div class="evaluation-page">
     <h2 class="evaluation-title">Phiếu đánh giá kết quả rèn luyện của sinh viên</h2>
 
-    <div class="evaluation-note">
+    <div class="evaluation-note alert alert-warning">
         <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
             <circle cx="12" cy="12" r="9" stroke-width="2" />
             <path d="M12 8h.01" stroke-width="2" stroke-linecap="round" />
@@ -338,7 +338,7 @@
         <span>Sinh viên tự đánh giá trung thực theo đúng quy định. Điểm tự chấm sẽ được các đơn vị liên quan xem xét và đánh giá.</span>
     </div>
 
-    <div class="student-info-card">
+    <div class="student-info-card card">
         <div class="student-info-grid">
             <div class="student-info-item">
                 <span>Họ tên sinh viên</span>
@@ -376,8 +376,8 @@
                     <span>Sinh viên tự chấm: <?= $section['score'] ?></span>
                 </span>
             </summary>
-            <div class="section-body">
-                <div class="section-table">
+            <div class="section-body card-body">
+                <div class="section-table table-responsive">
                     <div class="section-row header">
                         <div>ội dung đánh giá</div>
                         <div>Điểm tối đa</div>
@@ -391,14 +391,14 @@
                                 <div><?= $item['label'] ?></div>
                                 <div><?= $item['max'] ?></div>
                                 <div>
-                                    <select class="score-select">
+                                    <select class="score-select form-select">
                                         <?php for ($i = 0; $i <= $item['max']; $i++): ?>
                                             <option value="<?= $i ?>" <?= $i === $item['score'] ? 'selected' : '' ?>><?= $i ?></option>
                                         <?php endfor; ?>
                                     </select>
                                 </div>
                                 <div>
-                                    <button class="evidence-btn" type="button">
+                                    <button class="evidence-btn btn btn-outline-secondary" type="button">
                                         <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                                             <path d="M12 5v14" stroke-width="2" stroke-linecap="round" />
                                             <path d="M5 12h14" stroke-width="2" stroke-linecap="round" />
@@ -420,14 +420,14 @@
                             <div>Chưa có nội dung chi tiết.</div>
                             <div><?= $section['max'] ?></div>
                             <div>
-                                <select class="score-select">
+                                <select class="score-select form-select">
                                     <?php for ($i = 0; $i <= $section['max']; $i++): ?>
                                         <option value="<?= $i ?>" <?= $i === $section['score'] ? 'selected' : '' ?>><?= $i ?></option>
                                     <?php endfor; ?>
                                 </select>
                             </div>
                             <div>
-                                <button class="evidence-btn" type="button">
+                                <button class="evidence-btn btn btn-outline-secondary" type="button">
                                     <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                                         <path d="M12 5v14" stroke-width="2" stroke-linecap="round" />
                                         <path d="M5 12h14" stroke-width="2" stroke-linecap="round" />
@@ -464,11 +464,11 @@
         </div>
         <div class="summary-item">
             <span>Trạng thái</span>
-            <span class="summary-status">Chưa gửi</span>
+            <span class="summary-status badge rounded-pill">Chưa gửi</span>
         </div>
         <div class="summary-actions">
-            <button class="summary-btn" type="button">Lưu nháp</button>
-            <button class="summary-btn primary" type="button">Gửi phiếu tự chấm</button>
+            <button class="summary-btn btn btn-outline-secondary" type="button">Lưu nháp</button>
+            <button class="summary-btn primary btn btn-primary" type="button">Gửi phiếu tự chấm</button>
         </div>
     </div>
 </div>

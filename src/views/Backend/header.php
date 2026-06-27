@@ -4,9 +4,9 @@ $adminName = $adminSession['TEN_DANG_NHAP'] ?? 'Admin';
 $adminRole = $adminSession['TEN_VAI_TRO'] ?? '';
 ?>
 
-<div class="header">
-    <div style="display:flex; align-items:center; gap:12px;">
-        <button id="sidebarToggle" class="icon-btn" type="button" aria-label="Thu gọn menu">
+<div class="header navbar">
+    <div class="d-flex align-items-center gap-3">
+        <button id="sidebarToggle" class="icon-btn btn btn-outline-secondary" type="button" aria-label="Thu gọn menu">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <path d="M4 7h16M4 12h16M4 17h16" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
             </svg>
@@ -15,14 +15,14 @@ $adminRole = $adminSession['TEN_VAI_TRO'] ?? '';
     </div>
 
     <div class="header-search">
-        <input type="text" placeholder="Tìm kiếm..." />
+        <input type="text" class="form-control" placeholder="Tìm kiếm..." />
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
             <path d="M11 19a8 8 0 1 0 0-16 8 8 0 0 0 0 16Zm10 2-4.35-4.35" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
         </svg>
     </div>
 
     <div class="header-right">
-        <a class="header-icon-link" href="#" aria-label="Thông báo">
+        <a class="header-icon-link btn btn-light" href="#" aria-label="Thông báo">
             <span class="notif-badge">3</span>
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <path d="M18 8a6 6 0 1 0-12 0c0 7-3 7-3 7h18s-3 0-3-7Z" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
@@ -31,7 +31,7 @@ $adminRole = $adminSession['TEN_VAI_TRO'] ?? '';
             <span>Thông báo</span>
         </a>
         <div class="user-menu">
-            <button id="userMenuBtn" class="admin-user-btn" type="button" aria-label="Tài khoản" aria-expanded="false">
+            <button id="userMenuBtn" class="admin-user-btn btn btn-light dropdown-toggle" type="button" aria-label="Tài khoản" aria-expanded="false">
                 <span class="admin-user-avatar">
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                         <path d="M12 12a4 4 0 1 0-4-4 4 4 0 0 0 4 4Z" stroke="#ffffff" stroke-width="2" stroke-linecap="round"/>

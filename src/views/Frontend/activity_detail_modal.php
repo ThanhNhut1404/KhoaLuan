@@ -2,32 +2,32 @@
 // Activity detail modal include (markup + JS only)
 ?>
 
-<div class="activity-detail-overlay" id="activityDetailOverlay" aria-hidden="true">
-    <div class="activity-detail-card" role="dialog" aria-modal="true" aria-labelledby="activityDetailTitle">
-        <div class="activity-detail-header">
+<div class="activity-detail-overlay modal" id="activityDetailOverlay" aria-hidden="true">
+    <div class="activity-detail-card modal-content" role="dialog" aria-modal="true" aria-labelledby="activityDetailTitle">
+        <div class="activity-detail-header modal-header">
             <span class="modal-title" id="activityDetailTitle"></span>
-            <button class="activity-detail-close" type="button" aria-label="Đóng" onclick="closeActivityDetail()">✕</button>
+            <button class="activity-detail-close btn btn-light" type="button" aria-label="Đóng" onclick="closeActivityDetail()">✕</button>
         </div>
-        <div class="activity-detail-body">
+        <div class="activity-detail-body modal-body">
             <div class="activity-detail-top">
                 <div class="activity-detail-image">
                     <img id="activityDetailImage" src="" alt="Chi tiết hoạt động" />
                 </div>
                 <div class="activity-detail-summary">
                     <div class="activity-detail-summary-grid">
-                        <div class="activity-detail-summary-item">
+                        <div class="activity-detail-summary-item card">
                             <div class="activity-detail-summary-label"><i class="fa-solid fa-university" style="margin-right: 6px;"></i>Đơn vị</div>
                             <div class="activity-detail-summary-value" id="activityDetailUnit"></div>
                         </div>
-                        <div class="activity-detail-summary-item">
+                        <div class="activity-detail-summary-item card">
                             <div class="activity-detail-summary-label"><i class="fa-solid fa-calendar-days" style="margin-right: 6px;"></i>Thời gian</div>
                             <div class="activity-detail-summary-value" id="activityDetailTime"></div>
                         </div>
-                        <div class="activity-detail-summary-item">
+                        <div class="activity-detail-summary-item card">
                             <div class="activity-detail-summary-label"><i class="fa-solid fa-location-dot" style="margin-right: 6px;"></i>Địa điểm</div>
                             <div class="activity-detail-summary-value" id="activityDetailLocation"></div>
                         </div>
-                        <div class="activity-detail-summary-item">
+                        <div class="activity-detail-summary-item card">
                             <div class="activity-detail-summary-label"><i class="fa-solid fa-tag" style="margin-right: 6px;"></i>Trạng thái</div>
                             <div class="activity-detail-summary-value" id="activityDetailTag"></div>
                         </div>
@@ -36,31 +36,31 @@
             </div>
 
             <div class="activity-detail-grid">
-                <div class="detail-box benefits-box">
+                <div class="detail-box card benefits-box">
                     <div class="detail-label"><i class="fa-solid fa-gift"></i>Quyền lợi</div>
                     <div class="detail-value" id="activityDetailBenefits"></div>
                 </div>
-                <div class="detail-box">
+                <div class="detail-box card">
                     <div class="detail-label"><i class="fa-solid fa-shirt"></i>Trang phục</div>
                     <div class="detail-value" id="activityDetailClothing"></div>
                 </div>
-                <div class="detail-box audience-box">
+                <div class="detail-box card audience-box">
                     <div class="detail-label"><i class="fa-solid fa-users"></i>Đối tượng</div>
                     <div class="detail-value" id="activityDetailAudience"></div>
                 </div>
-                <div class="detail-box">
+                <div class="detail-box card">
                     <div class="detail-label"><i class="fa-solid fa-file-lines"></i>Nội dung</div>
                     <div class="detail-value" id="activityDetailContent"></div>
                 </div>
-                <div class="detail-box stat-box point-box">
+                <div class="detail-box card stat-box point-box">
                     <div class="detail-label"><i class="fa-solid fa-circle-plus"></i>Điểm cộng</div>
                     <div class="detail-value" id="activityDetailPoint"></div>
                 </div>
-                <div class="detail-box stat-box remaining-box">
+                <div class="detail-box card stat-box remaining-box">
                     <div class="detail-label"><i class="fa-solid fa-user-clock"></i>Còn lại</div>
                     <div class="detail-value" id="activityDetailRemaining"></div>
                 </div>
-                <div class="detail-box full-width contact-box">
+                <div class="detail-box card full-width contact-box">
                     <div class="detail-label"><i class="fa-solid fa-address-card"></i>Liên hệ</div>
                     <div class="detail-contact">
                         <div class="detail-contact-item">
@@ -75,9 +75,9 @@
                 </div>
             </div>
         </div>
-        <div class="activity-detail-footer">
-            <button class="detail-action" type="button" onclick="closeActivityDetail()">Đóng</button>
-            <button class="detail-action primary" type="button">Đăng ký</button>
+        <div class="activity-detail-footer modal-footer">
+            <button class="detail-action btn btn-outline-secondary" type="button" onclick="closeActivityDetail()">Đóng</button>
+            <button class="detail-action primary btn btn-primary" type="button">Đăng ký</button>
         </div>
     </div>
 </div>
@@ -104,7 +104,7 @@
             const tagEl = document.getElementById('activityDetailTag');
             if (tagEl) {
                 tagEl.textContent = card.dataset.tag || '';
-                tagEl.className = 'activity-detail-summary-value activity-badge-inline';
+                tagEl.className = 'activity-detail-summary-value activity-badge-inline badge rounded-pill';
                 
                 const tagLower = (card.dataset.tag || '').toLowerCase();
                 if (tagLower.includes('tình nguyện')) {

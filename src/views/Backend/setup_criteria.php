@@ -4,24 +4,24 @@ $title = 'Thiết lập tiêu chí';
 ?>
 
 <div class="create-year-page">
-    <div class="page-panel">
-        <div class="panel-header">
+    <div class="page-panel card">
+        <div class="panel-header card-header">
             <h3 class="panel-title">THIẾT LẬP TIÊU CHÍ</h3>
         </div>
-        <div class="panel-body">
+        <div class="panel-body card-body">
             <div class="criteria-controls" style="display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:18px;">
                 <div style="display:flex;align-items:center;gap:10px;">
-                    <label class="field-label" style="margin-right:6px;">Học kỳ áp dụng:</label>
-                    <select class="field-input">
+                    <label class="field-label form-label" style="margin-right:6px;">Học kỳ áp dụng:</label>
+                    <select class="field-input form-select">
                         <option>Học kỳ 1 (2026 - 2027)</option>
                         <option>Học kỳ 2 (2026 - 2027)</option>
                     </select>
-                    <button class="action-btn secondary" style="margin-left:8px;">Đang áp dụng</button>
+                    <button class="action-btn secondary btn btn-outline-secondary" style="margin-left:8px;">Đang áp dụng</button>
                 </div>
 
                 <div style="display:flex;gap:10px;align-items:center;">
-                    <a class="action-btn secondary" href="#">Xem lịch sử tiêu chí</a>
-                    <button class="action-btn primary">Thêm tiêu chí lớn</button>
+                    <a class="action-btn secondary btn btn-outline-secondary" href="#">Xem lịch sử tiêu chí</a>
+                    <button class="action-btn primary btn btn-primary">Thêm tiêu chí lớn</button>
                 </div>
             </div>
 
@@ -34,7 +34,7 @@ $title = 'Thiết lập tiêu chí';
                 <button class="criteria-toggle" aria-expanded="true">▾</button>
             </div>
             <div class="criteria-body">
-                <table class="table">
+                <table class="table table-hover table-bordered align-middle">
                     <thead>
                         <tr>
                             <th style="width:40px;">STT</th>
@@ -132,7 +132,7 @@ $title = 'Thiết lập tiêu chí';
             </div>
 
             <div style="display:flex;justify-content:center;margin-top:26px;">
-                <button class="action-btn primary">Lưu cấu hình tiêu chí</button>
+                <button class="action-btn primary btn btn-primary">Lưu cấu hình tiêu chí</button>
             </div>
         </div>
     </div>

@@ -55,18 +55,18 @@ function confirmDelete() {
 </script>
 
 <!-- Confirmation modal (uses global modal styles) -->
-<div class="modal-overlay" id="confirmDeleteModal" aria-hidden="true">
-    <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="confirmDeleteTitle">
+<div class="modal-overlay modal" id="confirmDeleteModal" aria-hidden="true">
+    <div class="modal-card modal-content" role="dialog" aria-modal="true" aria-labelledby="confirmDeleteTitle">
         <div class="modal-header">
             <span class="modal-title" id="confirmDeleteTitle">Xác nhận xóa</span>
-            <button class="modal-close" type="button" aria-label="Đóng" onclick="hideDeleteConfirm()">✕</button>
+            <button class="modal-close btn btn-light" type="button" aria-label="Đóng" onclick="hideDeleteConfirm()">✕</button>
         </div>
         <div class="modal-body">
             <p class="confirm-text">Bạn có chắc chắn muốn xóa mục này không?</p>
         </div>
         <div class="modal-actions">
-            <button class="action-btn secondary" type="button" onclick="hideDeleteConfirm()">Hủy</button>
-            <button class="action-btn primary" type="button" onclick="confirmDelete()">Xác nhận</button>
+            <button class="action-btn secondary btn btn-outline-secondary" type="button" onclick="hideDeleteConfirm()">Hủy</button>
+            <button class="action-btn primary btn btn-primary" type="button" onclick="confirmDelete()">Xác nhận</button>
         </div>
     </div>
 </div>

@@ -284,8 +284,8 @@
 </style>
 
 <div class="profile-shell">
-    <section class="profile-card">
-        <div class="profile-card-header">
+    <section class="profile-card card">
+        <div class="profile-card-header card-header">
             <div class="profile-card-title">Thông tin sinh viên</div>
         </div>
         <div class="profile-hero">
@@ -300,7 +300,7 @@
                 <div>
                     <div class="profile-name">
                         <?= htmlspecialchars($fullName, ENT_QUOTES, 'UTF-8') ?>
-                        <span class="profile-badge">DANG HOC</span>
+                        <span class="profile-badge badge rounded-pill">DANG HOC</span>
                     </div>
                     <div class="profile-meta">
                         <span>MSSV: <?= htmlspecialchars($mssv, ENT_QUOTES, 'UTF-8') ?></span>
@@ -311,13 +311,13 @@
                     </div>
                 </div>
                 <div class="profile-actions">
-                    <button id="openEditBtn" class="action-btn primary" type="button">Chỉnh sửa thông tin</button>
-                    <button class="action-btn link" type="button" onclick="openPasswordModal()">Đổi mật khẩu</button>
+                    <button id="openEditBtn" class="action-btn primary btn btn-primary" type="button">Chỉnh sửa thông tin</button>
+                    <button class="action-btn link btn btn-outline-secondary" type="button" onclick="openPasswordModal()">Đổi mật khẩu</button>
                 </div>
             </div>
         </div>
 
-        <div class="profile-section">
+        <div class="profile-section card-body">
             <div class="section-title">
                 <span class="dot">
                     <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
@@ -351,7 +351,7 @@
             </div>
         </div>
 
-        <div class="profile-section">
+        <div class="profile-section card-body">
             <div class="section-title">
                 <span class="dot">
                     <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
@@ -389,7 +389,7 @@
             </div>
         </div>
 
-        <div class="profile-section">
+        <div class="profile-section card-body">
             <div class="section-title">
                 <span class="dot">
                     <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
@@ -400,7 +400,7 @@
                 Thông tin liên lạc
             </div>
             <div class="contact-row">
-                <div class="contact-pill">
+                <div class="contact-pill badge rounded-pill">
                     <span class="contact-icon">
                         <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
                             <rect x="3" y="5" width="18" height="14" rx="2" stroke-width="2" />
@@ -409,7 +409,7 @@
                     </span>
                     <?= htmlspecialchars($student['email'] ?? 'student@example.com', ENT_QUOTES, 'UTF-8') ?>
                 </div>
-                <div class="contact-pill">
+                <div class="contact-pill badge rounded-pill">
                     <span class="contact-icon">
                         <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
                             <path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7 12.7 12.7 0 0 0 .7 2.8 2 2 0 0 1-.5 2.1l-1.2 1.2a16 16 0 0 0 6 6l1.2-1.2a2 2 0 0 1 2.1-.5 12.7 12.7 0 0 0 2.8.7 2 2 0 0 1 1.7 2Z" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
@@ -417,7 +417,7 @@
                     </span>
                     <?= htmlspecialchars($student['so_dien_thoai'] ?? '0123 456 789', ENT_QUOTES, 'UTF-8') ?>
                 </div>
-                <div class="contact-pill">
+                <div class="contact-pill badge rounded-pill">
                     <span class="contact-icon">
                         <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
                             <path d="M12 21s7-5.3 7-11a7 7 0 1 0-14 0c0 5.7 7 11 7 11Z" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>

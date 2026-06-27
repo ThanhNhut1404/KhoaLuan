@@ -135,17 +135,17 @@
 <div class="joined-page">
     <h2 class="joined-title">Hoạt động đã đăng ký</h2>
 
-    <div class="joined-card">
+    <div class="joined-card card">
         <div class="joined-toolbar">
             <label class="term-select">
-                <select name="term" aria-label="Chon hoc ky">
+                <select class="form-select" name="term" aria-label="Chon hoc ky">
                     <option value="2024-2025-1">Hoc ky 1 (2024-2025)</option>
                     <option value="2024-2025-2" selected>Hoc ky 2 (2024-2025)</option>
                     <option value="2025-2026-1">Hoc ky 1 (2025-2026)</option>
                 </select>
             </label>
         </div>
-        <table class="joined-table">
+        <div class="table-responsive"><table class="joined-table table table-hover table-bordered align-middle">
             <thead>
                 <tr>
                     <th class="cell-center">STT</th>
@@ -168,7 +168,7 @@
                             <td><?= htmlspecialchars($activity['location'] ?? '') ?></td>
                             <td><?= htmlspecialchars($activity['level'] ?? '') ?></td>
                             <td class="cell-center">
-                                <button class="action-btn" type="button">Huy</button>
+                                <button class="action-btn btn btn-danger" type="button">Huy</button>
                             </td>
                         </tr>
                     <?php endforeach; ?>
@@ -178,6 +178,6 @@
                     </tr>
                 <?php endif; ?>
             </tbody>
-        </table>
+        </table></div>
     </div>
 </div>

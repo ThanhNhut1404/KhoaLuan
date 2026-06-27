@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><?= $title ?? 'Hệ thống quản lý điểm rèn luyện' ?></title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap');
@@ -34,6 +35,166 @@
             display: flex;
             flex-direction: column;
             min-height: 100vh;
+            max-width: 100%;
+            overflow-x: hidden;
+        }
+
+        html {
+            max-width: 100%;
+            overflow-x: hidden;
+        }
+
+        .student-app .container,
+        .student-app .container-fluid {
+            max-width: none;
+        }
+
+        .student-app .card {
+            border: 1px solid #e8ecf3;
+        }
+
+        .student-app .card,
+        .student-app .card-header,
+        .student-app .card-body {
+            color: inherit;
+        }
+
+        .student-app .form-control,
+        .student-app .form-select {
+            font-family: inherit;
+        }
+
+        .student-app .btn {
+            font-family: inherit;
+            font-weight: inherit;
+        }
+
+        .student-app .table {
+            margin-bottom: 0;
+            color: inherit;
+        }
+
+        .student-app .badge {
+            font-family: inherit;
+        }
+
+        .student-app .modal-card.modal-content,
+        .student-app .activity-detail-card.modal-content {
+            display: block;
+            width: min(520px, 100%);
+            max-width: calc(100vw - 32px);
+        }
+
+        .student-app .activity-detail-card.modal-content {
+            display: grid;
+            width: min(980px, calc(100vw - 32px));
+        }
+
+        .student-app .modal-header,
+        .student-app .modal-body {
+            flex-shrink: 0;
+        }
+
+        .user-dropdown .dropdown-menu {
+            display: block;
+        }
+
+        .user-dropdown .dropdown-menu:not(.active) {
+            pointer-events: none;
+        }
+
+        .user-btn.dropdown-toggle::after {
+            display: none;
+        }
+
+        .student-header.navbar {
+            padding: 0;
+        }
+
+        .header-left.navbar-brand {
+            margin: 0;
+            padding: 0 0 0 8px;
+        }
+
+        .header-right.navbar-nav {
+            flex-direction: row;
+        }
+
+        .header-icon-link.nav-link {
+            padding: 6px 10px;
+        }
+
+        .search-input.form-control {
+            min-height: auto;
+            box-shadow: none;
+        }
+
+        .search-input.form-control:focus {
+            box-shadow: none;
+        }
+
+        .sidebar-menu.nav {
+            display: block;
+        }
+
+        .sidebar-menu .nav-link {
+            color: inherit;
+        }
+
+        .student-app .activity-tabs.nav-pills .activity-tab.nav-link {
+            color: #64748b;
+            background: transparent;
+            border: 1px solid transparent;
+        }
+
+        .student-app .activity-tabs.nav-pills .activity-tab.nav-link.active {
+            background: #1d4ed8;
+            color: #ffffff;
+        }
+
+        .student-app .activity-tabs.nav-pills .activity-tab.nav-link:hover {
+            background: #f1f5f9;
+            color: #1d4ed8;
+        }
+
+        .student-app .activity-tabs.nav-pills .activity-tab.nav-link.active:hover {
+            background: #1d4ed8;
+            color: #ffffff;
+        }
+
+        .footer-content.row {
+            margin-left: 0;
+            margin-right: 0;
+        }
+
+        .footer-section[class*="col-"] {
+            padding-left: 0;
+            padding-right: 0;
+        }
+
+        .table-responsive {
+            border-radius: inherit;
+        }
+
+        @media (max-width: 576px) {
+            .student-app .modal-card.modal-content,
+            .student-app .activity-detail-card.modal-content {
+                width: calc(100vw - 40px);
+                max-width: calc(100vw - 40px);
+                box-sizing: border-box;
+            }
+
+            .student-app .modal-overlay {
+                padding: 16px;
+            }
+
+            .student-app .modal-body {
+                padding: 16px;
+            }
+
+            .student-app .modal-actions {
+                padding: 0 16px 16px;
+            }
         }
 
         /* HEADER */
@@ -637,11 +798,15 @@
             margin-top: 56px;
             margin-bottom: 60px;
             padding: 30px 20px;
+            min-width: 0;
+            width: 100%;
         }
 
         .content-wrapper {
             max-width: 1200px;
             margin: 0 auto;
+            min-width: 0;
+            width: 100%;
         }
 
         /* Desktop: sidebar luôn hiện giống cổng thông tin */
@@ -817,13 +982,36 @@
 
         /* RESPONSIVE */
         @media (max-width: 768px) {
+            .student-header {
+                min-width: 0;
+                overflow: hidden;
+            }
+
+            .header-left {
+                flex: 0 0 auto;
+                min-width: 0;
+            }
+
+            .header-logo {
+                max-width: 116px;
+                height: auto;
+            }
+
             .header-center {
                 display: none;
             }
 
             .header-right {
+                flex: 1 1 auto;
                 gap: 5px;
+                min-width: 0;
                 padding-right: 10px;
+            }
+
+            .header-right .search-box {
+                flex: 1 1 auto;
+                min-width: 0;
+                max-width: 240px;
             }
 
             .header-icon-link span {
@@ -846,6 +1034,11 @@
 
             .header-icon-link {
                 padding: 6px 8px;
+                flex: 0 0 auto;
+            }
+
+            .main-content {
+                padding-top: 64px;
             }
 
             .dropdown-menu {
@@ -855,7 +1048,15 @@
 
         @media (max-width: 480px) {
             .header-left {
-                padding-left: 10px;
+                padding-left: 8px;
+            }
+
+            .header-logo {
+                max-width: 104px;
+            }
+
+            .header-right .search-box {
+                max-width: 180px;
             }
 
             .logo span {
@@ -882,15 +1083,15 @@
         }
     </style>
 </head>
-<body>
+<body class="student-app">
 <?php if (!empty($passwordToast)): ?>
-    <div class="student-toast <?= htmlspecialchars($passwordToast['type']) ?>">
+    <div class="student-toast alert <?= htmlspecialchars($passwordToast['type']) ?> <?= ($passwordToast['type'] ?? '') === 'success' ? 'alert-success' : 'alert-danger' ?>">
         <?= htmlspecialchars($passwordToast['message']) ?>
     </div>
 <?php endif; ?>
 <?php include __DIR__ . '/header.php'; ?>
 
-<button class="menu-toggle-btn" onclick="toggleMenu()" title="Mở menu">
+<button class="menu-toggle-btn btn btn-light" onclick="toggleMenu()" title="Mở menu">
     <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
         <path d="M4 7h16M4 12h16M4 17h16" stroke-width="2" stroke-linecap="round"/>
     </svg>
@@ -974,6 +1175,7 @@
     <?php endif; ?>
 </script>
 
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 <script src="/KhoaLuan/public/js/menu.js"></script>
 
 </body>

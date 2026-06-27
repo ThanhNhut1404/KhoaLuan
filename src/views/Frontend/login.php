@@ -339,16 +339,16 @@ $error = $error ?? '';
     }
 </style>
 
-<div class="login-wrapper">
-    <header class="login-header">
+<div class="login-wrapper container-fluid">
+    <header class="login-header navbar">
         <div class="header-left">
             <a href="#" aria-label="Tải lại trang đăng nhập sinh viên" onclick="location.reload(); return false;">
                 <img class="header-logo" src="/KhoaLuan/public/images/logo1.png" alt="Logo" />
             </a>
         </div>
-        <div class="header-links">
-            <a href="#" class="header-link">Hướng dẫn</a>
-            <a href="#" class="header-link">Hỗ trợ</a>
+        <div class="header-links navbar-nav">
+            <a href="#" class="header-link nav-link">Hướng dẫn</a>
+            <a href="#" class="header-link nav-link">Hỗ trợ</a>
         </div>
     </header>
 
@@ -383,12 +383,12 @@ $error = $error ?? '';
             </svg>
         </section>
 
-        <aside class="login-card">
+        <aside class="login-card card">
             <img class="login-logo" src="/KhoaLuan/public/images/logo1.png" alt="Logo" />
             <h3>Đăng nhập hệ thống</h3>
 
             <?php if (!empty($error)): ?>
-                <div class="error"><?= htmlspecialchars($error) ?></div>
+                <div class="error alert alert-danger"><?= htmlspecialchars($error) ?></div>
             <?php endif; ?>
 
             <form method="post" action="/student.php?action=login">
@@ -401,7 +401,7 @@ $error = $error ?? '';
                     <label class="form-label" for="password">Mật khẩu</label>
                     <div class="pwd-wrap">
                         <input id="password" name="password" class="form-control" type="password" placeholder=" Nhập mật khẩu" required />
-                        <button type="button" id="togglePwd" class="toggle-btn" aria-label="Hiện mật khẩu">
+                        <button type="button" id="togglePwd" class="toggle-btn btn btn-light" aria-label="Hiện mật khẩu">
                             <svg class="eye-on" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                                 <path d="M2 12s3.5-6 10-6 10 6 10 6-3.5 6-10 6-10-6-10-6Z" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
                                 <circle cx="12" cy="12" r="3" stroke-width="2" />
@@ -417,15 +417,15 @@ $error = $error ?? '';
                 </div>
 
                 <div class="form-row helper-row">
-                    <label style="display:flex; align-items:center; gap:8px;"><input type="checkbox" name="remember" /> Ghi nhớ đăng nhập</label>
-                    <button type="button" class="forgot-link" onclick="openForgotModal()" style="color:var(--brand); text-decoration:none; font-weight:600; background:none; border:none; padding:0; cursor:pointer;">Quên mật khẩu?</button>
+                    <label style="display:flex; align-items:center; gap:8px;"><input type="checkbox" name="remember" class="form-check-input" /> Ghi nhớ đăng nhập</label>
+                    <button type="button" class="forgot-link btn btn-link" onclick="openForgotModal()" style="color:var(--brand); text-decoration:none; font-weight:600; background:none; border:none; padding:0; cursor:pointer;">Quên mật khẩu?</button>
                 </div>
 
                 <div class="form-row">
                     <label class="form-label" for="captchaInput">Nhập mã</label>
                     <div class="captcha-row">
                         <input id="captchaInput" class="form-control captcha-input" type="text" placeholder="Nhập mã" aria-label="Nhập mã xác thực" />
-                        <button class="captcha-refresh" type="button" aria-label="Tải lại mã">
+                        <button class="captcha-refresh btn btn-light" type="button" aria-label="Tải lại mã">
                             <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                                 <path d="M20 12a8 8 0 1 1-2.34-5.66" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
                                 <path d="M20 4v6h-6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
@@ -436,7 +436,7 @@ $error = $error ?? '';
                 </div>
 
                 <div class="form-actions">
-                    <button class="btn-login" type="submit">Đăng nhập</button>
+                    <button class="btn-login btn btn-success" type="submit">Đăng nhập</button>
                     <div style="font-size:13px; color:var(--muted); text-align:center;">Chưa có tài khoản? <a href="#" style="color:var(--brand); text-decoration:none; font-weight:700;">Liên hệ</a></div>
                 </div>
             </form>

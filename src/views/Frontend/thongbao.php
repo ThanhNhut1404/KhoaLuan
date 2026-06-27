@@ -421,47 +421,47 @@
 
 <div class="notif-container">
     <!-- TIÊU ĐỀ & TÌM KIẾM -->
-    <div class="activity-panel">
-        <div class="activity-panel__header">
+    <div class="activity-panel card">
+        <div class="activity-panel__header card-header">
             <div class="activity-page-title">
                 <i class="fa-solid fa-bell"></i>
                 Thông báo
             </div>
-            <div class="notif-summary-badge has-unread" id="notifUnreadSummary">Bạn có 4 thông báo chưa đọc</div>
+            <div class="notif-summary-badge has-unread badge rounded-pill" id="notifUnreadSummary">Bạn có 4 thông báo chưa đọc</div>
         </div>
-        <div class="activity-panel__body" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 16px; padding: 12px 14px;">
+        <div class="activity-panel__body card-body" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 16px; padding: 12px 14px;">
             <!-- SEARCH INPUT -->
             <div class="filter-input" style="max-width: 320px; width: 100%;">
                 <i class="fa-solid fa-magnifying-glass" style="color: #94a3b8; font-size: 14px;"></i>
-                <input type="text" id="notifSearch" placeholder="Tìm kiếm thông báo..." onkeyup="filterNotifications()">
+                <input class="form-control" type="text" id="notifSearch" placeholder="Tìm kiếm thông báo..." onkeyup="filterNotifications()">
             </div>
             <!-- MARK ALL ACTION -->
-            <button class="filter-btn primary" id="btnMarkAll" onclick="markAllAsRead()">
+            <button class="filter-btn primary btn btn-primary" id="btnMarkAll" onclick="markAllAsRead()">
                 <i class="fa-solid fa-check-double"></i> Đánh dấu tất cả đã đọc
             </button>
         </div>
     </div>
 
     <!-- TABS -->
-    <div class="activity-tabs" role="tablist">
-        <button class="activity-tab active" id="tab-all" onclick="switchTab('all')" role="tab" aria-selected="true">
-            Tất cả <span class="notif-tab-badge" id="badge-all">6</span>
+    <div class="activity-tabs nav nav-pills" role="tablist">
+        <button class="activity-tab active nav-link" id="tab-all" onclick="switchTab('all')" role="tab" aria-selected="true">
+            Tất cả <span class="notif-tab-badge badge rounded-pill" id="badge-all">6</span>
         </button>
-        <button class="activity-tab" id="tab-unread" onclick="switchTab('unread')" role="tab" aria-selected="false">
-            Chưa đọc <span class="notif-tab-badge" id="badge-unread">4</span>
+        <button class="activity-tab nav-link" id="tab-unread" onclick="switchTab('unread')" role="tab" aria-selected="false">
+            Chưa đọc <span class="notif-tab-badge badge rounded-pill" id="badge-unread">4</span>
         </button>
-        <button class="activity-tab" id="tab-system" onclick="switchTab('system')" role="tab" aria-selected="false">
-            Hệ thống <span class="notif-tab-badge" id="badge-system">3</span>
+        <button class="activity-tab nav-link" id="tab-system" onclick="switchTab('system')" role="tab" aria-selected="false">
+            Hệ thống <span class="notif-tab-badge badge rounded-pill" id="badge-system">3</span>
         </button>
-        <button class="activity-tab" id="tab-activity" onclick="switchTab('activity')" role="tab" aria-selected="false">
-            Hoạt động <span class="notif-tab-badge" id="badge-activity">3</span>
+        <button class="activity-tab nav-link" id="tab-activity" onclick="switchTab('activity')" role="tab" aria-selected="false">
+            Hoạt động <span class="notif-tab-badge badge rounded-pill" id="badge-activity">3</span>
         </button>
     </div>
 
     <!-- DANH SÁCH THÔNG BÁO -->
     <div class="notif-list" id="notifList">
         <!-- Item 1 -->
-        <div class="notif-card unread" id="notif-1" data-category="activity" data-status="unread" onclick="toggleExpand('notif-1')">
+        <div class="notif-card unread card" id="notif-1" data-category="activity" data-status="unread" onclick="toggleExpand('notif-1')">
             <div class="notif-icon-circle activity" aria-hidden="true">
                 <i class="fa-solid fa-person-running"></i>
             </div>
@@ -473,7 +473,7 @@
                         <i class="fa-regular fa-clock"></i> 24/04/2026 08:30
                     </span>
                     <span class="notif-dot-separator" aria-hidden="true"></span>
-                    <span class="notif-badge activity">Hoạt động</span>
+                    <span class="notif-badge activity badge rounded-pill">Hoạt động</span>
                 </div>
                 <div class="notif-item-title">
                     Thông báo cập nhật điểm rèn luyện học kỳ I <span class="notif-unread-dot" id="dot-notif-1"></span>
@@ -494,7 +494,7 @@
         </div>
 
         <!-- Item 2 -->
-        <div class="notif-card" id="notif-2" data-category="activity" data-status="read" onclick="toggleExpand('notif-2')">
+        <div class="notif-card card" id="notif-2" data-category="activity" data-status="read" onclick="toggleExpand('notif-2')">
             <div class="notif-icon-circle activity" aria-hidden="true">
                 <i class="fa-solid fa-calendar-days"></i>
             </div>
@@ -506,7 +506,7 @@
                         <i class="fa-regular fa-clock"></i> 22/04/2026 14:10
                     </span>
                     <span class="notif-dot-separator" aria-hidden="true"></span>
-                    <span class="notif-badge activity">Hoạt động</span>
+                    <span class="notif-badge activity badge rounded-pill">Hoạt động</span>
                 </div>
                 <div class="notif-item-title">
                     Hướng dẫn đăng ký hoạt động ngoại khóa
@@ -527,7 +527,7 @@
         </div>
 
         <!-- Item 3 -->
-        <div class="notif-card unread" id="notif-3" data-category="system" data-status="unread" onclick="toggleExpand('notif-3')">
+        <div class="notif-card unread card" id="notif-3" data-category="system" data-status="unread" onclick="toggleExpand('notif-3')">
             <div class="notif-icon-circle system" aria-hidden="true">
                 <i class="fa-solid fa-gear"></i>
             </div>
@@ -539,7 +539,7 @@
                         <i class="fa-regular fa-clock"></i> 18/04/2026 09:00
                     </span>
                     <span class="notif-dot-separator" aria-hidden="true"></span>
-                    <span class="notif-badge system">Hệ thống</span>
+                    <span class="notif-badge system badge rounded-pill">Hệ thống</span>
                 </div>
                 <div class="notif-item-title">
                     Lịch tiếp nhận minh chứng điểm rèn luyện <span class="notif-unread-dot" id="dot-notif-3"></span>
@@ -560,7 +560,7 @@
         </div>
 
         <!-- Item 4 -->
-        <div class="notif-card unread" id="notif-4" data-category="system" data-status="unread" onclick="toggleExpand('notif-4')">
+        <div class="notif-card unread card" id="notif-4" data-category="system" data-status="unread" onclick="toggleExpand('notif-4')">
             <div class="notif-icon-circle system" aria-hidden="true">
                 <i class="fa-solid fa-triangle-exclamation"></i>
             </div>
@@ -572,7 +572,7 @@
                         <i class="fa-regular fa-clock"></i> 10/04/2026 16:45
                     </span>
                     <span class="notif-dot-separator" aria-hidden="true"></span>
-                    <span class="notif-badge system">Hệ thống</span>
+                    <span class="notif-badge system badge rounded-pill">Hệ thống</span>
                 </div>
                 <div class="notif-item-title">
                     Nhắc hạn hoàn tất khảo sát học kỳ <span class="notif-unread-dot" id="dot-notif-4"></span>
@@ -593,7 +593,7 @@
         </div>
 
         <!-- Item 5 -->
-        <div class="notif-card" id="notif-5" data-category="activity" data-status="read" onclick="toggleExpand('notif-5')">
+        <div class="notif-card card" id="notif-5" data-category="activity" data-status="read" onclick="toggleExpand('notif-5')">
             <div class="notif-icon-circle activity" aria-hidden="true">
                 <i class="fa-solid fa-clipboard-check"></i>
             </div>
@@ -605,7 +605,7 @@
                         <i class="fa-regular fa-clock"></i> 05/04/2026 10:20
                     </span>
                     <span class="notif-dot-separator" aria-hidden="true"></span>
-                    <span class="notif-badge activity">Hoạt động</span>
+                    <span class="notif-badge activity badge rounded-pill">Hoạt động</span>
                 </div>
                 <div class="notif-item-title">
                     Xác nhận đăng ký hoạt động thành công
@@ -626,7 +626,7 @@
         </div>
 
         <!-- Item 6 -->
-        <div class="notif-card unread" id="notif-6" data-category="system" data-status="unread" onclick="toggleExpand('notif-6')">
+        <div class="notif-card unread card" id="notif-6" data-category="system" data-status="unread" onclick="toggleExpand('notif-6')">
             <div class="notif-icon-circle system" aria-hidden="true">
                 <i class="fa-solid fa-shield-halved"></i>
             </div>
@@ -638,7 +638,7 @@
                         <i class="fa-regular fa-clock"></i> 01/04/2026 21:15
                     </span>
                     <span class="notif-dot-separator" aria-hidden="true"></span>
-                    <span class="notif-badge system">Hệ thống</span>
+                    <span class="notif-badge system badge rounded-pill">Hệ thống</span>
                 </div>
                 <div class="notif-item-title">
                     Cảnh báo tài khoản đăng nhập lạ <span class="notif-unread-dot" id="dot-notif-6"></span>

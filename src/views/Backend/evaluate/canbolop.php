@@ -11,14 +11,14 @@ $active = 0; // index của sinh viên hiện chọn
 ?>
 
 <div class="evaluate-page">
-	<div class="page-panel two-column">
+	<div class="page-panel two-column card">
 		<div class="left-panel">
-			<div class="panel-header">
+			<div class="panel-header card-header">
 				<h3 class="panel-title">Chấm điểm rèn luyện - Lớp trưởng</h3>
 			</div>
-			<div class="panel-body list-panel">
+			<div class="panel-body list-panel card-body">
 				<div class="table-wrapper">
-					<table class="data-table student-list">
+					<table class="data-table student-list table table-hover table-bordered align-middle">
 						<thead>
 							<tr>
 								<th></th>
@@ -51,7 +51,7 @@ $active = 0; // index của sinh viên hiện chọn
 		</div>
 
 		<div class="right-panel">
-			<div class="panel-header detail-header">
+			<div class="panel-header detail-header card-header">
 				<div class="student-info">
 					<div class="avatar">NV</div>
 					<div>
@@ -67,7 +67,7 @@ $active = 0; // index của sinh viên hiện chọn
 				</div>
 			</div>
 
-			<div class="panel-body detail-body">
+			<div class="panel-body detail-body card-body">
 				<div class="action-row">
 					<button class="btn-accept">Duyệt phiếu</button>
 					<button class="btn-reject">Từ chối</button>

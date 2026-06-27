@@ -13,27 +13,27 @@
 ?>
 
 <div class="edit-year-page">
-    <div class="page-panel"><div class="panel-header"><h2 class="panel-title">CHỈNH SỬA NIÊN KHÓA</h2></div>
-    <div class="panel-body">
+    <div class="page-panel card"><div class="panel-header card-header"><h2 class="panel-title">CHỈNH SỬA NIÊN KHÓA</h2></div>
+    <div class="panel-body card-body">
         <form id="editYearForm" method="POST" action="?page=edit_year&id=<?= $id ?>">
             <div class="form-grid">
                 <div class="form-field">
-                    <label class="field-label" for="year_name">Tên niên khóa <span class="required">*</span></label>
-                    <input type="text" id="year_name" name="year_name" class="field-input" placeholder="Ví dụ: 2024 - 2025" value="<?= htmlspecialchars($formData['name'] ?? ($formData['year_name'] ?? '')) ?>" required />
+                    <label class="field-label form-label" for="year_name">Tên niên khóa <span class="required">*</span></label>
+                    <input type="text" id="year_name" name="year_name" class="field-input form-control" placeholder="Ví dụ: 2024 - 2025" value="<?= htmlspecialchars($formData['name'] ?? ($formData['year_name'] ?? '')) ?>" required />
                     <small class="field-hint">&nbsp;</small>
                     <?php if(isset($errors['year_name'])): ?><span class="field-error"><?= $errors['year_name'] ?></span><?php endif; ?>
                 </div>
 
                 <div class="form-field">
-                    <label class="field-label" for="start_date">Ngày bắt đầu <span class="required">*</span></label>
-                    <input type="date" id="start_date" name="start_date" class="field-input" value="<?= htmlspecialchars($formData['start_date'] ?? '') ?>" required />
+                    <label class="field-label form-label" for="start_date">Ngày bắt đầu <span class="required">*</span></label>
+                    <input type="date" id="start_date" name="start_date" class="field-input form-control" value="<?= htmlspecialchars($formData['start_date'] ?? '') ?>" required />
                     <small class="field-hint">Định dạng: dd/mm/yyyy</small>
                     <?php if(isset($errors['start_date'])): ?><span class="field-error"><?= $errors['start_date'] ?></span><?php endif; ?>
                 </div>
 
                 <div class="form-field">
-                    <label class="field-label" for="status">Trạng thái <span class="required">*</span></label>
-                    <select id="status" name="status" class="field-input" required>
+                    <label class="field-label form-label" for="status">Trạng thái <span class="required">*</span></label>
+                    <select id="status" name="status" class="field-input form-select" required>
                         <option value="">-- Chọn trạng thái --</option>
                         <option value="upcoming" <?= (isset($formData['status']) && $formData['status'] === 'upcoming') ? 'selected' : '' ?>>Sắp tới</option>
                         <option value="active" <?= (isset($formData['status']) && $formData['status'] === 'active') ? 'selected' : '' ?>>Đang diễn ra</option>
@@ -44,15 +44,15 @@
                 </div>
 
                 <div class="form-field">
-                    <label class="field-label" for="end_date">Ngày kết thúc <span class="required">*</span></label>
-                    <input type="date" id="end_date" name="end_date" class="field-input" value="<?= htmlspecialchars($formData['end_date'] ?? '') ?>" required />
+                    <label class="field-label form-label" for="end_date">Ngày kết thúc <span class="required">*</span></label>
+                    <input type="date" id="end_date" name="end_date" class="field-input form-control" value="<?= htmlspecialchars($formData['end_date'] ?? '') ?>" required />
                     <small class="field-hint">Định dạng: dd/mm/yyyy</small>
                     <?php if(isset($errors['end_date'])): ?><span class="field-error"><?= $errors['end_date'] ?></span><?php endif; ?>
                 </div>
             </div>
             <div class="form-actions">
-                <a href="?page=list_year" class="action-btn secondary">Hủy</a>
-                <button type="submit" class="action-btn primary">Cập nhật niên khóa</button>
+                <a href="?page=list_year" class="action-btn secondary btn btn-outline-secondary">Hủy</a>
+                <button type="submit" class="action-btn primary btn btn-primary">Cập nhật niên khóa</button>
             </div>
         </form>
     </div></div>
