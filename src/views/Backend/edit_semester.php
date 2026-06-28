@@ -1,28 +1,23 @@
 <?php
     $id = isset($_GET['id']) ? (int)$_GET['id'] : null;
-    $semesters = $semesters ?? [ ['id'=>1,'name'=>'Học kỳ 1','start_date'=>'2023-09-05','end_date'=>'2023-12-15','status'=>'completed'] ];
-    $formData = [];
-    if ($id) foreach($semesters as $s) if($s['id']==$id){ $formData=$s; break; }
-    $errors = [];
-    if ($_SERVER['REQUEST_METHOD']==='POST'){
-        $name = trim($_POST['name'] ?? '');
-        if ($name==='') $errors['name']='Tên học kỳ là bắt buộc';
-        if (empty($errors)){ if(session_status()===PHP_SESSION_NONE) session_start(); $_SESSION['message']='Cập nhật học kỳ thành công'; $_SESSION['message_type']='success'; header('Location: ?page=list_semester'); exit; }
-        $formData = $_POST;
+    $semesters = $semesters ?? [];
+    $academic_years = $academic_years ?? [];
+    $formData = $formData ?? [];
+    $errors = $errors ?? [];
+
+    if ($id && empty($formData)) {
+        foreach ($semesters as $s) {
+            if (($s['id'] ?? null) == $id) {
+                $formData = $s;
+                break;
+            }
+        }
     }
 ?>
-
 <div class="edit-semester-page">
     <div class="page-panel card"><div class="panel-header card-header"><h2 class="panel-title">CHỈNH SỬA HỌC KỲ</h2></div>
     <div class="panel-body card-body">
-        <?php
-            $academic_years = $academic_years ?? [
-                ['id' => 1, 'name' => '2023 - 2024'],
-                ['id' => 2, 'name' => '2024 - 2025'],
-                ['id' => 3, 'name' => '2022 - 2023']
-            ];
-        ?>
-        <form id="editSemesterForm" method="POST" action="?page=edit_semester&id=<?= $id ?>">
+<form id="editSemesterForm" method="POST" action="?page=edit_semester&id=<?= $id ?>">
             <div class="form-grid">
                 <!-- Niên khóa -->
                 <div class="form-field">

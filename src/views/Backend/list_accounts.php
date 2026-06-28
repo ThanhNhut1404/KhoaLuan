@@ -1,36 +1,14 @@
 <?php
-    // Sample accounts - replace with DB query
-    $accounts = $accounts ?? [
-        ['id'=>1,'full_name'=>'Nguyễn Văn A','username'=>'nguyenvana','gender'=>'male','email'=>'a@example.com','phone'=>'0912345678','role'=>'Admin','status'=>'active','status_label'=>'Hoạt động'],
-        ['id'=>2,'full_name'=>'Trần Thị B','username'=>'tranthib','gender'=>'female','email'=>'b@example.com','phone'=>'0987654321','role'=>'Giảng viên','status'=>'inactive','status_label'=>'Không hoạt động'],
-        ['id'=>3,'full_name'=>'Lê Văn C','username'=>'levanc','gender'=>'male','email'=>'c@example.com','phone'=>'0901122334','role'=>'Sinh viên','status'=>'active','status_label'=>'Hoạt động']
-    ];
-
-    $roles = $roles ?? ['Admin','Giảng viên','Sinh viên'];
+    $accounts = $accounts ?? [];
+    $roles = $roles ?? [];
     $genders = ['male'=>'Nam','female'=>'Nữ','other'=>'Khác'];
     $statuses = ['active'=>'Hoạt động','inactive'=>'Không hoạt động'];
-
-    if (session_status() === PHP_SESSION_NONE) session_start();
-    if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['status']) && is_array($_POST['status'])) {
-        foreach ($_POST['status'] as $id => $newStatus) {
-            foreach ($accounts as &$acct) {
-                if ($acct['id'] == $id) {
-                    $acct['status'] = $newStatus;
-                    $acct['status_label'] = $newStatus === 'active' ? 'Hoạt động' : 'Không hoạt động';
-                }
-            }
-            unset($acct);
-        }
-        $_SESSION['message'] = 'Cập nhật trạng thái thành công';
-        $_SESSION['message_type'] = 'success';
-    }
 
     $current_page = isset($_GET['page_num']) ? (int)$_GET['page_num'] : 1;
     $total_items = count($accounts);
     $items_per_page = 10;
-    $total_pages = ceil($total_items / $items_per_page);
+    $total_pages = max(1, (int) ceil($total_items / $items_per_page));
 ?>
-
 <div class="list-accounts-page">
     <div class="page-panel card">
         <div class="panel-header card-header">

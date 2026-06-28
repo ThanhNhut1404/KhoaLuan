@@ -1,65 +1,10 @@
 <?php
-    // Sample data - replace with actual database query
-    $semesters = $semesters ?? [
-        [
-            'id' => 1,
-            'name' => 'Học kỳ 1',
-            'academic_year' => '2023 - 2024',
-            'start_date' => '05/09/2023',
-            'end_date' => '15/12/2023',
-            'status' => 'completed',
-            'status_label' => 'Đã hoàn thành'
-        ],
-        [
-            'id' => 2,
-            'name' => 'Học kỳ 2',
-            'academic_year' => '2023 - 2024',
-            'start_date' => '02/01/2024',
-            'end_date' => '30/06/2024',
-            'status' => 'completed',
-            'status_label' => 'Đã hoàn thành'
-        ],
-        [
-            'id' => 3,
-            'name' => 'Học kỳ 1',
-            'academic_year' => '2024 - 2025',
-            'start_date' => '05/09/2024',
-            'end_date' => '15/12/2024',
-            'status' => 'active',
-            'status_label' => 'Đang diễn ra'
-        ],
-        [
-            'id' => 4,
-            'name' => 'Học kỳ 2',
-            'academic_year' => '2024 - 2025',
-            'start_date' => '02/01/2025',
-            'end_date' => '30/06/2025',
-            'status' => 'upcoming',
-            'status_label' => 'Sắp tới'
-        ]
-    ];
-
-    if (session_status() === PHP_SESSION_NONE) session_start();
-    if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['status']) && is_array($_POST['status'])) {
-        foreach ($_POST['status'] as $id => $newStatus) {
-            foreach ($semesters as &$s) {
-                if ($s['id'] == $id) {
-                    $s['status'] = $newStatus;
-                    $s['status_label'] = $newStatus === 'active' ? 'Đang diễn ra' : ($newStatus === 'upcoming' ? 'Sắp tới' : 'Đã hoàn thành');
-                }
-            }
-            unset($s);
-        }
-        $_SESSION['message'] = 'Cập nhật trạng thái thành công';
-        $_SESSION['message_type'] = 'success';
-    }
-
+    $semesters = $semesters ?? [];
     $current_page = isset($_GET['page_num']) ? (int)$_GET['page_num'] : 1;
     $total_items = count($semesters);
     $items_per_page = 10;
-    $total_pages = ceil($total_items / $items_per_page);
+    $total_pages = max(1, (int) ceil($total_items / $items_per_page));
 ?>
-
 <div class="list-semester-page">
     <div class="page-panel card">
         <div class="panel-header card-header">

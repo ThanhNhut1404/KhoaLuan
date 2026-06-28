@@ -1,24 +1,8 @@
 <?php
-    $academic_years = $academic_years ?? [
-        ['id' => 1, 'name' => '2023 - 2024'],
-        ['id' => 2, 'name' => '2024 - 2025']
-    ];
-
-    $departments = $departments ?? [
-        ['id' => 1, 'name' => 'Khoa CNTT'],
-        ['id' => 2, 'name' => 'Khoa Điện tử']
-    ];
-
-    $majors = $majors ?? [
-        ['id' => 1, 'name' => 'Chuyên ngành Công nghệ Phần mềm'],
-        ['id' => 2, 'name' => 'Chuyên ngành Mạng máy tính']
-    ];
-
-    $advisors = $advisors ?? [
-        ['id' => 1, 'name' => 'Thầy Nguyễn Văn A'],
-        ['id' => 2, 'name' => 'Cô Trần Thị B']
-    ];
-
+    $academic_years = $academic_years ?? [];
+    $departments = $departments ?? [];
+    $majors = $majors ?? [];
+    $advisors = $advisors ?? [];
     $formData = $formData ?? [];
     $errors = $errors ?? [];
 ?>

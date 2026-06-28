@@ -1,70 +1,10 @@
 <?php
-    $activities = $activities ?? [
-        [
-            'id' => 1,
-            'name' => 'Ngày hội khởi nghiệp',
-            'time' => '09:00',
-            'period' => 'Sáng',
-            'start_date' => '15/07/2025',
-            'end_date' => '15/07/2025',
-            'activity_type' => 'Hội thảo',
-            'activity_level' => 'Trường',
-            'bonus_points' => 10,
-            'capacity' => 120,
-            'status' => 'active',
-            'status_label' => 'Đang diễn ra'
-        ],
-        [
-            'id' => 2,
-            'name' => 'Tập huấn kỹ năng mềm',
-            'time' => '13:30',
-            'period' => 'Chiều',
-            'start_date' => '22/07/2025',
-            'end_date' => '22/07/2025',
-            'activity_type' => 'Văn hóa',
-            'activity_level' => 'Khoa',
-            'bonus_points' => 8,
-            'capacity' => 80,
-            'status' => 'upcoming',
-            'status_label' => 'Sắp tới'
-        ],
-        [
-            'id' => 3,
-            'name' => 'Chiến dịch tình nguyện',
-            'time' => '18:00',
-            'period' => 'Tối',
-            'start_date' => '10/08/2025',
-            'end_date' => '12/08/2025',
-            'activity_type' => 'Tình nguyện',
-            'activity_level' => 'Lớp',
-            'bonus_points' => 15,
-            'capacity' => 150,
-            'status' => 'completed',
-            'status_label' => 'Đã hoàn thành'
-        ]
-    ];
-
-    if (session_status() === PHP_SESSION_NONE) session_start();
-    if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['status']) && is_array($_POST['status'])) {
-        foreach ($_POST['status'] as $id => $newStatus) {
-            foreach ($activities as &$act) {
-                if ($act['id'] == $id) {
-                    $act['status'] = $newStatus;
-                    $act['status_label'] = $newStatus === 'active' ? 'Đang diễn ra' : ($newStatus === 'upcoming' ? 'Sắp tới' : 'Đã hoàn thành');
-                }
-            }
-            unset($act);
-        }
-        $_SESSION['message'] = 'Cập nhật trạng thái thành công';
-        $_SESSION['message_type'] = 'success';
-    }
-
+    $activities = $activities ?? [];
     $current_page = isset($_GET['page_num']) ? (int)$_GET['page_num'] : 1;
     $total_items = count($activities);
     $items_per_page = 10;
-    $total_pages = ceil($total_items / $items_per_page);
+    $total_pages = max(1, (int) ceil($total_items / $items_per_page));
 ?>
-
 <div class="list-activity-page">
     <div class="page-panel card">
         <div class="panel-header card-header">

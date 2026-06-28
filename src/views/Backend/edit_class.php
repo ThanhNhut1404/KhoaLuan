@@ -1,27 +1,23 @@
 <?php
-    $academic_years = $academic_years ?? [ ['id'=>1,'name'=>'2023 - 2024'], ['id'=>2,'name'=>'2024 - 2025'] ];
-    $departments = $departments ?? [ ['id'=>1,'name'=>'Khoa CNTT'], ['id'=>2,'name'=>'Khoa Điện tử'] ];
-    $majors = $majors ?? [ ['id'=>1,'name'=>'Chuyên ngành Công nghệ Phần mềm'], ['id'=>2,'name'=>'Chuyên ngành Mạng máy tính'] ];
-    $advisors = $advisors ?? [ ['id'=>1,'name'=>'Thầy Nguyễn Văn A'], ['id'=>2,'name'=>'Cô Trần Thị B'] ];
+    $academic_years = $academic_years ?? [];
+    $departments = $departments ?? [];
+    $majors = $majors ?? [];
+    $advisors = $advisors ?? [];
+    $classes = $classes ?? [];
 
     $id = isset($_GET['id']) ? (int)$_GET['id'] : null;
-    $formData = [];
-    $errors = [];
+    $formData = $formData ?? [];
+    $errors = $errors ?? [];
 
-    $classes = $classes ?? [ ['id'=>1,'code'=>'L01','name'=>'Lớp K1','academic_year'=>1,'department'=>1,'major'=>1,'advisor'=>1,'capacity'=>30,'status'=>'active'] ];
-    if ($id) foreach($classes as $c) if($c['id']==$id) { $formData = $c; break; }
-
-    if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-        $code = trim($_POST['class_code'] ?? '');
-        $name = trim($_POST['class_name'] ?? '');
-        $credits = (int)($_POST['capacity'] ?? 0);
-        if ($code==='') $errors['class_code']='Mã lớp là bắt buộc';
-        if ($name==='') $errors['class_name']='Tên lớp là bắt buộc';
-        if (empty($errors)) { if(session_status()===PHP_SESSION_NONE) session_start(); $_SESSION['message']='Cập nhật lớp thành công'; $_SESSION['message_type']='success'; header('Location: ?page=list_class'); exit; }
-        $formData = $_POST;
+    if ($id && empty($formData)) {
+        foreach ($classes as $c) {
+            if (($c['id'] ?? null) == $id) {
+                $formData = $c;
+                break;
+            }
+        }
     }
 ?>
-
 <div class="edit-class-page">
     <div class="page-panel card">
         <div class="panel-header card-header"><h2 class="panel-title">CHỈNH SỬA LỚP HỌC</h2></div>

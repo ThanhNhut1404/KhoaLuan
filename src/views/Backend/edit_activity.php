@@ -1,34 +1,26 @@
 <?php
     $id = isset($_GET['id']) ? (int)$_GET['id'] : null;
-    $activities = $activities ?? [ ['id'=>1,'name'=>'Ngày hội khởi nghiệp','start_date'=>'2025-07-15','end_date'=>'2025-07-15','status'=>'active'] ];
-    $formData = [];
-    if ($id) foreach($activities as $a) if($a['id']==$id){ $formData=$a; break; }
-    $errors = [];
-    if ($_SERVER['REQUEST_METHOD']==='POST'){
-        $name = trim($_POST['activity_name'] ?? '');
-        if ($name==='') $errors['activity_name']='Tên hoạt động là bắt buộc';
-        if (empty($errors)){ if(session_status()===PHP_SESSION_NONE) session_start(); $_SESSION['message']='Cập nhật hoạt động thành công'; $_SESSION['message_type']='success'; header('Location: ?page=list_activity'); exit; }
-        $formData = $_POST;
+    $activities = $activities ?? [];
+    $organizing_units = $organizing_units ?? [];
+    $time_slots = $time_slots ?? [];
+    $activity_types = $activity_types ?? [];
+    $activity_levels = $activity_levels ?? [];
+    $formData = $formData ?? [];
+    $errors = $errors ?? [];
+
+    if ($id && empty($formData)) {
+        foreach ($activities as $a) {
+            if (($a['id'] ?? null) == $id) {
+                $formData = $a;
+                break;
+            }
+        }
     }
 ?>
-
 <div class="edit-activity-page">
     <div class="page-panel card"><div class="panel-header card-header"><h2 class="panel-title">CHỈNH SỬA HOẠT ĐỘNG</h2></div>
     <div class="panel-body card-body">
-        <?php
-            $organizing_units = $organizing_units ?? [
-                'Đoàn trường',
-                'Khoa CNTT',
-                'Phòng Công tác Sinh viên',
-                'Liên chi đoàn'
-            ];
-
-            $time_slots = $time_slots ?? ['Sáng','Chiều','Tối'];
-            $activity_types = $activity_types ?? ['Văn hóa','Thể thao','Tình nguyện','Hội thảo'];
-            $activity_levels = $activity_levels ?? ['Trường','Khoa','Lớp','Liên trường'];
-        ?>
-
-        <form id="editActivityForm" method="POST" action="?page=edit_activity&id=<?= $id ?>" enctype="multipart/form-data">
+<form id="editActivityForm" method="POST" action="?page=edit_activity&id=<?= $id ?>" enctype="multipart/form-data">
             <div class="form-grid">
                 <!-- Tên hoạt động -->
                 <div class="form-field">

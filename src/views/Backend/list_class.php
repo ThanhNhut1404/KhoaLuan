@@ -1,64 +1,10 @@
 <?php
-    $classes = $classes ?? [
-        [
-            'id' => 1,
-            'code' => 'CNTT01',
-            'name' => 'Công nghệ thông tin A',
-            'department' => 'Khoa CNTT',
-            'academic_year' => '2023 - 2024',
-            'major' => 'Công nghệ Phần mềm',
-            'advisor' => 'Thầy Nguyễn Văn A',
-            'capacity' => 35,
-            'status' => 'active',
-            'status_label' => 'Đang diễn ra'
-        ],
-        [
-            'id' => 2,
-            'code' => 'DT01',
-            'name' => 'Điện tử 1',
-            'department' => 'Khoa Điện tử',
-            'academic_year' => '2024 - 2025',
-            'major' => 'Hệ thống nhúng',
-            'advisor' => 'Cô Trần Thị B',
-            'capacity' => 28,
-            'status' => 'upcoming',
-            'status_label' => 'Sắp tới'
-        ],
-        [
-            'id' => 3,
-            'code' => 'MX01',
-            'name' => 'Mạng máy tính 1',
-            'department' => 'Khoa CNTT',
-            'academic_year' => '2023 - 2024',
-            'major' => 'Mạng và Truyền thông',
-            'advisor' => 'Thầy Phạm Văn C',
-            'capacity' => 32,
-            'status' => 'completed',
-            'status_label' => 'Đã hoàn thành'
-        ]
-    ];
-
-    if (session_status() === PHP_SESSION_NONE) session_start();
-    if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['status']) && is_array($_POST['status'])) {
-        foreach ($_POST['status'] as $id => $newStatus) {
-            foreach ($classes as &$c) {
-                if ($c['id'] == $id) {
-                    $c['status'] = $newStatus;
-                    $c['status_label'] = $newStatus === 'active' ? 'Đang diễn ra' : ($newStatus === 'upcoming' ? 'Sắp tới' : 'Đã hoàn thành');
-                }
-            }
-            unset($c);
-        }
-        $_SESSION['message'] = 'Cập nhật trạng thái thành công';
-        $_SESSION['message_type'] = 'success';
-    }
-
+    $classes = $classes ?? [];
     $current_page = isset($_GET['page_num']) ? (int)$_GET['page_num'] : 1;
     $total_items = count($classes);
     $items_per_page = 10;
-    $total_pages = ceil($total_items / $items_per_page);
+    $total_pages = max(1, (int) ceil($total_items / $items_per_page));
 ?>
-
 <div class="list-class-page">
     <div class="page-panel card">
         <div class="panel-header card-header">

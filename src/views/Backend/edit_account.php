@@ -1,18 +1,19 @@
 <?php
     $id = isset($_GET['id']) ? (int)$_GET['id'] : null;
-    $roles = $roles ?? [ ['id'=>1,'name'=>'Admin'], ['id'=>2,'name'=>'Giảng viên'], ['id'=>3,'name'=>'Sinh viên'] ];
-    $users = $users ?? [ ['id'=>1,'full_name'=>'Nguyen A','username'=>'nguyena','email'=>'a@example.com','role'=>1,'status'=>'active'] ];
-    $formData = [];
-    if ($id) foreach($users as $u) if($u['id']==$id){ $formData=$u; break; }
-    $errors = [];
-    if ($_SERVER['REQUEST_METHOD']==='POST'){
-        $name = trim($_POST['full_name'] ?? '');
-        if ($name==='') $errors['full_name']='Tên là bắt buộc';
-        if (empty($errors)){ if(session_status()===PHP_SESSION_NONE) session_start(); $_SESSION['message']='Cập nhật tài khoản thành công'; $_SESSION['message_type']='success'; header('Location: ?page=list_accounts'); exit; }
-        $formData = $_POST;
+    $roles = $roles ?? [];
+    $users = $users ?? [];
+    $formData = $formData ?? [];
+    $errors = $errors ?? [];
+
+    if ($id && empty($formData)) {
+        foreach ($users as $u) {
+            if (($u['id'] ?? null) == $id) {
+                $formData = $u;
+                break;
+            }
+        }
     }
 ?>
-
 <div class="edit-account-page">
     <div class="page-panel card"><div class="panel-header card-header"><h2 class="panel-title">CHỈNH SỬA TÀI KHOẢN</h2></div>
     <div class="panel-body card-body">

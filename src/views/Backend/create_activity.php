@@ -1,31 +1,8 @@
 <?php
-    $organizing_units = $organizing_units ?? [
-        'Đoàn trường',
-        'Khoa CNTT',
-        'Phòng Công tác Sinh viên',
-        'Liên chi đoàn'
-    ];
-
-    $time_slots = $time_slots ?? [
-        'Sáng',
-        'Chiều',
-        'Tối'
-    ];
-
-    $activity_types = $activity_types ?? [
-        'Văn hóa',
-        'Thể thao',
-        'Tình nguyện',
-        'Hội thảo'
-    ];
-
-    $activity_levels = $activity_levels ?? [
-        'Trường',
-        'Khoa',
-        'Lớp',
-        'Liên trường'
-    ];
-
+    $organizing_units = $organizing_units ?? [];
+    $time_slots = $time_slots ?? [];
+    $activity_types = $activity_types ?? [];
+    $activity_levels = $activity_levels ?? [];
     $formData = $formData ?? [];
     $errors = $errors ?? [];
 ?>
