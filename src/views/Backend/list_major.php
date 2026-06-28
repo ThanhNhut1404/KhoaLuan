@@ -50,7 +50,7 @@
             <?php else: ?>
                 <div class="table-wrapper">
                     <table class="data-table table table-hover table-bordered align-middle">
-                        <thead>
+                        <thead class="table-light">
                             <tr>
                                 <th class="col-stt">STT</th>
                                 <th class="col-code">MÃ NGÀNH</th>
@@ -133,14 +133,12 @@
     .panel-body { padding:0; }
     .table-wrapper { overflow-x:auto; }
     .data-table { width:100%; border-collapse:collapse; font-size:13px; }
-    .data-table thead { background:#f3f4f6; border-bottom:1px solid #e5e7eb; }
+    .data-table thead { background:#f8f9fa; border-bottom:1px solid #e5e7eb; }
     .data-table th { padding:12px 14px; text-align:center; font-weight:700; color:#0f2a5a; text-transform:uppercase; font-size:11px; border-right:1px solid #d1d5db; }
-    .data-table th:last-child { border-right:none; }
     .data-table tbody tr { border-bottom:1px solid #f3f4f6; transition:background-color .2s; }
     .data-table tbody tr:nth-child(odd) { background:#f9fafb; }
     .data-table tbody tr:hover { background:#f0f1f3; }
     .data-table td { padding:12px 14px; color:#1f2937; text-align:center; border-right:1px solid #e5e7eb; }
-    .data-table td:last-child { border-right:none; }
     .col-stt { width:50px; }
     .col-code { width:12%; }
     .col-name { width:26%; }

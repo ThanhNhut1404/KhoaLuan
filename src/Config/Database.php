@@ -11,7 +11,7 @@ class Database
     private const DB_NAME = 'dbkhoaluan';
     private const USERNAME = 'root';
     private const PASSWORD = '';
-    private const CHARSET = 'utf8';
+    private const CHARSET = 'utf8mb4';
 
     private static ?PDO $connection = null;
 

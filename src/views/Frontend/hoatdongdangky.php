@@ -73,10 +73,6 @@
         white-space: nowrap;
     }
 
-    .joined-table thead th:last-child {
-        border-right: none;
-    }
-
     .joined-table tbody td {
         padding: 10px 12px;
         border-bottom: 1px solid #eef2f7;
@@ -91,10 +87,6 @@
 
     .joined-table tbody tr:first-child {
         border-top: none;
-    }
-
-    .joined-table tbody td:last-child {
-        border-right: none;
     }
 
     .joined-table tbody tr:hover {

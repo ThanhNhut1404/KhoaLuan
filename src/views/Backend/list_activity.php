@@ -85,7 +85,7 @@
             <?php else: ?>
                 <div class="table-wrapper">
                     <table class="data-table table table-hover table-bordered align-middle">
-                        <thead>
+                        <thead class="table-light">
                             <tr>
                                 <th class="col-stt">STT</th>
                                 <th class="col-name">TÊN HOẠT ĐỘNG</th>
@@ -255,7 +255,7 @@
     }
 
     .data-table thead {
-        background: #f3f4f6;
+        background: #f8f9fa;
         border-bottom: 1px solid #e5e7eb;
     }
 
@@ -268,10 +268,6 @@
         letter-spacing: 0.4px;
         font-size: 11px;
         border-right: 1px solid #d1d5db;
-    }
-
-    .data-table th:last-child {
-        border-right: none;
     }
 
     .data-table tbody tr {
@@ -292,10 +288,6 @@
         color: #1f2937;
         text-align: center;
         border-right: 1px solid #e5e7eb;
-    }
-
-    .data-table td:last-child {
-        border-right: none;
     }
 
     .col-stt {

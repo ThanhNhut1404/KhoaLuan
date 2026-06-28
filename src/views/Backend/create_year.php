@@ -12,7 +12,7 @@
     $formData['status'] = $formData['status'] ?? $statusOptions[0]['value'];
 ?>
 
-<div class="create-year-page">
+<div class="create-year-page container-fluid">
     <div class="page-panel card">
         <div class="panel-header card-header">
             <h2 class="panel-title">TẠO NIÊN KHÓA</h2>
@@ -20,9 +20,9 @@
 
         <div class="panel-body card-body">
             <form id="createYearForm" method="POST" action="?page=create_year">
-                <div class="form-grid">
+                <div class="row g-3 g-md-4 year-form-row">
                     <!-- Tên niên khóa -->
-                    <div class="form-field">
+                    <div class="col-12 col-md-6 year-field">
                         <label class="field-label form-label" for="year_name">
                             Tên niên khóa <span class="required">*</span>
                         </label>
@@ -30,19 +30,19 @@
                             type="text" 
                             id="year_name" 
                             name="year_name" 
-                            class="field-input<?= isset($errors['year_name']) ? ' has-error' : '' ?> form-control" 
+                            class="field-input form-control<?= isset($errors['year_name']) ? ' is-invalid' : '' ?>" 
                             placeholder="Ví dụ: 2024 - 2025"
                             value="<?= htmlspecialchars($formData['year_name'] ?? '') ?>"
                             required 
                         />
                         <small class="field-hint">&nbsp;</small>
                         <?php if(isset($errors['year_name'])): ?>
-                            <span class="field-error"><?= htmlspecialchars($errors['year_name']) ?></span>
+                            <div class="invalid-feedback"><?= htmlspecialchars($errors['year_name']) ?></div>
                         <?php endif; ?>
                     </div>
 
                     <!-- Ngày bắt đầu -->
-                    <div class="form-field">
+                    <div class="col-12 col-md-6 year-field">
                         <label class="field-label form-label" for="start_date">
                             Ngày bắt đầu <span class="required">*</span>
                         </label>
@@ -50,22 +50,22 @@
                             type="date" 
                             id="start_date" 
                             name="start_date" 
-                            class="field-input<?= isset($errors['start_date']) ? ' has-error' : '' ?> form-control" 
+                            class="field-input form-control<?= isset($errors['start_date']) ? ' is-invalid' : '' ?>" 
                             value="<?= htmlspecialchars($formData['start_date'] ?? '') ?>"
                             required 
                         />
                         <small class="field-hint">Định dạng: dd/mm/yyyy</small>
                         <?php if(isset($errors['start_date'])): ?>
-                            <span class="field-error"><?= htmlspecialchars($errors['start_date']) ?></span>
+                            <div class="invalid-feedback"><?= htmlspecialchars($errors['start_date']) ?></div>
                         <?php endif; ?>
                     </div>
 
                     <!-- Trạng thái -->
-                    <div class="form-field">
+                    <div class="col-12 col-md-6 year-field">
                         <label class="field-label form-label" for="status">
                             Trạng thái <span class="required">*</span>
                         </label>
-                        <select id="status" name="status" class="field-input<?= isset($errors['status']) ? ' has-error' : '' ?> form-select" required>
+                        <select id="status" name="status" class="field-input form-select<?= isset($errors['status']) ? ' is-invalid' : '' ?>" required>
                             <?php foreach ($statusOptions as $option): ?>
                                 <option value="<?= htmlspecialchars($option['value']) ?>" <?= (($formData['status'] ?? '') === $option['value']) ? 'selected' : '' ?>>
                                     <?= htmlspecialchars($option['label']) ?>
@@ -74,12 +74,12 @@
                         </select>
                         <small class="field-hint">&nbsp;</small>
                         <?php if(isset($errors['status'])): ?>
-                            <span class="field-error"><?= htmlspecialchars($errors['status']) ?></span>
+                            <div class="invalid-feedback"><?= htmlspecialchars($errors['status']) ?></div>
                         <?php endif; ?>
                     </div>
 
                     <!-- Ngày kết thúc -->
-                    <div class="form-field">
+                    <div class="col-12 col-md-6 year-field">
                         <label class="field-label form-label" for="end_date">
                             Ngày kết thúc <span class="required">*</span>
                         </label>
@@ -87,13 +87,13 @@
                             type="date" 
                             id="end_date" 
                             name="end_date" 
-                            class="field-input<?= isset($errors['end_date']) ? ' has-error' : '' ?> form-control" 
+                            class="field-input form-control<?= isset($errors['end_date']) ? ' is-invalid' : '' ?>" 
                             value="<?= htmlspecialchars($formData['end_date'] ?? '') ?>"
                             required 
                         />
                         <small class="field-hint">Định dạng: dd/mm/yyyy</small>
                         <?php if(isset($errors['end_date'])): ?>
-                            <span class="field-error"><?= htmlspecialchars($errors['end_date']) ?></span>
+                            <div class="invalid-feedback"><?= htmlspecialchars($errors['end_date']) ?></div>
                         <?php endif; ?>
                     </div>
                 </div>
@@ -114,8 +114,6 @@
 
 <style>
     .create-year-page {
-        display: grid;
-        gap: 0;
         padding: 24px;
     }
 
@@ -172,17 +170,13 @@
         padding: 20px;
     }
 
-    .form-grid {
-        display: grid;
-        grid-template-columns: repeat(2, minmax(0, 1fr));
-        gap: 20px;
+    .year-form-row {
         margin-bottom: 24px;
         align-items: start;
     }
 
-    .form-field {
-        display: grid;
-        gap: 6px;
+    .year-field {
+        min-width: 0;
     }
 
     .field-label {
@@ -192,6 +186,7 @@
         text-transform: none;
         letter-spacing: 0.4px;
         display: block;
+        margin-bottom: 6px;
     }
 
     .required {
@@ -210,6 +205,7 @@
         transition: border-color 0.2s, box-shadow 0.2s;
         height: 40px;
         box-sizing: border-box;
+        width: 100%;
     }
 
     .field-input:focus {
@@ -219,9 +215,9 @@
         background: #ffffff;
     }
 
-    .field-input.has-error {
+    .field-input.is-invalid {
         border-color: #dc2626;
-        background: #fff7f7;
+        background-color: #fff7f7;
     }
 
     select.field-input {
@@ -238,12 +234,12 @@
         font-size: 11px;
         color: #9ca3af;
         display: block;
+        margin-top: 6px;
     }
 
-    .field-error {
+    .invalid-feedback {
         font-size: 12px;
-        color: #dc2626;
-        display: block;
+        margin-top: 6px;
     }
 
     .form-actions {
@@ -289,9 +285,12 @@
     }
 
     @media (max-width: 768px) {
-        .form-grid {
-            grid-template-columns: 1fr;
-            gap: 16px;
+        .create-year-page {
+            padding: 16px;
+        }
+
+        .panel-body {
+            padding: 16px;
         }
 
         .form-actions {

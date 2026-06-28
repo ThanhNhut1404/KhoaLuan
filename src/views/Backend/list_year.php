@@ -41,9 +41,9 @@
                     <h3>Chưa có niên khóa nào.</h3>
                 </div>
             <?php else: ?>
-                <div class="table-wrapper">
+                <div class="table-responsive">
                     <table class="data-table table table-hover table-bordered align-middle">
-                        <thead>
+                        <thead class="table-light">
                             <tr>
                                 <th class="col-stt">STT</th>
                                 <th class="col-name">TÊN NIÊN KHÓA</th>
@@ -118,29 +118,37 @@
                         Hiển thị <?= (int) $pagination['from'] ?> - <?= (int) $pagination['to'] ?> của <?= (int) $pagination['total_items'] ?> niên khóa
                     </div>
                     <?php if ($pagination['total_pages'] > 1): ?>
-                        <div class="pagination mb-0">
+                        <nav class="pagination-nav" aria-label="Pagination">
+                            <ul class="pagination mb-0">
                             <?php if ($pagination['current_page'] > 1): ?>
-                                <a href="?page=list_year&page_num=<?= $pagination['current_page'] - 1 ?>" class="pagination-btn prev page-link page-item" aria-label="Trang trước">
+                                <li class="page-item">
+                                <a href="?page=list_year&page_num=<?= $pagination['current_page'] - 1 ?>" class="pagination-btn prev page-link" aria-label="Trang trước">
                                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                                         <path d="M15 19l-7-7 7-7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
                                     </svg>
                                 </a>
+                                </li>
                             <?php endif; ?>
 
                             <?php for ($i = 1; $i <= $pagination['total_pages']; $i++): ?>
-                                <a href="?page=list_year&page_num=<?= $i ?>" class="pagination-btn page-link page-item <?= $i === $pagination['current_page'] ? 'active' : '' ?>">
+                                <li class="page-item <?= $i === $pagination['current_page'] ? 'active' : '' ?>">
+                                <a href="?page=list_year&page_num=<?= $i ?>" class="pagination-btn page-link">
                                     <?= $i ?>
                                 </a>
+                                </li>
                             <?php endfor; ?>
 
                             <?php if ($pagination['current_page'] < $pagination['total_pages']): ?>
-                                <a href="?page=list_year&page_num=<?= $pagination['current_page'] + 1 ?>" class="pagination-btn next page-link page-item" aria-label="Trang sau">
+                                <li class="page-item">
+                                <a href="?page=list_year&page_num=<?= $pagination['current_page'] + 1 ?>" class="pagination-btn next page-link" aria-label="Trang sau">
                                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                                         <path d="M9 5l7 7-7 7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
                                     </svg>
                                 </a>
+                                </li>
                             <?php endif; ?>
-                        </div>
+                            </ul>
+                        </nav>
                     <?php endif; ?>
                 </div>
             <?php endif; ?>
@@ -148,7 +156,8 @@
     </div>
 </div>
 
-<div class="modal-overlay modal" id="yearDeleteModal" aria-hidden="true">
+<div class="modal modal-overlay" id="yearDeleteModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered year-delete-dialog">
     <div class="modal-card modal-content year-delete-card" role="dialog" aria-modal="true" aria-labelledby="yearDeleteTitle">
         <div class="modal-header">
             <span class="modal-title" id="yearDeleteTitle">Xác nhận xóa</span>
@@ -157,12 +166,13 @@
         <div class="modal-body">
             <p class="confirm-text">Bạn có chắc chắn muốn xóa niên khóa này không?</p>
         </div>
-        <form id="yearDeleteForm" method="POST" class="modal-actions">
+        <form id="yearDeleteForm" method="POST" class="modal-actions modal-footer">
             <input type="hidden" name="action" value="delete" />
             <input type="hidden" name="year_id" id="deleteYearId" value="" />
             <button class="action-btn secondary btn btn-outline-secondary" type="button" onclick="hideYearDeleteConfirm()">Hủy</button>
             <button class="action-btn primary btn btn-primary" type="submit">Đồng ý</button>
         </form>
+    </div>
     </div>
 </div>
 
@@ -226,7 +236,7 @@
         margin: 0;
     }
 
-    .table-wrapper {
+    .table-responsive {
         overflow-x: auto;
     }
 
@@ -237,7 +247,7 @@
     }
 
     .data-table thead {
-        background: #f3f4f6;
+        background: #f8f9fa;
         border-bottom: 1px solid #e5e7eb;
     }
 
@@ -250,11 +260,6 @@
         letter-spacing: 0.4px;
         font-size: 11px;
         border-right: 1px solid #d1d5db;
-    }
-
-    .data-table th:last-child,
-    .data-table td:last-child {
-        border-right: none;
     }
 
     .data-table tbody tr {
@@ -371,7 +376,7 @@
         color: #4b5563;
     }
 
-    .pagination-btn.active {
+    .page-item.active .pagination-btn {
         background: linear-gradient(180deg, #0f2a5a 0%, #0b1f45 100%);
         border-color: #0f2a5a;
         color: #ffffff;
@@ -417,7 +422,7 @@
     }
 
     .data-table .status-select.unknown {
-        background: #f3f4f6;
+        background: #f8f9fa;
         color: #6b7280;
     }
 
@@ -439,8 +444,14 @@
         background: rgba(15, 23, 42, 0.35);
     }
 
-    .year-delete-card {
+    .year-delete-dialog {
         width: min(520px, calc(100% - 32px));
+        max-width: 520px;
+        margin: 0;
+    }
+
+    .year-delete-card {
+        width: 100%;
     }
 
     #yearDeleteModal .modal-body {
@@ -477,7 +488,7 @@
     }
 
     #yearDeleteModal .action-btn.secondary {
-        background: #f3f4f6;
+        background: #f8f9fa;
         border-color: #d1d5db;
         color: #0f2a5a;
     }
@@ -489,6 +500,10 @@
     }
 
     @media (max-width: 768px) {
+        .list-year-page {
+            padding: 16px;
+        }
+
         .data-table {
             min-width: 800px;
         }

@@ -159,10 +159,6 @@
         font-size: 13px;
     }
 
-    .schedule-cell:nth-child(8n) {
-        border-right: none;
-    }
-
     .schedule-header {
         background: linear-gradient(135deg, #1d4ed8 0%, #2563eb 100%);
         color: #ffffff;

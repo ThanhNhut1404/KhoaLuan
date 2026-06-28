@@ -284,11 +284,6 @@
         border-bottom: none;
     }
 
-    .result-table th:last-child,
-    .result-table td:last-child {
-        border-right: none;
-    }
-
     .score-pill {
         display: inline-flex;
         align-items: center;
