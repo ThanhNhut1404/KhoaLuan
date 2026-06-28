@@ -65,7 +65,7 @@ function confirmDelete() {
             <p class="confirm-text">Bạn có chắc chắn muốn xóa mục này không?</p>
         </div>
         <div class="modal-actions">
-            <button class="action-btn secondary btn btn-outline-secondary" type="button" onclick="hideDeleteConfirm()">Hủy</button>
+            <button class="action-btn secondary cancel-btn btn btn-outline-secondary" type="button" onclick="hideDeleteConfirm()">Hủy</button>
             <button class="action-btn primary btn btn-primary" type="button" onclick="confirmDelete()">Xác nhận</button>
         </div>
     </div>

@@ -11,33 +11,18 @@
     <div class="page-panel card">
         <div class="panel-header card-header">
             <div class="header-content">
-                <h2 class="panel-title">DANH SÁCH KHOA</h2>
-                <a href="?page=create_khoa" class="btn-create">Tạo khoa</a>
+                <h2 class="panel-title">DANH SÁCH KHOA/BỘ MÔN</h2>
             </div>
         </div>
 
         <div class="panel-body card-body">
-            <?php if (isset($adminToast) && $adminToast): ?>
-                <div class="alert alert-<?= htmlspecialchars($adminToast['type'] ?? 'info') ?>" style="margin-bottom:12px;padding:10px;border-radius:8px;">
-                    <?= htmlspecialchars($adminToast['message'] ?? '') ?>
-                </div>
-            <?php endif; ?>
-
-            <?php if (session_status() === PHP_SESSION_NONE) session_start(); ?>
-            <?php if (!empty($_SESSION['message'])): ?>
-                <div class="alert alert-<?= htmlspecialchars($_SESSION['message_type'] ?? 'info') ?>" style="margin-bottom:12px;padding:10px;border-radius:8px;">
-                    <?= htmlspecialchars($_SESSION['message']) ?>
-                </div>
-                <?php unset($_SESSION['message'], $_SESSION['message_type']); ?>
-            <?php endif; ?>
-
             <?php if (empty($khoas)): ?>
                 <div class="empty-state">
                     <svg width="48" height="48" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                         <path d="M9 13h6M9 17h3M5 21h14a2 2 0 0 0 2-2V5a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
                     </svg>
-                    <h3>Chưa có khoa nào</h3>
-                    <p>Hãy tạo khoa để bắt đầu</p>
+                    <h3>Chưa có khoa/bộ môn nào</h3>
+                    <p>Hãy tạo khoa/bộ môn để bắt đầu</p>
                 </div>
             <?php else: ?>
                 <div class="table-wrapper">
@@ -45,8 +30,8 @@
                         <thead class="table-light">
                             <tr>
                                 <th class="col-stt">STT</th>
-                                <th class="col-code">MÃ KHOA</th>
-                                <th class="col-name">TÊN KHOA</th>
+                                <th class="col-code">MÃ KHOA/BỘ MÔN</th>
+                                <th class="col-name">TÊN KHOA/BỘ MÔN</th>
                                 <th class="col-email">EMAIL</th>
                                 <th class="col-phone">SỐ ĐIỆN THOẠI</th>
                                 <th class="col-action">THAO TÁC</th>
@@ -87,7 +72,7 @@
 
                 <div class="pagination-container">
                     <div class="pagination-info">
-                        Hiển thị 1 - <?= min($items_per_page, $total_items) ?> của <?= $total_items ?> khoa
+                        Hiển thị 1 - <?= min($items_per_page, $total_items) ?> của <?= $total_items ?> khoa/bộ môn
                     </div>
                     <div class="pagination mb-0">
                         <?php if ($current_page > 1): ?>
@@ -121,7 +106,12 @@
     .data-table thead { background:#f8f9fa; border-bottom:1px solid #e5e7eb; }
     .data-table th { padding:12px 14px; text-align:center; font-weight:700; color:#0f2a5a; text-transform:uppercase; font-size:11px; border-right:1px solid #d1d5db; }
     .data-table tbody tr { border-bottom:1px solid #f3f4f6; transition:background-color .2s; }
-    .data-table tbody tr:nth-child(odd) { background:#f9fafb; }
+    .data-table tbody tr:nth-child(odd),
+    .data-table tbody tr:nth-child(odd) td { background:#ffffff; }
+    .data-table tbody tr:nth-child(even),
+    .data-table tbody tr:nth-child(even) td { background:#f1f5f9; }
+    .data-table tbody tr:hover,
+    .data-table tbody tr:hover td { background:#e9edf3; }
     .data-table tbody tr:hover { background:#f0f1f3; }
     .data-table td { padding:12px 14px; color:#1f2937; text-align:center; border-right:1px solid #e5e7eb; }
     .col-stt { width:50px; }

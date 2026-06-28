@@ -383,7 +383,7 @@
                 </div>
 
                 <div class="form-actions">
-                    <a href="?page=list_activity" class="action-btn secondary btn btn-outline-secondary">
+                    <a href="?page=list_activity" class="action-btn secondary cancel-btn btn btn-outline-secondary">
                         Hủy
                     </a>
                     <button type="submit" class="action-btn primary btn btn-primary">

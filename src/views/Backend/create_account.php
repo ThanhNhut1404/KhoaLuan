@@ -199,7 +199,7 @@ $roleLabel = static function (string $roleName): string {
                 </div>
 
                 <div class="form-actions">
-                    <a href="/KhoaLuan/public/admin.php?page=list_accounts" class="action-btn secondary btn btn-outline-secondary">Hủy</a>
+                    <a href="/KhoaLuan/public/admin.php?page=list_accounts" class="action-btn secondary cancel-btn btn btn-outline-secondary">Hủy</a>
                     <button type="submit" class="action-btn primary btn btn-primary">Cấp tài khoản</button>
                 </div>
             </form>

@@ -62,7 +62,7 @@
             z-index: 10;
         }
 
-        .content { padding: 22px; }
+        .content { padding: 4px 14px 22px; }
 
         .card.page-panel,
         .page-panel.card {
@@ -115,9 +115,110 @@
             font-weight: 700;
         }
 
+        .action-btn.cancel-btn,
+        .btn.action-btn.cancel-btn {
+            color: #dc2626 !important;
+            background: #ffffff !important;
+            border-color: #e5e7eb !important;
+        }
+
+        .action-btn.cancel-btn:hover,
+        .btn.action-btn.cancel-btn:hover {
+            color: #dc2626 !important;
+            background: #e5e7eb !important;
+            border-color: #cbd5e1 !important;
+        }
+
+        .action-btn.save-change-btn,
+        .btn.action-btn.save-change-btn {
+            color: #ffffff !important;
+            background: linear-gradient(180deg, #16a34a 0%, #15803d 100%) !important;
+            border-color: #16a34a !important;
+        }
+
+        .action-btn.save-change-btn:hover,
+        .btn.action-btn.save-change-btn:hover {
+            color: #ffffff !important;
+            background: linear-gradient(180deg, #15803d 0%, #166534 100%) !important;
+            border-color: #15803d !important;
+        }
+
         .table.data-table {
             margin-bottom: 0;
             font-size: 13px;
+        }
+
+        .data-table thead,
+        .data-table thead.table-light,
+        .data-table thead tr,
+        .data-table thead th {
+            background: #eef2f7 !important;
+        }
+
+        .data-table tbody tr:nth-child(odd),
+        .data-table tbody tr:nth-child(odd) td {
+            background: #ffffff !important;
+        }
+
+        .data-table tbody tr:nth-child(even),
+        .data-table tbody tr:nth-child(even) td {
+            background: #f1f5f9 !important;
+        }
+
+        .data-table tbody tr:hover,
+        .data-table tbody tr:hover td {
+            background: #e9edf3 !important;
+        }
+
+        .data-table .action-group {
+            display: flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            gap: 8px !important;
+        }
+
+        .data-table .action-btn.edit,
+        .data-table .action-btn.delete {
+            display: inline-flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            width: 32px !important;
+            height: 32px !important;
+            border: 1px solid #e5e7eb !important;
+            border-radius: 6px !important;
+            background: #ffffff !important;
+            cursor: pointer !important;
+            transition: all 0.2s !important;
+            padding: 0 !important;
+            text-decoration: none !important;
+            line-height: 1 !important;
+        }
+
+        .data-table .action-btn.edit {
+            color: #1d4ed8 !important;
+        }
+
+        .data-table .action-btn.edit:hover {
+            color: #1d4ed8 !important;
+            background: #eff6ff !important;
+            border-color: #d1d5db !important;
+        }
+
+        .data-table .action-btn.delete {
+            color: #dc2626 !important;
+        }
+
+        .data-table .action-btn.delete:hover {
+            color: #dc2626 !important;
+            background: #fef2f2 !important;
+            border-color: #d1d5db !important;
+        }
+
+        .data-table .action-btn.edit svg,
+        .data-table .action-btn.delete svg {
+            width: 16px !important;
+            height: 16px !important;
+            stroke: currentColor !important;
         }
 
         .form-grid.row {
@@ -628,6 +729,74 @@
         </div>
     </div>
 </div>
+
+<style>
+    .content {
+        --select-arrow-default: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%231f2937' stroke-width='2'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+        --select-arrow-green: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23065f46' stroke-width='2'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+        --select-arrow-orange: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2392400e' stroke-width='2'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+        --select-arrow-blue: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%231e40af' stroke-width='2'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+        --select-arrow-red: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%237f1d1d' stroke-width='2'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+        --select-arrow-gray: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%236b7280' stroke-width='2'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+    }
+
+    .content select.field-input,
+    .content select.form-select:not(.status-select) {
+        appearance: none !important;
+        -webkit-appearance: none !important;
+        background-image: var(--select-arrow-default) !important;
+        background-position: right 12px center !important;
+        background-repeat: no-repeat !important;
+        background-size: 16px !important;
+        padding-right: 42px !important;
+    }
+
+    .content select.status-select {
+        appearance: none !important;
+        -webkit-appearance: none !important;
+        background-image: var(--select-arrow-default) !important;
+        background-position: right 10px center !important;
+        background-repeat: no-repeat !important;
+        background-size: 12px !important;
+        padding-right: 36px !important;
+    }
+
+    .content select.status-select.active {
+        background-image: var(--select-arrow-green), linear-gradient(90deg, #bbf7d0, #34d399) !important;
+        background-position: right 10px center, center !important;
+        background-repeat: no-repeat, repeat !important;
+        background-size: 12px, auto !important;
+    }
+
+    .content select.status-select.upcoming {
+        background-image: var(--select-arrow-orange), linear-gradient(90deg, #fde68a, #f59e0b) !important;
+        background-position: right 10px center, center !important;
+        background-repeat: no-repeat, repeat !important;
+        background-size: 12px, auto !important;
+    }
+
+    .content select.status-select.completed {
+        background-image: var(--select-arrow-blue), linear-gradient(90deg, #dbeafe, #bfdbfe) !important;
+        background-position: right 10px center, center !important;
+        background-repeat: no-repeat, repeat !important;
+        background-size: 12px, auto !important;
+    }
+
+    .content select.status-select.inactive {
+        background-image: var(--select-arrow-red), linear-gradient(90deg, #fed7d7, #f87171) !important;
+        background-position: right 10px center, center !important;
+        background-repeat: no-repeat, repeat !important;
+        background-size: 12px, auto !important;
+    }
+
+    .content select.status-select.unknown {
+        background-image: var(--select-arrow-gray) !important;
+        background-color: #f8f9fa !important;
+        background-position: right 10px center !important;
+        background-repeat: no-repeat !important;
+        background-size: 12px !important;
+    }
+</style>
 
 <?php include __DIR__ . '/change_password_modal.php'; ?>
 

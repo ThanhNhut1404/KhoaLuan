@@ -117,8 +117,8 @@
                     </div>
                 </div>
                 <div class="form-actions">
-                    <a href="?page=list_class" class="action-btn secondary btn btn-outline-secondary">Hủy</a>
-                    <button type="submit" class="action-btn primary btn btn-primary">Cập nhật lớp học</button>
+                    <a href="?page=list_class" class="action-btn secondary cancel-btn btn btn-outline-secondary">Hủy</a>
+                    <button type="submit" class="action-btn primary save-change-btn btn btn-primary">Cập nhật lớp học</button>
                 </div>
             </form>
         </div>

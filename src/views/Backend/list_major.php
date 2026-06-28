@@ -1,33 +1,21 @@
 <?php
-    // Sample data - replace with actual database query
-    $majors = $majors ?? [
-        ['id'=>1, 'code'=>'CNTT01', 'name'=>'Công nghệ thông tin', 'credits'=>120, 'department'=>'Khoa CNTT', 'status'=>'active', 'status_label'=>'Hoạt động'],
-        ['id'=>2, 'code'=>'DTVT02', 'name'=>'Điện tử truyền thông', 'credits'=>130, 'department'=>'Khoa Điện tử', 'status'=>'inactive', 'status_label'=>'Không hoạt động'],
-        ['id'=>3, 'code'=>'CK03', 'name'=>'Cơ khí', 'credits'=>140, 'department'=>'Khoa Cơ khí', 'status'=>'active', 'status_label'=>'Hoạt động']
+    $majors = $majors ?? [];
+    $statusOptions = $statusOptions ?? [
+        ['value' => 'Hoạt động', 'label' => 'Hoạt động'],
+        ['value' => 'Ngừng tuyển sinh', 'label' => 'Ngừng tuyển sinh'],
     ];
-
-    // Handle status updates submitted from the table (auto-submit on change)
-    if (session_status() === PHP_SESSION_NONE) session_start();
-    if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['status']) && is_array($_POST['status'])) {
-        foreach ($_POST['status'] as $id => $newStatus) {
-            // TODO: persist $newStatus for $id to database via model
-            // For now update the local $majors array so UI reflects change immediately
-            foreach ($majors as &$m) {
-                if ($m['id'] == $id) {
-                    $m['status'] = $newStatus;
-                    $m['status_label'] = $newStatus === 'active' ? 'Hoạt động' : 'Không hoạt động';
-                }
-            }
-            unset($m);
-        }
-        $_SESSION['message'] = 'Cập nhật trạng thái thành công';
-        $_SESSION['message_type'] = 'success';
-    }
-
-    $current_page = isset($_GET['page_num']) ? (int)$_GET['page_num'] : 1;
-    $total_items = count($majors);
-    $items_per_page = 6;
-    $total_pages = ceil($total_items / $items_per_page);
+    $pagination = $pagination ?? [
+        'current_page' => 1,
+        'total_items' => count($majors),
+        'items_per_page' => 6,
+        'total_pages' => 1,
+        'from' => empty($majors) ? 0 : 1,
+        'to' => count($majors),
+    ];
+    $current_page = (int) ($pagination['current_page'] ?? 1);
+    $total_items = (int) ($pagination['total_items'] ?? count($majors));
+    $items_per_page = (int) ($pagination['items_per_page'] ?? 6);
+    $total_pages = (int) ($pagination['total_pages'] ?? 1);
 ?>
 
 <div class="list-major-page">
@@ -55,26 +43,30 @@
                                 <th class="col-stt">STT</th>
                                 <th class="col-code">MÃ NGÀNH</th>
                                 <th class="col-name">TÊN NGÀNH</th>
-                                <th class="col-credits">SỐ TÍN CHỈ</th>
-                                <th class="col-dept">KHOA TRỰC THUỘC</th>
+                                <th class="col-dept">MÃ KHOA/BỘ MÔN</th>
+                                <th class="col-dept-name">TÊN KHOA/BỘ MÔN</th>
                                 <th class="col-status">TRẠNG THÁI</th>
                                 <th class="col-action">THAO TÁC</th>
                             </tr>
                         </thead>
                         <tbody>
                             <?php foreach ($majors as $index => $major): ?>
+                                <?php $rowNumber = (($current_page - 1) * $items_per_page) + $index + 1; ?>
                                 <tr data-id="<?= $major['id'] ?>">
-                                    <td class="col-stt">0<?= $index + 1 ?></td>
-                                    <td class="col-code"><?= htmlspecialchars($major['code']) ?></td>
-                                    <td class="col-name"><?= htmlspecialchars($major['name']) ?></td>
-                                    <td class="col-credits"><?= htmlspecialchars($major['credits']) ?></td>
-                                    <td class="col-dept"><?= htmlspecialchars($major['department']) ?></td>
+                                    <td class="col-stt"><?= str_pad((string) $rowNumber, 2, '0', STR_PAD_LEFT) ?></td>
+                                    <td class="col-code"><?= htmlspecialchars($major['code'] ?? '--') ?></td>
+                                    <td class="col-name"><?= htmlspecialchars($major['name'] ?? '--') ?></td>
+                                    <td class="col-dept"><?= htmlspecialchars($major['department'] ?? '--') ?></td>
+                                    <td class="col-dept-name"><?= htmlspecialchars($major['department_name'] ?? '--') ?></td>
                                     <td class="col-status">
                                         <form method="POST" style="display:inline-block;">
                                             <input type="hidden" name="_row_id" value="<?= $major['id'] ?>" />
-                                            <select name="status[<?= $major['id'] ?>]" class="status-select form-select" onchange="updateStatusSelect(this)">
-                                                <option value="active" <?= $major['status'] === 'active' ? 'selected' : '' ?>>Hoạt động</option>
-                                                <option value="inactive" <?= $major['status'] === 'inactive' ? 'selected' : '' ?>>Không hoạt động</option>
+                                            <select name="status[<?= $major['id'] ?>]" class="status-select <?= htmlspecialchars($major['status_class'] ?? '') ?> form-select" onchange="updateStatusSelect(this)">
+                                                <?php foreach ($statusOptions as $option): ?>
+                                                    <option value="<?= htmlspecialchars($option['value']) ?>" <?= (($major['status'] ?? '') === $option['value']) ? 'selected' : '' ?>>
+                                                        <?= htmlspecialchars($option['label']) ?>
+                                                    </option>
+                                                <?php endforeach; ?>
                                             </select>
                                         </form>
                                     </td>
@@ -101,7 +93,7 @@
 
                 <div class="pagination-container">
                     <div class="pagination-info">
-                        Hiển thị 1 - <?= min($items_per_page, $total_items) ?> của <?= $total_items ?> ngành học
+                        Hiển thị <?= (int) ($pagination['from'] ?? 0) ?> - <?= (int) ($pagination['to'] ?? 0) ?> của <?= $total_items ?> ngành học
                     </div>
                     <div class="pagination mb-0">
                         <?php if ($current_page > 1): ?>
@@ -141,9 +133,9 @@
     .data-table td { padding:12px 14px; color:#1f2937; text-align:center; border-right:1px solid #e5e7eb; }
     .col-stt { width:50px; }
     .col-code { width:12%; }
-    .col-name { width:26%; }
-    .col-credits { width:12%; }
-    .col-dept { width:18%; }
+    .col-name { width:24%; }
+    .col-dept { width:12%; }
+    .col-dept-name { width:18%; }
     .col-status { width:16%; }
     .col-action { width:8%; }
     .status-badge { display:inline-flex; align-items:center; gap:6px; padding:6px 12px; border-radius:999px; font-size:12px; font-weight:600; }
@@ -179,7 +171,7 @@
     function updateStatusSelect(el){
         var val = el.value;
         el.classList.remove('active','inactive');
-        el.classList.add(val === 'active' ? 'active' : 'inactive');
+        el.classList.add(val === 'Hoạt động' ? 'active' : 'inactive');
 
         // submit the form after updating style
         el.form.submit();
@@ -188,7 +180,7 @@
     document.addEventListener('DOMContentLoaded', function(){
         document.querySelectorAll('.status-select').forEach(function(s){
             var val = s.value;
-            s.classList.add(val === 'active' ? 'active' : 'inactive');
+            s.classList.add(val === 'Hoạt động' ? 'active' : 'inactive');
         });
     });
 </script>

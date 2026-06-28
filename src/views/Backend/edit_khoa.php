@@ -7,10 +7,7 @@
 <div class="edit-khoa-page">
     <div class="page-panel card">
         <div class="panel-header card-header">
-            <div style="display:flex;justify-content:space-between;align-items:center;gap:12px;">
-                <h2 class="panel-title">CHỈNH SỬA KHOA</h2>
-                <a href="?page=list_khoa" class="btn-create" style="padding:8px 12px;font-size:13px;">← Quay về danh sách</a>
-            </div>
+            <h2 class="panel-title">CHỈNH SỬA KHOA</h2>
         </div>
 
         <div class="panel-body card-body">
@@ -94,10 +91,10 @@
                     </div>
 
                     <div class="col-12" style="display:flex; justify-content:flex-end; gap:12px;">
-                        <a href="?page=list_khoa" class="action-btn secondary btn btn-outline-secondary">
+                        <a href="?page=list_khoa" class="action-btn secondary cancel-btn btn btn-outline-secondary">
                             Hủy
                         </a>
-                        <button type="submit" class="action-btn primary btn btn-primary">
+                        <button type="submit" class="action-btn primary save-change-btn btn btn-primary">
                             Lưu thay đổi
                         </button>
                     </div>
@@ -208,15 +205,25 @@
         border-color: #d1d5db;
     }
 
+    .action-btn.secondary:hover {
+        color: #dc2626;
+        background: #e5e7eb;
+        border-color: #cbd5e1;
+    }
+
+    .action-btn.secondary {
+        color: #dc2626;
+    }
+
     .action-btn.primary {
-        background: linear-gradient(180deg, #0f2a5a 0%, #0b1f45 100%);
-        border-color: #0f2a5a;
+        background: linear-gradient(180deg, #16a34a 0%, #15803d 100%);
+        border-color: #16a34a;
         color: #ffffff;
     }
 
     .action-btn.primary:hover {
-        background: linear-gradient(180deg, #0d2449 0%, #091a3d 100%);
-        border-color: #0a1838;
+        background: linear-gradient(180deg, #15803d 0%, #166534 100%);
+        border-color: #15803d;
     }
 
     @media (max-width: 768px) {

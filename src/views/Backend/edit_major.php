@@ -1,72 +1,12 @@
 <?php
-    // Sample departments & majors - replace with DB calls in real app
-    $departments = $departments ?? [
-        'Khoa CNTT',
-        'Khoa Điện tử',
-        'Khoa Cơ khí',
-        'Khoa Hóa học'
+    $departments = $departments ?? [];
+    $formData = $formData ?? [];
+    $errors = $errors ?? [];
+    $statusOptions = $statusOptions ?? [
+        ['value' => 'Hoạt động', 'label' => 'Hoạt động'],
+        ['value' => 'Ngừng tuyển sinh', 'label' => 'Ngừng tuyển sinh'],
     ];
-
-    $majors = $majors ?? [
-        ['id'=>1, 'code'=>'CNTT01', 'name'=>'Công nghệ thông tin', 'credits'=>120, 'department'=>'Khoa CNTT', 'status'=>'active', 'description'=> ''],
-        ['id'=>2, 'code'=>'DTVT02', 'name'=>'Điện tử truyền thông', 'credits'=>130, 'department'=>'Khoa Điện tử', 'status'=>'inactive', 'description'=> ''],
-        ['id'=>3, 'code'=>'CK03', 'name'=>'Cơ khí', 'credits'=>140, 'department'=>'Khoa Cơ khí', 'status'=>'active', 'description'=> '']
-    ];
-
-    $id = isset($_GET['id']) ? (int)$_GET['id'] : null;
-    $formData = [];
-    $errors = [];
-
-    // find major by id for prefilling
-    if ($id) {
-        foreach ($majors as $m) {
-            if ($m['id'] == $id) {
-                $formData = [
-                    'major_code' => $m['code'],
-                    'major_name' => $m['name'],
-                    'total_credits' => $m['credits'],
-                    'department' => $m['department'],
-                    'description' => $m['description'] ?? '',
-                    'status' => $m['status'] ?? 'active'
-                ];
-                break;
-            }
-        }
-    }
-
-    if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-        // basic validation
-        $code = trim($_POST['major_code'] ?? '');
-        $name = trim($_POST['major_name'] ?? '');
-        $credits = (int)($_POST['total_credits'] ?? 0);
-        $dept = $_POST['department'] ?? '';
-        $desc = $_POST['description'] ?? '';
-        $status = $_POST['status'] ?? 'inactive';
-
-        if ($code === '') $errors['major_code'] = 'Mã ngành là bắt buộc';
-        if ($name === '') $errors['major_name'] = 'Tên ngành là bắt buộc';
-        if ($credits < 1) $errors['total_credits'] = 'Số tín chỉ phải lớn hơn 0';
-        if ($dept === '') $errors['department'] = 'Vui lòng chọn khoa';
-
-        if (empty($errors)) {
-            // TODO: persist update to DB. For now simulate update and redirect
-            if (session_status() === PHP_SESSION_NONE) session_start();
-            $_SESSION['message'] = 'Cập nhật ngành học thành công';
-            $_SESSION['message_type'] = 'success';
-            header('Location: ?page=list_major');
-            exit;
-        } else {
-            // repopulate form with submitted values
-            $formData = [
-                'major_code' => htmlspecialchars($code),
-                'major_name' => htmlspecialchars($name),
-                'total_credits' => $credits,
-                'department' => $dept,
-                'description' => htmlspecialchars($desc),
-                'status' => $status
-            ];
-        }
-    }
+    $id = isset($_GET['id']) ? (int) $_GET['id'] : 0;
 ?>
 
 <div class="edit-major-page">
@@ -76,130 +16,295 @@
         </div>
 
         <div class="panel-body card-body">
-            <form id="editMajorForm" method="POST" action="?page=edit_major&id=<?= $id ?>">
+            <form id="editMajorForm" method="POST" action="?page=edit_major&id=<?= (int) $id ?>">
                 <div class="form-grid">
-                    <div class="form-field">
-                        <label class="field-label form-label" for="major_code">Mã ngành <span class="required">*</span></label>
-                        <input type="text" id="major_code" name="major_code" class="field-input form-control" placeholder="Ví dụ: CNTT01" value="<?= $formData['major_code'] ?? '' ?>" required />
-                        <?php if(isset($errors['major_code'])): ?><span class="field-error"><?= $errors['major_code'] ?></span><?php endif; ?>
+                    <div class="form-row row">
+                        <div class="form-field col-12 col-md-6">
+                            <label class="field-label form-label" for="major_code">
+                                Tên viết tắt
+                            </label>
+                            <input
+                                type="text"
+                                id="major_code"
+                                name="major_code"
+                                class="field-input form-control"
+                                placeholder="Ví dụ: CNTT"
+                                value="<?= htmlspecialchars($formData['major_code'] ?? '') ?>"
+                            />
+                            <span class="field-error<?= isset($errors['major_code']) ? '' : ' is-empty' ?>"><?= isset($errors['major_code']) ? htmlspecialchars($errors['major_code']) : '&nbsp;' ?></span>
+                        </div>
+
+                        <div class="form-field col-12 col-md-6">
+                            <label class="field-label form-label" for="major_name">
+                                Tên ngành <span class="required">*</span>
+                            </label>
+                            <input
+                                type="text"
+                                id="major_name"
+                                name="major_name"
+                                class="field-input form-control"
+                                placeholder="Nhập tên ngành học"
+                                value="<?= htmlspecialchars($formData['major_name'] ?? '') ?>"
+                                required
+                            />
+                            <span class="field-error<?= isset($errors['major_name']) ? '' : ' is-empty' ?>"><?= isset($errors['major_name']) ? htmlspecialchars($errors['major_name']) : '&nbsp;' ?></span>
+                        </div>
                     </div>
 
-                    <div class="form-field">
-                        <label class="field-label form-label" for="major_name">Tên ngành <span class="required">*</span></label>
-                        <input type="text" id="major_name" name="major_name" class="field-input form-control" placeholder="Nhập tên ngành học" value="<?= $formData['major_name'] ?? '' ?>" required />
-                        <?php if(isset($errors['major_name'])): ?><span class="field-error"><?= $errors['major_name'] ?></span><?php endif; ?>
+                    <div class="form-row row">
+                        <div class="form-field col-12 col-md-6">
+                            <label class="field-label form-label" for="department">
+                                Khoa trực thuộc <span class="required">*</span>
+                            </label>
+                            <select id="department" name="department" class="field-input form-select" required>
+                                <option value="">-- Chọn khoa quản lý --</option>
+                                <?php foreach ($departments as $dept): ?>
+                                    <?php
+                                        $departmentValue = is_array($dept) ? (string) ($dept['MA_KHOA'] ?? $dept['ma'] ?? '') : (string) $dept;
+                                        $departmentLabel = is_array($dept) ? (string) ($dept['TEN_KHOA'] ?? $dept['ten'] ?? '') : (string) $dept;
+                                    ?>
+                                    <option value="<?= htmlspecialchars($departmentValue) ?>" <?= (isset($formData['department']) && (string) $formData['department'] === $departmentValue) ? 'selected' : '' ?>>
+                                        <?= htmlspecialchars($departmentLabel) ?>
+                                    </option>
+                                <?php endforeach; ?>
+                            </select>
+                            <span class="field-error<?= isset($errors['department']) ? '' : ' is-empty' ?>"><?= isset($errors['department']) ? htmlspecialchars($errors['department']) : '&nbsp;' ?></span>
+                        </div>
+
+                        <div class="form-field col-12 col-md-6">
+                            <label class="field-label form-label" for="status">
+                                Trạng thái <span class="required">*</span>
+                            </label>
+                            <select id="status" name="status" class="field-input form-select" required>
+                                <option value="">-- Chọn trạng thái --</option>
+                                <?php foreach ($statusOptions as $option): ?>
+                                    <option value="<?= htmlspecialchars($option['value']) ?>" <?= (isset($formData['status']) && $formData['status'] === $option['value']) ? 'selected' : '' ?>>
+                                        <?= htmlspecialchars($option['label']) ?>
+                                    </option>
+                                <?php endforeach; ?>
+                            </select>
+                            <span class="field-error<?= isset($errors['status']) ? '' : ' is-empty' ?>"><?= isset($errors['status']) ? htmlspecialchars($errors['status']) : '&nbsp;' ?></span>
+                        </div>
                     </div>
 
-                    <div class="form-field">
-                        <label class="field-label form-label" for="total_credits">Số tín chỉ <span class="required">*</span></label>
-                        <input type="number" id="total_credits" name="total_credits" class="field-input form-control" placeholder="Ví dụ: 120" value="<?= $formData['total_credits'] ?? '' ?>" min="1" required />
-                        <?php if(isset($errors['total_credits'])): ?><span class="field-error"><?= $errors['total_credits'] ?></span><?php endif; ?>
-                    </div>
-
-                    <div class="form-field">
-                        <label class="field-label form-label" for="department">Khoa trực thuộc <span class="required">*</span></label>
-                        <select id="department" name="department" class="field-input form-select" required>
-                            <option value="">-- Chọn khoa quản lý --</option>
-                            <?php foreach ($departments as $dept): ?>
-                                <option value="<?= htmlspecialchars($dept) ?>" <?= (isset($formData['department']) && $formData['department'] === $dept) ? 'selected' : '' ?>><?= htmlspecialchars($dept) ?></option>
-                            <?php endforeach; ?>
-                        </select>
-                        <?php if(isset($errors['department'])): ?><span class="field-error"><?= $errors['department'] ?></span><?php endif; ?>
-                    </div>
-
-                    <div class="form-field" style="grid-column: 1 / -1;">
-                        <label class="field-label form-label" for="description">Mô tả</label>
-                        <textarea id="description" name="description" class="field-input textarea-input form-control" rows="4" placeholder="Nhập mô tả ngành học"><?= $formData['description'] ?? '' ?></textarea>
-                    </div>
-
-                    <div class="form-field">
-                        <label class="field-label form-label" for="status">Trạng thái <span class="required">*</span></label>
-                        <select id="status" name="status" class="field-input form-select" required>
-                            <option value="active" <?= (isset($formData['status']) && $formData['status'] === 'active') ? 'selected' : '' ?>>Hoạt động</option>
-                            <option value="inactive" <?= (isset($formData['status']) && $formData['status'] === 'inactive') ? 'selected' : '' ?>>Không hoạt động</option>
-                        </select>
+                    <div class="form-row row">
+                        <div class="form-field col-12 col-md-6">
+                            <label class="field-label form-label" for="description">
+                                Mô tả
+                            </label>
+                            <textarea
+                                id="description"
+                                name="description"
+                                class="field-input textarea-input form-control"
+                                placeholder="Nhập mô tả ngành học"
+                                rows="4"
+                            ><?= htmlspecialchars($formData['description'] ?? '') ?></textarea>
+                            <span class="field-error<?= isset($errors['description']) ? '' : ' is-empty' ?>"><?= isset($errors['description']) ? htmlspecialchars($errors['description']) : '&nbsp;' ?></span>
+                        </div>
                     </div>
                 </div>
 
                 <div class="form-actions">
-                    <a href="?page=list_major" class="action-btn secondary btn btn-outline-secondary">Hủy</a>
-                    <button type="submit" class="action-btn primary btn btn-primary">Cập nhật ngành học</button>
+                    <a href="?page=list_major" class="action-btn secondary cancel-btn btn btn-outline-secondary">
+                        Hủy
+                    </a>
+                    <button type="submit" class="action-btn primary save-change-btn btn btn-primary">
+                        Cập nhật ngành học
+                    </button>
                 </div>
-
-                <?php if(isset($_SESSION['message'])): ?>
-                    <div class="alert alert-<?= $_SESSION['message_type'] ?? 'info' ?>">
-                        <?= $_SESSION['message'] ?>
-                    </div>
-                    <?php unset($_SESSION['message'], $_SESSION['message_type']); ?>
-                <?php endif; ?>
             </form>
         </div>
     </div>
 </div>
 
 <style>
-    /* reuse styles from create_major */
-    .edit-major-page { display:grid; gap:0; padding:24px; }
-    .page-panel { background:#fff; border:1px solid #e8ecf3; border-radius:8px; box-shadow:0 2px 8px rgba(0,0,0,0.06); overflow:hidden; }
-    .panel-header { padding:12px 14px; border-bottom:1px solid #e5e7eb; background:#f9fafb; }
-    .panel-title { font-size:14px; font-weight:700; color:#0f2a5a; margin:0; }
-    .panel-body { padding:20px; }
-    .form-grid { display:grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap:20px; margin-bottom:24px; }
-    .form-field { display:grid; gap:6px; }
-    .field-label { font-size:12px; font-weight:700; color:#0f2a5a; }
-    .field-input { padding:8px 10px; border-radius:10px; border:1px solid #e5e7eb; background:#f9fafb; font-size:13px; }
-    .form-actions { display:flex; justify-content:flex-end; gap:12px; padding-top:16px; border-top:1px solid #e8ecf3; }
-    .action-btn { padding:8px 20px; border-radius:10px; }
-    .action-btn.primary { background:linear-gradient(180deg,#0f2a5a 0%,#0b1f45 100%); color:#fff; border-color:#0f2a5a; }
-        .form-actions { display: flex; justify-content: flex-end; gap: 12px; padding-top: 16px; border-top: 1px solid #e8ecf3; }
+    .edit-major-page {
+        display: grid;
+        gap: 0;
+        padding: 24px;
+    }
+
+    .page-panel {
+        background: #ffffff;
+        border: 1px solid #e8ecf3;
+        border-radius: 8px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+        overflow: hidden;
+    }
+
+    .panel-header {
+        padding: 12px 14px;
+        border-bottom: 1px solid #e5e7eb;
+        background: #f9fafb;
+    }
+
+    .panel-title {
+        font-size: 14px;
+        font-weight: 700;
+        color: #0f2a5a;
+        margin: 0;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .panel-body {
+        padding: 20px;
+    }
+
+    .form-grid {
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+        margin-bottom: 18px;
+    }
+
+    .form-row {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        column-gap: 20px;
+        row-gap: 12px;
+        margin: 0;
+    }
+
+    .form-row > .form-field {
+        width: auto;
+        max-width: none;
+        padding: 0;
+    }
+
+    .form-field {
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+        min-width: 0;
+    }
+
+    .field-label {
+        font-size: 12px;
+        font-weight: 700;
+        color: #0f2a5a;
+        text-transform: none;
+        letter-spacing: 0.4px;
+        display: block;
+    }
+
+    .required {
+        color: #dc2626;
+        font-weight: 700;
+    }
+
+    .field-input {
+        display: flex;
+        align-items: center;
+        padding: 8px 10px;
+        border-radius: 10px;
+        border: 1px solid #e5e7eb;
+        background: #f9fafb;
+        font-size: 13px;
+        color: #1f2937;
+        font-family: inherit;
+        transition: border-color 0.2s, box-shadow 0.2s;
+    }
+
+    .field-input:focus {
+        outline: none;
+        border-color: #0f2a5a;
+        box-shadow: 0 0 0 3px rgba(15, 42, 90, 0.08);
+        background: #ffffff;
+    }
+
+    textarea.field-input {
+        resize: vertical;
+        padding: 10px;
+        display: block;
+        font-family: inherit;
+        line-height: 1.5;
+    }
+
+    select.field-input {
+        cursor: pointer;
+        appearance: none;
+        background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%231f2937' stroke-width='2'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+        background-repeat: no-repeat;
+        background-position: right 10px center;
+        background-size: 16px;
+        padding-right: 32px;
+    }
+
+    .field-error {
+        font-size: 12px;
+        color: #dc2626;
+        display: block;
+        line-height: 1.25;
+        min-height: 14px;
+        overflow-wrap: anywhere;
+    }
+
+    .field-error.is-empty {
+        visibility: hidden;
+    }
+
+    .form-actions {
+        display: flex;
+        justify-content: flex-end;
+        gap: 12px;
+        padding-top: 16px;
+        border-top: 1px solid #e8ecf3;
+    }
+
+    .action-btn {
+        padding: 8px 20px;
+        border-radius: 10px;
+        border: 1px solid #e5e7eb;
+        background: #ffffff;
+        color: #0f2a5a;
+        font-size: 13px;
+        font-weight: 700;
+        cursor: pointer;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        transition: all 0.2s;
+        white-space: nowrap;
+    }
+
+    @media (max-width: 768px) {
+        .edit-major-page {
+            padding: 16px;
+        }
+
+        .form-grid {
+            gap: 12px;
+        }
+
+        .form-row {
+            grid-template-columns: 1fr;
+            gap: 12px;
+        }
+
+        .form-actions {
+            flex-direction: column-reverse;
+        }
 
         .action-btn {
-            padding: 8px 20px;
-            border-radius: 10px;
-            border: 1px solid #e5e7eb;
-            background: #ffffff;
-            color: #0f2a5a;
-            font-size: 13px;
-            font-weight: 700;
-            cursor: pointer;
-            text-decoration: none;
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-            transition: all 0.2s;
-            white-space: nowrap;
+            width: 100%;
+            justify-content: center;
         }
-
-        .action-btn:hover {
-            background: #f3f4f6;
-            border-color: #d1d5db;
-        }
-
-        .action-btn.primary {
-            background: linear-gradient(180deg, #0f2a5a 0%, #0b1f45 100%);
-            border-color: #0f2a5a;
-            color: #ffffff;
-            font-weight: 700;
-        }
-
-        .action-btn.primary:hover {
-            background: linear-gradient(180deg, #0d2449 0%, #091a3d 100%);
-            border-color: #0a1838;
-        }
-    @media (max-width:768px) { .form-grid { grid-template-columns:1fr; } .action-btn { width:100%; justify-content:center; } }
-</style>
-
-<style>
-    /* Ensure required asterisk is red like create_ views */
-    .required { color: #dc2626; font-weight: 700; }
+    }
 </style>
 
 <script>
-    document.getElementById('editMajorForm')?.addEventListener('submit', function(e){
-        var code = document.getElementById('major_code').value.trim();
-        var name = document.getElementById('major_name').value.trim();
-        var credits = parseInt(document.getElementById('total_credits').value || '0', 10);
-        if (!code || !name) { e.preventDefault(); alert('Vui lòng điền các trường bắt buộc'); return false; }
-        if (credits < 1) { e.preventDefault(); alert('Số tín chỉ phải lớn hơn 0'); return false; }
+    document.getElementById('editMajorForm')?.addEventListener('submit', function(e) {
+        const majorName = document.getElementById('major_name').value.trim();
+        const department = document.getElementById('department').value.trim();
+        const status = document.getElementById('status').value.trim();
+
+        if (!majorName || !department || !status) {
+            e.preventDefault();
+            alert('Vui lòng điền tất cả các trường bắt buộc!');
+            return false;
+        }
     });
 </script>

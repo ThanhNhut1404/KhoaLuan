@@ -210,6 +210,71 @@ if (in_array($page, ['create_khoa', 'list_khoa', 'edit_khoa'], true)) {
     }
 }
 
+if (in_array($page, ['create_major', 'list_major', 'edit_major'], true)) {
+    try {
+        $majorController = new \KhoaLuan\QLDRL\Controllers\MajorController();
+        $majorState = $majorController->handle($page, $_POST, $_GET, $_SERVER['REQUEST_METHOD']);
+
+        if ($page === 'create_major') {
+            $formData = $majorState['formData'];
+            $errors = $majorState['errors'];
+            $departments = $majorState['departments'];
+            $statusOptions = $majorState['statusOptions'];
+            $adminToast = $majorState['toast'];
+        }
+
+        if ($page === 'list_major') {
+            $majors = $majorState['majors'];
+            $pagination = $majorState['pagination'];
+            $statusOptions = $majorState['statusOptions'];
+            $adminToast = $majorState['toast'] ?? null;
+        }
+
+        if ($page === 'edit_major') {
+            if (!empty($majorState['redirect'])) {
+                if (!empty($majorState['toast'])) {
+                    $_SESSION['message'] = $majorState['toast']['message'] ?? '';
+                    $_SESSION['message_type'] = $majorState['toast']['type'] ?? 'info';
+                }
+                header('Location: ' . $majorState['redirect']);
+                exit;
+            }
+
+            $formData = $majorState['formData'];
+            $errors = $majorState['errors'];
+            $departments = $majorState['departments'];
+            $statusOptions = $majorState['statusOptions'];
+            $adminToast = $majorState['toast'] ?? null;
+            $isEdit = true;
+        }
+    } catch (\Throwable $e) {
+        $statusOptions = [
+            ['value' => 'Hoạt động', 'label' => 'Hoạt động'],
+            ['value' => 'Ngừng tuyển sinh', 'label' => 'Ngừng tuyển sinh'],
+        ];
+
+        if ($page === 'create_major') {
+            $formData = $_SERVER['REQUEST_METHOD'] === 'POST' ? $_POST : [];
+            $errors = [];
+            $departments = [];
+            $adminToast = ['type' => 'error', 'message' => 'Có lỗi khi xử lý yêu cầu tạo ngành học.'];
+        }
+
+        if ($page === 'list_major') {
+            $majors = [];
+            $pagination = ['current_page' => 1, 'total_items' => 0, 'items_per_page' => 6, 'total_pages' => 1, 'from' => 0, 'to' => 0];
+            $adminToast = ['type' => 'error', 'message' => 'Không thể tải danh sách ngành học.'];
+        }
+
+        if ($page === 'edit_major') {
+            $formData = $_SERVER['REQUEST_METHOD'] === 'POST' ? $_POST : [];
+            $errors = [];
+            $departments = [];
+            $adminToast = ['type' => 'error', 'message' => 'Có lỗi khi tải dữ liệu ngành học.'];
+        }
+    }
+}
+
 
 $content = $viewPath . $page . '.php';
 

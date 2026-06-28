@@ -169,7 +169,7 @@
         <form id="yearDeleteForm" method="POST" class="modal-actions modal-footer">
             <input type="hidden" name="action" value="delete" />
             <input type="hidden" name="year_id" id="deleteYearId" value="" />
-            <button class="action-btn secondary btn btn-outline-secondary" type="button" onclick="hideYearDeleteConfirm()">Hủy</button>
+            <button class="action-btn secondary cancel-btn btn btn-outline-secondary" type="button" onclick="hideYearDeleteConfirm()">Hủy</button>
             <button class="action-btn primary btn btn-primary" type="submit">Đồng ý</button>
         </form>
     </div>
