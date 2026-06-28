@@ -123,7 +123,142 @@ class AcademicYearController
         return ['allowed' => true, 'toast' => null];
     }
 
-    private function validate(array $data, array $statusOptions): array
+    public function editState(int $id, array $data, string $method): array
+    {
+        $statusOptions = $this->years->getStatusOptions();
+        $state = [
+            'formData' => [],
+            'errors' => [],
+            'statusOptions' => $statusOptions,
+            'toast' => null,
+            'redirect' => null,
+            'isEdit' => true,
+        ];
+
+        if ($id < 1) {
+            $state['toast'] = ['type' => 'error', 'message' => 'Niên khóa không hợp lệ.'];
+            $state['redirect'] = '?page=list_year';
+            return $state;
+        }
+
+        $canEdit = $this->canEdit($id);
+        if (!$canEdit['allowed']) {
+            $state['toast'] = $canEdit['toast'];
+            $state['redirect'] = '?page=list_year';
+            return $state;
+        }
+
+        if ($method === 'POST') {
+            $state['formData'] = [
+                'year_name' => trim($data['year_name'] ?? ''),
+                'start_date' => trim($data['start_date'] ?? ''),
+                'end_date' => trim($data['end_date'] ?? ''),
+                'status' => trim($data['status'] ?? ''),
+            ];
+            $state['errors'] = $this->validate($state['formData'], $statusOptions, $id);
+
+            if (!empty($state['errors'])) {
+                return $state;
+            }
+
+            try {
+                $updated = $this->update($id, $state['formData']);
+                $state['toast'] = [
+                    'type' => $updated ? 'success' : 'error',
+                    'message' => $updated ? 'Cập nhật niên khóa thành công.' : 'Không có thay đổi nào được thực hiện.',
+                ];
+                if ($updated) {
+                    $state['redirect'] = '?page=list_year';
+                }
+            } catch (Throwable $exception) {
+                $state['toast'] = ['type' => 'error', 'message' => 'Có lỗi xảy ra khi cập nhật niên khóa.'];
+            }
+
+            return $state;
+        }
+
+        $year = $this->years->findById($id);
+        if ($year === null) {
+            $state['toast'] = ['type' => 'error', 'message' => 'Niên khóa không tồn tại.'];
+            $state['redirect'] = '?page=list_year';
+            return $state;
+        }
+
+        $state['formData'] = [
+            'year_name' => $year['name'] ?? '',
+            'start_date' => $year['start_date'] ?? '',
+            'end_date' => $year['end_date'] ?? '',
+            'status' => $year['status'] ?? '',
+        ];
+
+        return $state;
+    }
+
+    public function update(int $id, array $data): bool
+    {
+        $idColumn = $this->years->column('id');
+        $nameColumn = $this->years->column('name');
+        $startColumn = $this->years->column('start_date');
+        $endColumn = $this->years->column('end_date');
+        $statusColumn = $this->years->column('status', false);
+
+        $columns = [
+            sprintf('%s = :name', $nameColumn),
+            sprintf('%s = :start_date', $startColumn),
+            sprintf('%s = :end_date', $endColumn),
+        ];
+        $params = [
+            'name' => $data['year_name'],
+            'start_date' => $data['start_date'],
+            'end_date' => $data['end_date'],
+            'id' => $id,
+        ];
+
+        if ($statusColumn !== null) {
+            $columns[] = sprintf('%s = :status', $statusColumn);
+            $params['status'] = $data['status'];
+        }
+
+        $statement = $this->years->getConnection()->prepare(
+            sprintf('UPDATE nien_khoa SET %s WHERE %s = :id', implode(', ', $columns), $idColumn)
+        );
+
+        $statement->execute($params);
+
+        return $statement->rowCount() > 0;
+    }
+
+    public function handle(string $page, array $post, array $get, string $method): array
+    {
+        $page = trim($page);
+
+        if ($page === 'create_year') {
+            return $this->create($post, $method) + ['page' => 'create_year'];
+        }
+
+        if ($page === 'list_year') {
+            if ($method === 'POST' && ($post['action'] ?? '') === 'edit') {
+                $editState = $this->canEdit((int) ($post['year_id'] ?? 0));
+                if ($editState['allowed']) {
+                    return ['redirect' => '?page=edit_year&id=' . (int) ($post['year_id'] ?? 0), 'toast' => null, 'page' => 'list_year'];
+                }
+                $state = $this->listing([], $get, 'GET');
+                $state['toast'] = $editState['toast'];
+                $state['page'] = 'list_year';
+                return $state;
+            }
+
+            return $this->listing($post, $get, $method) + ['page' => 'list_year'];
+        }
+
+        if ($page === 'edit_year') {
+            return $this->editState((int) ($get['id'] ?? 0), $post, $method) + ['page' => 'edit_year'];
+        }
+
+        return ['page' => $page, 'formData' => [], 'errors' => [], 'statusOptions' => [], 'toast' => null, 'years' => [], 'pagination' => [], 'redirect' => null];
+    }
+
+    private function validate(array $data, array $statusOptions, int $excludeId = 0): array
     {
         $errors = [];
         $rawYearName = $data['year_name'] ?? '';
@@ -142,7 +277,9 @@ class AcademicYearController
 
             if ($endYear !== $startYear + 1) {
                 $errors['year_name'] = 'Niên khóa phải gồm hai năm liên tiếp.';
-            } elseif ($this->years->normalizedNameExists($normalizedYearName)) {
+            } elseif ($excludeId > 0
+                ? $this->years->normalizedNameExistsExcept($normalizedYearName, $excludeId)
+                : $this->years->normalizedNameExists($normalizedYearName)) {
                 $errors['year_name'] = 'Niên khóa đã tồn tại.';
             }
         }

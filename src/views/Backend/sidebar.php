@@ -30,8 +30,7 @@
                 </svg>
             </a>
             <div class="nav-sub">
-                <a href="#"><span class="nav-text">Danh sách khoa</span></a>
-                <a href="#"><span class="nav-text">Danh sách bộ môn</span></a>
+                <a href="?page=list_khoa" class="<?= in_array($currentPage, ['list_khoa','create_khoa']) ? 'active' : '' ?>"><span class="nav-text">Danh sách khoa</span></a>
             </div>
         </div>
 

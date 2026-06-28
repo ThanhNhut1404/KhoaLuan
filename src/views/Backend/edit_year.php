@@ -1,14 +1,13 @@
 <?php
-    $id = isset($_GET['id']) ? (int)$_GET['id'] : null;
-    $years = $years ?? [ ['id'=>1,'name'=>'2023 - 2024','start_date'=>'2023-09-05','end_date'=>'2024-06-30','status'=>'completed'] ];
-    $formData = [];
-    if ($id) foreach($years as $y) if($y['id']==$id) { $formData=$y; break; }
-    $errors = [];
-    if ($_SERVER['REQUEST_METHOD']==='POST'){
-        $name = trim($_POST['year_name'] ?? '');
-        if ($name==='') $errors['year_name']='Tên niên khóa là bắt buộc';
-        if (empty($errors)){ if(session_status()===PHP_SESSION_NONE) session_start(); $_SESSION['message']='Cập nhật niên khóa thành công'; $_SESSION['message_type']='success'; header('Location: ?page=list_year'); exit; }
-        $formData = $_POST;
+    $formData = $formData ?? [];
+    $errors = $errors ?? [];
+    $statusOptions = $statusOptions ?? [];
+    if (empty($statusOptions)) {
+        $statusOptions = [
+            ['value' => 'Sắp diễn ra', 'label' => 'Sắp diễn ra'],
+            ['value' => 'Đang diễn ra', 'label' => 'Đang diễn ra'],
+            ['value' => 'Đã hoàn thành', 'label' => 'Đã hoàn thành'],
+        ];
     }
 ?>
 
@@ -35,12 +34,14 @@
                     <label class="field-label form-label" for="status">Trạng thái <span class="required">*</span></label>
                     <select id="status" name="status" class="field-input form-select" required>
                         <option value="">-- Chọn trạng thái --</option>
-                        <option value="upcoming" <?= (isset($formData['status']) && $formData['status'] === 'upcoming') ? 'selected' : '' ?>>Sắp tới</option>
-                        <option value="active" <?= (isset($formData['status']) && $formData['status'] === 'active') ? 'selected' : '' ?>>Đang diễn ra</option>
-                        <option value="completed" <?= (isset($formData['status']) && $formData['status'] === 'completed') ? 'selected' : '' ?>>Đã hoàn thành</option>
+                        <?php foreach ($statusOptions as $option): ?>
+                            <option value="<?= htmlspecialchars($option['value']) ?>" <?= (($formData['status'] ?? '') === $option['value']) ? 'selected' : '' ?>>
+                                <?= htmlspecialchars($option['label']) ?>
+                            </option>
+                        <?php endforeach; ?>
                     </select>
                     <small class="field-hint">&nbsp;</small>
-                    <?php if(isset($errors['status'])): ?><span class="field-error"><?= $errors['status'] ?></span><?php endif; ?>
+                    <?php if(isset($errors['status'])): ?><span class="field-error"><?= htmlspecialchars($errors['status']) ?></span><?php endif; ?>
                 </div>
 
                 <div class="form-field">

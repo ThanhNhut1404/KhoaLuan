@@ -218,6 +218,22 @@ class AcademicYearModel
         return (bool) $statement->fetchColumn();
     }
 
+    public function normalizedNameExistsExcept(string $normalizedName, int $exceptId): bool
+    {
+        $nameColumn = $this->column('name');
+        $idColumn = $this->column('id');
+        $statement = $this->db->prepare(
+            sprintf(
+                "SELECT 1 FROM nien_khoa WHERE REPLACE(%s, ' ', '') = :name AND %s <> :except LIMIT 1",
+                $nameColumn,
+                $idColumn
+            )
+        );
+        $statement->execute(['name' => $normalizedName, 'except' => $exceptId]);
+
+        return (bool) $statement->fetchColumn();
+    }
+
     public function activeYearExists(array $activeValues): bool
     {
         $statusColumn = $this->column('status', false);
@@ -333,6 +349,16 @@ class AcademicYearModel
         return $exception instanceof \PDOException && $exception->getCode() === '23000';
     }
 
+    public function getConnection(): \PDO
+    {
+        return $this->db;
+    }
+
+    public function getColumn(string $type, bool $required = true): ?string
+    {
+        return $this->column($type, $required);
+    }
+
     private function loadColumns(): array
     {
         $columns = [];
@@ -345,7 +371,7 @@ class AcademicYearModel
         return $columns;
     }
 
-    private function column(string $type, bool $required = true): ?string
+    public function column(string $type, bool $required = true): ?string
     {
         $candidates = [
             'id' => ['MA_NIEN_KHOA'],
