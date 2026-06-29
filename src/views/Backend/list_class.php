@@ -33,7 +33,6 @@
                                 <th class="col-department">KHOA</th>
                                 <th class="col-year">NIÊN KHÓA</th>
                                 <th class="col-major">CHUYÊN NGÀNH</th>
-                                <th class="col-advisor">CỐ VẤN</th>
                                 <th class="col-capacity">SỐ LƯỢNG</th>
                                 <th class="col-status">TRẠNG THÁI</th>
                                 <th class="col-action">THAO TÁC</th>
