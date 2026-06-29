@@ -290,6 +290,45 @@ if (in_array($page, ['create_major', 'list_major', 'edit_major'], true)) {
     }
 }
 
+if ($page === 'create_class') {
+    try {
+        $classController = new \KhoaLuan\QLDRL\Controllers\ClassController();
+        $classState = $classController->create($_POST, $_SERVER['REQUEST_METHOD']);
+
+        if (!empty($classState['redirect'])) {
+            if (!empty($classState['toast'])) {
+                $_SESSION['message'] = $classState['toast']['message'] ?? '';
+                $_SESSION['message_type'] = $classState['toast']['type'] ?? 'info';
+            }
+
+            header('Location: ' . $classState['redirect']);
+            exit;
+        }
+
+        $formData = $classState['formData'];
+        $errors = $classState['errors'];
+        $academic_years = $classState['academic_years'];
+        $departments = $classState['departments'];
+        $majors = $classState['majors'];
+        $statusOptions = $classState['statusOptions'];
+        $adminToast = $classState['toast'] ?? null;
+    } catch (\Throwable $e) {
+        error_log($e->getMessage());
+
+        $formData = $_SERVER['REQUEST_METHOD'] === 'POST' ? $_POST : [];
+        $errors = [];
+        $academic_years = [];
+        $departments = [];
+        $majors = [];
+        $statusOptions = [
+            ['value' => 'upcoming', 'label' => 'Sắp tới'],
+            ['value' => 'active', 'label' => 'Đang diễn ra'],
+            ['value' => 'completed', 'label' => 'Đã hoàn thành'],
+        ];
+        $adminToast = ['type' => 'error', 'message' => 'Có lỗi khi xử lý yêu cầu tạo lớp học. Vui lòng thử lại.'];
+    }
+}
+
 
 if (empty($adminToast) && !empty($_SESSION['message'])) {
     $adminToast = [

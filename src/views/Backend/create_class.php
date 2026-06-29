@@ -2,9 +2,23 @@
     $academic_years = $academic_years ?? [];
     $departments = $departments ?? [];
     $majors = $majors ?? [];
-    $advisors = $advisors ?? [];
     $formData = $formData ?? [];
     $errors = $errors ?? [];
+    $statusOptions = $statusOptions ?? [
+        ['value' => 'upcoming', 'label' => 'Sắp tới'],
+        ['value' => 'active', 'label' => 'Đang diễn ra'],
+        ['value' => 'completed', 'label' => 'Đã hoàn thành'],
+    ];
+
+    $selectedDepartment = (string) ($formData['department'] ?? '');
+    $selectedMajor = (string) ($formData['major'] ?? '');
+    $majorPayload = array_map(static function (array $major): array {
+        return [
+            'id' => (string) ($major['id'] ?? ''),
+            'department_id' => (string) ($major['department_id'] ?? ''),
+            'name' => (string) ($major['name'] ?? ''),
+        ];
+    }, $majors);
 ?>
 
 <div class="create-class-page">
@@ -14,9 +28,8 @@
         </div>
 
         <div class="panel-body card-body">
-            <form id="createClassForm" method="POST" action="?page=create_class">
+            <form id="createClassForm" method="POST" action="?page=create_class" novalidate>
                 <div class="form-grid">
-                    <!-- Mã lớp học -->
                     <div class="form-field">
                         <label class="field-label form-label" for="class_code">
                             Mã lớp học <span class="required">*</span>
@@ -26,14 +39,14 @@
                             id="class_code"
                             name="class_code"
                             class="field-input form-control"
-                            placeholder="Nhập mã lớp học"
-                            value="<?= isset($formData['class_code']) ? htmlspecialchars($formData['class_code']) : '' ?>"
-                            required
+                            placeholder="Ví dụ: CNTT47A"
+                            maxlength="50"
+                            value="<?= htmlspecialchars($formData['class_code'] ?? '', ENT_QUOTES, 'UTF-8') ?>"
+                            aria-invalid="<?= isset($errors['class_code']) ? 'true' : 'false' ?>"
                         />
-                        <span class="field-error<?= isset($errors['class_code']) ? '' : ' is-empty' ?>"><?= isset($errors['class_code']) ? htmlspecialchars($errors['class_code']) : '&nbsp;' ?></span>
+                        <span class="field-error<?= isset($errors['class_code']) ? '' : ' is-empty' ?>"><?= isset($errors['class_code']) ? htmlspecialchars($errors['class_code'], ENT_QUOTES, 'UTF-8') : '&nbsp;' ?></span>
                     </div>
 
-                    <!-- Tên lớp -->
                     <div class="form-field">
                         <label class="field-label form-label" for="class_name">
                             Tên lớp <span class="required">*</span>
@@ -44,108 +57,108 @@
                             name="class_name"
                             class="field-input form-control"
                             placeholder="Nhập tên lớp"
-                            value="<?= isset($formData['class_name']) ? htmlspecialchars($formData['class_name']) : '' ?>"
-                            required
+                            maxlength="100"
+                            value="<?= htmlspecialchars($formData['class_name'] ?? '', ENT_QUOTES, 'UTF-8') ?>"
+                            aria-invalid="<?= isset($errors['class_name']) ? 'true' : 'false' ?>"
                         />
-                        <span class="field-error<?= isset($errors['class_name']) ? '' : ' is-empty' ?>"><?= isset($errors['class_name']) ? htmlspecialchars($errors['class_name']) : '&nbsp;' ?></span>
+                        <span class="field-error<?= isset($errors['class_name']) ? '' : ' is-empty' ?>"><?= isset($errors['class_name']) ? htmlspecialchars($errors['class_name'], ENT_QUOTES, 'UTF-8') : '&nbsp;' ?></span>
                     </div>
 
-                    <!-- Niên khóa -->
                     <div class="form-field">
                         <label class="field-label form-label" for="academic_year">
                             Niên khóa <span class="required">*</span>
                         </label>
-                        <select id="academic_year" name="academic_year" class="field-input form-select" required>
+                        <select id="academic_year" name="academic_year" class="field-input form-select" aria-invalid="<?= isset($errors['academic_year']) ? 'true' : 'false' ?>">
                             <option value="">-- Chọn niên khóa --</option>
                             <?php foreach ($academic_years as $year): ?>
-                                <option value="<?= $year['id'] ?>" <?= (isset($formData['academic_year']) && $formData['academic_year'] == $year['id']) ? 'selected' : '' ?>>
-                                    <?= htmlspecialchars($year['name']) ?>
+                                <?php
+                                    $yearId = (string) ($year['id'] ?? '');
+                                    $yearName = (string) ($year['name'] ?? '');
+                                ?>
+                                <option value="<?= htmlspecialchars($yearId, ENT_QUOTES, 'UTF-8') ?>" <?= (isset($formData['academic_year']) && (string) $formData['academic_year'] === $yearId) ? 'selected' : '' ?>>
+                                    <?= htmlspecialchars($yearName, ENT_QUOTES, 'UTF-8') ?>
                                 </option>
                             <?php endforeach; ?>
                         </select>
-                        <span class="field-error<?= isset($errors['academic_year']) ? '' : ' is-empty' ?>"><?= isset($errors['academic_year']) ? htmlspecialchars($errors['academic_year']) : '&nbsp;' ?></span>
+                        <span class="field-error<?= isset($errors['academic_year']) ? '' : ' is-empty' ?>"><?= isset($errors['academic_year']) ? htmlspecialchars($errors['academic_year'], ENT_QUOTES, 'UTF-8') : '&nbsp;' ?></span>
                     </div>
 
-                    <!-- Khoa -->
                     <div class="form-field">
                         <label class="field-label form-label" for="department">
                             Khoa <span class="required">*</span>
                         </label>
-                        <select id="department" name="department" class="field-input form-select" required>
+                        <select id="department" name="department" class="field-input form-select" aria-invalid="<?= isset($errors['department']) ? 'true' : 'false' ?>">
                             <option value="">-- Chọn khoa --</option>
                             <?php foreach ($departments as $department): ?>
-                                <option value="<?= $department['id'] ?>" <?= (isset($formData['department']) && $formData['department'] == $department['id']) ? 'selected' : '' ?>>
-                                    <?= htmlspecialchars($department['name']) ?>
+                                <?php
+                                    $departmentId = (string) ($department['id'] ?? '');
+                                    $departmentName = (string) ($department['name'] ?? '');
+                                ?>
+                                <option value="<?= htmlspecialchars($departmentId, ENT_QUOTES, 'UTF-8') ?>" <?= $selectedDepartment === $departmentId ? 'selected' : '' ?>>
+                                    <?= htmlspecialchars($departmentName, ENT_QUOTES, 'UTF-8') ?>
                                 </option>
                             <?php endforeach; ?>
                         </select>
-                        <span class="field-error<?= isset($errors['department']) ? '' : ' is-empty' ?>"><?= isset($errors['department']) ? htmlspecialchars($errors['department']) : '&nbsp;' ?></span>
+                        <span class="field-error<?= isset($errors['department']) ? '' : ' is-empty' ?>"><?= isset($errors['department']) ? htmlspecialchars($errors['department'], ENT_QUOTES, 'UTF-8') : '&nbsp;' ?></span>
                     </div>
 
-                    <!-- Chuyên ngành -->
                     <div class="form-field">
                         <label class="field-label form-label" for="major">
                             Chuyên ngành <span class="required">*</span>
                         </label>
-                        <select id="major" name="major" class="field-input form-select" required>
+                        <select id="major" name="major" class="field-input form-select" aria-invalid="<?= isset($errors['major']) ? 'true' : 'false' ?>" <?= $selectedDepartment === '' ? 'disabled' : '' ?>>
                             <option value="">-- Chọn chuyên ngành --</option>
                             <?php foreach ($majors as $major): ?>
-                                <option value="<?= $major['id'] ?>" <?= (isset($formData['major']) && $formData['major'] == $major['id']) ? 'selected' : '' ?>>
-                                    <?= htmlspecialchars($major['name']) ?>
+                                <?php
+                                    $majorId = (string) ($major['id'] ?? '');
+                                    $majorDepartmentId = (string) ($major['department_id'] ?? '');
+                                    $majorName = (string) ($major['name'] ?? '');
+                                    if ($selectedDepartment === '' || $majorDepartmentId !== $selectedDepartment) {
+                                        continue;
+                                    }
+                                ?>
+                                <option value="<?= htmlspecialchars($majorId, ENT_QUOTES, 'UTF-8') ?>" <?= $selectedMajor === $majorId ? 'selected' : '' ?>>
+                                    <?= htmlspecialchars($majorName, ENT_QUOTES, 'UTF-8') ?>
                                 </option>
                             <?php endforeach; ?>
                         </select>
-                        <span class="field-error<?= isset($errors['major']) ? '' : ' is-empty' ?>"><?= isset($errors['major']) ? htmlspecialchars($errors['major']) : '&nbsp;' ?></span>
+                        <span class="field-error<?= isset($errors['major']) ? '' : ' is-empty' ?>"><?= isset($errors['major']) ? htmlspecialchars($errors['major'], ENT_QUOTES, 'UTF-8') : '&nbsp;' ?></span>
                     </div>
 
-                    <!-- Cố vấn -->
-                    <div class="form-field">
-                        <label class="field-label form-label" for="advisor">
-                            Cố vấn <span class="required">*</span>
-                        </label>
-                        <select id="advisor" name="advisor" class="field-input form-select" required>
-                            <option value="">-- Chọn cố vấn --</option>
-                            <?php foreach ($advisors as $advisor): ?>
-                                <option value="<?= $advisor['id'] ?>" <?= (isset($formData['advisor']) && $formData['advisor'] == $advisor['id']) ? 'selected' : '' ?>>
-                                    <?= htmlspecialchars($advisor['name']) ?>
-                                </option>
-                            <?php endforeach; ?>
-                        </select>
-                        <span class="field-error<?= isset($errors['advisor']) ? '' : ' is-empty' ?>"><?= isset($errors['advisor']) ? htmlspecialchars($errors['advisor']) : '&nbsp;' ?></span>
-                    </div>
-
-                    <!-- Số lượng -->
                     <div class="form-field">
                         <label class="field-label form-label" for="capacity">
-                            Số lượng
+                            Sĩ số <span class="required">*</span>
                         </label>
                         <input
                             type="number"
                             id="capacity"
                             name="capacity"
                             class="field-input form-control"
-                            placeholder="Nhập số lượng"
-                            value="<?= isset($formData['capacity']) ? htmlspecialchars($formData['capacity']) : '' ?>"
-                            min="0"
+                            placeholder="Nhập sĩ số tối đa"
+                            min="1"
+                            max="200"
+                            step="1"
+                            value="<?= htmlspecialchars($formData['capacity'] ?? '', ENT_QUOTES, 'UTF-8') ?>"
+                            aria-invalid="<?= isset($errors['capacity']) ? 'true' : 'false' ?>"
                         />
-                        <span class="field-error<?= isset($errors['capacity']) ? '' : ' is-empty' ?>"><?= isset($errors['capacity']) ? htmlspecialchars($errors['capacity']) : '&nbsp;' ?></span>
+                        <span class="field-error<?= isset($errors['capacity']) ? '' : ' is-empty' ?>"><?= isset($errors['capacity']) ? htmlspecialchars($errors['capacity'], ENT_QUOTES, 'UTF-8') : '&nbsp;' ?></span>
                     </div>
 
-                    <!-- Trạng thái -->
                     <div class="form-field">
                         <label class="field-label form-label" for="status">
                             Trạng thái <span class="required">*</span>
                         </label>
-                        <select id="status" name="status" class="field-input form-select" required>
+                        <select id="status" name="status" class="field-input form-select" aria-invalid="<?= isset($errors['status']) ? 'true' : 'false' ?>">
                             <option value="">-- Chọn trạng thái --</option>
-                            <option value="upcoming" <?= (isset($formData['status']) && $formData['status'] === 'upcoming') ? 'selected' : '' ?>>Sắp tới</option>
-                            <option value="active" <?= (isset($formData['status']) && $formData['status'] === 'active') ? 'selected' : '' ?>>Đang diễn ra</option>
-                            <option value="completed" <?= (isset($formData['status']) && $formData['status'] === 'completed') ? 'selected' : '' ?>>Đã hoàn thành</option>
+                            <?php foreach ($statusOptions as $option): ?>
+                                <option value="<?= htmlspecialchars($option['value'], ENT_QUOTES, 'UTF-8') ?>" <?= (isset($formData['status']) && $formData['status'] === $option['value']) ? 'selected' : '' ?>>
+                                    <?= htmlspecialchars($option['label'], ENT_QUOTES, 'UTF-8') ?>
+                                </option>
+                            <?php endforeach; ?>
                         </select>
-                        <span class="field-error<?= isset($errors['status']) ? '' : ' is-empty' ?>"><?= isset($errors['status']) ? htmlspecialchars($errors['status']) : '&nbsp;' ?></span>
+                        <span class="field-error<?= isset($errors['status']) ? '' : ' is-empty' ?>"><?= isset($errors['status']) ? htmlspecialchars($errors['status'], ENT_QUOTES, 'UTF-8') : '&nbsp;' ?></span>
                     </div>
 
-                    <!-- Ghi chú -->
                     <div class="form-field">
                         <label class="field-label form-label" for="notes">
                             Ghi chú
@@ -155,8 +168,8 @@
                             name="notes"
                             class="field-input textarea-input form-control"
                             placeholder="Nhập ghi chú"
-                        ><?= isset($formData['notes']) ? htmlspecialchars($formData['notes']) : '' ?></textarea>
-                        <span class="field-error<?= isset($errors['notes']) ? '' : ' is-empty' ?>"><?= isset($errors['notes']) ? htmlspecialchars($errors['notes']) : '&nbsp;' ?></span>
+                        ><?= htmlspecialchars($formData['notes'] ?? '', ENT_QUOTES, 'UTF-8') ?></textarea>
+                        <span class="field-error<?= isset($errors['notes']) ? '' : ' is-empty' ?>"><?= isset($errors['notes']) ? htmlspecialchars($errors['notes'], ENT_QUOTES, 'UTF-8') : '&nbsp;' ?></span>
                     </div>
                 </div>
 
@@ -168,13 +181,6 @@
                         Tạo lớp học
                     </button>
                 </div>
-
-                <?php if(isset($_SESSION['message'])): ?>
-                    <div class="alert alert-<?= $_SESSION['message_type'] ?? 'info' ?>">
-                        <?= $_SESSION['message'] ?>
-                    </div>
-                    <?php unset($_SESSION['message'], $_SESSION['message_type']); ?>
-                <?php endif; ?>
             </form>
         </div>
     </div>
@@ -261,6 +267,12 @@
         background: #ffffff;
     }
 
+    .field-input:disabled {
+        cursor: not-allowed;
+        color: #9ca3af;
+        background-color: #eef2f7;
+    }
+
     select.field-input {
         cursor: pointer;
         appearance: none;
@@ -333,32 +345,6 @@
         border-color: #0a1838;
     }
 
-    .alert {
-        margin-top: 16px;
-        padding: 12px 16px;
-        border-radius: 8px;
-        font-size: 13px;
-        border: 1px solid;
-    }
-
-    .alert-success {
-        background: #d1fae5;
-        color: #065f46;
-        border-color: #6ee7b7;
-    }
-
-    .alert-error {
-        background: #fee2e2;
-        color: #991b1b;
-        border-color: #fca5a5;
-    }
-
-    .alert-info {
-        background: #dbeafe;
-        color: #1e3a8a;
-        border-color: #93c5fd;
-    }
-
     @media (max-width: 768px) {
         .form-grid {
             grid-template-columns: 1fr;
@@ -375,3 +361,52 @@
         }
     }
 </style>
+
+<script>
+    (function() {
+        const majors = <?= json_encode($majorPayload, JSON_UNESCAPED_UNICODE | JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP) ?>;
+        const departmentSelect = document.getElementById('department');
+        const majorSelect = document.getElementById('major');
+        const selectedMajor = <?= json_encode($selectedMajor, JSON_UNESCAPED_UNICODE | JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP) ?>;
+
+        if (!departmentSelect || !majorSelect) {
+            return;
+        }
+
+        function resetMajorOptions(nextSelectedMajor) {
+            const departmentId = departmentSelect.value;
+            majorSelect.innerHTML = '';
+
+            const placeholder = document.createElement('option');
+            placeholder.value = '';
+            placeholder.textContent = '-- Chọn chuyên ngành --';
+            majorSelect.appendChild(placeholder);
+
+            if (!departmentId) {
+                majorSelect.value = '';
+                majorSelect.disabled = true;
+                return;
+            }
+
+            majors
+                .filter(function(major) {
+                    return major.department_id === departmentId;
+                })
+                .forEach(function(major) {
+                    const option = document.createElement('option');
+                    option.value = major.id;
+                    option.textContent = major.name;
+                    majorSelect.appendChild(option);
+                });
+
+            majorSelect.disabled = false;
+            majorSelect.value = nextSelectedMajor || '';
+        }
+
+        departmentSelect.addEventListener('change', function() {
+            resetMajorOptions('');
+        });
+
+        resetMajorOptions(selectedMajor);
+    })();
+</script>
