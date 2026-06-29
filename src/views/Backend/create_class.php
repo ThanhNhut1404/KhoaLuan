@@ -5,9 +5,9 @@
     $formData = $formData ?? [];
     $errors = $errors ?? [];
     $statusOptions = $statusOptions ?? [
-        ['value' => 'upcoming', 'label' => 'Sắp tới'],
-        ['value' => 'active', 'label' => 'Đang diễn ra'],
-        ['value' => 'completed', 'label' => 'Đã hoàn thành'],
+        ['value' => 'Hoạt động', 'label' => 'Hoạt động'],
+        ['value' => 'Không hoạt động', 'label' => 'Không hoạt động'],
+        ['value' => 'Ngừng tuyển sinh', 'label' => 'Ngừng tuyển sinh'],
     ];
 
     $selectedDepartment = (string) ($formData['department'] ?? '');

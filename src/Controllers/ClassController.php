@@ -8,14 +8,15 @@ use Throwable;
 
 class ClassController
 {
+    private const LIST_PER_PAGE = 10;
     private const MAX_CODE_LENGTH = 50;
     private const MAX_NAME_LENGTH = 100;
     private const MAX_CAPACITY = 200;
 
     private const STATUS_OPTIONS = [
-        ['value' => 'upcoming', 'label' => 'Sắp tới'],
-        ['value' => 'active', 'label' => 'Đang diễn ra'],
-        ['value' => 'completed', 'label' => 'Đã hoàn thành'],
+        ['value' => 'Hoạt động', 'label' => 'Hoạt động'],
+        ['value' => 'Không hoạt động', 'label' => 'Không hoạt động'],
+        ['value' => 'Ngừng tuyển sinh', 'label' => 'Ngừng tuyển sinh'],
     ];
 
     public function __construct(private ?ClassModel $model = null)
@@ -109,6 +110,119 @@ class ClassController
 
         $state['toast'] = ['type' => 'error', 'message' => 'Tạo lớp học thất bại. Vui lòng thử lại.'];
         return $state;
+    }
+
+    public function listing(array $data, array $query, string $method): array
+    {
+        $page = max(1, (int) ($query['page_num'] ?? 1));
+        $state = [
+            'classes' => [],
+            'pagination' => [
+                'current_page' => $page,
+                'total_items' => 0,
+                'items_per_page' => self::LIST_PER_PAGE,
+                'total_pages' => 1,
+                'from' => 0,
+                'to' => 0,
+            ],
+            'emptyMessage' => 'Chưa có lớp học nào.',
+            'toast' => null,
+        ];
+
+        if ($method === 'POST' && ($data['action'] ?? '') === 'delete') {
+            $state['toast'] = $this->deleteFromList((int) ($data['id'] ?? 0));
+        }
+
+        try {
+            $totalItems = $this->model->countAll();
+            $totalPages = max(1, (int) ceil($totalItems / self::LIST_PER_PAGE));
+            $currentPage = min(max(1, $page), $totalPages);
+            $rows = $totalItems > 0
+                ? $this->model->listPaginated($currentPage, self::LIST_PER_PAGE)
+                : [];
+
+            $state['classes'] = array_map(fn (array $class): array => $this->formatListRow($class), $rows);
+            $state['pagination'] = [
+                'current_page' => $currentPage,
+                'total_items' => $totalItems,
+                'items_per_page' => self::LIST_PER_PAGE,
+                'total_pages' => $totalPages,
+                'from' => $totalItems === 0 ? 0 : (($currentPage - 1) * self::LIST_PER_PAGE) + 1,
+                'to' => min($totalItems, $currentPage * self::LIST_PER_PAGE),
+            ];
+
+            return $state;
+        } catch (Throwable $exception) {
+            error_log($exception->getMessage());
+            $state['toast'] ??= ['type' => 'error', 'message' => 'Không thể tải danh sách lớp học.'];
+
+            return $state;
+        }
+    }
+
+    private function deleteFromList(int $id): array
+    {
+        if ($id < 1) {
+            return ['type' => 'error', 'message' => 'Lớp học không hợp lệ.'];
+        }
+
+        try {
+            if ($this->model->findById($id) === null) {
+                return ['type' => 'error', 'message' => 'Lớp học không tồn tại hoặc đã bị xóa.'];
+            }
+
+            if ($this->model->hasRelatedData($id)) {
+                return ['type' => 'error', 'message' => 'Không thể xóa lớp học vì đang có dữ liệu sinh viên liên quan.'];
+            }
+
+            if (!$this->model->delete($id)) {
+                return ['type' => 'error', 'message' => 'Xóa lớp học thất bại. Vui lòng thử lại.'];
+            }
+        } catch (Throwable $exception) {
+            error_log($exception->getMessage());
+
+            if ($this->model->isConstraintException($exception)) {
+                return ['type' => 'error', 'message' => 'Không thể xóa lớp học vì đang có dữ liệu liên quan.'];
+            }
+
+            return ['type' => 'error', 'message' => 'Xóa lớp học thất bại. Vui lòng thử lại.'];
+        }
+
+        return ['type' => 'success', 'message' => 'Xóa lớp học thành công.'];
+    }
+
+    private function formatListRow(array $class): array
+    {
+        return [
+            'id' => (int) ($class['id'] ?? 0),
+            'code' => $this->blank($class['code'] ?? null),
+            'name' => $this->blank($class['name'] ?? null),
+            'department' => $this->blank($class['department'] ?? null),
+            'academic_year' => $this->blank($class['academic_year'] ?? null),
+            'major' => $this->blank($class['major'] ?? null),
+            'capacity' => $this->blank($class['capacity'] ?? null),
+            'status' => $this->blank($class['status'] ?? null),
+            'status_class' => $this->statusClass((string) ($class['status'] ?? '')),
+        ];
+    }
+
+    private function statusClass(string $status): string
+    {
+        $normalized = function_exists('mb_strtolower') ? mb_strtolower(trim($status), 'UTF-8') : strtolower(trim($status));
+
+        return match ($normalized) {
+            'hoạt động' => 'active',
+            'không hoạt động' => 'inactive',
+            'ngừng tuyển sinh' => 'stopped',
+            default => 'unknown',
+        };
+    }
+
+    private function blank(mixed $value): string
+    {
+        $value = trim((string) ($value ?? ''));
+
+        return $value === '' ? '--' : $value;
     }
 
     private function formData(array $data): array

@@ -109,6 +109,14 @@ function confirmDelete() {
         return;
     }
 
+    const classDeleteForm = document.getElementById('classDeleteForm');
+    const classDeleteId = document.getElementById('classDeleteId');
+    if (_deleteTargetLabel === 'lớp học' && classDeleteForm && classDeleteId) {
+        classDeleteId.value = _deleteTargetId;
+        classDeleteForm.submit();
+        return;
+    }
+
     const row = document.querySelector('tr[data-id="' + _deleteTargetId + '"]');
     if (row) row.remove();
     hideDeleteConfirm();

@@ -374,12 +374,14 @@ if (in_array($page, ['create_major', 'list_major', 'edit_major'], true)) {
     }
 }
 
-if ($page === 'create_class') {
+if (in_array($page, ['create_class', 'list_class'], true)) {
     try {
         $classController = new \KhoaLuan\QLDRL\Controllers\ClassController();
-        $classState = $classController->create($_POST, $_SERVER['REQUEST_METHOD']);
+        $classState = $page === 'create_class'
+            ? $classController->create($_POST, $_SERVER['REQUEST_METHOD'])
+            : $classController->listing($_POST, $_GET, $_SERVER['REQUEST_METHOD']);
 
-        if (!empty($classState['redirect'])) {
+        if ($page === 'create_class' && !empty($classState['redirect'])) {
             if (!empty($classState['toast'])) {
                 $_SESSION['message'] = $classState['toast']['message'] ?? '';
                 $_SESSION['message_type'] = $classState['toast']['type'] ?? 'info';
@@ -389,27 +391,43 @@ if ($page === 'create_class') {
             exit;
         }
 
-        $formData = $classState['formData'];
-        $errors = $classState['errors'];
-        $academic_years = $classState['academic_years'];
-        $departments = $classState['departments'];
-        $majors = $classState['majors'];
-        $statusOptions = $classState['statusOptions'];
+        if ($page === 'create_class') {
+            $formData = $classState['formData'];
+            $errors = $classState['errors'];
+            $academic_years = $classState['academic_years'];
+            $departments = $classState['departments'];
+            $majors = $classState['majors'];
+            $statusOptions = $classState['statusOptions'];
+        }
+
+        if ($page === 'list_class') {
+            $classes = $classState['classes'];
+            $pagination = $classState['pagination'];
+            $emptyMessage = $classState['emptyMessage'] ?? 'Chưa có lớp học nào.';
+        }
         $adminToast = $classState['toast'] ?? null;
     } catch (\Throwable $e) {
         error_log($e->getMessage());
 
+        if ($page === 'create_class') {
         $formData = $_SERVER['REQUEST_METHOD'] === 'POST' ? $_POST : [];
         $errors = [];
         $academic_years = [];
         $departments = [];
         $majors = [];
         $statusOptions = [
-            ['value' => 'upcoming', 'label' => 'Sắp tới'],
-            ['value' => 'active', 'label' => 'Đang diễn ra'],
-            ['value' => 'completed', 'label' => 'Đã hoàn thành'],
+            ['value' => 'Hoạt động', 'label' => 'Hoạt động'],
+            ['value' => 'Không hoạt động', 'label' => 'Không hoạt động'],
+            ['value' => 'Ngừng tuyển sinh', 'label' => 'Ngừng tuyển sinh'],
         ];
         $adminToast = ['type' => 'error', 'message' => 'Có lỗi khi xử lý yêu cầu tạo lớp học. Vui lòng thử lại.'];
+    }
+        if ($page === 'list_class') {
+            $classes = [];
+            $pagination = ['current_page' => 1, 'total_items' => 0, 'items_per_page' => 10, 'total_pages' => 1, 'from' => 0, 'to' => 0];
+            $emptyMessage = 'Chưa có lớp học nào.';
+            $adminToast = ['type' => 'error', 'message' => 'Không thể tải danh sách lớp học.'];
+        }
     }
 }
 

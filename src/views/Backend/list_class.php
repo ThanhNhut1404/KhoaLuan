@@ -1,9 +1,13 @@
 <?php
     $classes = $classes ?? [];
-    $current_page = isset($_GET['page_num']) ? (int)$_GET['page_num'] : 1;
-    $total_items = count($classes);
-    $items_per_page = 10;
-    $total_pages = max(1, (int) ceil($total_items / $items_per_page));
+    $pagination = $pagination ?? [];
+    $current_page = (int) ($pagination['current_page'] ?? ($_GET['page_num'] ?? 1));
+    $total_items = (int) ($pagination['total_items'] ?? count($classes));
+    $items_per_page = (int) ($pagination['items_per_page'] ?? 10);
+    $total_pages = max(1, (int) ($pagination['total_pages'] ?? ceil($total_items / max(1, $items_per_page))));
+    $from = (int) ($pagination['from'] ?? ($total_items === 0 ? 0 : (($current_page - 1) * $items_per_page) + 1));
+    $to = (int) ($pagination['to'] ?? min($total_items, $current_page * $items_per_page));
+    $emptyMessage = $emptyMessage ?? 'Chưa có lớp học nào.';
 ?>
 <div class="list-class-page">
     <div class="page-panel card">
@@ -19,7 +23,7 @@
                     <svg width="48" height="48" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                         <path d="M9 13h6M9 17h3M5 21h14a2 2 0 0 0 2-2V5a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
                     </svg>
-                    <h3>Chưa có lớp học nào</h3>
+                    <h3><?= htmlspecialchars($emptyMessage, ENT_QUOTES, 'UTF-8') ?></h3>
                     <p>Hãy tạo lớp học đầu tiên để bắt đầu</p>
                 </div>
             <?php else: ?>
@@ -33,41 +37,39 @@
                                 <th class="col-department">KHOA</th>
                                 <th class="col-year">NIÊN KHÓA</th>
                                 <th class="col-major">CHUYÊN NGÀNH</th>
-                                <th class="col-capacity">SỐ LƯỢNG</th>
+                                <th class="col-capacity">SĨ SỐ</th>
                                 <th class="col-status">TRẠNG THÁI</th>
                                 <th class="col-action">THAO TÁC</th>
                             </tr>
                         </thead>
                         <tbody>
                             <?php foreach ($classes as $index => $class): ?>
-                                <tr data-id="<?= $class['id'] ?>">
-                                    <td class="col-stt">0<?= $index + 1 ?></td>
-                                    <td class="col-code"><?= htmlspecialchars($class['code']) ?></td>
-                                    <td class="col-name"><?= htmlspecialchars($class['name']) ?></td>
-                                    <td class="col-department"><?= htmlspecialchars($class['department']) ?></td>
-                                    <td class="col-year"><?= htmlspecialchars($class['academic_year']) ?></td>
-                                    <td class="col-major"><?= htmlspecialchars($class['major']) ?></td>
-                                    <td class="col-advisor"><?= htmlspecialchars($class['advisor']) ?></td>
-                                    <td class="col-capacity"><?= htmlspecialchars($class['capacity']) ?></td>
+                                <?php
+                                    $id = (int) ($class['id'] ?? 0);
+                                    $stt = (($current_page - 1) * $items_per_page) + $index + 1;
+                                ?>
+                                <tr data-id="<?= $id ?>">
+                                    <td class="col-stt"><?= $stt ?></td>
+                                    <td class="col-code"><?= htmlspecialchars($class['code'] ?? '', ENT_QUOTES, 'UTF-8') ?></td>
+                                    <td class="col-name"><?= htmlspecialchars($class['name'] ?? '', ENT_QUOTES, 'UTF-8') ?></td>
+                                    <td class="col-department"><?= htmlspecialchars($class['department'] ?? '', ENT_QUOTES, 'UTF-8') ?></td>
+                                    <td class="col-year"><?= htmlspecialchars($class['academic_year'] ?? '', ENT_QUOTES, 'UTF-8') ?></td>
+                                    <td class="col-major"><?= htmlspecialchars($class['major'] ?? '', ENT_QUOTES, 'UTF-8') ?></td>
+                                    <td class="col-capacity"><?= htmlspecialchars($class['capacity'] ?? '', ENT_QUOTES, 'UTF-8') ?></td>
                                     <td class="col-status">
-                                        <form method="POST" style="display:inline-block;">
-                                            <input type="hidden" name="_row_id" value="<?= $class['id'] ?>" />
-                                            <select name="status[<?= $class['id'] ?>]" class="status-select form-select" onchange="updateStatusSelect(this)">
-                                                <option value="active" <?= $class['status'] === 'active' ? 'selected' : '' ?>>Đang diễn ra</option>
-                                                <option value="upcoming" <?= $class['status'] === 'upcoming' ? 'selected' : '' ?>>Sắp tới</option>
-                                                <option value="completed" <?= $class['status'] === 'completed' ? 'selected' : '' ?>>Đã hoàn thành</option>
-                                            </select>
-                                        </form>
+                                        <span class="status-badge status-<?= htmlspecialchars($class['status_class'] ?? 'unknown', ENT_QUOTES, 'UTF-8') ?>">
+                                            <?= htmlspecialchars($class['status'] ?? '', ENT_QUOTES, 'UTF-8') ?>
+                                        </span>
                                     </td>
                                     <td class="col-action">
                                         <div class="action-group">
-                                            <button class="action-btn edit btn btn-outline-primary" title="Chỉnh sửa" onclick="editClass(<?= $class['id'] ?>)">
+                                            <button class="action-btn edit btn btn-outline-primary" title="Chỉnh sửa" onclick="editClass(<?= $id ?>)">
                                                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                                                     <path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
                                                     <path d="M15.5 3.5a2.121 2.121 0 1 1 3 3L18 7.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
                                                 </svg>
                                             </button>
-                                            <button class="action-btn delete btn btn-danger" title="Xóa" onclick="showDeleteConfirm(<?= $class['id'] ?>, 'lớp học', <?= htmlspecialchars(json_encode((string) ($class['name'] ?? ''), JSON_UNESCAPED_UNICODE | JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP), ENT_QUOTES, 'UTF-8') ?>)">
+                                            <button class="action-btn delete btn btn-danger" title="Xóa" onclick="showDeleteConfirm(<?= $id ?>, 'lớp học', <?= htmlspecialchars(json_encode((string) ($class['name'] ?? ''), JSON_UNESCAPED_UNICODE | JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP), ENT_QUOTES, 'UTF-8') ?>)">
                                                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                                                     <path d="M19 7l-1 12a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2l-1-12M9 7V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v3M9 11v6M15 11v6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
                                                 </svg>
@@ -82,11 +84,11 @@
 
                 <div class="pagination-container">
                     <div class="pagination-info">
-                        Hiển thị 1 - <?= min($items_per_page, $total_items) ?> của <?= $total_items ?> lớp học
+                        Hiển thị <?= $from ?> - <?= $to ?> của <?= $total_items ?> lớp học
                     </div>
                     <div class="pagination mb-0">
                         <?php if ($current_page > 1): ?>
-                            <a href="?page=list_class&page_num=<?= $current_page - 1 ?>" class="pagination-btn prev page-link page-item">
+                            <a href="?page=list_class&page_num=<?= $current_page - 1 ?>" class="pagination-btn prev page-link page-item" aria-label="Trang trước">
                                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                                     <path d="M15 19l-7-7 7-7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
                                 </svg>
@@ -100,7 +102,7 @@
                         <?php endfor; ?>
 
                         <?php if ($current_page < $total_pages): ?>
-                            <a href="?page=list_class&page_num=<?= $current_page + 1 ?>" class="pagination-btn next page-link page-item">
+                            <a href="?page=list_class&page_num=<?= $current_page + 1 ?>" class="pagination-btn next page-link page-item" aria-label="Trang sau">
                                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                                     <path d="M9 5l7 7-7 7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
                                 </svg>
@@ -112,6 +114,11 @@
         </div>
     </div>
 </div>
+
+<form id="classDeleteForm" method="POST" action="<?= htmlspecialchars($_SERVER['REQUEST_URI'] ?? '?page=list_class', ENT_QUOTES, 'UTF-8') ?>" style="display:none;">
+    <input type="hidden" name="action" value="delete" />
+    <input type="hidden" name="id" id="classDeleteId" value="" />
+</form>
 
 <style>
     .list-class-page {
@@ -189,20 +196,22 @@
         font-size: 13px;
     }
 
-    .data-table thead {
-        background: #f8f9fa;
+    .data-table thead,
+    .data-table thead.table-light {
+        background: #eef2f7;
         border-bottom: 1px solid #e5e7eb;
     }
 
     .data-table th {
         padding: 12px 14px;
         text-align: center;
-        font-weight: 700;
+        font-weight: 800;
         color: #0f2a5a;
         text-transform: uppercase;
         letter-spacing: 0.4px;
         font-size: 11px;
         border-right: 1px solid #d1d5db;
+        white-space: nowrap;
     }
 
     .data-table tbody tr {
@@ -223,6 +232,7 @@
         color: #1f2937;
         text-align: center;
         border-right: 1px solid #e5e7eb;
+        vertical-align: middle;
     }
 
     .col-stt {
@@ -240,8 +250,7 @@
 
     .col-department,
     .col-year,
-    .col-major,
-    .col-advisor {
+    .col-major {
         width: 14%;
     }
 
@@ -262,17 +271,14 @@
     .status-badge {
         display: inline-flex;
         align-items: center;
+        justify-content: center;
         gap: 6px;
+        min-width: 92px;
         padding: 6px 12px;
         border-radius: 999px;
         font-size: 12px;
-        font-weight: 600;
+        font-weight: 700;
         white-space: nowrap;
-    }
-
-    .status-badge svg {
-        width: 10px;
-        height: 10px;
     }
 
     .status-active {
@@ -280,14 +286,19 @@
         color: #065f46;
     }
 
-    .status-completed {
-        background: #dbeafe;
-        color: #1e40af;
+    .status-inactive {
+        background: #fee2e2;
+        color: #991b1b;
     }
 
-    .status-upcoming {
-        background: #fce7f3;
-        color: #831843;
+    .status-stopped {
+        background: #fef3c7;
+        color: #92400e;
+    }
+
+    .status-unknown {
+        background: #e5e7eb;
+        color: #374151;
     }
 
     .action-group {
@@ -386,8 +397,7 @@
     @media (max-width: 1024px) {
         .col-department,
         .col-year,
-        .col-major,
-        .col-advisor {
+        .col-major {
             width: auto;
         }
 
@@ -402,42 +412,25 @@
     }
 
     @media (max-width: 768px) {
+        .pagination-container {
+            align-items: flex-start;
+            flex-direction: column;
+            gap: 10px;
+        }
+
         .table-wrapper {
             overflow-x: auto;
         }
 
         .data-table {
-            min-width: 1000px;
+            min-width: 920px;
         }
     }
-    /* Status select styling */
-    .status-select { padding:6px 12px 6px 8px; border-radius:12px; border:1px solid #e5e7eb; background:#f9fafb; font-size:13px; color:#0f2a5a; appearance:none; -webkit-appearance:none; font-weight:700; padding-right:36px; }
-    .status-select.option { color:#0f2a5a; }
-    .status-select.active { background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24'%3E%3Cpath d='M6 9l6 6 6-6' stroke='%23065546' stroke-width='2' stroke-linecap='round' stroke-linejoin='round' fill='none'/%3E%3C/svg%3E") no-repeat right 10px center, linear-gradient(90deg, #bbf7d0, #34d399); background-size:12px, auto; color:#065f46; border-color:#34d399; font-weight:700; }
-    .status-select.upcoming { background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24'%3E%3Cpath d='M6 9l6 6 6-6' stroke='%23613b52' stroke-width='2' stroke-linecap='round' stroke-linejoin='round' fill='none'/%3E%3C/svg%3E") no-repeat right 10px center, linear-gradient(90deg, #fde68a, #f59e0b); background-size:12px, auto; color:#92400e; border-color:#f59e0b; font-weight:700; }
-    .status-select.completed { background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24'%3E%3Cpath d='M6 9l6 6 6-6' stroke='%231e40af' stroke-width='2' stroke-linecap='round' stroke-linejoin='round' fill='none'/%3E%3C/svg%3E") no-repeat right 10px center, linear-gradient(90deg, #dbeafe, #bfdbfe); background-size:12px, auto; color:#1e40af; border-color:#93c5fd; font-weight:700; }
 </style>
 
 <script>
     function editClass(id) {
         window.location.href = '?page=edit_class&id=' + id;
     }
-
-    function deleteClass(id) {
-        console.log('Delete class:', id);
-    }
-    function updateStatusSelect(el){
-        var val = el.value;
-        el.classList.remove('active','upcoming','completed');
-        el.classList.add(val);
-        el.form.submit();
-    }
-
-    document.addEventListener('DOMContentLoaded', function(){
-        document.querySelectorAll('.status-select').forEach(function(s){
-            var val = s.value;
-            s.classList.add(val);
-        });
-    });
 </script>
 <?php include __DIR__ . '/confirm/confirm_delete_modal.php'; ?>

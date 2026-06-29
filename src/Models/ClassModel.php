@@ -107,6 +107,75 @@ class ClassModel
         return $created && $statement->rowCount() > 0;
     }
 
+    public function countAll(): int
+    {
+        return (int) $this->db->query('SELECT COUNT(*) FROM lop_hoc')->fetchColumn();
+    }
+
+    public function listPaginated(int $page, int $perPage): array
+    {
+        $offset = max(0, ($page - 1) * $perPage);
+        $statement = $this->db->prepare(
+            'SELECT lh.MA_LOP AS id,
+                    lh.TEN_LOP_VIET_TAT AS code,
+                    lh.TEN_LOP AS name,
+                    kbm.TEN_KHOA AS department,
+                    nk.TEN_NIEN_KHOA AS academic_year,
+                    nh.TEN_NGANH AS major,
+                    lh.SI_SO AS capacity,
+                    lh.TRANG_THAI_LH AS status
+             FROM lop_hoc lh
+             LEFT JOIN khoa_bo_mon kbm ON kbm.MA_KHOA = lh.MA_KHOA
+             LEFT JOIN nganh_hoc nh ON nh.MA_NGANH = lh.MA_NGANH
+             LEFT JOIN nien_khoa nk ON nk.MA_NIEN_KHOA = lh.MA_NIEN_KHOA
+             ORDER BY lh.MA_LOP DESC
+             LIMIT :limit OFFSET :offset'
+        );
+        $statement->bindValue('limit', $perPage, PDO::PARAM_INT);
+        $statement->bindValue('offset', $offset, PDO::PARAM_INT);
+        $statement->execute();
+
+        return $statement->fetchAll();
+    }
+
+    public function findById(int $id): ?array
+    {
+        $statement = $this->db->prepare(
+            'SELECT MA_LOP AS id,
+                    TEN_LOP_VIET_TAT AS code,
+                    TEN_LOP AS name,
+                    SI_SO AS capacity,
+                    TRANG_THAI_LH AS status
+             FROM lop_hoc
+             WHERE MA_LOP = :id
+             LIMIT 1'
+        );
+        $statement->execute(['id' => $id]);
+        $row = $statement->fetch();
+
+        return $row ?: null;
+    }
+
+    public function hasRelatedData(int $id): bool
+    {
+        if (!$this->tableHasColumn('sinh_vien', 'MA_LOP')) {
+            return false;
+        }
+
+        $statement = $this->db->prepare('SELECT 1 FROM sinh_vien WHERE MA_LOP = :id LIMIT 1');
+        $statement->execute(['id' => $id]);
+
+        return (bool) $statement->fetchColumn();
+    }
+
+    public function delete(int $id): bool
+    {
+        $statement = $this->db->prepare('DELETE FROM lop_hoc WHERE MA_LOP = :id');
+        $statement->execute(['id' => $id]);
+
+        return $statement->rowCount() > 0;
+    }
+
     public function isDuplicateException(Throwable $exception): bool
     {
         return $exception instanceof PDOException
@@ -129,6 +198,28 @@ class ClassModel
         $statement->execute(['id' => $id]);
 
         return (bool) $statement->fetchColumn();
+    }
+
+    private function tableHasColumn(string $table, string $column): bool
+    {
+        try {
+            $statement = $this->db->prepare(
+                'SELECT 1
+                 FROM information_schema.COLUMNS
+                 WHERE TABLE_SCHEMA = DATABASE()
+                   AND TABLE_NAME = :table
+                   AND COLUMN_NAME = :column
+                 LIMIT 1'
+            );
+            $statement->execute([
+                'table' => $table,
+                'column' => $column,
+            ]);
+
+            return (bool) $statement->fetchColumn();
+        } catch (Throwable) {
+            return false;
+        }
     }
 
     private function normalizeCode(string $code): string
