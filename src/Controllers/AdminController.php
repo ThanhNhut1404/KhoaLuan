@@ -93,7 +93,11 @@ if (in_array($page, ['create_student', 'list_students', 'edit_student', 'delete_
 
             $formData = $studentState['formData'];
             $errors = $studentState['errors'];
-            $classes = $studentState['classes'];
+            $classes = $studentState['classes'] ?? ($studentState['options']['classes'] ?? []);
+            $listKhoa = $studentState['listKhoa'] ?? [];
+            $listNganh = $studentState['listNganh'] ?? [];
+            $listNienKhoa = $studentState['listNienKhoa'] ?? [];
+            $listLop = $studentState['listLop'] ?? [];
             $statusOptions = $studentState['statusOptions'];
             $adminToast = $studentState['toast'];
         }
@@ -117,7 +121,11 @@ if (in_array($page, ['create_student', 'list_students', 'edit_student', 'delete_
 
             $formData = $studentState['formData'];
             $errors = $studentState['errors'];
-            $classes = $studentState['classes'];
+            $classes = $studentState['classes'] ?? ($studentState['options']['classes'] ?? []);
+            $listKhoa = $studentState['listKhoa'] ?? [];
+            $listNganh = $studentState['listNganh'] ?? [];
+            $listNienKhoa = $studentState['listNienKhoa'] ?? [];
+            $listLop = $studentState['listLop'] ?? [];
             $statusOptions = $studentState['statusOptions'];
             $adminToast = $studentState['toast'];
             $isEdit = true;

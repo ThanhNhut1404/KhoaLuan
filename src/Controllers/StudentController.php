@@ -101,11 +101,33 @@ class StudentController
             'page' => 'create_student',
             'formData' => $method === 'POST' ? $this->normalizeFormData($post) : [],
             'errors' => [],
-            'classes' => $this->safeClassOptions(),
+            'options' => $this->safeCreateOptions(),
             'statusOptions' => self::STATUS_OPTIONS,
             'toast' => null,
             'redirect' => null,
         ];
+
+        // Map options to DB-like keys so views can use MA_KHOA, TEN_KHOA, etc.
+        try {
+            $opts = $state['options'];
+            $state['listKhoa'] = array_map(fn($d) => ['MA_KHOA' => $d['id'] ?? '', 'TEN_KHOA' => $d['name'] ?? ''], $opts['departments'] ?? []);
+            $state['listNganh'] = array_map(fn($m) => [
+                'MA_NGANH' => $m['id'] ?? '',
+                'MA_KHOA' => $m['department_id'] ?? '',
+                'TEN_NGANH' => $m['name'] ?? '',
+            ], $opts['majors'] ?? []);
+            $state['listNienKhoa'] = array_map(fn($a) => ['MA_NIEN_KHOA' => $a['id'] ?? '', 'TEN_NIEN_KHOA' => $a['name'] ?? ''], $opts['academic_years'] ?? []);
+            $state['listLop'] = array_map(fn($c) => [
+                'MA_LOP' => $c['id'] ?? '',
+                'TEN_LOP' => $c['name'] ?? '',
+                'MA_KHOA' => $c['department_id'] ?? '',
+                'MA_NGANH' => $c['major_id'] ?? '',
+                'MA_NIEN_KHOA' => $c['year_id'] ?? '',
+            ], $opts['classes'] ?? []);
+        } catch (Throwable $e) {
+            // if mapping fails, ensure lists exist
+            $state['listKhoa'] = $state['listNganh'] = $state['listNienKhoa'] = $state['listLop'] = [];
+        }
 
         if ($method !== 'POST') {
             return $state;
@@ -118,16 +140,17 @@ class StudentController
 
         try {
             $created = $this->model->createStudent($state['formData']);
-            $state['toast'] = [
-                'type' => $created ? 'success' : 'error',
-                'message' => $created ? 'Tạo sinh viên thành công.' : 'Tạo sinh viên thất bại. Vui lòng thử lại.',
-            ];
-            if ($created) {
+            if (is_array($created) && ($created['created'] ?? false)) {
+                $state['toast'] = ['type' => 'success', 'message' => 'Tạo sinh viên thành công.'];
+                $state['createdMssv'] = $created['mssv'] ?? null;
+                $state['createdPassword'] = $created['password'] ?? null;
                 $state['redirect'] = '?page=list_students';
+            } else {
+                $state['toast'] = ['type' => 'error', 'message' => 'Tạo sinh viên thất bại. Vui lòng thử lại.'];
             }
         } catch (Throwable $exception) {
             error_log($exception->getMessage());
-            $state['toast'] = ['type' => 'error', 'message' => 'Có lỗi khi tạo sinh viên. Vui lòng thử lại.'];
+            $state['toast'] = ['type' => 'error', 'message' => 'Có lỗi khi tạo tài khoản: ' . $exception->getMessage()];
             if ($this->model->isConstraintException($exception)) {
                 $state['errors']['class_id'] = 'Lớp học không hợp lệ hoặc không tồn tại.';
             }
@@ -242,13 +265,37 @@ class StudentController
             return $this->model->loadCreateOptions();
         } catch (Throwable $exception) {
             error_log($exception->getMessage());
-            return ['classes' => []];
+            return ['departments' => [], 'majors' => [], 'academic_years' => [], 'classes' => []];
+        }
+    }
+
+    private function safeCreateOptions(): array
+    {
+        try {
+            return $this->model->loadCreateOptions();
+        } catch (Throwable $exception) {
+            error_log($exception->getMessage());
+            return ['departments' => [], 'majors' => [], 'academic_years' => [], 'classes' => []];
         }
     }
 
     private function normalizeFormData(array $data): array
     {
+        $addressLines = [
+            trim((string) ($data['address_line1'] ?? '')),
+            trim((string) ($data['address_line2'] ?? '')),
+            trim((string) ($data['address_line3'] ?? '')),
+            trim((string) ($data['address_line4'] ?? '')),
+        ];
+
+        $address = implode(', ', array_filter($addressLines, static fn(string $line): bool => $line !== ''));
+
         return [
+            'full_name' => trim((string) ($data['full_name'] ?? '')),
+            'department_id' => trim((string) ($data['department_id'] ?? '')),
+            'major_id' => trim((string) ($data['major_id'] ?? '')),
+            'academic_year_id' => trim((string) ($data['academic_year_id'] ?? '')),
+            'academic_year' => trim((string) ($data['academic_year_id'] ?? '')),
             'username' => trim((string) ($data['username'] ?? '')),
             'password' => $data['password'] ?? '',
             'class_id' => trim((string) ($data['class_id'] ?? '')),
@@ -256,7 +303,11 @@ class StudentController
             'gender' => trim((string) ($data['gender'] ?? '')),
             'email' => trim((string) ($data['email'] ?? '')),
             'phone' => trim((string) ($data['phone'] ?? '')),
-            'address' => trim((string) ($data['address'] ?? '')),
+            'address_line1' => $addressLines[0],
+            'address_line2' => $addressLines[1],
+            'address_line3' => $addressLines[2],
+            'address_line4' => $addressLines[3],
+            'address' => $address,
             'status' => trim((string) ($data['status'] ?? 'Đang học')),
         ];
     }
@@ -265,17 +316,27 @@ class StudentController
     {
         $errors = [];
 
-        if ($form['username'] === '') {
-            $errors['username'] = 'Vui lòng nhập tên đăng nhập.';
-        } elseif (!preg_match('/^[A-Za-z0-9_]{5,50}$/', $form['username'])) {
-            $errors['username'] = 'Tên đăng nhập chỉ gồm chữ cái, số, dấu gạch dưới và dài từ 5 đến 50 ký tự.';
-        } elseif ($this->model->usernameExists($form['username'])) {
-            $errors['username'] = 'Tên đăng nhập đã tồn tại.';
+        if ($form['full_name'] === '') {
+            $errors['full_name'] = 'Vui lòng nhập họ và tên.';
         }
 
-        if ($form['password'] === '') {
-            $errors['password'] = 'Vui lòng nhập mật khẩu.';
+        if ($form['department_id'] === '' || !ctype_digit($form['department_id'])) {
+            $errors['department_id'] = 'Vui lòng chọn khoa/bộ môn hợp lệ.';
         }
+
+        if ($form['major_id'] === '' || !ctype_digit($form['major_id'])) {
+            $errors['major_id'] = 'Vui lòng chọn ngành học hợp lệ.';
+        }
+
+        if ($form['academic_year_id'] === '' || !ctype_digit($form['academic_year_id'])) {
+            $errors['academic_year_id'] = 'Vui lòng chọn niên khóa hợp lệ.';
+        }
+
+        if ($form['full_name'] !== '' && strlen($form['full_name']) < 5) {
+            $errors['full_name'] = 'Họ và tên phải dài ít nhất 5 ký tự.';
+        }
+
+        // Username and password are generated automatically from MSSV and student full name.
 
         if ($form['birth_date'] === '') {
             $errors['birth_date'] = 'Vui lòng nhập ngày sinh.';
@@ -297,8 +358,17 @@ class StudentController
             $errors['phone'] = 'Vui lòng nhập số điện thoại.';
         }
 
-        if ($form['address'] === '') {
-            $errors['address'] = 'Vui lòng nhập địa chỉ.';
+        if ($form['address_line1'] === '') {
+            $errors['address_line1'] = 'Vui lòng nhập địa chỉ dòng 1.';
+        }
+        if ($form['address_line2'] === '') {
+            $errors['address_line2'] = 'Vui lòng nhập địa chỉ dòng 2.';
+        }
+        if ($form['address_line3'] === '') {
+            $errors['address_line3'] = 'Vui lòng nhập địa chỉ dòng 3.';
+        }
+        if ($form['address_line4'] === '') {
+            $errors['address_line4'] = 'Vui lòng nhập địa chỉ dòng 4.';
         }
 
         if ($form['class_id'] === '' || !ctype_digit($form['class_id'])) {

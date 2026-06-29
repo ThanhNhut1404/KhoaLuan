@@ -14,19 +14,39 @@ class StudentModel
 
     public function loadCreateOptions(): array
     {
-        $statement = $this->db->query(
+        $departments = $this->db->query(
+            'SELECT MA_KHOA AS id, TEN_KHOA AS name
+             FROM khoa_bo_mon
+             ORDER BY TEN_KHOA'
+        )->fetchAll();
+
+        $majors = $this->db->query(
+            'SELECT MA_NGANH AS id, MA_KHOA AS department_id, TEN_NGANH AS name
+             FROM nganh_hoc
+             ORDER BY TEN_NGANH'
+        )->fetchAll();
+
+        $academicYears = $this->db->query(
+            'SELECT MA_NIEN_KHOA AS id, TEN_NIEN_KHOA AS name
+             FROM nien_khoa
+             ORDER BY MA_NIEN_KHOA DESC'
+        )->fetchAll();
+
+        $classes = $this->db->query(
             'SELECT lh.MA_LOP AS id,
                     lh.TEN_LOP AS name,
                     lh.MA_KHOA AS department_id,
-                    lh.MA_NIEN_KHOA AS year_id,
-                    nk.TEN_NIEN_KHOA AS academic_year_name
+                    lh.MA_NGANH AS major_id,
+                    lh.MA_NIEN_KHOA AS year_id
              FROM lop_hoc lh
-             LEFT JOIN nien_khoa nk ON nk.MA_NIEN_KHOA = lh.MA_NIEN_KHOA
              ORDER BY lh.TEN_LOP'
-        );
+        )->fetchAll();
 
         return [
-            'classes' => $statement->fetchAll(),
+            'departments' => $departments,
+            'majors' => $majors,
+            'academic_years' => $academicYears,
+            'classes' => $classes,
         ];
     }
 
@@ -68,7 +88,7 @@ class StudentModel
                     sv.TEN_DANG_NHAP AS username,
                     sv.MSSV AS mssv,
                     sv.NGAY_SINH AS birth_date,
-                    sv.GIOI_TINH AS gender,
+                    sv.GIO_TINH AS gender,
                     sv.EMAIL_SV AS email,
                     sv.SO_DIEN_THOAI AS phone,
                     sv.DIA_CHI AS address,
@@ -89,6 +109,7 @@ class StudentModel
         $statement = $this->db->prepare(
             'SELECT lh.MA_LOP AS class_id,
                     lh.MA_KHOA AS department_id,
+                    lh.MA_NGANH AS major_id,
                     lh.MA_NIEN_KHOA AS year_id,
                     nk.TEN_NIEN_KHOA AS academic_year_name
              FROM lop_hoc lh
@@ -152,7 +173,7 @@ class StudentModel
         return (bool) $statement->fetchColumn();
     }
 
-    public function createStudent(array $data): bool
+    public function createStudent(array $data): array
     {
         $classId = (int) $data['class_id'];
         $classInfo = $this->findClassById($classId);
@@ -166,7 +187,10 @@ class StudentModel
         }
 
         $mssv = $this->generateMssv($classId, $classInfo);
-        $khoaHoc = $classInfo['academic_year_name'] ?? '';
+        $khoaHoc = $this->findAcademicYearNameById((int) ($data['academic_year_id'] ?? 0))
+            ?? trim($classInfo['academic_year_name'] ?? '');
+        $rawPassword = $this->generatePasswordFromName(trim($data['full_name'] ?? ''));
+        $hashedPassword = password_hash($rawPassword, PASSWORD_DEFAULT);
 
         $this->db->beginTransaction();
 
@@ -175,8 +199,8 @@ class StudentModel
                 'INSERT INTO nguoi_dung (TEN_DANG_NHAP, MAT_KHAU, TRANG_THAI_ND)
                  VALUES (:username, :password, :status)'
             )->execute([
-                'username' => trim($data['username']),
-                'password' => $data['password'],
+                'username' => $mssv,
+                'password' => $hashedPassword,
                 'status' => 'HOAT_DONG',
             ]);
 
@@ -184,30 +208,30 @@ class StudentModel
                 'INSERT INTO nguoi_dung_vai_tro (TEN_DANG_NHAP, MA_VAI_TRO)
                  VALUES (:username, :role_id)'
             )->execute([
-                'username' => trim($data['username']),
+                'username' => $mssv,
                 'role_id' => $roleId,
             ]);
 
             $this->db->prepare(
                 'INSERT INTO sinh_vien
-                 (MA_LOP, TEN_DANG_NHAP, MSSV, NGAY_SINH, GIOI_TINH, EMAIL_SV, SO_DIEN_THOAI, DIA_CHI, KHOA_HOC, TRANG_THAI_HOC_TAP)
-                 VALUES (:class_id, :username, :mssv, :birth_date, :gender, :email, :phone, :address, :academic_year, :status)'
+                 (MA_LOP, TEN_DANG_NHAP, MSSV, NGAY_SINH, GIO_TINH, EMAIL_SV, SO_DIEN_THOAI, DIA_CHI, KHOA_HOC, TRANG_THAI_HOC_TAP)
+                 VALUES (:class_id, :username, :mssv, :birth_date, :gender, :email, :phone, :address, :khoa_hoc, :status)'
             )->execute([
                 'class_id' => $classId,
-                'username' => trim($data['username']),
+                'username' => $mssv,
                 'mssv' => $mssv,
                 'birth_date' => $data['birth_date'],
                 'gender' => $data['gender'],
                 'email' => trim($data['email']),
                 'phone' => trim($data['phone']),
                 'address' => trim($data['address']),
-                'academic_year' => $khoaHoc,
+                'khoa_hoc' => $khoaHoc,
                 'status' => $data['status'],
             ]);
 
             $this->db->commit();
 
-            return true;
+            return ['created' => true, 'password' => $rawPassword, 'mssv' => $mssv];
         } catch (Throwable $exception) {
             if ($this->db->inTransaction()) {
                 $this->db->rollBack();
@@ -261,11 +285,11 @@ class StudentModel
                  SET MA_LOP = :class_id,
                      TEN_DANG_NHAP = :username,
                      NGAY_SINH = :birth_date,
-                     GIOI_TINH = :gender,
+                     GIO_TINH = :gender,
                      EMAIL_SV = :email,
                      SO_DIEN_THOAI = :phone,
                      DIA_CHI = :address,
-                     KHOA_HOC = :academic_year,
+                     KHOA_HOC = :khoa_hoc,
                      TRANG_THAI_HOC_TAP = :status
                  WHERE MA_SV = :id'
             );
@@ -278,7 +302,7 @@ class StudentModel
                 'email' => trim($data['email']),
                 'phone' => trim($data['phone']),
                 'address' => trim($data['address']),
-                'academic_year' => $classInfo['academic_year_name'] ?? '',
+                'khoa_hoc' => $classInfo['academic_year_name'] ?? '',
                 'status' => $data['status'],
                 'id' => $id,
             ]);
@@ -293,6 +317,25 @@ class StudentModel
 
             throw $exception;
         }
+    }
+
+    private function findAcademicYearNameById(int $academicYearId): ?string
+    {
+        if ($academicYearId < 1) {
+            return null;
+        }
+
+        $statement = $this->db->prepare(
+            'SELECT TEN_NIEN_KHOA
+             FROM nien_khoa
+             WHERE MA_NIEN_KHOA = :academic_year_id
+             LIMIT 1'
+        );
+        $statement->execute(['academic_year_id' => $academicYearId]);
+
+        $name = $statement->fetchColumn();
+
+        return $name === false ? null : (string) $name;
     }
 
     public function deleteStudent(int $id): bool
@@ -354,6 +397,15 @@ class StudentModel
         $nextId = $this->nextSequentialId($latestMssv);
 
         return $prefix . str_pad((string) $nextId, 3, '0', STR_PAD_LEFT);
+    }
+
+    private function generatePasswordFromName(string $fullName): string
+    {
+        $slug = preg_replace('/[^A-Za-z0-9]/', '', mb_strtolower($fullName));
+        if ($slug === '') {
+            $slug = 'user';
+        }
+        return $slug . '#tdu1234';
     }
 
     private function findLatestMssvByClass(int $classId, string $prefix): ?string

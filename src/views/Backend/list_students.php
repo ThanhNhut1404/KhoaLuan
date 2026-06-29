@@ -24,7 +24,6 @@ $paginationUrl = static function (int $pageNum): string {
         <div class="panel-header card-header">
             <div class="header-content">
                 <h2 class="panel-title">DANH SÁCH SINH VIÊN</h2>
-                <a href="?page=create_student" class="action-btn btn btn-primary">Tạo sinh viên</a>
             </div>
         </div>
 

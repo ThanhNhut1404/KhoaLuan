@@ -117,7 +117,7 @@
                 </svg>
             </a>
             <div class="nav-sub">
-                <a href="?page=create_account&role_name=SINH_VIEN" class="<?= ($currentPage === 'create_account' && ($_GET['role_name'] ?? '') === 'SINH_VIEN') ? 'active' : '' ?>"><span class="nav-text">Cấp tài khoản sinh viên</span></a>
+                <a href="/KhoaLuan/public/admin.php?page=create_student" class="<?= $currentPage === 'create_student' ? 'active' : '' ?>"><span class="nav-text">Tạo sinh viên</span></a>
                 <a href="?page=list_students" class="<?= $currentPage === 'list_students' ? 'active' : '' ?>"><span class="nav-text">Danh sách sinh viên</span></a>
             </div>
         </div>

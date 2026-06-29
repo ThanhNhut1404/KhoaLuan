@@ -1,7 +1,10 @@
 <?php
 $formData = $formData ?? [];
 $errors = $errors ?? [];
-$classes = $classes['classes'] ?? [];
+$listKhoa = $listKhoa ?? [];
+$listNganh = $listNganh ?? [];
+$listNienKhoa = $listNienKhoa ?? [];
+$listLop = $listLop ?? [];
 $statusOptions = $statusOptions ?? [
     ['value' => 'Đang học', 'label' => 'Đang học'],
     ['value' => 'Tạm ngừng', 'label' => 'Tạm ngừng'],
@@ -22,26 +25,51 @@ $error = static fn(string $key): string => '<span class="field-error' . (empty($
         <div class="panel-body card-body">
             <form method="post" action="/KhoaLuan/public/admin.php?page=create_student">
                 <div class="form-grid">
-                    <div class="form-field">
-                        <label class="field-label form-label" for="username">Tên đăng nhập <span class="required">*</span></label>
-                        <input id="username" name="username" class="field-input form-control" type="text" value="<?= $value('username') ?>" placeholder="Tên đăng nhập" />
-                        <?= $error('username') ?>
+                    <div class="form-field full-width">
+                        <label class="field-label form-label" for="full_name">Họ và tên <span class="required">*</span></label>
+                        <input id="full_name" name="full_name" class="field-input form-control" type="text" value="<?= $value('full_name') ?>" placeholder="Họ và tên" />
+                        <?= $error('full_name') ?>
                     </div>
 
                     <div class="form-field">
-                        <label class="field-label form-label" for="password">Mật khẩu <span class="required">*</span></label>
-                        <input id="password" name="password" class="field-input form-control" type="password" placeholder="Mật khẩu" />
-                        <?= $error('password') ?>
+                        <label class="field-label form-label" for="department_id">Khoa/Bộ môn <span class="required">*</span></label>
+                        <select id="department_id" name="department_id" class="field-input form-select">
+                            <option value="">-- Chọn khoa/bộ môn --</option>
+                            <?php foreach ($listKhoa as $khoa): ?>
+                                <option value="<?= htmlspecialchars($khoa['MA_KHOA']) ?>" <?= $selected('department_id', (string) $khoa['MA_KHOA']) ?>><?= htmlspecialchars($khoa['TEN_KHOA']) ?></option>
+                            <?php endforeach; ?>
+                        </select>
+                        <?= $error('department_id') ?>
+                    </div>
+
+                    <div class="form-field">
+                        <label class="field-label form-label" for="major_id">Ngành học <span class="required">*</span></label>
+                        <select id="major_id" name="major_id" class="field-input form-select">
+                            <option value="">-- Chọn ngành học --</option>
+                            <?php foreach ($listNganh as $nganh): ?>
+                                <option value="<?= htmlspecialchars($nganh['MA_NGANH']) ?>" data-ma-khoa="<?= htmlspecialchars($nganh['MA_KHOA']) ?>" <?= $selected('major_id', (string) $nganh['MA_NGANH']) ?>><?= htmlspecialchars($nganh['TEN_NGANH']) ?></option>
+                            <?php endforeach; ?>
+                        </select>
+                        <?= $error('major_id') ?>
+                    </div>
+
+                    <div class="form-field">
+                        <label class="field-label form-label" for="academic_year_id">Niên khóa <span class="required">*</span></label>
+                        <select id="academic_year_id" name="academic_year_id" class="field-input form-select">
+                            <option value="">-- Chọn niên khóa --</option>
+                            <?php foreach ($listNienKhoa as $nk): ?>
+                                <option value="<?= htmlspecialchars($nk['MA_NIEN_KHOA']) ?>" <?= $selected('academic_year_id', (string) $nk['MA_NIEN_KHOA']) ?>><?= htmlspecialchars($nk['TEN_NIEN_KHOA']) ?></option>
+                            <?php endforeach; ?>
+                        </select>
+                        <?= $error('academic_year_id') ?>
                     </div>
 
                     <div class="form-field">
                         <label class="field-label form-label" for="class_id">Lớp học <span class="required">*</span></label>
                         <select id="class_id" name="class_id" class="field-input form-select">
                             <option value="">-- Chọn lớp học --</option>
-                            <?php foreach ($classes as $class): ?>
-                                <option value="<?= htmlspecialchars($class['id']) ?>" <?= $selected('class_id', (string) $class['id']) ?>>
-                                    <?= htmlspecialchars($class['name']) ?>
-                                </option>
+                            <?php foreach ($listLop as $lop): ?>
+                                <option value="<?= htmlspecialchars($lop['MA_LOP']) ?>" data-ma-khoa="<?= htmlspecialchars($lop['MA_KHOA']) ?>" data-ma-nganh="<?= htmlspecialchars($lop['MA_NGANH']) ?>" data-ma-nien-khoa="<?= htmlspecialchars($lop['MA_NIEN_KHOA']) ?>" <?= $selected('class_id', (string) $lop['MA_LOP']) ?>><?= htmlspecialchars($lop['TEN_LOP']) ?></option>
                             <?php endforeach; ?>
                         </select>
                         <?= $error('class_id') ?>
@@ -76,18 +104,29 @@ $error = static fn(string $key): string => '<span class="field-error' . (empty($
                     </div>
 
                     <div class="form-field full-width">
-                        <label class="field-label form-label" for="address">Địa chỉ <span class="required">*</span></label>
-                        <input id="address" name="address" class="field-input form-control" type="text" value="<?= $value('address') ?>" placeholder="Địa chỉ" />
-                        <?= $error('address') ?>
+                        <label class="field-label form-label">Địa chỉ <span class="required">*</span></label>
+                        <label class="sub-label">Số nhà</label>
+                        <input id="address_line1" name="address_line1" class="field-input form-control" type="text" value="<?= $value('address_line1') ?>" placeholder="Số nhà" />
+                        <?= $error('address_line1') ?>
+
+                        <label class="sub-label">Ấp / Khóm / Đường</label>
+                        <input id="address_line2" name="address_line2" class="field-input form-control" type="text" value="<?= $value('address_line2') ?>" placeholder="Ấp / Khóm / Đường" />
+                        <?= $error('address_line2') ?>
+
+                        <label class="sub-label">Xã / Phường / Thị trấn</label>
+                        <input id="address_line3" name="address_line3" class="field-input form-control" type="text" value="<?= $value('address_line3') ?>" placeholder="Xã / Phường / Thị trấn" />
+                        <?= $error('address_line3') ?>
+
+                        <label class="sub-label">Quận / Huyện / Tỉnh / Thành phố</label>
+                        <input id="address_line4" name="address_line4" class="field-input form-control" type="text" value="<?= $value('address_line4') ?>" placeholder="Quận / Huyện / Tỉnh / Thành phố" />
+                        <?= $error('address_line4') ?>
                     </div>
 
                     <div class="form-field full-width">
                         <label class="field-label form-label" for="status">Trạng thái học tập</label>
                         <select id="status" name="status" class="field-input form-select">
                             <?php foreach ($statusOptions as $option): ?>
-                                <option value="<?= htmlspecialchars($option['value']) ?>" <?= $selected('status', $option['value']) ?>>
-                                    <?= htmlspecialchars($option['label']) ?>
-                                </option>
+                                <option value="<?= htmlspecialchars($option['value']) ?>" <?= $selected('status', $option['value']) ?>><?= htmlspecialchars($option['label']) ?></option>
                             <?php endforeach; ?>
                         </select>
                     </div>
@@ -99,7 +138,7 @@ $error = static fn(string $key): string => '<span class="field-error' . (empty($
                 </div>
             </form>
 
-            <p class="hint">MSSV sẽ được tạo tự động dựa trên mã khoa, mã niên khóa, mã lớp và số thứ tự.</p>
+            <p class="hint">MSSV sẽ được tạo tự động; mật khẩu sinh viên được sinh từ họ tên + <strong>#tdu1234</strong>.</p>
         </div>
     </div>
 </div>
