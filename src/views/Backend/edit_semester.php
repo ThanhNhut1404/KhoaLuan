@@ -16,8 +16,8 @@
         <div class="panel-body card-body">
             <form id="editSemesterForm" method="POST" action="?page=edit_semester&id=<?= $id ?>" novalidate>
                 <div class="form-grid">
-                    <div class="form-row row">
-                        <div class="form-field col-12 col-md-6">
+                    <div class="form-row">
+                        <div class="form-field">
                             <label class="field-label form-label" for="academic_year">
                                 Niên khóa <span class="required">*</span>
                             </label>
@@ -40,7 +40,7 @@
                             <span class="field-error<?= isset($errors['academic_year']) ? '' : ' is-empty' ?>"><?= isset($errors['academic_year']) ? htmlspecialchars($errors['academic_year']) : '&nbsp;' ?></span>
                         </div>
 
-                        <div class="form-field col-12 col-md-6">
+                        <div class="form-field">
                             <label class="field-label form-label" for="semester_name">
                                 Tên học kỳ <span class="required">*</span>
                             </label>
@@ -56,8 +56,8 @@
                         </div>
                     </div>
 
-                    <div class="form-row row">
-                        <div class="form-field col-12 col-md-6">
+                    <div class="form-row">
+                        <div class="form-field">
                             <label class="field-label form-label" for="start_date">
                                 Ngày bắt đầu <span class="required">*</span>
                             </label>
@@ -72,7 +72,7 @@
                             <span class="field-error<?= isset($errors['start_date']) ? '' : ' is-empty' ?>"><?= isset($errors['start_date']) ? htmlspecialchars($errors['start_date']) : '&nbsp;' ?></span>
                         </div>
 
-                        <div class="form-field col-12 col-md-6">
+                        <div class="form-field">
                             <label class="field-label form-label" for="end_date">
                                 Ngày kết thúc <span class="required">*</span>
                             </label>
@@ -88,8 +88,8 @@
                         </div>
                     </div>
 
-                    <div class="form-row row">
-                        <div class="form-field col-12 col-md-6">
+                    <div class="form-row">
+                        <div class="form-field">
                             <label class="field-label form-label" for="status">
                                 Trạng thái <span class="required">*</span>
                             </label>
@@ -113,11 +113,11 @@
                         </div>
                     </div>
 
-                    <div class="col-12" style="display: flex; justify-content: flex-end; gap: 12px; margin-top: 16px;">
-                        <a href="?page=list_semester" class="action-btn secondary cancel-btn btn btn-outline-secondary">
+                    <div class="form-actions">
+                        <a href="?page=list_semester" class="action-btn">
                             Hủy
                         </a>
-                        <button type="submit" class="action-btn primary save-change-btn btn btn-primary">
+                        <button type="submit" class="action-btn primary">
                             Lưu thay đổi
                         </button>
                     </div>
@@ -129,7 +129,28 @@
 
 <style>
     .edit-semester-page {
+        display: grid;
+        gap: 0;
         padding: 24px;
+    }
+
+    .page-header {
+        margin-bottom: 0;
+    }
+
+    .page-title {
+        font-size: 20px;
+        font-weight: 800;
+        color: #0f2a5a;
+        text-transform: none;
+        letter-spacing: 0.6px;
+        margin: 0 0 4px 0;
+    }
+
+    .page-subtitle {
+        font-size: 13px;
+        color: #6b7280;
+        margin: 0;
     }
 
     .page-panel {
@@ -151,22 +172,46 @@
         font-weight: 700;
         color: #0f2a5a;
         margin: 0;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .panel-title svg {
+        width: 18px;
+        height: 18px;
+        color: #0f2a5a;
+    }
+
+    .panel-body {
+        padding: 20px;
     }
 
     .form-grid {
-        display: grid;
+        display: flex;
+        flex-direction: column;
         gap: 0;
+        margin-bottom: 8px;
     }
 
     .form-row {
         display: grid;
-        gap: 14px;
-        margin-bottom: 14px;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        column-gap: 14px;
+        row-gap: 0;
+        margin: 0;
+    }
+
+    .form-row > .form-field {
+        width: auto;
+        max-width: none;
+        padding: 0;
     }
 
     .form-field {
-        display: grid;
-        gap: 3px;
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
         min-width: 0;
     }
 
@@ -174,25 +219,29 @@
         font-size: 12px;
         font-weight: 700;
         color: #0f2a5a;
+        text-transform: none;
+        letter-spacing: 0.4px;
         display: block;
     }
 
     .required {
         color: #dc2626;
+        font-weight: 700;
     }
 
     .field-input {
-        padding: 10px;
+        display: flex;
+        align-items: center;
+        padding: 8px 10px;
         border-radius: 10px;
         border: 1px solid #e5e7eb;
         background: #f9fafb;
         font-size: 13px;
         color: #1f2937;
         font-family: inherit;
-        transition: border-color 0.2s, box-shadow 0.2s;
         height: 40px;
         box-sizing: border-box;
-        width: 100%;
+        transition: border-color 0.2s, box-shadow 0.2s;
     }
 
     .field-input:focus {
@@ -202,14 +251,10 @@
         background: #ffffff;
     }
 
-    select.field-input {
-        cursor: pointer;
-        appearance: none;
-        background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%231f2937' stroke-width='2'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
-        background-repeat: no-repeat;
-        background-position: right 10px center;
-        background-size: 16px;
-        padding-right: 32px;
+    .field-hint {
+        font-size: 11px;
+        color: #9ca3af;
+        display: block;
     }
 
     .field-error {
@@ -218,10 +263,19 @@
         display: block;
         line-height: 1.2;
         min-height: 18px;
+        overflow-wrap: anywhere;
     }
 
     .field-error.is-empty {
         visibility: hidden;
+    }
+
+    .form-actions {
+        display: flex;
+        justify-content: flex-end;
+        gap: 12px;
+        padding-top: 16px;
+        border-top: 1px solid #e8ecf3;
     }
 
     .action-btn {
@@ -233,11 +287,12 @@
         font-size: 13px;
         font-weight: 700;
         cursor: pointer;
+        text-decoration: none;
         display: inline-flex;
         align-items: center;
         gap: 6px;
-        text-decoration: none;
         transition: all 0.2s;
+        white-space: nowrap;
     }
 
     .action-btn:hover {
@@ -249,15 +304,100 @@
         background: linear-gradient(180deg, #0f2a5a 0%, #0b1f45 100%);
         border-color: #0f2a5a;
         color: #ffffff;
+        font-weight: 700;
     }
 
     .action-btn.primary:hover {
-        background: linear-gradient(180deg, #1a3a6b 0%, #152d52 100%);
+        background: linear-gradient(180deg, #0d2449 0%, #091a3d 100%);
+        border-color: #0a1838;
     }
 
     @media (max-width: 768px) {
+        .edit-semester-page {
+            padding: 16px;
+        }
+
+        .form-grid {
+            gap: 0;
+        }
+
         .form-row {
             grid-template-columns: 1fr;
+            gap: 0;
+        }
+
+        .form-actions {
+            flex-direction: column-reverse;
+        }
+
+        .action-btn {
+            width: 100%;
+            justify-content: center;
         }
     }
 </style>
+
+<script>
+    document.getElementById('editSemesterForm')?.addEventListener('submit', function(e){
+        var form = this;
+        var submitButton = form.querySelector('button[type="submit"]');
+        var fields = {
+            academic_year: document.getElementById('academic_year'),
+            semester_name: document.getElementById('semester_name'),
+            start_date: document.getElementById('start_date'),
+            end_date: document.getElementById('end_date'),
+            status: document.getElementById('status')
+        };
+        var errors = {};
+
+        function setFieldError(name, message) {
+            var input = fields[name];
+            var error = input?.closest('.form-field')?.querySelector('.field-error');
+            if (!error) return;
+
+            error.textContent = message || '\u00a0';
+            error.classList.toggle('is-empty', !message);
+        }
+
+        Object.keys(fields).forEach(function(name) {
+            setFieldError(name, '');
+        });
+
+        if (!fields.academic_year.value.trim()) {
+            errors.academic_year = 'Vui lòng chọn niên khóa.';
+        }
+
+        if (!fields.semester_name.value.trim()) {
+            errors.semester_name = 'Vui lòng nhập tên học kỳ.';
+        }
+
+        if (!fields.start_date.value.trim()) {
+            errors.start_date = 'Vui lòng chọn ngày bắt đầu.';
+        }
+
+        if (!fields.end_date.value.trim()) {
+            errors.end_date = 'Vui lòng chọn ngày kết thúc.';
+        }
+
+        if (fields.start_date.value && fields.end_date.value && fields.start_date.value >= fields.end_date.value) {
+            errors.end_date = 'Ngày kết thúc phải sau ngày bắt đầu.';
+        }
+
+        if (!fields.status.value.trim()) {
+            errors.status = 'Vui lòng chọn trạng thái.';
+        }
+
+        Object.keys(errors).forEach(function(name) {
+            setFieldError(name, errors[name]);
+        });
+
+        if (Object.keys(errors).length > 0) {
+            e.preventDefault();
+            return false;
+        }
+
+        if (submitButton) {
+            submitButton.disabled = true;
+        }
+    });
+</script>
