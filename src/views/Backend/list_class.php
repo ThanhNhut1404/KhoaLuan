@@ -34,10 +34,10 @@
                                 <th class="col-stt">STT</th>
                                 <th class="col-code">MÃ LỚP</th>
                                 <th class="col-name">TÊN LỚP</th>
-                                <th class="col-department">KHOA</th>
+                                <th class="col-capacity">SĨ SỐ</th>
                                 <th class="col-year">NIÊN KHÓA</th>
                                 <th class="col-major">CHUYÊN NGÀNH</th>
-                                <th class="col-capacity">SĨ SỐ</th>
+                                <th class="col-department">KHOA</th>
                                 <th class="col-status">TRẠNG THÁI</th>
                                 <th class="col-action">THAO TÁC</th>
                             </tr>
@@ -52,10 +52,10 @@
                                     <td class="col-stt"><?= $stt ?></td>
                                     <td class="col-code"><?= htmlspecialchars($class['code'] ?? '', ENT_QUOTES, 'UTF-8') ?></td>
                                     <td class="col-name"><?= htmlspecialchars($class['name'] ?? '', ENT_QUOTES, 'UTF-8') ?></td>
-                                    <td class="col-department"><?= htmlspecialchars($class['department'] ?? '', ENT_QUOTES, 'UTF-8') ?></td>
+                                    <td class="col-capacity"><?= htmlspecialchars($class['capacity'] ?? '', ENT_QUOTES, 'UTF-8') ?></td>
                                     <td class="col-year"><?= htmlspecialchars($class['academic_year'] ?? '', ENT_QUOTES, 'UTF-8') ?></td>
                                     <td class="col-major"><?= htmlspecialchars($class['major'] ?? '', ENT_QUOTES, 'UTF-8') ?></td>
-                                    <td class="col-capacity"><?= htmlspecialchars($class['capacity'] ?? '', ENT_QUOTES, 'UTF-8') ?></td>
+                                    <td class="col-department"><?= htmlspecialchars($class['department'] ?? '', ENT_QUOTES, 'UTF-8') ?></td>
                                     <td class="col-status">
                                         <span class="status-badge status-<?= htmlspecialchars($class['status_class'] ?? 'unknown', ENT_QUOTES, 'UTF-8') ?>">
                                             <?= htmlspecialchars($class['status'] ?? '', ENT_QUOTES, 'UTF-8') ?>
@@ -240,7 +240,7 @@
     }
 
     .col-code {
-        width: 10%;
+        width: 8%;
         white-space: nowrap;
     }
 
@@ -248,14 +248,20 @@
         width: 18%;
     }
 
-    .col-department,
-    .col-year,
+    .col-department {
+        width: 20%;
+    }
+
+    .col-year {
+        width: 9%;
+    }
+
     .col-major {
-        width: 14%;
+        width: 13%;
     }
 
     .col-capacity {
-        width: 8%;
+        width: 6%;
         white-space: nowrap;
     }
 
