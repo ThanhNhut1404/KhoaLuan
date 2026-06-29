@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="vi">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -20,7 +21,9 @@
             --line: #e8ecf3;
         }
 
-        * { box-sizing: border-box; }
+        * {
+            box-sizing: border-box;
+        }
 
         body {
             margin: 0;
@@ -45,9 +48,14 @@
             transition: width 0.2s ease;
         }
 
-        .sidebar.collapsed { width: 86px; }
+        .sidebar.collapsed {
+            width: 86px;
+        }
 
-        .main { flex: 1; min-width: 0; }
+        .main {
+            flex: 1;
+            min-width: 0;
+        }
 
         .header {
             background: var(--card);
@@ -62,7 +70,9 @@
             z-index: 10;
         }
 
-        .content { padding: 4px 14px 22px; }
+        .content {
+            padding: 4px 14px 22px;
+        }
 
         .card.page-panel,
         .page-panel.card {
@@ -229,7 +239,7 @@
             --bs-gutter-y: 0;
         }
 
-        .form-grid.row > .form-field {
+        .form-grid.row>.form-field {
             width: auto;
             max-width: none;
             padding-left: 0;
@@ -310,9 +320,13 @@
             border: none;
         }
 
-        .header-search input::placeholder { color: #94a3b8; }
+        .header-search input::placeholder {
+            color: #94a3b8;
+        }
 
-        .header-search svg { color: #0f2a5a; }
+        .header-search svg {
+            color: #0f2a5a;
+        }
 
         .header-search button {
             border: none;
@@ -325,8 +339,17 @@
             cursor: pointer;
         }
 
-        .header-right { display: flex; align-items: center; gap: 10px; }
-        .header-title { font-weight: 700; letter-spacing: 0.3px; color: var(--brand); }
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .header-title {
+            font-weight: 700;
+            letter-spacing: 0.3px;
+            color: var(--brand);
+        }
 
         .header-icon-link {
             display: inline-flex;
@@ -343,9 +366,13 @@
             border: none;
         }
 
-        .header-icon-link svg { color: #0f2a5a; }
+        .header-icon-link svg {
+            color: #0f2a5a;
+        }
 
-        .header-icon-link:hover { background: #f1f5f9; }
+        .header-icon-link:hover {
+            background: #f1f5f9;
+        }
 
         .admin-user-btn {
             display: inline-flex;
@@ -361,7 +388,9 @@
             font-weight: 600;
         }
 
-        .admin-user-btn:hover { background: #f1f5f9; }
+        .admin-user-btn:hover {
+            background: #f1f5f9;
+        }
 
         .admin-user-btn.dropdown-toggle::after {
             display: none;
@@ -384,7 +413,10 @@
             stroke: currentColor;
         }
 
-        .user-menu { position: relative; }
+        .user-menu {
+            position: relative;
+        }
+
         .user-dropdown {
             position: absolute;
             right: 0;
@@ -399,7 +431,10 @@
             z-index: 20;
         }
 
-        .user-dropdown.open { display: block; }
+        .user-dropdown.open {
+            display: block;
+        }
+
         .user-dropdown a {
             display: block;
             padding: 10px 12px;
@@ -418,7 +453,9 @@
             stroke: currentColor;
         }
 
-        .user-dropdown a:hover { background: #f1f5f9; }
+        .user-dropdown a:hover {
+            background: #f1f5f9;
+        }
 
         .menu-divider {
             height: 1px;
@@ -438,7 +475,9 @@
             padding: 20px;
         }
 
-        .modal-overlay.active { display: flex; }
+        .modal-overlay.active {
+            display: flex;
+        }
 
         .modal-card {
             width: min(520px, 100%);
@@ -483,7 +522,9 @@
             justify-content: center;
         }
 
-        .modal-close:hover { background: #f1f5f9; }
+        .modal-close:hover {
+            background: #f1f5f9;
+        }
 
         .modal-body {
             padding: 18px;
@@ -499,7 +540,10 @@
             margin-bottom: 6px;
         }
 
-        .modal-field .req { color: #ef4444; margin-left: 4px; }
+        .modal-field .req {
+            color: #ef4444;
+            margin-left: 4px;
+        }
 
         .modal-error {
             color: #dc2626;
@@ -508,7 +552,9 @@
             margin-top: 6px;
         }
 
-        .modal-input-wrap { position: relative; }
+        .modal-input-wrap {
+            position: relative;
+        }
 
         .modal-field input {
             width: 100%;
@@ -547,11 +593,21 @@
             fill: none;
         }
 
-        .modal-toggle .eye-off { display: none; }
-        .modal-toggle.is-visible .eye-on { display: none; }
-        .modal-toggle.is-visible .eye-off { display: block; }
+        .modal-toggle .eye-off {
+            display: none;
+        }
 
-        .modal-actions { padding: 0 18px 18px; }
+        .modal-toggle.is-visible .eye-on {
+            display: none;
+        }
+
+        .modal-toggle.is-visible .eye-off {
+            display: block;
+        }
+
+        .modal-actions {
+            padding: 0 18px 18px;
+        }
 
         .modal-save {
             width: 100%;
@@ -561,12 +617,22 @@
             font-size: 14px;
             font-weight: 700;
             color: #ffffff;
-            background: linear-gradient(135deg, #0f2a5a, #0b1f45);
+            background: linear-gradient(180deg, #16a34a, #15803d);
             cursor: pointer;
-            box-shadow: 0 10px 24px rgba(15, 42, 90, 0.25);
+            box-shadow: 0 10px 24px rgba(22, 163, 74, 0.25);
+            transition: all 0.2s ease;
         }
 
-        .modal-save:hover { filter: brightness(0.96); }
+        .modal-save:hover {
+            background: linear-gradient(180deg, #15803d, #166534);
+            box-shadow: 0 14px 28px rgba(22, 163, 74, 0.35);
+            transform: translateY(-1px);
+        }
+
+        .modal-save:active {
+            transform: translateY(0);
+            box-shadow: 0 8px 18px rgba(22, 163, 74, 0.22);
+        }
 
         .admin-toast {
             position: fixed;
@@ -604,13 +670,27 @@
         }
 
         @keyframes toastIn {
-            from { transform: translateY(-8px); opacity: 0; }
-            to { transform: translateY(0); opacity: 1; }
+            from {
+                transform: translateY(-8px);
+                opacity: 0;
+            }
+
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
         }
 
         @keyframes modalIn {
-            from { transform: translateY(8px); opacity: 0; }
-            to { transform: translateY(0); opacity: 1; }
+            from {
+                transform: translateY(8px);
+                opacity: 0;
+            }
+
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
         }
 
         .sidebar .brand {
@@ -619,7 +699,7 @@
             gap: 8px;
             padding: 6px 8px;
             border-radius: 12px;
-            background: rgba(255,255,255,0.08);
+            background: rgba(255, 255, 255, 0.08);
             margin-bottom: 8px;
         }
 
@@ -631,7 +711,8 @@
         }
 
         /* Reset any extra spacing that might push the logo down */
-        .brand-text, .brand-title {
+        .brand-text,
+        .brand-title {
             padding: 0;
             margin: 0;
             height: auto;
@@ -654,7 +735,11 @@
             color: white;
         }
 
-        .nav { display: grid; gap: 1px; }
+        .nav {
+            display: grid;
+            gap: 1px;
+        }
+
         .nav a {
             color: #dbeafe;
             text-decoration: none;
@@ -673,9 +758,10 @@
             overflow: hidden;
             opacity: 0;
             transform: translateY(-8px);
-            transition: max-height 420ms cubic-bezier(.2,.8,.2,1), opacity 300ms ease, transform 360ms cubic-bezier(.2,.8,.2,1);
+            transition: max-height 420ms cubic-bezier(.2, .8, .2, 1), opacity 300ms ease, transform 360ms cubic-bezier(.2, .8, .2, 1);
             pointer-events: none;
-            display: block; /* keep layout but hidden via max-height/opacity */
+            display: block;
+            /* keep layout but hidden via max-height/opacity */
         }
 
         .nav-item.open .nav-sub {
@@ -686,6 +772,7 @@
             pointer-events: auto;
             display: block;
         }
+
         .nav-sub a {
             display: block;
             padding: 4px 10px;
@@ -697,8 +784,16 @@
             transition: background 0.15s ease, color 0.15s ease;
         }
 
-        .nav-sub a:hover { background: rgba(255,255,255,0.08); color: #ffffff; }
-        .nav a:hover { background: rgba(255,255,255,0.12); color: #ffffff; }
+        .nav-sub a:hover {
+            background: rgba(255, 255, 255, 0.08);
+            color: #ffffff;
+        }
+
+        .nav a:hover {
+            background: rgba(255, 255, 255, 0.12);
+            color: #ffffff;
+        }
+
         .nav-section {
             margin: 10px 0 4px;
             padding: 0 12px;
@@ -708,204 +803,237 @@
             letter-spacing: 0.12em;
             text-transform: uppercase;
         }
-        .nav a.active,
-        .nav-sub a.active { background: rgba(255,255,255,0.16); color: #ffffff; }
-        .nav-item { position: relative; }
-        .nav-item > a { display: flex; align-items: center; gap: 10px; }
-        .nav-caret { margin-left: auto; opacity: 0.8; transition: transform 0.2s ease; }
-        .nav-item.open .nav-caret { transform: rotate(180deg); }
-        .sidebar.collapsed .nav-sub { display: none; }
-        .nav .nav-text { white-space: nowrap; }
-        .sidebar.collapsed .nav-text,
-        .sidebar.collapsed .brand-text { display: none; }
 
-        .sidebar.collapsed .brand { justify-content: center; }
+        .nav a.active,
+        .nav-sub a.active {
+            background: rgba(255, 255, 255, 0.16);
+            color: #ffffff;
+        }
+
+        .nav-item {
+            position: relative;
+        }
+
+        .nav-item>a {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .nav-caret {
+            margin-left: auto;
+            opacity: 0.8;
+            transition: transform 0.2s ease;
+        }
+
+        .nav-item.open .nav-caret {
+            transform: rotate(180deg);
+        }
+
+        .sidebar.collapsed .nav-sub {
+            display: none;
+        }
+
+        .nav .nav-text {
+            white-space: nowrap;
+        }
+
+        .sidebar.collapsed .nav-text,
+        .sidebar.collapsed .brand-text {
+            display: none;
+        }
+
+        .sidebar.collapsed .brand {
+            justify-content: center;
+        }
     </style>
 </head>
+
 <body>
-<?php $activeToast = $adminToast ?? $changePasswordToast ?? null; ?>
-<?php if (!empty($activeToast)): ?>
-    <div class="admin-toast <?= htmlspecialchars($activeToast['type']) ?>">
-        <?= htmlspecialchars($activeToast['message']) ?>
-    </div>
-<?php endif; ?>
+    <?php $activeToast = $adminToast ?? $changePasswordToast ?? null; ?>
+    <?php if (!empty($activeToast)): ?>
+        <div class="admin-toast <?= htmlspecialchars($activeToast['type']) ?>">
+            <?= htmlspecialchars($activeToast['message']) ?>
+        </div>
+    <?php endif; ?>
 
-<div class="container admin-container container-fluid">
-    <?php include 'sidebar.php'; ?>
+    <div class="container admin-container container-fluid">
+        <?php include 'sidebar.php'; ?>
 
-    <div class="main">
-        <?php include 'header.php'; ?>
-        <div class="content">
-            <?php include $content; ?>
+        <div class="main">
+            <?php include 'header.php'; ?>
+            <div class="content">
+                <?php include $content; ?>
+            </div>
         </div>
     </div>
-</div>
 
-<style>
-    .content {
-        --select-arrow-default: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%231f2937' stroke-width='2'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
-        --select-arrow-green: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23065f46' stroke-width='2'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
-        --select-arrow-orange: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2392400e' stroke-width='2'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
-        --select-arrow-blue: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%231e40af' stroke-width='2'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
-        --select-arrow-red: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%237f1d1d' stroke-width='2'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
-        --select-arrow-gray: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%236b7280' stroke-width='2'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
-    }
-
-    .content select.field-input,
-    .content select.form-select:not(.status-select) {
-        appearance: none !important;
-        -webkit-appearance: none !important;
-        background-image: var(--select-arrow-default) !important;
-        background-position: right 12px center !important;
-        background-repeat: no-repeat !important;
-        background-size: 16px !important;
-        padding-right: 42px !important;
-    }
-
-    .content select.status-select {
-        appearance: none !important;
-        -webkit-appearance: none !important;
-        background-image: var(--select-arrow-default) !important;
-        background-position: right 10px center !important;
-        background-repeat: no-repeat !important;
-        background-size: 12px !important;
-        padding-right: 36px !important;
-    }
-
-    .content select.status-select.active {
-        background-image: var(--select-arrow-green), linear-gradient(90deg, #bbf7d0, #34d399) !important;
-        background-position: right 10px center, center !important;
-        background-repeat: no-repeat, repeat !important;
-        background-size: 12px, auto !important;
-    }
-
-    .content select.status-select.upcoming {
-        background-image: var(--select-arrow-orange), linear-gradient(90deg, #fde68a, #f59e0b) !important;
-        background-position: right 10px center, center !important;
-        background-repeat: no-repeat, repeat !important;
-        background-size: 12px, auto !important;
-    }
-
-    .content select.status-select.completed {
-        background-image: var(--select-arrow-blue), linear-gradient(90deg, #dbeafe, #bfdbfe) !important;
-        background-position: right 10px center, center !important;
-        background-repeat: no-repeat, repeat !important;
-        background-size: 12px, auto !important;
-    }
-
-    .content select.status-select.inactive {
-        background-image: var(--select-arrow-red), linear-gradient(90deg, #fed7d7, #f87171) !important;
-        background-position: right 10px center, center !important;
-        background-repeat: no-repeat, repeat !important;
-        background-size: 12px, auto !important;
-    }
-
-    .content select.status-select.unknown {
-        background-image: var(--select-arrow-gray) !important;
-        background-color: #f8f9fa !important;
-        background-position: right 10px center !important;
-        background-repeat: no-repeat !important;
-        background-size: 12px !important;
-    }
-</style>
-
-<?php include __DIR__ . '/change_password_modal.php'; ?>
-
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-<script>
-    (function(){
-        var toggle = document.getElementById('sidebarToggle');
-        var sidebar = document.querySelector('.sidebar');
-        var userBtn = document.getElementById('userMenuBtn');
-        var userMenu = document.getElementById('userMenu');
-        if (!toggle || !sidebar) return;
-
-        function closeSidebarSubmenus() {
-            document.querySelectorAll('.sidebar .nav-item.open').forEach(function(item) {
-                item.classList.remove('open');
-            });
+    <style>
+        .content {
+            --select-arrow-default: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%231f2937' stroke-width='2'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+            --select-arrow-green: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23065f46' stroke-width='2'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+            --select-arrow-orange: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2392400e' stroke-width='2'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+            --select-arrow-blue: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%231e40af' stroke-width='2'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+            --select-arrow-red: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%237f1d1d' stroke-width='2'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+            --select-arrow-gray: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%236b7280' stroke-width='2'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
         }
 
-        toggle.addEventListener('click', function(){
-            var isCollapsed = sidebar.classList.toggle('collapsed');
-            if (isCollapsed) {
-                closeSidebarSubmenus();
-            }
-        });
+        .content select.field-input,
+        .content select.form-select:not(.status-select) {
+            appearance: none !important;
+            -webkit-appearance: none !important;
+            background-image: var(--select-arrow-default) !important;
+            background-position: right 12px center !important;
+            background-repeat: no-repeat !important;
+            background-size: 16px !important;
+            padding-right: 42px !important;
+        }
 
-        // Accordion: only one nav-item open at a time
-        (function(){
-            var nav = document.querySelector('.sidebar .nav');
-            if(!nav) return;
+        .content select.status-select {
+            appearance: none !important;
+            -webkit-appearance: none !important;
+            background-image: var(--select-arrow-default) !important;
+            background-position: right 10px center !important;
+            background-repeat: no-repeat !important;
+            background-size: 12px !important;
+            padding-right: 36px !important;
+        }
 
-            var toggles = nav.querySelectorAll('.nav-item > a');
-            toggles.forEach(function(trigger){
-                var item = trigger.closest('.nav-item');
-                var submenu = item && item.querySelector('.nav-sub');
-                if(!item || !submenu) return;
+        .content select.status-select.active {
+            background-image: var(--select-arrow-green), linear-gradient(90deg, #bbf7d0, #34d399) !important;
+            background-position: right 10px center, center !important;
+            background-repeat: no-repeat, repeat !important;
+            background-size: 12px, auto !important;
+        }
 
-                trigger.addEventListener('click', function(e){
-                    e.preventDefault();
-                    var wasOpen = item.classList.contains('open');
+        .content select.status-select.upcoming {
+            background-image: var(--select-arrow-orange), linear-gradient(90deg, #fde68a, #f59e0b) !important;
+            background-position: right 10px center, center !important;
+            background-repeat: no-repeat, repeat !important;
+            background-size: 12px, auto !important;
+        }
 
-                    // close others
-                    nav.querySelectorAll('.nav-item.open').forEach(function(other){
-                        if(other !== item) other.classList.remove('open');
-                    });
+        .content select.status-select.completed {
+            background-image: var(--select-arrow-blue), linear-gradient(90deg, #dbeafe, #bfdbfe) !important;
+            background-position: right 10px center, center !important;
+            background-repeat: no-repeat, repeat !important;
+            background-size: 12px, auto !important;
+        }
 
-                    // toggle this one
-                    item.classList.toggle('open', !wasOpen);
+        .content select.status-select.inactive {
+            background-image: var(--select-arrow-red), linear-gradient(90deg, #fed7d7, #f87171) !important;
+            background-position: right 10px center, center !important;
+            background-repeat: no-repeat, repeat !important;
+            background-size: 12px, auto !important;
+        }
+
+        .content select.status-select.unknown {
+            background-image: var(--select-arrow-gray) !important;
+            background-color: #f8f9fa !important;
+            background-position: right 10px center !important;
+            background-repeat: no-repeat !important;
+            background-size: 12px !important;
+        }
+    </style>
+
+    <?php include __DIR__ . '/change_password_modal.php'; ?>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        (function() {
+            var toggle = document.getElementById('sidebarToggle');
+            var sidebar = document.querySelector('.sidebar');
+            var userBtn = document.getElementById('userMenuBtn');
+            var userMenu = document.getElementById('userMenu');
+            if (!toggle || !sidebar) return;
+
+            function closeSidebarSubmenus() {
+                document.querySelectorAll('.sidebar .nav-item.open').forEach(function(item) {
+                    item.classList.remove('open');
                 });
+            }
+
+            toggle.addEventListener('click', function() {
+                var isCollapsed = sidebar.classList.toggle('collapsed');
+                if (isCollapsed) {
+                    closeSidebarSubmenus();
+                }
             });
 
-            // open any parent that contains an active link
-            nav.querySelectorAll('.nav-item').forEach(function(it){
-                if(it.querySelector('a.active')) it.classList.add('open');
-            });
-        })();
+            // Accordion: only one nav-item open at a time
+            (function() {
+                var nav = document.querySelector('.sidebar .nav');
+                if (!nav) return;
 
-        if (userBtn && userMenu) {
-            userBtn.addEventListener('click', function(e){
-                e.stopPropagation();
-                var isOpen = userMenu.classList.toggle('open');
-                userBtn.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
-            });
+                var toggles = nav.querySelectorAll('.nav-item > a');
+                toggles.forEach(function(trigger) {
+                    var item = trigger.closest('.nav-item');
+                    var submenu = item && item.querySelector('.nav-sub');
+                    if (!item || !submenu) return;
 
-            document.addEventListener('click', function(){
-                userMenu.classList.remove('open');
-                userBtn.setAttribute('aria-expanded', 'false');
-            });
+                    trigger.addEventListener('click', function(e) {
+                        e.preventDefault();
+                        var wasOpen = item.classList.contains('open');
 
-            document.addEventListener('keydown', function(e){
-                if (e.key === 'Escape') {
+                        // close others
+                        nav.querySelectorAll('.nav-item.open').forEach(function(other) {
+                            if (other !== item) other.classList.remove('open');
+                        });
+
+                        // toggle this one
+                        item.classList.toggle('open', !wasOpen);
+                    });
+                });
+
+                // open any parent that contains an active link
+                nav.querySelectorAll('.nav-item').forEach(function(it) {
+                    if (it.querySelector('a.active')) it.classList.add('open');
+                });
+            })();
+
+            if (userBtn && userMenu) {
+                userBtn.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    var isOpen = userMenu.classList.toggle('open');
+                    userBtn.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+                });
+
+                document.addEventListener('click', function() {
                     userMenu.classList.remove('open');
                     userBtn.setAttribute('aria-expanded', 'false');
-                    closeAdminPasswordModal();
-                }
-            });
-        }
-    })();
+                });
 
-    (function(){
-        var toast = document.querySelector('.admin-toast');
-        if (!toast) return;
+                document.addEventListener('keydown', function(e) {
+                    if (e.key === 'Escape') {
+                        userMenu.classList.remove('open');
+                        userBtn.setAttribute('aria-expanded', 'false');
+                        closeAdminPasswordModal();
+                    }
+                });
+            }
+        })();
 
-        window.setTimeout(function() {
-            toast.classList.add('is-hiding');
+        (function() {
+            var toast = document.querySelector('.admin-toast');
+            if (!toast) return;
+
             window.setTimeout(function() {
-                if (toast && toast.parentNode) {
-                    toast.parentNode.removeChild(toast);
-                }
-            }, 220);
-        }, 3000);
-    })();
+                toast.classList.add('is-hiding');
+                window.setTimeout(function() {
+                    if (toast && toast.parentNode) {
+                        toast.parentNode.removeChild(toast);
+                    }
+                }, 220);
+            }, 3000);
+        })();
 
-    <?php if (!empty($redirectToAdminLogin)): ?>
-    window.setTimeout(function() {
-        window.location.href = '/KhoaLuan/public/admin.php?page=login';
-    }, 2000);
-    <?php endif; ?>
-</script>
+        <?php if (!empty($redirectToAdminLogin)): ?>
+            window.setTimeout(function() {
+                window.location.href = '/KhoaLuan/public/admin.php?page=login';
+            }, 2000);
+        <?php endif; ?>
+    </script>
 
 </body>
+
 </html>

@@ -154,7 +154,6 @@ if (in_array($page, ['create_student', 'list_students', 'edit_student', 'delete_
         if ($page === 'create_student' || $page === 'edit_student') {
             $formData = $_SERVER['REQUEST_METHOD'] === 'POST' ? $_POST : [];
             $errors = [];
-            $classes = [];
             $statusOptions = [
                 ['value' => 'Đang học', 'label' => 'Đang học'],
                 ['value' => 'Tạm ngừng', 'label' => 'Tạm ngừng'],
@@ -463,14 +462,18 @@ if (in_array($page, ['create_major', 'list_major', 'edit_major'], true)) {
     }
 }
 
-if (in_array($page, ['create_class', 'list_class'], true)) {
+if (in_array($page, ['create_class', 'list_class', 'edit_class'], true)) {
     try {
         $classController = new \KhoaLuan\QLDRL\Controllers\ClassController();
-        $classState = $page === 'create_class'
-            ? $classController->create($_POST, $_SERVER['REQUEST_METHOD'])
-            : $classController->listing($_POST, $_GET, $_SERVER['REQUEST_METHOD']);
+        if ($page === 'create_class') {
+            $classState = $classController->create($_POST, $_SERVER['REQUEST_METHOD']);
+        } elseif ($page === 'edit_class') {
+            $classState = $classController->editState((int) ($_GET['id'] ?? 0), $_POST, $_SERVER['REQUEST_METHOD']);
+        } else {
+            $classState = $classController->listing($_POST, $_GET, $_SERVER['REQUEST_METHOD']);
+        }
 
-        if ($page === 'create_class' && !empty($classState['redirect'])) {
+        if (in_array($page, ['create_class', 'edit_class'], true) && !empty($classState['redirect'])) {
             if (!empty($classState['toast'])) {
                 $_SESSION['message'] = $classState['toast']['message'] ?? '';
                 $_SESSION['message_type'] = $classState['toast']['type'] ?? 'info';
@@ -480,7 +483,7 @@ if (in_array($page, ['create_class', 'list_class'], true)) {
             exit;
         }
 
-        if ($page === 'create_class') {
+        if (in_array($page, ['create_class', 'edit_class'], true)) {
             $formData = $classState['formData'];
             $errors = $classState['errors'];
             $academic_years = $classState['academic_years'];
@@ -492,13 +495,16 @@ if (in_array($page, ['create_class', 'list_class'], true)) {
         if ($page === 'list_class') {
             $classes = $classState['classes'];
             $pagination = $classState['pagination'];
+            $filters = $classState['filters'] ?? [];
+            $academic_years = $classState['academic_years'] ?? [];
+            $statusOptions = $classState['statusOptions'] ?? [];
             $emptyMessage = $classState['emptyMessage'] ?? 'Chưa có lớp học nào.';
         }
         $adminToast = $classState['toast'] ?? null;
     } catch (\Throwable $e) {
         error_log($e->getMessage());
 
-        if ($page === 'create_class') {
+        if (in_array($page, ['create_class', 'edit_class'], true)) {
         $formData = $_SERVER['REQUEST_METHOD'] === 'POST' ? $_POST : [];
         $errors = [];
         $academic_years = [];
@@ -513,6 +519,9 @@ if (in_array($page, ['create_class', 'list_class'], true)) {
     }
         if ($page === 'list_class') {
             $classes = [];
+            $filters = [];
+            $academic_years = [];
+            $statusOptions = [];
             $pagination = ['current_page' => 1, 'total_items' => 0, 'items_per_page' => 10, 'total_pages' => 1, 'from' => 0, 'to' => 0];
             $emptyMessage = 'Chưa có lớp học nào.';
             $adminToast = ['type' => 'error', 'message' => 'Không thể tải danh sách lớp học.'];

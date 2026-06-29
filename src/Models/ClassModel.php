@@ -85,6 +85,23 @@ class ClassModel
         return (bool) $statement->fetchColumn();
     }
 
+    public function codeExistsExcept(string $code, int $excludeId): bool
+    {
+        $statement = $this->db->prepare(
+            'SELECT 1
+             FROM lop_hoc
+             WHERE UPPER(TRIM(TEN_LOP_VIET_TAT)) = :code
+               AND MA_LOP <> :exclude_id
+             LIMIT 1'
+        );
+        $statement->execute([
+            'code' => $this->normalizeCode($code),
+            'exclude_id' => $excludeId,
+        ]);
+
+        return (bool) $statement->fetchColumn();
+    }
+
     public function create(array $data): bool
     {
         $statement = $this->db->prepare(
@@ -110,6 +127,22 @@ class ClassModel
     public function countAll(): int
     {
         return (int) $this->db->query('SELECT COUNT(*) FROM lop_hoc')->fetchColumn();
+    }
+
+    public function countFiltered(string $keyword = '', array $filters = []): int
+    {
+        [$where, $params] = $this->filterClause($keyword, $filters);
+        $statement = $this->db->prepare(
+            'SELECT COUNT(*)
+             FROM lop_hoc lh
+             LEFT JOIN khoa_bo_mon kbm ON kbm.MA_KHOA = lh.MA_KHOA
+             LEFT JOIN nganh_hoc nh ON nh.MA_NGANH = lh.MA_NGANH
+             LEFT JOIN nien_khoa nk ON nk.MA_NIEN_KHOA = lh.MA_NIEN_KHOA'
+             . $where
+        );
+        $statement->execute($params);
+
+        return (int) $statement->fetchColumn();
     }
 
     public function listPaginated(int $page, int $perPage): array
@@ -138,14 +171,51 @@ class ClassModel
         return $statement->fetchAll();
     }
 
+    public function listFilteredPaginated(int $page, int $perPage, string $keyword = '', array $filters = []): array
+    {
+        $offset = max(0, ($page - 1) * $perPage);
+        [$where, $params] = $this->filterClause($keyword, $filters);
+        $statement = $this->db->prepare(
+            'SELECT lh.MA_LOP AS id,
+                    lh.TEN_LOP_VIET_TAT AS code,
+                    lh.TEN_LOP AS name,
+                    kbm.TEN_KHOA AS department,
+                    nk.TEN_NIEN_KHOA AS academic_year,
+                    nh.TEN_NGANH AS major,
+                    lh.SI_SO AS capacity,
+                    lh.TRANG_THAI_LH AS status
+             FROM lop_hoc lh
+             LEFT JOIN khoa_bo_mon kbm ON kbm.MA_KHOA = lh.MA_KHOA
+             LEFT JOIN nganh_hoc nh ON nh.MA_NGANH = lh.MA_NGANH
+             LEFT JOIN nien_khoa nk ON nk.MA_NIEN_KHOA = lh.MA_NIEN_KHOA'
+             . $where .
+            ' ORDER BY lh.MA_LOP DESC
+             LIMIT :limit OFFSET :offset'
+        );
+
+        foreach ($params as $name => $value) {
+            $statement->bindValue(':' . ltrim((string) $name, ':'), $value);
+        }
+
+        $statement->bindValue('limit', $perPage, PDO::PARAM_INT);
+        $statement->bindValue('offset', $offset, PDO::PARAM_INT);
+        $statement->execute();
+
+        return $statement->fetchAll();
+    }
+
     public function findById(int $id): ?array
     {
         $statement = $this->db->prepare(
             'SELECT MA_LOP AS id,
+                    MA_KHOA AS department_id,
+                    MA_NGANH AS major_id,
+                    MA_NIEN_KHOA AS academic_year_id,
                     TEN_LOP_VIET_TAT AS code,
                     TEN_LOP AS name,
                     SI_SO AS capacity,
-                    TRANG_THAI_LH AS status
+                    TRANG_THAI_LH AS status,
+                    GHI_CHU AS notes
              FROM lop_hoc
              WHERE MA_LOP = :id
              LIMIT 1'
@@ -154,6 +224,49 @@ class ClassModel
         $row = $statement->fetch();
 
         return $row ?: null;
+    }
+
+    public function update(int $id, array $data): bool
+    {
+        $statement = $this->db->prepare(
+            'UPDATE lop_hoc
+             SET MA_KHOA = :department_id,
+                 MA_NGANH = :major_id,
+                 MA_NIEN_KHOA = :academic_year_id,
+                 TEN_LOP = :name,
+                 TEN_LOP_VIET_TAT = :code,
+                 SI_SO = :capacity,
+                 TRANG_THAI_LH = :status,
+                 GHI_CHU = :notes
+             WHERE MA_LOP = :id'
+        );
+
+        return $statement->execute([
+            'id' => $id,
+            'department_id' => $data['department_id'],
+            'major_id' => $data['major_id'],
+            'academic_year_id' => $data['academic_year_id'],
+            'name' => $data['name'],
+            'code' => $data['code'],
+            'capacity' => $data['capacity'],
+            'status' => $data['status'],
+            'notes' => $data['notes'] === '' ? null : $data['notes'],
+        ]);
+    }
+
+    public function updateStatus(int $id, string $status): bool
+    {
+        $statement = $this->db->prepare(
+            'UPDATE lop_hoc
+             SET TRANG_THAI_LH = :status
+             WHERE MA_LOP = :id'
+        );
+        $statement->execute([
+            'id' => $id,
+            'status' => $status,
+        ]);
+
+        return $statement->rowCount() > 0;
     }
 
     public function hasRelatedData(int $id): bool
@@ -220,6 +333,41 @@ class ClassModel
         } catch (Throwable) {
             return false;
         }
+    }
+
+    private function filterClause(string $keyword, array $filters): array
+    {
+        $conditions = [];
+        $params = [];
+
+        $keyword = trim($keyword);
+        if ($keyword !== '') {
+            $textKeyword = function_exists('mb_strtolower') ? mb_strtolower($keyword, 'UTF-8') : strtolower($keyword);
+            $conditions[] = '(LOWER(lh.TEN_LOP_VIET_TAT) LIKE :keyword_code
+                OR LOWER(lh.TEN_LOP) LIKE :keyword_name
+                OR LOWER(kbm.TEN_KHOA) LIKE :keyword_department
+                OR LOWER(nh.TEN_NGANH) LIKE :keyword_major
+                OR LOWER(nk.TEN_NIEN_KHOA) LIKE :keyword_year)';
+            $params['keyword_code'] = '%' . $textKeyword . '%';
+            $params['keyword_name'] = '%' . $textKeyword . '%';
+            $params['keyword_department'] = '%' . $textKeyword . '%';
+            $params['keyword_major'] = '%' . $textKeyword . '%';
+            $params['keyword_year'] = '%' . $textKeyword . '%';
+        }
+
+        $academicYear = trim((string) ($filters['academic_year'] ?? ''));
+        if ($academicYear !== '' && ctype_digit($academicYear) && (int) $academicYear > 0) {
+            $conditions[] = 'lh.MA_NIEN_KHOA = :academic_year_id';
+            $params['academic_year_id'] = (int) $academicYear;
+        }
+
+        $status = trim((string) ($filters['status'] ?? ''));
+        if ($status !== '') {
+            $conditions[] = 'lh.TRANG_THAI_LH = :status';
+            $params['status'] = $status;
+        }
+
+        return [empty($conditions) ? '' : ' WHERE ' . implode(' AND ', $conditions), $params];
     }
 
     private function normalizeCode(string $code): string

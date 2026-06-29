@@ -115,8 +115,16 @@ class ClassController
     public function listing(array $data, array $query, string $method): array
     {
         $page = max(1, (int) ($query['page_num'] ?? 1));
+        $filters = [
+            'keyword' => $this->searchKeyword($query['keyword'] ?? $query['q'] ?? $query['search'] ?? ''),
+            'academic_year' => $this->positiveIdFilter($query['academic_year'] ?? ''),
+            'status' => $this->statusFilter($query['status'] ?? ''),
+        ];
         $state = [
             'classes' => [],
+            'filters' => $filters,
+            'academic_years' => $this->safeAcademicYears(),
+            'statusOptions' => self::STATUS_OPTIONS,
             'pagination' => [
                 'current_page' => $page,
                 'total_items' => 0,
@@ -129,19 +137,25 @@ class ClassController
             'toast' => null,
         ];
 
-        if ($method === 'POST' && ($data['action'] ?? '') === 'delete') {
-            $state['toast'] = $this->deleteFromList((int) ($data['id'] ?? 0));
+        if ($method === 'POST') {
+            $state['toast'] = $this->handleListAction($data);
         }
 
         try {
-            $totalItems = $this->model->countAll();
+            $hasFilters = $this->hasListFilters($filters);
+            $totalItems = $hasFilters
+                ? $this->model->countFiltered($filters['keyword'], $filters)
+                : $this->model->countAll();
             $totalPages = max(1, (int) ceil($totalItems / self::LIST_PER_PAGE));
             $currentPage = min(max(1, $page), $totalPages);
             $rows = $totalItems > 0
-                ? $this->model->listPaginated($currentPage, self::LIST_PER_PAGE)
+                ? ($hasFilters
+                    ? $this->model->listFilteredPaginated($currentPage, self::LIST_PER_PAGE, $filters['keyword'], $filters)
+                    : $this->model->listPaginated($currentPage, self::LIST_PER_PAGE))
                 : [];
 
             $state['classes'] = array_map(fn (array $class): array => $this->formatListRow($class), $rows);
+            $state['emptyMessage'] = $hasFilters ? 'Không có lớp học phù hợp.' : 'Chưa có lớp học nào.';
             $state['pagination'] = [
                 'current_page' => $currentPage,
                 'total_items' => $totalItems,
@@ -158,6 +172,137 @@ class ClassController
 
             return $state;
         }
+    }
+
+    public function editState(int $id, array $data, string $method): array
+    {
+        $state = [
+            'formData' => [],
+            'errors' => [],
+            'academic_years' => $this->safeAcademicYears(),
+            'departments' => $this->safeDepartments(),
+            'majors' => $this->safeMajors(),
+            'statusOptions' => self::STATUS_OPTIONS,
+            'toast' => null,
+            'redirect' => null,
+        ];
+
+        if ($id < 1) {
+            $state['toast'] = ['type' => 'error', 'message' => 'Lớp học không hợp lệ.'];
+            $state['redirect'] = '?page=list_class';
+            return $state;
+        }
+
+        if ($method === 'POST') {
+            $form = $this->formData($data);
+            $state['formData'] = $form;
+
+            try {
+                if ($this->model->findById($id) === null) {
+                    $state['toast'] = ['type' => 'error', 'message' => 'Lớp học không tồn tại hoặc đã bị xóa.'];
+                    $state['redirect'] = '?page=list_class';
+                    return $state;
+                }
+            } catch (Throwable $exception) {
+                error_log($exception->getMessage());
+                $state['toast'] = ['type' => 'error', 'message' => 'Không thể kiểm tra dữ liệu lớp học. Vui lòng thử lại.'];
+                return $state;
+            }
+
+            $state['errors'] = $this->validate($form);
+            if (!empty($state['errors'])) {
+                return $state;
+            }
+
+            $academicYearId = (int) $form['academic_year'];
+            $departmentId = (int) $form['department'];
+            $majorId = (int) $form['major'];
+
+            try {
+                if (!$this->model->academicYearExists($academicYearId)) {
+                    $state['errors']['academic_year'] = 'Vui lòng chọn niên khóa.';
+                    return $state;
+                }
+
+                if (!$this->model->departmentExists($departmentId)) {
+                    $state['errors']['department'] = 'Vui lòng chọn khoa.';
+                    return $state;
+                }
+
+                if (!$this->model->majorBelongsToDepartment($majorId, $departmentId)) {
+                    $state['errors']['major'] = 'Vui lòng chọn chuyên ngành.';
+                    return $state;
+                }
+
+                if ($this->model->codeExistsExcept($form['class_code'], $id)) {
+                    $state['errors']['class_code'] = 'Mã lớp học đã tồn tại.';
+                    return $state;
+                }
+
+                $updated = $this->model->update($id, [
+                    'department_id' => $departmentId,
+                    'major_id' => $majorId,
+                    'academic_year_id' => $academicYearId,
+                    'name' => $form['class_name'],
+                    'code' => $form['class_code'],
+                    'capacity' => (int) $form['capacity'],
+                    'status' => $form['status'],
+                    'notes' => $form['notes'],
+                ]);
+            } catch (Throwable $exception) {
+                error_log($exception->getMessage());
+
+                if ($this->model->isDuplicateException($exception)) {
+                    $state['errors']['class_code'] = 'Mã lớp học đã tồn tại.';
+                    return $state;
+                }
+
+                if ($this->model->isConstraintException($exception)) {
+                    $state['toast'] = ['type' => 'error', 'message' => 'Dữ liệu khoa, chuyên ngành hoặc niên khóa không hợp lệ.'];
+                    return $state;
+                }
+
+                $state['toast'] = ['type' => 'error', 'message' => 'Có lỗi khi cập nhật lớp học. Vui lòng thử lại.'];
+                return $state;
+            }
+
+            if ($updated) {
+                $state['toast'] = ['type' => 'success', 'message' => 'Cập nhật lớp học thành công.'];
+                $state['redirect'] = '?page=list_class';
+                return $state;
+            }
+
+            $state['toast'] = ['type' => 'error', 'message' => 'Cập nhật lớp học thất bại. Vui lòng thử lại.'];
+            return $state;
+        }
+
+        try {
+            $class = $this->model->findById($id);
+        } catch (Throwable $exception) {
+            error_log($exception->getMessage());
+            $state['toast'] = ['type' => 'error', 'message' => 'Có lỗi khi tải dữ liệu lớp học. Vui lòng thử lại.'];
+            $state['redirect'] = '?page=list_class';
+            return $state;
+        }
+
+        if ($class === null) {
+            $state['toast'] = ['type' => 'error', 'message' => 'Lớp học không tồn tại hoặc đã bị xóa.'];
+            $state['redirect'] = '?page=list_class';
+            return $state;
+        }
+
+        $state['formData'] = [
+            'class_code' => $class['code'] ?? '',
+            'class_name' => $class['name'] ?? '',
+            'academic_year' => (string) ($class['academic_year_id'] ?? ''),
+            'department' => (string) ($class['department_id'] ?? ''),
+            'major' => (string) ($class['major_id'] ?? ''),
+            'capacity' => (string) ($class['capacity'] ?? ''),
+            'status' => $class['status'] ?? '',
+            'notes' => $class['notes'] ?? '',
+        ];
+
+        return $state;
     }
 
     private function deleteFromList(int $id): array
@@ -189,6 +334,48 @@ class ClassController
         }
 
         return ['type' => 'success', 'message' => 'Xóa lớp học thành công.'];
+    }
+
+    private function handleListAction(array $data): ?array
+    {
+        if (($data['action'] ?? '') === 'delete') {
+            return $this->deleteFromList((int) ($data['id'] ?? 0));
+        }
+
+        if (!isset($data['status']) || !is_array($data['status'])) {
+            return null;
+        }
+
+        $statusValues = array_column(self::STATUS_OPTIONS, 'value');
+
+        foreach ($data['status'] as $id => $status) {
+            $id = (int) $id;
+            $status = trim((string) $status);
+
+            if ($id < 1 || !in_array($status, $statusValues, true)) {
+                return ['type' => 'error', 'message' => 'Vui lòng chọn trạng thái hợp lệ.'];
+            }
+
+            try {
+                $class = $this->model->findById($id);
+                if ($class === null) {
+                    return ['type' => 'error', 'message' => 'Lớp học không tồn tại hoặc đã bị xóa.'];
+                }
+
+                if ((string) ($class['status'] ?? '') === $status) {
+                    return ['type' => 'error', 'message' => 'Trạng thái mới trùng với trạng thái hiện tại.'];
+                }
+
+                if (!$this->model->updateStatus($id, $status)) {
+                    return ['type' => 'error', 'message' => 'Cập nhật trạng thái lớp học thất bại. Vui lòng thử lại.'];
+                }
+            } catch (Throwable $exception) {
+                error_log($exception->getMessage());
+                return ['type' => 'error', 'message' => 'Cập nhật trạng thái lớp học thất bại. Vui lòng thử lại.'];
+            }
+        }
+
+        return ['type' => 'success', 'message' => 'Cập nhật trạng thái lớp học thành công.'];
     }
 
     private function formatListRow(array $class): array
@@ -223,6 +410,32 @@ class ClassController
         $value = trim((string) ($value ?? ''));
 
         return $value === '' ? '--' : $value;
+    }
+
+    private function hasListFilters(array $filters): bool
+    {
+        foreach (['keyword', 'academic_year', 'status'] as $key) {
+            if (trim((string) ($filters[$key] ?? '')) !== '') {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    private function positiveIdFilter(mixed $value): string
+    {
+        $value = trim((string) $value);
+
+        return $value !== '' && ctype_digit($value) && (int) $value > 0 ? $value : '';
+    }
+
+    private function statusFilter(mixed $value): string
+    {
+        $value = trim((string) $value);
+        $statusValues = array_column(self::STATUS_OPTIONS, 'value');
+
+        return in_array($value, $statusValues, true) ? $value : '';
     }
 
     private function formData(array $data): array
@@ -317,5 +530,19 @@ class ClassController
     private function length(string $value): int
     {
         return function_exists('mb_strlen') ? mb_strlen($value, 'UTF-8') : strlen($value);
+    }
+
+    private function searchKeyword(mixed $value): string
+    {
+        $keyword = preg_replace('/\s+/u', ' ', trim((string) $value));
+        if ($keyword === '') {
+            return '';
+        }
+
+        if ($this->length($keyword) <= 100) {
+            return $keyword;
+        }
+
+        return function_exists('mb_substr') ? mb_substr($keyword, 0, 100, 'UTF-8') : substr($keyword, 0, 100);
     }
 }
