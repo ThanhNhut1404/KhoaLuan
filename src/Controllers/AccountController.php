@@ -16,9 +16,10 @@ class AccountController
 
     public function create(array $data, string $method): array
     {
+        $options = $this->accounts->loadCreateOptions();
         $state = [
-            'options' => $this->accounts->loadCreateOptions(),
-            'formData' => $method === 'POST' ? $data : [],
+            'options' => $options,
+            'formData' => $method === 'POST' ? $data : $this->buildInitialFormData($data, $options),
             'errors' => [],
             'toast' => null,
         ];
@@ -45,6 +46,33 @@ class AccountController
         }
 
         return $state;
+    }
+
+    private function buildInitialFormData(array $data, array $options): array
+    {
+        $formData = [];
+
+        if (!empty($data['role_id'])) {
+            $formData['role_id'] = $data['role_id'];
+        } elseif (!empty($data['role_name'])) {
+            $roleId = $this->getRoleIdByName($options['roles'], trim($data['role_name']));
+            if ($roleId !== null) {
+                $formData['role_id'] = $roleId;
+            }
+        }
+
+        return $formData;
+    }
+
+    private function getRoleIdByName(array $roles, string $roleName): ?string
+    {
+        foreach ($roles as $role) {
+            if ($role['TEN_VAI_TRO'] === $roleName) {
+                return (string) $role['MA_VAI_TRO'];
+            }
+        }
+
+        return null;
     }
 
     private function validate(array $data, ?array $role): array

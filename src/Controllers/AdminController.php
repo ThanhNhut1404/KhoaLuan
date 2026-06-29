@@ -68,12 +68,93 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $page === 'change_password') {
 
 if ($page === 'create_account') {
     $accountController = new \KhoaLuan\QLDRL\Controllers\AccountController();
-    $accountState = $accountController->create($_POST, $_SERVER['REQUEST_METHOD']);
+    $accountState = $accountController->create(array_merge($_GET, $_POST), $_SERVER['REQUEST_METHOD']);
 
     $createAccountOptions = $accountState['options'];
     $formData = $accountState['formData'];
     $errors = $accountState['errors'];
     $adminToast = $accountState['toast'];
+}
+
+if (in_array($page, ['create_student', 'list_students', 'edit_student', 'delete_student'], true)) {
+    try {
+        $studentController = new \KhoaLuan\QLDRL\Controllers\StudentController();
+        $studentState = $studentController->handle($page, $_POST, $_GET, $_SERVER['REQUEST_METHOD']);
+
+        if ($page === 'create_student') {
+            if (!empty($studentState['redirect'])) {
+                if (!empty($studentState['toast'])) {
+                    $_SESSION['message'] = $studentState['toast']['message'] ?? '';
+                    $_SESSION['message_type'] = $studentState['toast']['type'] ?? 'info';
+                }
+                header('Location: /KhoaLuan/public/' . ltrim($studentState['redirect'], '/'));
+                exit;
+            }
+
+            $formData = $studentState['formData'];
+            $errors = $studentState['errors'];
+            $classes = $studentState['classes'];
+            $statusOptions = $studentState['statusOptions'];
+            $adminToast = $studentState['toast'];
+        }
+
+        if ($page === 'list_students') {
+            $students = $studentState['students'];
+            $pagination = $studentState['pagination'];
+            $emptyMessage = $studentState['emptyMessage'] ?? 'Chưa có sinh viên nào.';
+            $adminToast = $studentState['toast'] ?? null;
+        }
+
+        if ($page === 'edit_student') {
+            if (!empty($studentState['redirect'])) {
+                if (!empty($studentState['toast'])) {
+                    $_SESSION['message'] = $studentState['toast']['message'] ?? '';
+                    $_SESSION['message_type'] = $studentState['toast']['type'] ?? 'info';
+                }
+                header('Location: /KhoaLuan/public/' . ltrim($studentState['redirect'], '/'));
+                exit;
+            }
+
+            $formData = $studentState['formData'];
+            $errors = $studentState['errors'];
+            $classes = $studentState['classes'];
+            $statusOptions = $studentState['statusOptions'];
+            $adminToast = $studentState['toast'];
+            $isEdit = true;
+        }
+
+        if ($page === 'delete_student') {
+            if (!empty($studentState['redirect'])) {
+                if (!empty($studentState['toast'])) {
+                    $_SESSION['message'] = $studentState['toast']['message'] ?? '';
+                    $_SESSION['message_type'] = $studentState['toast']['type'] ?? 'info';
+                }
+                header('Location: /KhoaLuan/public/' . ltrim($studentState['redirect'], '/'));
+                exit;
+            }
+        }
+    } catch (Throwable $e) {
+        error_log($e->getMessage());
+
+        if ($page === 'list_students') {
+            $students = [];
+            $pagination = ['current_page' => 1, 'total_items' => 0, 'items_per_page' => 10, 'total_pages' => 1, 'from' => 0, 'to' => 0];
+            $emptyMessage = 'Không thể tải danh sách sinh viên.';
+            $adminToast = ['type' => 'error', 'message' => 'Không thể tải danh sách sinh viên.'];
+        }
+
+        if ($page === 'create_student' || $page === 'edit_student') {
+            $formData = $_SERVER['REQUEST_METHOD'] === 'POST' ? $_POST : [];
+            $errors = [];
+            $classes = [];
+            $statusOptions = [
+                ['value' => 'Đang học', 'label' => 'Đang học'],
+                ['value' => 'Tạm ngừng', 'label' => 'Tạm ngừng'],
+                ['value' => 'Kết thúc', 'label' => 'Kết thúc'],
+            ];
+            $adminToast = ['type' => 'error', 'message' => 'Có lỗi khi xử lý yêu cầu sinh viên.'];
+        }
+    }
 }
 
 if (in_array($page, ['create_year', 'list_year', 'edit_year'], true)) {
