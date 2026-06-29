@@ -6,7 +6,7 @@ $adminRole = $adminSession['TEN_VAI_TRO'] ?? '';
 
 <?php
     $currentPage = $_GET['page'] ?? 'dashboard';
-    $searchablePages = ['list_khoa', 'list_major'];
+    $searchablePages = ['list_khoa', 'list_major', 'list_class'];
     $isHeaderSearchEnabled = in_array($currentPage, $searchablePages, true);
     $headerSearchValue = $isHeaderSearchEnabled
         ? trim((string) ($_GET['search'] ?? $_GET['keyword'] ?? $_GET['q'] ?? ''))
@@ -25,6 +25,16 @@ $adminRole = $adminSession['TEN_VAI_TRO'] ?? '';
 
     <form id="headerSearchForm" class="header-search" method="GET" action="/KhoaLuan/public/admin.php" data-search-enabled="<?= $isHeaderSearchEnabled ? '1' : '0' ?>" data-list-page="<?= htmlspecialchars($currentPage) ?>">
         <input type="hidden" name="page" value="<?= htmlspecialchars($currentPage) ?>" />
+        <?php if ($isHeaderSearchEnabled): ?>
+            <?php foreach ($_GET as $key => $value): ?>
+                <?php
+                    if (in_array((string) $key, ['page', 'search', 'keyword', 'q', 'page_num', 'department', 'major'], true) || is_array($value)) {
+                        continue;
+                    }
+                ?>
+                <input type="hidden" name="<?= htmlspecialchars((string) $key, ENT_QUOTES, 'UTF-8') ?>" value="<?= htmlspecialchars((string) $value, ENT_QUOTES, 'UTF-8') ?>" />
+            <?php endforeach; ?>
+        <?php endif; ?>
         <input id="headerSearchInput" type="text" name="search" class="form-control" placeholder="Tìm kiếm..." value="<?= htmlspecialchars($headerSearchValue) ?>" />
         <button type="submit" aria-label="Tìm kiếm">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
