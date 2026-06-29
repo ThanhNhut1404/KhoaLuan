@@ -97,6 +97,7 @@ if (in_array($page, ['create_year', 'list_year', 'edit_year'], true)) {
             $years = $academicYearState['years'];
             $statusOptions = $academicYearState['statusOptions'];
             $pagination = $academicYearState['pagination'];
+            $emptyMessage = $academicYearState['emptyMessage'] ?? 'Chưa có niên khóa nào.';
             $adminToast = $academicYearState['toast'] ?? null;
         }
 
@@ -142,6 +143,7 @@ if (in_array($page, ['create_year', 'list_year', 'edit_year'], true)) {
                 ['value' => 'Đã hoàn thành', 'label' => 'Đã hoàn thành'],
             ];
             $pagination = ['current_page' => 1, 'total_items' => 0, 'items_per_page' => 10, 'total_pages' => 1, 'from' => 0, 'to' => 0];
+            $emptyMessage = 'Chưa có niên khóa nào.';
             $adminToast = ['type' => 'error', 'message' => 'Không thể tải danh sách niên khóa.'];
         }
 
@@ -166,6 +168,7 @@ if (in_array($page, ['create_khoa', 'list_khoa', 'edit_khoa'], true)) {
         if ($page === 'list_khoa') {
             $khoas = $khoaState['khoas'];
             $pagination = $khoaState['pagination'];
+            $emptyMessage = $khoaState['emptyMessage'] ?? 'Chưa có khoa/bộ môn nào.';
             $adminToast = $khoaState['toast'] ?? null;
         }
 
@@ -191,16 +194,23 @@ if (in_array($page, ['create_khoa', 'list_khoa', 'edit_khoa'], true)) {
             $isEdit = true;
         }
     } catch (\Throwable $e) {
+        error_log($e->getMessage());
+
         if ($page === 'list_khoa') {
+            $searchKeyword = trim((string) ($_GET['search'] ?? $_GET['keyword'] ?? $_GET['q'] ?? ''));
             $khoas = [];
-            $pagination = ['current_page' => 1, 'total_items' => 0, 'items_per_page' => 10, 'total_pages' => 1];
-            $adminToast = ['type' => 'error', 'message' => 'Không thể tải danh sách khoa.'];
+            $pagination = ['current_page' => 1, 'total_items' => 0, 'items_per_page' => 10, 'total_pages' => 1, 'from' => 0, 'to' => 0];
+            $emptyMessage = $searchKeyword === '' ? 'Chưa có khoa/bộ môn nào.' : 'Không tìm thấy khoa/bộ môn phù hợp.';
+            $adminToast = [
+                'type' => 'error',
+                'message' => $searchKeyword === '' ? 'Không thể tải danh sách khoa.' : 'Đã xảy ra lỗi khi tìm kiếm. Vui lòng thử lại.',
+            ];
         }
 
         if ($page === 'create_khoa') {
             $formData = $_SERVER['REQUEST_METHOD'] === 'POST' ? $_POST : [];
             $errors = [];
-            $adminToast = ['type' => 'error', 'message' => 'Có lỗi khi xử lý yêu cầu tạo khoa.'];
+            $adminToast = ['type' => 'error', 'message' => 'Có lỗi khi tạo khoa.'];
         }
 
         if ($page === 'edit_khoa') {
@@ -275,6 +285,15 @@ if (in_array($page, ['create_major', 'list_major', 'edit_major'], true)) {
     }
 }
 
+
+if (empty($adminToast) && !empty($_SESSION['message'])) {
+    $adminToast = [
+        'type' => $_SESSION['message_type'] ?? 'info',
+        'message' => $_SESSION['message'],
+    ];
+}
+
+unset($_SESSION['message'], $_SESSION['message_type']);
 
 $content = $viewPath . $page . '.php';
 

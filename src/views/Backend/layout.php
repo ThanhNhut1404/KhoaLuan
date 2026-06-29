@@ -314,6 +314,17 @@
 
         .header-search svg { color: #0f2a5a; }
 
+        .header-search button {
+            border: none;
+            background: transparent;
+            color: #0f2a5a;
+            padding: 0;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+        }
+
         .header-right { display: flex; align-items: center; gap: 10px; }
         .header-title { font-weight: 700; letter-spacing: 0.3px; color: var(--brand); }
 

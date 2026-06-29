@@ -11,28 +11,22 @@
         </div>
 
         <div class="panel-body card-body">
-            <?php if (isset($adminToast) && $adminToast): ?>
-                <div class="alert alert-<?= htmlspecialchars($adminToast['type'] ?? 'info') ?>" style="margin-bottom:16px;padding:12px 14px;border-radius:8px;">
-                    <?= htmlspecialchars($adminToast['message'] ?? '') ?>
-                </div>
-            <?php endif; ?>
-
-            <form id="editKhoaForm" method="POST" action="?page=edit_khoa&ma=<?= urlencode($formData['ma_khoa'] ?? '') ?>">
+            <form id="editKhoaForm" method="POST" action="?page=edit_khoa&ma=<?= urlencode($formData['original_ma'] ?? '') ?>">
                 <div class="row g-3 g-md-4 year-form-row">
                     <div class="col-12 col-md-6 year-field">
                         <label class="field-label form-label" for="ma_khoa">
-                            Mã khoa <span class="required">*</span>
+                            Mã khoa/bộ môn <span class="required">*</span>
                         </label>
                         <input
                             type="text"
                             id="ma_khoa"
                             name="ma_khoa"
-                            class="field-input form-control"
-                            placeholder="Ví dụ: K001"
+                            class="field-input form-control<?= isset($errors['ma_khoa']) ? ' is-invalid' : '' ?>"
+                            placeholder="Ví dụ: CNTT"
                             value="<?= htmlspecialchars($formData['ma_khoa'] ?? '') ?>"
-                            readonly
+                            required
                         />
-                        <input type="hidden" name="original_ma" value="<?= htmlspecialchars($formData['ma_khoa'] ?? '') ?>" />
+                        <input type="hidden" name="original_ma" value="<?= htmlspecialchars($formData['original_ma'] ?? '') ?>" />
                         <?php if(isset($errors['ma_khoa'])): ?>
                             <div class="invalid-feedback"><?= htmlspecialchars($errors['ma_khoa']) ?></div>
                         <?php endif; ?>
@@ -40,7 +34,7 @@
 
                     <div class="col-12 col-md-6 year-field">
                         <label class="field-label form-label" for="ten_khoa">
-                            Tên khoa <span class="required">*</span>
+                            Tên khoa/bộ môn <span class="required">*</span>
                         </label>
                         <input
                             type="text"
@@ -58,7 +52,7 @@
 
                     <div class="col-12 col-md-6 year-field">
                         <label class="field-label form-label" for="email_khoa">
-                            Email khoa
+                            Email 
                         </label>
                         <input
                             type="email"
@@ -245,3 +239,12 @@
         }
     }
 </style>
+
+<script>
+    document.getElementById('editKhoaForm')?.addEventListener('submit', function() {
+        var maKhoa = document.getElementById('ma_khoa');
+        if (maKhoa) {
+            maKhoa.value = maKhoa.value.trim().toUpperCase();
+        }
+    });
+</script>

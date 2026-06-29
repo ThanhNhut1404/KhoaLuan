@@ -13,6 +13,14 @@
         'from' => empty($years) ? 0 : 1,
         'to' => count($years),
     ];
+    $emptyMessage = $emptyMessage ?? 'Chưa có niên khóa nào.';
+    $paginationUrl = static function (int $pageNum): string {
+        $params = $_GET;
+        $params['page'] = 'list_year';
+        $params['page_num'] = $pageNum;
+
+        return '?' . http_build_query($params);
+    };
 
     $statusClass = function (string $label): string {
         return match ($label) {
@@ -38,7 +46,7 @@
                     <svg width="48" height="48" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                         <path d="M9 13h6M9 17h3M5 21h14a2 2 0 0 0 2-2V5a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
                     </svg>
-                    <h3>Chưa có niên khóa nào.</h3>
+                    <h3><?= htmlspecialchars($emptyMessage) ?></h3>
                 </div>
             <?php else: ?>
                 <div class="table-responsive">
@@ -117,39 +125,47 @@
                     <div class="pagination-info">
                         Hiển thị <?= (int) $pagination['from'] ?> - <?= (int) $pagination['to'] ?> của <?= (int) $pagination['total_items'] ?> niên khóa
                     </div>
-                    <?php if ($pagination['total_pages'] > 1): ?>
-                        <nav class="pagination-nav" aria-label="Pagination">
-                            <ul class="pagination mb-0">
+                    <nav class="pagination-nav" aria-label="Pagination">
+                        <ul class="pagination mb-0">
                             <?php if ($pagination['current_page'] > 1): ?>
                                 <li class="page-item">
-                                <a href="?page=list_year&page_num=<?= $pagination['current_page'] - 1 ?>" class="pagination-btn prev page-link" aria-label="Trang trước">
-                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                        <path d="M15 19l-7-7 7-7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
-                                    </svg>
-                                </a>
+                                    <a href="<?= htmlspecialchars($paginationUrl(1)) ?>" class="pagination-btn page-link" aria-label="Trang đầu">&lt;&lt;</a>
+                                </li>
+                                <li class="page-item">
+                                    <a href="<?= htmlspecialchars($paginationUrl($pagination['current_page'] - 1)) ?>" class="pagination-btn prev page-link" aria-label="Trang trước">&lt;</a>
+                                </li>
+                            <?php else: ?>
+                                <li class="page-item disabled">
+                                    <span class="pagination-btn page-link" aria-disabled="true">&lt;&lt;</span>
+                                </li>
+                                <li class="page-item disabled">
+                                    <span class="pagination-btn prev page-link" aria-disabled="true">&lt;</span>
                                 </li>
                             <?php endif; ?>
 
                             <?php for ($i = 1; $i <= $pagination['total_pages']; $i++): ?>
                                 <li class="page-item <?= $i === $pagination['current_page'] ? 'active' : '' ?>">
-                                <a href="?page=list_year&page_num=<?= $i ?>" class="pagination-btn page-link">
-                                    <?= $i ?>
-                                </a>
+                                    <a href="<?= htmlspecialchars($paginationUrl($i)) ?>" class="pagination-btn page-link"><?= $i ?></a>
                                 </li>
                             <?php endfor; ?>
 
                             <?php if ($pagination['current_page'] < $pagination['total_pages']): ?>
                                 <li class="page-item">
-                                <a href="?page=list_year&page_num=<?= $pagination['current_page'] + 1 ?>" class="pagination-btn next page-link" aria-label="Trang sau">
-                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                        <path d="M9 5l7 7-7 7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
-                                    </svg>
-                                </a>
+                                    <a href="<?= htmlspecialchars($paginationUrl($pagination['current_page'] + 1)) ?>" class="pagination-btn next page-link" aria-label="Trang sau">&gt;</a>
+                                </li>
+                                <li class="page-item">
+                                    <a href="<?= htmlspecialchars($paginationUrl($pagination['total_pages'])) ?>" class="pagination-btn page-link" aria-label="Trang cuối">&gt;&gt;</a>
+                                </li>
+                            <?php else: ?>
+                                <li class="page-item disabled">
+                                    <span class="pagination-btn next page-link" aria-disabled="true">&gt;</span>
+                                </li>
+                                <li class="page-item disabled">
+                                    <span class="pagination-btn page-link" aria-disabled="true">&gt;&gt;</span>
                                 </li>
                             <?php endif; ?>
-                            </ul>
-                        </nav>
-                    <?php endif; ?>
+                        </ul>
+                    </nav>
                 </div>
             <?php endif; ?>
         </div>
@@ -166,7 +182,7 @@
         <div class="modal-body">
             <p class="confirm-text">Bạn có chắc chắn muốn xóa niên khóa này không?</p>
         </div>
-        <form id="yearDeleteForm" method="POST" class="modal-actions modal-footer">
+        <form id="yearDeleteForm" method="POST" action="<?= htmlspecialchars($_SERVER['REQUEST_URI'] ?? '?page=list_year') ?>" class="modal-actions modal-footer">
             <input type="hidden" name="action" value="delete" />
             <input type="hidden" name="year_id" id="deleteYearId" value="" />
             <button class="action-btn secondary cancel-btn btn btn-outline-secondary" type="button" onclick="hideYearDeleteConfirm()">Hủy</button>
@@ -380,6 +396,14 @@
         background: linear-gradient(180deg, #0f2a5a 0%, #0b1f45 100%);
         border-color: #0f2a5a;
         color: #ffffff;
+    }
+
+    .page-item.disabled .pagination-btn {
+        opacity: 0.45;
+        cursor: not-allowed;
+        pointer-events: none;
+        background: #f9fafb;
+        color: #9ca3af;
     }
 
     .pagination-btn.prev,

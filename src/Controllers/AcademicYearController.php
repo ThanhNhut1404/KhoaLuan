@@ -82,9 +82,14 @@ class AcademicYearController
     public function listing(array $data, array $query, string $method): array
     {
         $page = max(1, (int) ($query['page_num'] ?? 1));
+        $filters = [
+            'keyword' => trim($query['keyword'] ?? $query['q'] ?? $query['search'] ?? ''),
+        ];
         $state = [
             'years' => [],
             'statusOptions' => $this->years->getListStatusOptions(),
+            'filters' => $filters,
+            'emptyMessage' => 'Chưa có niên khóa nào.',
             'pagination' => [
                 'current_page' => $page,
                 'total_items' => 0,
@@ -100,7 +105,7 @@ class AcademicYearController
             $state['toast'] = $this->handleListAction($data, $state['statusOptions']);
         }
 
-        return $this->loadListState($state, $page);
+        return $this->loadListState($state, $page, $filters);
     }
 
     public function canEdit(int $id): array
@@ -338,17 +343,24 @@ class AcademicYearController
         return $errors;
     }
 
-    private function loadListState(array $state, int $requestedPage): array
+    private function loadListState(array $state, int $requestedPage, array $filters = []): array
     {
-        $totalItems = $this->years->countAll();
+        $keyword = trim((string) ($filters['keyword'] ?? ''));
+        $hasFilters = $keyword !== '';
+        $totalItems = $hasFilters ? $this->years->countFiltered($keyword) : $this->years->countAll();
         $totalPages = max(1, (int) ceil($totalItems / self::LIST_PER_PAGE));
         $currentPage = min(max(1, $requestedPage), $totalPages);
-        $years = $totalItems > 0 ? $this->years->listPaginated($currentPage, self::LIST_PER_PAGE) : [];
+        $years = $totalItems > 0
+            ? ($hasFilters
+                ? $this->years->listFilteredPaginated($currentPage, self::LIST_PER_PAGE, $keyword)
+                : $this->years->listPaginated($currentPage, self::LIST_PER_PAGE))
+            : [];
 
         $state['years'] = array_map(
             fn (array $year): array => $this->formatListRow($year, $state['statusOptions']),
             $years
         );
+        $state['emptyMessage'] = $hasFilters ? 'Không tìm thấy niên khóa phù hợp.' : 'Chưa có niên khóa nào.';
         $state['pagination'] = [
             'current_page' => $currentPage,
             'total_items' => $totalItems,

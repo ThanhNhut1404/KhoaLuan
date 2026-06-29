@@ -109,7 +109,7 @@
                                     <td class="col-action">
                                         <div class="action-group">
                                             <button class="action-btn edit btn btn-outline-primary" title="Chỉnh sửa" onclick="editAccount(<?= $a['id'] ?>)">✎</button>
-                                            <button class="action-btn delete btn btn-danger" title="Xóa" onclick="showDeleteConfirm(<?= $a['id'] ?>, 'tài khoản')">🗑</button>
+                                            <button class="action-btn delete btn btn-danger" title="Xóa" onclick="showDeleteConfirm(<?= $a['id'] ?>, 'tài khoản', <?= htmlspecialchars(json_encode((string) ($a['full_name'] ?? ''), JSON_UNESCAPED_UNICODE | JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP), ENT_QUOTES, 'UTF-8') ?>)">🗑</button>
                                         </div>
                                     </td>
                                 </tr>

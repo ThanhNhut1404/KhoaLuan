@@ -4,6 +4,13 @@ $adminName = $adminSession['TEN_DANG_NHAP'] ?? 'Admin';
 $adminRole = $adminSession['TEN_VAI_TRO'] ?? '';
 ?>
 
+<?php
+    $currentPage = $_GET['page'] ?? 'dashboard';
+    $headerSearchValue = $currentPage === 'list_khoa'
+        ? trim((string) ($_GET['search'] ?? $_GET['keyword'] ?? $_GET['q'] ?? ''))
+        : '';
+?>
+
 <div class="header navbar">
     <div class="d-flex align-items-center gap-3">
         <button id="sidebarToggle" class="icon-btn btn btn-outline-secondary" type="button" aria-label="Thu gọn menu">
@@ -14,12 +21,15 @@ $adminRole = $adminSession['TEN_VAI_TRO'] ?? '';
         <!-- header logo removed per design: logo now shown in sidebar -->
     </div>
 
-    <div class="header-search">
-        <input type="text" class="form-control" placeholder="Tìm kiếm..." />
+    <form id="headerSearchForm" class="header-search" method="GET" action="/KhoaLuan/public/admin.php" data-search-enabled="<?= $currentPage === 'list_khoa' ? '1' : '0' ?>">
+        <input type="hidden" name="page" value="<?= htmlspecialchars($currentPage) ?>" />
+        <input id="headerSearchInput" type="text" name="search" class="form-control" placeholder="Tìm kiếm..." value="<?= htmlspecialchars($headerSearchValue) ?>" />
+        <button type="submit" aria-label="Tìm kiếm">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
             <path d="M11 19a8 8 0 1 0 0-16 8 8 0 0 0 0 16Zm10 2-4.35-4.35" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
         </svg>
-    </div>
+        </button>
+    </form>
 
     <div class="header-right">
         <a class="header-icon-link btn btn-light" href="#" aria-label="Thông báo">
@@ -71,3 +81,37 @@ $adminRole = $adminSession['TEN_VAI_TRO'] ?? '';
         </div>
     </div>
 </div>
+
+<script>
+    (function() {
+        var form = document.getElementById('headerSearchForm');
+        var input = document.getElementById('headerSearchInput');
+        if (!form || !input) return;
+
+        var listUrl = '/KhoaLuan/public/admin.php?page=list_khoa';
+        var params = new URLSearchParams(window.location.search);
+        var hasSearchQuery = params.has('search') || params.has('keyword') || params.has('q');
+
+        function resetKhoaList() {
+            window.location.href = listUrl;
+        }
+
+        form.addEventListener('submit', function(event) {
+            if (form.dataset.searchEnabled !== '1') {
+                event.preventDefault();
+                return;
+            }
+
+            if (input.value.trim() === '') {
+                event.preventDefault();
+                resetKhoaList();
+            }
+        });
+
+        input.addEventListener('input', function() {
+            if (form.dataset.searchEnabled === '1' && hasSearchQuery && input.value.trim() === '') {
+                resetKhoaList();
+            }
+        });
+    })();
+</script>

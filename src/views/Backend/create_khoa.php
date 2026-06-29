@@ -11,7 +11,7 @@
         </div>
 
         <div class="panel-body card-body">
-            <form id="createKhoaForm" method="POST" action="<?= isset($isEdit) && $isEdit ? '?page=edit_khoa&ma=' . urlencode($formData['ma_khoa'] ?? '') : '?page=create_khoa' ?>">
+            <form id="createKhoaForm" method="POST" action="<?= isset($isEdit) && $isEdit ? '?page=edit_khoa&ma=' . urlencode($formData['original_ma'] ?? '') : '?page=create_khoa' ?>" novalidate>
                 <div class="form-grid">
                     <div class="form-row row">
                         <div class="form-field col-12 col-md-6">
@@ -22,13 +22,12 @@
                                 id="ma_khoa"
                                 name="ma_khoa"
                                 class="field-input form-control"
-                                placeholder="Ví dụ: K001"
+                                placeholder="Ví dụ: CNTT"
                                 value="<?= htmlspecialchars($formData['ma_khoa'] ?? '') ?>"
-                                <?= isset($isEdit) && $isEdit ? 'readonly' : '' ?>
                                 required
                             />
                             <?php if (isset($isEdit) && $isEdit): ?>
-                                <input type="hidden" name="original_ma" value="<?= htmlspecialchars($formData['ma_khoa'] ?? '') ?>" />
+                                <input type="hidden" name="original_ma" value="<?= htmlspecialchars($formData['original_ma'] ?? '') ?>" />
                             <?php endif; ?>
                             <span class="field-error<?= isset($errors['ma_khoa']) ? '' : ' is-empty' ?>"><?= isset($errors['ma_khoa']) ? htmlspecialchars($errors['ma_khoa']) : '&nbsp;' ?></span>
                         </div>
@@ -304,27 +303,62 @@
 
 <script>
     document.getElementById('createKhoaForm')?.addEventListener('submit', function(e){
-        var ma = document.getElementById('ma_khoa').value.trim();
-        var ten = document.getElementById('ten_khoa').value.trim();
-        var email = document.getElementById('email_khoa').value.trim();
-        var phone = document.getElementById('so_dien_thoai_khoa').value.trim();
+        var form = this;
+        var submitButton = form.querySelector('button[type="submit"]');
+        var fields = {
+            ma_khoa: document.getElementById('ma_khoa'),
+            ten_khoa: document.getElementById('ten_khoa'),
+            email_khoa: document.getElementById('email_khoa'),
+            so_dien_thoai_khoa: document.getElementById('so_dien_thoai_khoa')
+        };
+        var errors = {};
+        var ma = fields.ma_khoa.value.trim();
+        var ten = fields.ten_khoa.value.trim();
+        var email = fields.email_khoa.value.trim();
+        var phone = fields.so_dien_thoai_khoa.value.trim();
 
-        if (!ma || !ten) {
-            e.preventDefault();
-            alert('Vui lòng nhập Mã khoa và Tên khoa.');
-            return false;
+        function setFieldError(name, message) {
+            var input = fields[name];
+            var error = input?.closest('.form-field')?.querySelector('.field-error');
+            if (!error) return;
+
+            error.textContent = message || '\u00a0';
+            error.classList.toggle('is-empty', !message);
+        }
+
+        Object.keys(fields).forEach(function(name) {
+            setFieldError(name, '');
+        });
+
+        if (!ma) {
+            errors.ma_khoa = 'Vui lòng nhập mã khoa.';
+        }
+
+        if (!ten) {
+            errors.ten_khoa = 'Vui lòng nhập tên khoa.';
         }
 
         if (email && !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) {
+            errors.email_khoa = 'Email không hợp lệ (ví dụ: tennguoidung@truonghoc.edu.vn).';
+        }
+
+        if (phone && !/^0\d{9,10}$/.test(phone)) {
+            errors.so_dien_thoai_khoa = 'Số điện thoại không hợp lệ. Vui lòng nhập đúng định dạng (chỉ gồm số, 10–11 chữ số và phải bắt đầu bằng số 0).';
+        }
+
+        Object.keys(errors).forEach(function(name) {
+            setFieldError(name, errors[name]);
+        });
+
+        if (Object.keys(errors).length > 0) {
             e.preventDefault();
-            alert('Email không hợp lệ.');
             return false;
         }
 
-        if (phone && !/^[0-9+\-\s]{6,20}$/.test(phone)) {
-            e.preventDefault();
-            alert('Số điện thoại không hợp lệ.');
-            return false;
+        fields.ma_khoa.value = ma.toUpperCase();
+
+        if (submitButton) {
+            submitButton.disabled = true;
         }
     });
 </script>

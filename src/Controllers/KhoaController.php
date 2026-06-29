@@ -4,6 +4,7 @@ namespace KhoaLuan\QLDRL\Controllers;
 
 use KhoaLuan\QLDRL\Config\Database;
 use KhoaLuan\QLDRL\Models\KhoaModel;
+use Throwable;
 
 class KhoaController
 {
@@ -27,53 +28,46 @@ class KhoaController
         }
 
         $form = [
-            'ma_khoa' => trim($data['ma_khoa'] ?? ''),
+            'ma_khoa' => $this->normalizeAbbreviation($data['ma_khoa'] ?? ''),
             'ten_khoa' => trim($data['ten_khoa'] ?? ''),
             'email_khoa' => trim($data['email_khoa'] ?? ''),
             'so_dien_thoai_khoa' => trim($data['so_dien_thoai_khoa'] ?? ''),
         ];
 
-        // Validation
-        if ($form['ma_khoa'] === '') {
-            $state['errors']['ma_khoa'] = 'Vui lòng nhập mã khoa.';
-        }
-
-        if ($form['ten_khoa'] === '') {
-            $state['errors']['ten_khoa'] = 'Vui lòng nhập tên khoa.';
-        }
-
-        if ($form['email_khoa'] !== '' && !filter_var($form['email_khoa'], FILTER_VALIDATE_EMAIL)) {
-            $state['errors']['email_khoa'] = 'Email không hợp lệ.';
-        }
-
-        if ($form['so_dien_thoai_khoa'] !== '' && !preg_match('/^[0-9+\-\s]{6,20}$/', $form['so_dien_thoai_khoa'])) {
-            $state['errors']['so_dien_thoai_khoa'] = 'Số điện thoại không hợp lệ.';
-        }
+        $state['formData'] = $form;
+        $state['errors'] = $this->validateCreate($form);
 
         if (!empty($state['errors'])) {
-            $state['formData'] = $form;
             return $state;
         }
 
-        // Duplication checks
-        if ($this->model->existsByMa($form['ma_khoa'])) {
+        if ($this->model->existsByAbbreviation($form['ma_khoa'])) {
             $state['errors']['ma_khoa'] = 'Mã khoa đã tồn tại.';
-            $state['formData'] = $form;
             return $state;
         }
 
         if ($this->model->existsByName($form['ten_khoa'])) {
             $state['errors']['ten_khoa'] = 'Tên khoa đã tồn tại.';
-            $state['formData'] = $form;
             return $state;
         }
 
         try {
             $created = $this->model->create($form);
-        } catch (\Throwable $e) {
+        } catch (Throwable $e) {
+            error_log($e->getMessage());
+
             if ($this->model->isDuplicateException($e)) {
-                $state['errors']['ma_khoa'] = 'Mã hoặc tên khoa trùng lặp.';
-                $state['formData'] = $form;
+                if ($this->model->existsByAbbreviation($form['ma_khoa'])) {
+                    $state['errors']['ma_khoa'] = 'Mã khoa đã tồn tại.';
+                    return $state;
+                }
+
+                if ($this->model->existsByName($form['ten_khoa'])) {
+                    $state['errors']['ten_khoa'] = 'Tên khoa đã tồn tại.';
+                    return $state;
+                }
+
+                $state['toast'] = ['type' => 'error', 'message' => 'Tạo khoa thất bại.'];
                 return $state;
             }
 
@@ -97,18 +91,28 @@ class KhoaController
     {
         $page = max(1, (int) ($query['page_num'] ?? 1));
         $perPage = 10;
-        $totalItems = $this->model->countAll();
+        $keyword = trim($query['keyword'] ?? $query['q'] ?? $query['search'] ?? '');
+        $totalItems = $keyword === '' ? $this->model->countAll() : $this->model->countFiltered($keyword);
         $totalPages = max(1, (int) ceil($totalItems / $perPage));
+        $page = min($page, $totalPages);
 
-        $khoas = $totalItems > 0 ? $this->model->listPaginated($page, $perPage) : [];
+        $khoas = $totalItems > 0
+            ? ($keyword === ''
+                ? $this->model->listPaginated($page, $perPage)
+                : $this->model->listFilteredPaginated($page, $perPage, $keyword))
+            : [];
 
         return [
             'khoas' => $khoas,
+            'filters' => ['keyword' => $keyword],
+            'emptyMessage' => $keyword === '' ? 'Chưa có khoa/bộ môn nào.' : 'Không tìm thấy khoa/bộ môn phù hợp.',
             'pagination' => [
                 'current_page' => $page,
                 'total_items' => $totalItems,
                 'items_per_page' => $perPage,
                 'total_pages' => $totalPages,
+                'from' => $totalItems === 0 ? 0 : (($page - 1) * $perPage) + 1,
+                'to' => min($totalItems, $page * $perPage),
             ],
         ];
     }
@@ -123,10 +127,16 @@ class KhoaController
         $state = ['errors' => [], 'toast' => null, 'updated' => false];
 
         $form = [
+            'ma_khoa' => $this->normalizeAbbreviation($data['ma_khoa'] ?? ''),
             'ten_khoa' => trim($data['ten_khoa'] ?? ''),
             'email_khoa' => trim($data['email_khoa'] ?? ''),
             'so_dien_thoai_khoa' => trim($data['so_dien_thoai_khoa'] ?? ''),
         ];
+
+        if ($form['ma_khoa'] === '') {
+            $state['errors']['ma_khoa'] = 'Vui lòng nhập mã khoa.';
+            return $state;
+        }
 
         if ($form['ten_khoa'] === '') {
             $state['errors']['ten_khoa'] = 'Vui lòng nhập tên khoa.';
@@ -138,6 +148,11 @@ class KhoaController
             return $state;
         }
 
+        if ($this->model->existsByAbbreviationExceptMa($form['ma_khoa'], $originalMa)) {
+            $state['errors']['ma_khoa'] = 'Mã khoa đã tồn tại.';
+            return $state;
+        }
+
         try {
             $updated = $this->model->update($originalMa, $form);
             $state['updated'] = $updated;
@@ -145,7 +160,8 @@ class KhoaController
                 'type' => $updated ? 'success' : 'error',
                 'message' => $updated ? 'Cập nhật khoa thành công.' : 'Không có thay đổi nào được thực hiện.',
             ];
-        } catch (\Throwable $e) {
+        } catch (Throwable $e) {
+            error_log($e->getMessage());
             $state['toast'] = ['type' => 'error', 'message' => 'Có lỗi khi cập nhật khoa.'];
         }
 
@@ -157,16 +173,19 @@ class KhoaController
         try {
             $deleted = $this->model->deleteByMa($ma);
             return ['success' => $deleted, 'message' => $deleted ? 'Xóa khoa thành công.' : 'Xóa thất bại.'];
-        } catch (\Throwable $e) {
+        } catch (Throwable $e) {
+            error_log($e->getMessage());
             return ['success' => false, 'message' => 'Có lỗi khi xóa khoa.'];
         }
     }
 
     public function listState(array $data, array $query, string $method): array
     {
-        $state = ['khoas' => [], 'pagination' => [], 'toast' => null];
+        $state = ['khoas' => [], 'pagination' => [], 'toast' => null, 'filters' => [], 'emptyMessage' => 'Chưa có khoa/bộ môn nào.'];
         $page = max(1, (int) ($query['page_num'] ?? 1));
         $perPage = 10;
+        $keyword = trim($query['keyword'] ?? $query['q'] ?? $query['search'] ?? '');
+        $state['filters'] = ['keyword' => $keyword];
 
         if ($method === 'POST') {
             $action = $data['action'] ?? '';
@@ -176,17 +195,42 @@ class KhoaController
             }
         }
 
-        $totalItems = $this->model->countAll();
-        $totalPages = max(1, (int) ceil($totalItems / $perPage));
-        $page = min($page, $totalPages);
+        try {
+            $totalItems = $keyword === '' ? $this->model->countAll() : $this->model->countFiltered($keyword);
+            $totalPages = max(1, (int) ceil($totalItems / $perPage));
+            $page = min($page, $totalPages);
 
-        $state['khoas'] = $totalItems > 0 ? $this->model->listPaginated($page, $perPage) : [];
-        $state['pagination'] = [
-            'current_page' => $page,
-            'total_items' => $totalItems,
-            'items_per_page' => $perPage,
-            'total_pages' => $totalPages,
-        ];
+            $state['khoas'] = $totalItems > 0
+                ? ($keyword === ''
+                    ? $this->model->listPaginated($page, $perPage)
+                    : $this->model->listFilteredPaginated($page, $perPage, $keyword))
+                : [];
+            $state['emptyMessage'] = $keyword === '' ? 'Chưa có khoa/bộ môn nào.' : 'Không tìm thấy khoa/bộ môn phù hợp.';
+            $state['pagination'] = [
+                'current_page' => $page,
+                'total_items' => $totalItems,
+                'items_per_page' => $perPage,
+                'total_pages' => $totalPages,
+                'from' => $totalItems === 0 ? 0 : (($page - 1) * $perPage) + 1,
+                'to' => min($totalItems, $page * $perPage),
+            ];
+        } catch (Throwable $e) {
+            error_log($e->getMessage());
+            $state['khoas'] = [];
+            $state['emptyMessage'] = $keyword === '' ? 'Chưa có khoa/bộ môn nào.' : 'Không tìm thấy khoa/bộ môn phù hợp.';
+            $state['pagination'] = [
+                'current_page' => 1,
+                'total_items' => 0,
+                'items_per_page' => $perPage,
+                'total_pages' => 1,
+                'from' => 0,
+                'to' => 0,
+            ];
+            $state['toast'] = [
+                'type' => 'error',
+                'message' => $keyword === '' ? 'Không thể tải danh sách khoa.' : 'Đã xảy ra lỗi khi tìm kiếm. Vui lòng thử lại.',
+            ];
+        }
 
         return $state;
     }
@@ -213,7 +257,13 @@ class KhoaController
             $updateState = $this->update($originalMa, $data);
             $state['errors'] = $updateState['errors'] ?? [];
             $state['toast'] = $updateState['toast'] ?? null;
-            $state['formData'] = $data;
+            $state['formData'] = [
+                'original_ma' => $originalMa,
+                'ma_khoa' => $this->normalizeAbbreviation($data['ma_khoa'] ?? ''),
+                'ten_khoa' => trim($data['ten_khoa'] ?? ''),
+                'email_khoa' => trim($data['email_khoa'] ?? ''),
+                'so_dien_thoai_khoa' => trim($data['so_dien_thoai_khoa'] ?? ''),
+            ];
 
             if (!empty($updateState['updated'])) {
                 $state['redirect'] = '?page=list_khoa';
@@ -230,7 +280,8 @@ class KhoaController
         }
 
         $state['formData'] = [
-            'ma_khoa' => $found['ma'],
+            'original_ma' => $found['ma'],
+            'ma_khoa' => $found['ten_viet_tat'],
             'ten_khoa' => $found['ten'],
             'email_khoa' => $found['email'],
             'so_dien_thoai_khoa' => $found['phone'],
@@ -263,5 +314,35 @@ class KhoaController
         }
 
         return ['page' => $page, 'formData' => [], 'errors' => [], 'toast' => null, 'khoas' => [], 'pagination' => [], 'redirect' => null, 'isEdit' => false];
+    }
+
+    private function validateCreate(array $form): array
+    {
+        $errors = [];
+
+        if ($form['ma_khoa'] === '') {
+            $errors['ma_khoa'] = 'Vui lòng nhập mã khoa.';
+        }
+
+        if ($form['ten_khoa'] === '') {
+            $errors['ten_khoa'] = 'Vui lòng nhập tên khoa.';
+        }
+
+        if ($form['email_khoa'] !== '' && !filter_var($form['email_khoa'], FILTER_VALIDATE_EMAIL)) {
+            $errors['email_khoa'] = 'Email không hợp lệ (ví dụ: tennguoidung@truonghoc.edu.vn).';
+        }
+
+        if ($form['so_dien_thoai_khoa'] !== '' && !preg_match('/^0\d{9,10}$/', $form['so_dien_thoai_khoa'])) {
+            $errors['so_dien_thoai_khoa'] = 'Số điện thoại không hợp lệ. Vui lòng nhập đúng định dạng (chỉ gồm số, 10–11 chữ số và phải bắt đầu bằng số 0).';
+        }
+
+        return $errors;
+    }
+
+    private function normalizeAbbreviation(string $abbreviation): string
+    {
+        $abbreviation = trim($abbreviation);
+
+        return function_exists('mb_strtoupper') ? mb_strtoupper($abbreviation, 'UTF-8') : strtoupper($abbreviation);
     }
 }

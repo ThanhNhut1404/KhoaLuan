@@ -73,6 +73,15 @@ class AcademicYearModel
         return (int) $this->db->query('SELECT COUNT(*) FROM nien_khoa')->fetchColumn();
     }
 
+    public function countFiltered(string $keyword = ''): int
+    {
+        [$where, $params] = $this->filterClause($keyword);
+        $statement = $this->db->prepare('SELECT COUNT(*) FROM nien_khoa nk' . $where);
+        $statement->execute($params);
+
+        return (int) $statement->fetchColumn();
+    }
+
     public function listPaginated(int $page, int $perPage): array
     {
         $idColumn = $this->column('id');
@@ -116,6 +125,64 @@ class AcademicYearModel
                 $idColumn
             )
         );
+        $statement->bindValue('limit', $perPage, PDO::PARAM_INT);
+        $statement->bindValue('offset', $offset, PDO::PARAM_INT);
+        $statement->execute();
+
+        return $statement->fetchAll();
+    }
+
+    public function listFilteredPaginated(int $page, int $perPage, string $keyword = ''): array
+    {
+        $idColumn = $this->column('id');
+        $nameColumn = $this->column('name');
+        $startColumn = $this->column('start_date');
+        $endColumn = $this->column('end_date');
+        $statusColumn = $this->column('status', false);
+        $offset = max(0, ($page - 1) * $perPage);
+
+        [$where, $params] = $this->filterClause($keyword);
+        $statusSelect = $statusColumn !== null ? sprintf('nk.%s AS status', $statusColumn) : 'NULL AS status';
+        $semesterJoin = $this->hasColumn('hoc_ky', 'MA_NIEN_KHOA')
+            ? 'LEFT JOIN hoc_ky hk ON hk.MA_NIEN_KHOA = nk.' . $idColumn
+            : '';
+        $semesterCount = $semesterJoin !== '' ? 'COUNT(hk.MA_NIEN_KHOA)' : '0';
+
+        $statement = $this->db->prepare(
+            sprintf(
+                'SELECT nk.%s AS id,
+                        nk.%s AS name,
+                        nk.%s AS start_date,
+                        nk.%s AS end_date,
+                        %s,
+                        %s AS semesters
+                 FROM nien_khoa nk
+                 %s
+                 %s
+                 GROUP BY nk.%s, nk.%s, nk.%s, nk.%s%s
+                 ORDER BY nk.%s DESC
+                 LIMIT :limit OFFSET :offset',
+                $idColumn,
+                $nameColumn,
+                $startColumn,
+                $endColumn,
+                $statusSelect,
+                $semesterCount,
+                $semesterJoin,
+                $where,
+                $idColumn,
+                $nameColumn,
+                $startColumn,
+                $endColumn,
+                $statusColumn !== null ? ', nk.' . $statusColumn : '',
+                $idColumn
+            )
+        );
+
+        foreach ($params as $name => $value) {
+            $statement->bindValue($name, $value);
+        }
+
         $statement->bindValue('limit', $perPage, PDO::PARAM_INT);
         $statement->bindValue('offset', $offset, PDO::PARAM_INT);
         $statement->execute();
@@ -422,6 +489,30 @@ class AcademicYearModel
             ['bang_drl', 'MA_NIEN_KHOA'],
             ['sinh_vien', 'MA_NIEN_KHOA'],
         ];
+    }
+
+    private function filterClause(string $keyword): array
+    {
+        $keyword = trim($keyword);
+        if ($keyword === '') {
+            return ['', []];
+        }
+
+        $nameColumn = $this->column('name');
+        $startColumn = $this->column('start_date');
+        $endColumn = $this->column('end_date');
+        $statusColumn = $this->column('status', false);
+        $conditions = [
+            sprintf('nk.%s LIKE :keyword', $nameColumn),
+            sprintf('CAST(nk.%s AS CHAR) LIKE :keyword', $startColumn),
+            sprintf('CAST(nk.%s AS CHAR) LIKE :keyword', $endColumn),
+        ];
+
+        if ($statusColumn !== null) {
+            $conditions[] = sprintf('nk.%s LIKE :keyword', $statusColumn);
+        }
+
+        return [' WHERE ' . implode(' OR ', $conditions), ['keyword' => '%' . $keyword . '%']];
     }
 
     private function nextId(string $column): int

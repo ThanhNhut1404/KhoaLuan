@@ -7,21 +7,29 @@
     $pagination = $pagination ?? [
         'current_page' => 1,
         'total_items' => count($majors),
-        'items_per_page' => 6,
+        'items_per_page' => 10,
         'total_pages' => 1,
         'from' => empty($majors) ? 0 : 1,
         'to' => count($majors),
     ];
     $current_page = (int) ($pagination['current_page'] ?? 1);
     $total_items = (int) ($pagination['total_items'] ?? count($majors));
-    $items_per_page = (int) ($pagination['items_per_page'] ?? 6);
+    $items_per_page = (int) ($pagination['items_per_page'] ?? 10);
     $total_pages = (int) ($pagination['total_pages'] ?? 1);
+    $emptyMessage = $emptyMessage ?? 'Chưa có ngành học nào.';
+    $paginationUrl = static function (int $pageNum): string {
+        $params = $_GET;
+        $params['page'] = 'list_major';
+        $params['page_num'] = $pageNum;
+
+        return '?' . http_build_query($params);
+    };
 ?>
 
 <div class="list-major-page">
     <div class="page-panel card">
         <div class="panel-header card-header">
-                <div class="header-content">
+            <div class="header-content">
                 <h2 class="panel-title">DANH SÁCH NGÀNH HỌC</h2>
             </div>
         </div>
@@ -32,8 +40,7 @@
                     <svg width="48" height="48" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                         <path d="M9 13h6M9 17h3M5 21h14a2 2 0 0 0 2-2V5a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
                     </svg>
-                    <h3>Chưa có ngành học nào</h3>
-                    <p>Hãy tạo ngành học đầu tiên để bắt đầu</p>
+                    <h3><?= htmlspecialchars($emptyMessage) ?></h3>
                 </div>
             <?php else: ?>
                 <div class="table-wrapper">
@@ -52,7 +59,7 @@
                         <tbody>
                             <?php foreach ($majors as $index => $major): ?>
                                 <?php $rowNumber = (($current_page - 1) * $items_per_page) + $index + 1; ?>
-                                <tr data-id="<?= $major['id'] ?>">
+                                <tr data-id="<?= (int) $major['id'] ?>">
                                     <td class="col-stt"><?= str_pad((string) $rowNumber, 2, '0', STR_PAD_LEFT) ?></td>
                                     <td class="col-code"><?= htmlspecialchars($major['code'] ?? '--') ?></td>
                                     <td class="col-name"><?= htmlspecialchars($major['name'] ?? '--') ?></td>
@@ -60,8 +67,8 @@
                                     <td class="col-dept-name"><?= htmlspecialchars($major['department_name'] ?? '--') ?></td>
                                     <td class="col-status">
                                         <form method="POST" style="display:inline-block;">
-                                            <input type="hidden" name="_row_id" value="<?= $major['id'] ?>" />
-                                            <select name="status[<?= $major['id'] ?>]" class="status-select <?= htmlspecialchars($major['status_class'] ?? '') ?> form-select" onchange="updateStatusSelect(this)">
+                                            <input type="hidden" name="_row_id" value="<?= (int) $major['id'] ?>" />
+                                            <select name="status[<?= (int) $major['id'] ?>]" class="status-select <?= htmlspecialchars($major['status_class'] ?? '') ?> form-select" data-previous-value="<?= htmlspecialchars($major['status'] ?? '') ?>" onchange="updateStatusSelect(this)">
                                                 <?php foreach ($statusOptions as $option): ?>
                                                     <option value="<?= htmlspecialchars($option['value']) ?>" <?= (($major['status'] ?? '') === $option['value']) ? 'selected' : '' ?>>
                                                         <?= htmlspecialchars($option['label']) ?>
@@ -72,13 +79,13 @@
                                     </td>
                                     <td class="col-action">
                                         <div class="action-group">
-                                            <button class="action-btn edit btn btn-outline-primary" title="Chỉnh sửa" onclick="editMajor(<?= $major['id'] ?>)">
+                                            <button type="button" class="action-btn edit btn btn-outline-primary" title="Chỉnh sửa" onclick="editMajor(<?= (int) $major['id'] ?>)">
                                                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                                                     <path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
                                                     <path d="M15.5 3.5a2.121 2.121 0 1 1 3 3L18 7.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
                                                 </svg>
                                             </button>
-                                            <button class="action-btn delete btn btn-danger" title="Xóa" onclick="showDeleteConfirm(<?= $major['id'] ?>, 'ngành')">
+                                            <button type="button" class="action-btn delete btn btn-danger" title="Xóa" onclick="showMajorDeleteConfirm(<?= (int) $major['id'] ?>, <?= htmlspecialchars(json_encode((string) ($major['name'] ?? ''), JSON_UNESCAPED_UNICODE | JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP), ENT_QUOTES, 'UTF-8') ?>)">
                                                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                                                     <path d="M19 7l-1 12a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2l-1-12M9 7V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v3M9 11v6M15 11v6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
                                                 </svg>
@@ -97,15 +104,23 @@
                     </div>
                     <div class="pagination mb-0">
                         <?php if ($current_page > 1): ?>
-                            <a href="?page=list_major&page_num=<?= $current_page - 1 ?>" class="pagination-btn prev page-link page-item">«</a>
+                            <a href="<?= htmlspecialchars($paginationUrl(1)) ?>" class="pagination-btn first page-link page-item">&lt;&lt;</a>
+                            <a href="<?= htmlspecialchars($paginationUrl($current_page - 1)) ?>" class="pagination-btn prev page-link page-item">&lt;</a>
+                        <?php else: ?>
+                            <span class="pagination-btn first page-link page-item disabled">&lt;&lt;</span>
+                            <span class="pagination-btn prev page-link page-item disabled">&lt;</span>
                         <?php endif; ?>
 
                         <?php for ($i = 1; $i <= $total_pages; $i++): ?>
-                            <a href="?page=list_major&page_num=<?= $i ?>" class="pagination-btn page-link page-item <?= $i === $current_page ? 'active' : '' ?>"><?= $i ?></a>
+                            <a href="<?= htmlspecialchars($paginationUrl($i)) ?>" class="pagination-btn page-link page-item <?= $i === $current_page ? 'active' : '' ?>"><?= $i ?></a>
                         <?php endfor; ?>
 
                         <?php if ($current_page < $total_pages): ?>
-                            <a href="?page=list_major&page_num=<?= $current_page + 1 ?>" class="pagination-btn next page-link page-item">»</a>
+                            <a href="<?= htmlspecialchars($paginationUrl($current_page + 1)) ?>" class="pagination-btn next page-link page-item">&gt;</a>
+                            <a href="<?= htmlspecialchars($paginationUrl($total_pages)) ?>" class="pagination-btn last page-link page-item">&gt;&gt;</a>
+                        <?php else: ?>
+                            <span class="pagination-btn next page-link page-item disabled">&gt;</span>
+                            <span class="pagination-btn last page-link page-item disabled">&gt;&gt;</span>
                         <?php endif; ?>
                     </div>
                 </div>
@@ -113,6 +128,11 @@
         </div>
     </div>
 </div>
+
+<form id="majorDeleteForm" method="POST" action="<?= htmlspecialchars($_SERVER['REQUEST_URI'] ?? '?page=list_major') ?>" style="display:none;">
+    <input type="hidden" name="action" value="delete" />
+    <input type="hidden" name="id" id="majorDeleteId" value="" />
+</form>
 
 <style>
     /* Reuse styles from list_year with adjusted columns */
@@ -149,6 +169,7 @@
     .pagination { display:flex; gap:6px; align-items:center; }
     .pagination-btn { display:inline-flex; align-items:center; justify-content:center; min-width:32px; height:32px; border:1px solid #e5e7eb; border-radius:6px; background:#fff; color:#6b7280; font-weight:600; text-decoration:none; }
     .pagination-btn.active { background:linear-gradient(180deg,#0f2a5a 0%,#0b1f45 100%); color:#fff; border-color:#0f2a5a; }
+    .pagination-btn.disabled { opacity:.45; cursor:not-allowed; pointer-events:none; background:#f9fafb; color:#9ca3af; }
     @media (max-width:768px) { .data-table { min-width:900px; } }
 
     /* Status select styling (matched to list_activity) */
@@ -157,30 +178,45 @@
     .data-table .status-select.active { background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24'%3E%3Cpath d='M6 9l6 6 6-6' stroke='%23065546' stroke-width='2' stroke-linecap='round' stroke-linejoin='round' fill='none'/%3E%3C/svg%3E") no-repeat right 10px center, linear-gradient(90deg, #bbf7d0, #34d399); background-size:12px, auto; color:#065f46; border-color:#34d399; font-weight:700; }
     .data-table .status-select.inactive { background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24'%3E%3Cpath d='M6 9l6 6 6-6' stroke='%237f1d1d' stroke-width='2' stroke-linecap='round' stroke-linejoin='round' fill='none'/%3E%3C/svg%3E") no-repeat right 10px center, linear-gradient(90deg, #fed7d7, #f87171); background-size:12px, auto; color:#7f1d1d; border-color:#f87171; font-weight:700; }
     .data-table .status-select:focus { outline: none; box-shadow: 0 0 0 3px rgba(52,211,153,0.12); }
-
-    /* Removed status pill — select now shows status color directly */
-
-    
 </style>
 
 <script>
     function editMajor(id) { window.location.href = '?page=edit_major&id=' + id; }
 
-    
+    function isActiveStatus(value) {
+        return value === 'Hoạt động' || value === 'Hoáº¡t Ä‘á»™ng';
+    }
+
+    function setStatusClass(el, value) {
+        el.classList.remove('active','inactive');
+        el.classList.add(isActiveStatus(value) ? 'active' : 'inactive');
+    }
 
     function updateStatusSelect(el){
         var val = el.value;
-        el.classList.remove('active','inactive');
-        el.classList.add(val === 'Hoạt động' ? 'active' : 'inactive');
+        var previous = el.getAttribute('data-previous-value') || '';
+        var message = isActiveStatus(val)
+            ? 'Bạn có chắc muốn mở lại tuyển sinh ngành học này không?'
+            : 'Bạn có chắc muốn ngừng tuyển sinh ngành học này không?';
 
-        // submit the form after updating style
+        if (!confirm(message)) {
+            el.value = previous;
+            setStatusClass(el, previous);
+            return;
+        }
+
+        setStatusClass(el, val);
         el.form.submit();
+    }
+
+    function showMajorDeleteConfirm(id, name) {
+        showDeleteConfirm(id, 'ngành học', name);
     }
 
     document.addEventListener('DOMContentLoaded', function(){
         document.querySelectorAll('.status-select').forEach(function(s){
-            var val = s.value;
-            s.classList.add(val === 'Hoạt động' ? 'active' : 'inactive');
+            s.setAttribute('data-previous-value', s.value);
+            setStatusClass(s, s.value);
         });
     });
 </script>

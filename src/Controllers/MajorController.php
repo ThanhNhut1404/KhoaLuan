@@ -8,7 +8,7 @@ use Throwable;
 
 class MajorController
 {
-    private const LIST_PER_PAGE = 6;
+    private const LIST_PER_PAGE = 10;
 
     private const STATUS_OPTIONS = [
         ['value' => 'Hoạt động', 'label' => 'Hoạt động'],
@@ -34,14 +34,7 @@ class MajorController
             return $state;
         }
 
-        $form = [
-            'major_code' => trim($data['major_code'] ?? ''),
-            'major_name' => trim($data['major_name'] ?? ''),
-            'department' => trim($data['department'] ?? ''),
-            'description' => trim($data['description'] ?? ''),
-            'status' => trim($data['status'] ?? ''),
-        ];
-
+        $form = $this->formData($data);
         $state['formData'] = $form;
         $state['errors'] = $this->validate($form);
 
@@ -56,8 +49,13 @@ class MajorController
             return $state;
         }
 
+        if ($this->model->existsByCode($form['major_code'])) {
+            $state['errors']['major_code'] = 'Mã ngành đã tồn tại.';
+            return $state;
+        }
+
         if ($this->model->existsByNameInDepartment($form['major_name'], $departmentId)) {
-            $state['errors']['major_name'] = 'Ngành học này đã tồn tại trong khoa đã chọn.';
+            $state['errors']['major_name'] = 'Tên ngành đã tồn tại trong khoa/bộ môn này.';
             return $state;
         }
 
@@ -70,8 +68,15 @@ class MajorController
                 'status' => $form['status'],
             ]);
         } catch (Throwable $exception) {
+            error_log($exception->getMessage());
+
             if ($this->model->isDuplicateException($exception)) {
-                $state['errors']['major_name'] = 'Ngành học này đã tồn tại trong khoa đã chọn.';
+                if ($this->model->existsByCode($form['major_code'])) {
+                    $state['errors']['major_code'] = 'Mã ngành đã tồn tại.';
+                    return $state;
+                }
+
+                $state['errors']['major_name'] = 'Tên ngành đã tồn tại trong khoa/bộ môn này.';
                 return $state;
             }
 
@@ -94,9 +99,15 @@ class MajorController
     public function listing(array $data, array $query, string $method): array
     {
         $page = max(1, (int) ($query['page_num'] ?? 1));
+        $filters = [
+            'keyword' => trim($query['keyword'] ?? $query['q'] ?? $query['search'] ?? ''),
+            'status' => trim($query['status'] ?? ''),
+        ];
         $state = [
             'majors' => [],
             'statusOptions' => self::STATUS_OPTIONS,
+            'filters' => $filters,
+            'emptyMessage' => 'Chưa có ngành học nào.',
             'pagination' => [
                 'current_page' => $page,
                 'total_items' => 0,
@@ -112,7 +123,7 @@ class MajorController
             $state['toast'] = $this->handleListAction($data);
         }
 
-        return $this->loadListState($state, $page);
+        return $this->loadListState($state, $page, $filters);
     }
 
     public function editState(int $id, array $data, string $method): array
@@ -134,14 +145,13 @@ class MajorController
         }
 
         if ($method === 'POST') {
-            $form = [
-                'major_code' => trim($data['major_code'] ?? ''),
-                'major_name' => trim($data['major_name'] ?? ''),
-                'department' => trim($data['department'] ?? ''),
-                'description' => trim($data['description'] ?? ''),
-                'status' => trim($data['status'] ?? ''),
-            ];
+            if ($this->model->findById($id) === null) {
+                $state['toast'] = ['type' => 'error', 'message' => 'Ngành học không tồn tại hoặc đã bị xóa.'];
+                $state['redirect'] = '?page=list_major';
+                return $state;
+            }
 
+            $form = $this->formData($data);
             $state['formData'] = $form;
             $state['errors'] = $this->validate($form);
 
@@ -156,8 +166,13 @@ class MajorController
                 return $state;
             }
 
+            if ($this->model->existsByCodeExcept($form['major_code'], $id)) {
+                $state['errors']['major_code'] = 'Mã ngành đã tồn tại.';
+                return $state;
+            }
+
             if ($this->model->existsByNameInDepartmentExcept($form['major_name'], $departmentId, $id)) {
-                $state['errors']['major_name'] = 'Ngành học này đã tồn tại trong khoa đã chọn.';
+                $state['errors']['major_name'] = 'Tên ngành đã tồn tại trong khoa/bộ môn này.';
                 return $state;
             }
 
@@ -170,10 +185,17 @@ class MajorController
                     'status' => $form['status'],
                 ]);
             } catch (Throwable $exception) {
-                if ($this->model->isDuplicateException($exception)) {
-                    $state['errors']['major_name'] = 'Ngành học này đã tồn tại trong khoa đã chọn.';
+            error_log($exception->getMessage());
+
+            if ($this->model->isDuplicateException($exception)) {
+                if ($this->model->existsByCodeExcept($form['major_code'], $id)) {
+                    $state['errors']['major_code'] = 'Mã ngành đã tồn tại.';
                     return $state;
                 }
+
+                $state['errors']['major_name'] = 'Tên ngành đã tồn tại trong khoa/bộ môn này.';
+                return $state;
+            }
 
                 $state['toast'] = ['type' => 'error', 'message' => 'Có lỗi khi cập nhật ngành học.'];
                 return $state;
@@ -193,7 +215,7 @@ class MajorController
 
         $major = $this->model->findById($id);
         if ($major === null) {
-            $state['toast'] = ['type' => 'error', 'message' => 'Không tìm thấy ngành học.'];
+            $state['toast'] = ['type' => 'error', 'message' => 'Ngành học không tồn tại hoặc đã bị xóa.'];
             $state['redirect'] = '?page=list_major';
             return $state;
         }
@@ -237,14 +259,24 @@ class MajorController
         ];
     }
 
-    private function loadListState(array $state, int $requestedPage): array
+    private function loadListState(array $state, int $requestedPage, array $filters = []): array
     {
-        $totalItems = $this->model->countAll();
+        $keyword = trim((string) ($filters['keyword'] ?? ''));
+        $status = trim((string) ($filters['status'] ?? ''));
+        $hasFilters = $keyword !== '' || $status !== '';
+        $totalItems = $hasFilters
+            ? $this->model->countFiltered($keyword, $status)
+            : $this->model->countAll();
         $totalPages = max(1, (int) ceil($totalItems / self::LIST_PER_PAGE));
         $currentPage = min(max(1, $requestedPage), $totalPages);
-        $majors = $totalItems > 0 ? $this->model->listPaginated($currentPage, self::LIST_PER_PAGE) : [];
+        $majors = $totalItems > 0
+            ? ($hasFilters
+                ? $this->model->listFilteredPaginated($currentPage, self::LIST_PER_PAGE, $keyword, $status)
+                : $this->model->listPaginated($currentPage, self::LIST_PER_PAGE))
+            : [];
 
         $state['majors'] = array_map(fn (array $major): array => $this->formatListRow($major), $majors);
+        $state['emptyMessage'] = $hasFilters ? 'Không tìm thấy ngành học phù hợp.' : 'Chưa có ngành học nào.';
         $state['pagination'] = [
             'current_page' => $currentPage,
             'total_items' => $totalItems,
@@ -259,6 +291,12 @@ class MajorController
 
     private function handleListAction(array $data): ?array
     {
+        $action = trim((string) ($data['action'] ?? ''));
+
+        if ($action === 'delete') {
+            return $this->deleteFromList((int) ($data['id'] ?? 0));
+        }
+
         if (!isset($data['status']) || !is_array($data['status'])) {
             return null;
         }
@@ -273,10 +311,53 @@ class MajorController
                 return ['type' => 'error', 'message' => 'Vui lòng chọn trạng thái hợp lệ.'];
             }
 
-            $this->model->updateStatus($id, $status);
+            $major = $this->model->findById($id);
+            if ($major === null) {
+                return ['type' => 'error', 'message' => 'Ngành học không tồn tại hoặc đã bị xóa.'];
+            }
+
+            if ((string) ($major['status'] ?? '') === $status) {
+                return ['type' => 'success', 'message' => 'Cập nhật trạng thái ngành học thành công.'];
+            }
+
+            try {
+                if (!$this->model->updateStatus($id, $status)) {
+                    return ['type' => 'error', 'message' => 'Cập nhật trạng thái ngành học thất bại.'];
+                }
+            } catch (Throwable $exception) {
+                error_log($exception->getMessage());
+                return ['type' => 'error', 'message' => 'Cập nhật trạng thái ngành học thất bại.'];
+            }
         }
 
         return ['type' => 'success', 'message' => 'Cập nhật trạng thái ngành học thành công.'];
+    }
+
+    private function deleteFromList(int $id): array
+    {
+        if ($id < 1 || $this->model->findById($id) === null) {
+            return ['type' => 'error', 'message' => 'Ngành học không tồn tại hoặc đã bị xóa.'];
+        }
+
+        try {
+            if ($this->model->hasRelatedData($id)) {
+                return ['type' => 'error', 'message' => 'Không thể xóa ngành học vì đang có dữ liệu liên quan.'];
+            }
+
+            if (!$this->model->delete($id)) {
+                return ['type' => 'error', 'message' => 'Xóa ngành học thất bại. Vui lòng thử lại.'];
+            }
+        } catch (Throwable $exception) {
+            error_log($exception->getMessage());
+
+            if ($this->model->isConstraintException($exception)) {
+                return ['type' => 'error', 'message' => 'Không thể xóa ngành học vì đang có dữ liệu liên quan.'];
+            }
+
+            return ['type' => 'error', 'message' => 'Xóa ngành học thất bại. Vui lòng thử lại.'];
+        }
+
+        return ['type' => 'success', 'message' => 'Xóa ngành học thành công.'];
     }
 
     private function formatListRow(array $major): array
@@ -287,7 +368,7 @@ class MajorController
             'id' => (int) ($major['id'] ?? 0),
             'code' => $this->blank($major['code'] ?? null),
             'name' => $this->blank($major['name'] ?? null),
-            'department' => $this->blank($major['department_id'] ?? null),
+            'department' => $this->blank($major['department_code'] ?? null),
             'department_name' => $this->blank($major['department_name'] ?? null),
             'status' => $status,
             'status_label' => $this->statusLabel($status),
@@ -311,6 +392,17 @@ class MajorController
         $value = trim((string) ($value ?? ''));
 
         return $value === '' ? '--' : $value;
+    }
+
+    private function formData(array $data): array
+    {
+        return [
+            'major_code' => trim($data['major_code'] ?? ''),
+            'major_name' => trim($data['major_name'] ?? ''),
+            'department' => trim($data['department'] ?? ''),
+            'description' => trim($data['description'] ?? ''),
+            'status' => trim($data['status'] ?? ''),
+        ];
     }
 
     private function validate(array $form): array
