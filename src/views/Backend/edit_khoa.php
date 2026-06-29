@@ -12,7 +12,7 @@
 
         <div class="panel-body card-body">
             <form id="editKhoaForm" method="POST" action="?page=edit_khoa&ma=<?= urlencode($formData['original_ma'] ?? '') ?>">
-                <div class="row g-3 g-md-4 year-form-row">
+                <div class="row g-1 year-form-row">
                     <div class="col-12 col-md-6 year-field">
                         <label class="field-label form-label" for="ma_khoa">
                             Mã khoa/bộ môn <span class="required">*</span>
@@ -27,9 +27,7 @@
                             required
                         />
                         <input type="hidden" name="original_ma" value="<?= htmlspecialchars($formData['original_ma'] ?? '') ?>" />
-                        <?php if(isset($errors['ma_khoa'])): ?>
-                            <div class="invalid-feedback"><?= htmlspecialchars($errors['ma_khoa']) ?></div>
-                        <?php endif; ?>
+                        <div class="invalid-feedback<?= isset($errors['ma_khoa']) ? '' : ' is-empty' ?>"><?= isset($errors['ma_khoa']) ? htmlspecialchars($errors['ma_khoa']) : '&nbsp;' ?></div>
                     </div>
 
                     <div class="col-12 col-md-6 year-field">
@@ -45,9 +43,7 @@
                             value="<?= htmlspecialchars($formData['ten_khoa'] ?? '') ?>"
                             required
                         />
-                        <?php if(isset($errors['ten_khoa'])): ?>
-                            <div class="invalid-feedback"><?= htmlspecialchars($errors['ten_khoa']) ?></div>
-                        <?php endif; ?>
+                        <div class="invalid-feedback<?= isset($errors['ten_khoa']) ? '' : ' is-empty' ?>"><?= isset($errors['ten_khoa']) ? htmlspecialchars($errors['ten_khoa']) : '&nbsp;' ?></div>
                     </div>
 
                     <div class="col-12 col-md-6 year-field">
@@ -62,9 +58,7 @@
                             placeholder="contact@khoa.edu.vn"
                             value="<?= htmlspecialchars($formData['email_khoa'] ?? '') ?>"
                         />
-                        <?php if(isset($errors['email_khoa'])): ?>
-                            <div class="invalid-feedback"><?= htmlspecialchars($errors['email_khoa']) ?></div>
-                        <?php endif; ?>
+                        <div class="invalid-feedback<?= isset($errors['email_khoa']) ? '' : ' is-empty' ?>"><?= isset($errors['email_khoa']) ? htmlspecialchars($errors['email_khoa']) : '&nbsp;' ?></div>
                     </div>
 
                     <div class="col-12 col-md-6 year-field">
@@ -79,9 +73,7 @@
                             placeholder="Ví dụ: 0912345678"
                             value="<?= htmlspecialchars($formData['so_dien_thoai_khoa'] ?? '') ?>"
                         />
-                        <?php if(isset($errors['so_dien_thoai_khoa'])): ?>
-                            <div class="invalid-feedback"><?= htmlspecialchars($errors['so_dien_thoai_khoa']) ?></div>
-                        <?php endif; ?>
+                        <div class="invalid-feedback<?= isset($errors['so_dien_thoai_khoa']) ? '' : ' is-empty' ?>"><?= isset($errors['so_dien_thoai_khoa']) ? htmlspecialchars($errors['so_dien_thoai_khoa']) : '&nbsp;' ?></div>
                     </div>
 
                     <div class="col-12" style="display:flex; justify-content:flex-end; gap:12px;">
@@ -125,7 +117,7 @@
     }
 
     .year-form-row {
-        margin-bottom: 24px;
+        margin-bottom: 8px;
         align-items: start;
     }
 
@@ -174,9 +166,17 @@
     }
 
     .invalid-feedback {
+        display: block;
         font-size: 12px;
-        margin-top: 6px;
+        margin-top: 3px;
         color: #dc2626;
+        line-height: 1.2;
+        min-height: 18px;
+        overflow-wrap: anywhere;
+    }
+
+    .invalid-feedback.is-empty {
+        visibility: hidden;
     }
 
     .action-btn {

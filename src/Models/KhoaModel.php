@@ -4,6 +4,7 @@ namespace KhoaLuan\QLDRL\Models;
 
 use PDO;
 use PDOException;
+use Throwable;
 
 class KhoaModel
 {
@@ -97,6 +98,23 @@ class KhoaModel
         return (bool) $stmt->fetchColumn();
     }
 
+    public function existsByNameExceptMa(string $name, string $ma): bool
+    {
+        $stmt = $this->db->prepare(
+            'SELECT 1
+             FROM khoa_bo_mon
+             WHERE LOWER(REPLACE(TRIM(TEN_KHOA), " ", "")) = :ten
+               AND TRIM(CAST(MA_KHOA AS CHAR)) <> :ma
+             LIMIT 1'
+        );
+        $stmt->execute([
+            'ten' => $this->normalizeNameForLookup($name),
+            'ma' => $ma,
+        ]);
+
+        return (bool) $stmt->fetchColumn();
+    }
+
     public function getAll(): array
     {
         $stmt = $this->db->query('SELECT MA_KHOA AS ma, TEN_VIET_TAT_KHOA AS ten_viet_tat, TEN_KHOA AS ten, EMAIL_KHOA AS email, SO_DIEN_THOAI_KHOA AS phone FROM khoa_bo_mon ORDER BY MA_KHOA DESC');
@@ -166,12 +184,34 @@ class KhoaModel
         $stmt->execute([
             'ten_viet_tat' => $data['ma_khoa'],
             'ten' => $data['ten_khoa'],
-            'email' => $data['email_khoa'] ?? null,
-            'phone' => $data['so_dien_thoai_khoa'] ?? null,
+            'email' => ($data['email_khoa'] ?? '') === '' ? null : $data['email_khoa'],
+            'phone' => ($data['so_dien_thoai_khoa'] ?? '') === '' ? null : $data['so_dien_thoai_khoa'],
             'ma' => $originalMa,
         ]);
 
         return $stmt->rowCount() > 0;
+    }
+
+    public function hasRelatedData(string $ma): bool
+    {
+        foreach ($this->relatedChecks() as [$table, $column]) {
+            if (!$this->tableExists($table) || !$this->hasColumn($table, $column)) {
+                continue;
+            }
+
+            $stmt = $this->db->prepare(sprintf(
+                'SELECT 1 FROM %s WHERE %s = :ma LIMIT 1',
+                $table,
+                $column
+            ));
+            $stmt->execute(['ma' => $ma]);
+
+            if ($stmt->fetchColumn()) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     public function deleteByMa(string $ma): bool
@@ -182,6 +222,11 @@ class KhoaModel
     }
 
     public function isDuplicateException(\Throwable $exception): bool
+    {
+        return $exception instanceof PDOException && $exception->getCode() === '23000';
+    }
+
+    public function isConstraintException(Throwable $exception): bool
     {
         return $exception instanceof PDOException && $exception->getCode() === '23000';
     }
@@ -223,5 +268,91 @@ class KhoaModel
         $abbreviation = trim($abbreviation);
 
         return function_exists('mb_strtoupper') ? mb_strtoupper($abbreviation, 'UTF-8') : strtoupper($abbreviation);
+    }
+
+    private function relatedChecks(): array
+    {
+        $checks = [
+            ['nganh_hoc', 'MA_KHOA'],
+            ['giang_vien', 'MA_KHOA'],
+            ['doan_khoa', 'MA_KHOA'],
+            ['lop_hoc', 'MA_KHOA'],
+            ['sinh_vien', 'MA_KHOA'],
+        ];
+
+        foreach ($this->foreignKeyChecks() as $check) {
+            $checks[] = $check;
+        }
+
+        $uniqueChecks = [];
+        foreach ($checks as $check) {
+            $uniqueChecks[$check[0] . '.' . $check[1]] = $check;
+        }
+
+        return array_values($uniqueChecks);
+    }
+
+    private function foreignKeyChecks(): array
+    {
+        try {
+            $stmt = $this->db->prepare(
+                'SELECT TABLE_NAME AS table_name, COLUMN_NAME AS column_name
+                 FROM information_schema.KEY_COLUMN_USAGE
+                 WHERE TABLE_SCHEMA = DATABASE()
+                   AND REFERENCED_TABLE_NAME = :table
+                   AND REFERENCED_COLUMN_NAME = :column'
+            );
+            $stmt->execute([
+                'table' => 'khoa_bo_mon',
+                'column' => 'MA_KHOA',
+            ]);
+
+            return array_map(
+                static fn(array $row): array => [$row['table_name'], $row['column_name']],
+                $stmt->fetchAll()
+            );
+        } catch (Throwable) {
+            return [];
+        }
+    }
+
+    private function tableExists(string $table): bool
+    {
+        try {
+            $stmt = $this->db->prepare(
+                'SELECT 1
+                 FROM information_schema.TABLES
+                 WHERE TABLE_SCHEMA = DATABASE()
+                   AND TABLE_NAME = :table
+                 LIMIT 1'
+            );
+            $stmt->execute(['table' => $table]);
+
+            return (bool) $stmt->fetchColumn();
+        } catch (Throwable) {
+            return false;
+        }
+    }
+
+    private function hasColumn(string $table, string $column): bool
+    {
+        try {
+            $stmt = $this->db->prepare(
+                'SELECT 1
+                 FROM information_schema.COLUMNS
+                 WHERE TABLE_SCHEMA = DATABASE()
+                   AND TABLE_NAME = :table
+                   AND COLUMN_NAME = :column
+                 LIMIT 1'
+            );
+            $stmt->execute([
+                'table' => $table,
+                'column' => $column,
+            ]);
+
+            return (bool) $stmt->fetchColumn();
+        } catch (Throwable) {
+            return false;
+        }
     }
 }

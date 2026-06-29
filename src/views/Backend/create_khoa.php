@@ -156,15 +156,15 @@
     .form-grid {
         display: flex;
         flex-direction: column;
-        gap: 12px;
-        margin-bottom: 18px;
+        gap: 0;
+        margin-bottom: 8px;
     }
 
     .form-row {
         display: grid;
         grid-template-columns: repeat(2, minmax(0, 1fr));
-        column-gap: 20px;
-        row-gap: 12px;
+        column-gap: 14px;
+        row-gap: 0;
         margin: 0;
     }
 
@@ -205,6 +205,8 @@
         font-size: 13px;
         color: #1f2937;
         font-family: inherit;
+        height: 40px;
+        box-sizing: border-box;
         transition: border-color 0.2s, box-shadow 0.2s;
     }
 
@@ -225,8 +227,8 @@
         font-size: 12px;
         color: #dc2626;
         display: block;
-        line-height: 1.25;
-        min-height: 14px;
+        line-height: 1.2;
+        min-height: 18px;
         overflow-wrap: anywhere;
     }
 
@@ -282,12 +284,12 @@
         }
 
         .form-grid {
-            gap: 12px;
+            gap: 0;
         }
 
         .form-row {
             grid-template-columns: 1fr;
-            gap: 12px;
+            gap: 0;
         }
 
         .form-actions {

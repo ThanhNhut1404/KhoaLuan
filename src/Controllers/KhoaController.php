@@ -27,27 +27,21 @@ class KhoaController
             return $state;
         }
 
-        $form = [
-            'ma_khoa' => $this->normalizeAbbreviation($data['ma_khoa'] ?? ''),
-            'ten_khoa' => trim($data['ten_khoa'] ?? ''),
-            'email_khoa' => trim($data['email_khoa'] ?? ''),
-            'so_dien_thoai_khoa' => trim($data['so_dien_thoai_khoa'] ?? ''),
-        ];
-
+        $form = $this->formData($data);
         $state['formData'] = $form;
-        $state['errors'] = $this->validateCreate($form);
+        $state['errors'] = $this->validateForm($form);
 
         if (!empty($state['errors'])) {
             return $state;
         }
 
         if ($this->model->existsByAbbreviation($form['ma_khoa'])) {
-            $state['errors']['ma_khoa'] = 'Mã khoa đã tồn tại.';
+            $state['errors']['ma_khoa'] = 'Mã khoa/bộ môn đã tồn tại.';
             return $state;
         }
 
         if ($this->model->existsByName($form['ten_khoa'])) {
-            $state['errors']['ten_khoa'] = 'Tên khoa đã tồn tại.';
+            $state['errors']['ten_khoa'] = 'Tên khoa/bộ môn đã tồn tại.';
             return $state;
         }
 
@@ -58,26 +52,23 @@ class KhoaController
 
             if ($this->model->isDuplicateException($e)) {
                 if ($this->model->existsByAbbreviation($form['ma_khoa'])) {
-                    $state['errors']['ma_khoa'] = 'Mã khoa đã tồn tại.';
+                    $state['errors']['ma_khoa'] = 'Mã khoa/bộ môn đã tồn tại.';
                     return $state;
                 }
 
                 if ($this->model->existsByName($form['ten_khoa'])) {
-                    $state['errors']['ten_khoa'] = 'Tên khoa đã tồn tại.';
+                    $state['errors']['ten_khoa'] = 'Tên khoa/bộ môn đã tồn tại.';
                     return $state;
                 }
-
-                $state['toast'] = ['type' => 'error', 'message' => 'Tạo khoa thất bại.'];
-                return $state;
             }
 
-            $state['toast'] = ['type' => 'error', 'message' => 'Có lỗi khi tạo khoa.'];
+            $state['toast'] = ['type' => 'error', 'message' => 'Có lỗi khi tạo khoa/bộ môn. Vui lòng thử lại.'];
             return $state;
         }
 
         $state['toast'] = [
             'type' => $created ? 'success' : 'error',
-            'message' => $created ? 'Tạo khoa thành công.' : 'Tạo khoa thất bại.',
+            'message' => $created ? 'Tạo khoa/bộ môn thành công.' : 'Tạo khoa/bộ môn thất bại.',
         ];
 
         if ($created) {
@@ -125,31 +116,27 @@ class KhoaController
     public function update(string $originalMa, array $data): array
     {
         $state = ['errors' => [], 'toast' => null, 'updated' => false];
+        $originalMa = trim($originalMa);
 
-        $form = [
-            'ma_khoa' => $this->normalizeAbbreviation($data['ma_khoa'] ?? ''),
-            'ten_khoa' => trim($data['ten_khoa'] ?? ''),
-            'email_khoa' => trim($data['email_khoa'] ?? ''),
-            'so_dien_thoai_khoa' => trim($data['so_dien_thoai_khoa'] ?? ''),
-        ];
-
-        if ($form['ma_khoa'] === '') {
-            $state['errors']['ma_khoa'] = 'Vui lòng nhập mã khoa.';
+        if ($originalMa === '' || !$this->model->existsByMa($originalMa)) {
+            $state['toast'] = ['type' => 'error', 'message' => 'Không tìm thấy khoa/bộ môn cần cập nhật.'];
             return $state;
         }
 
-        if ($form['ten_khoa'] === '') {
-            $state['errors']['ten_khoa'] = 'Vui lòng nhập tên khoa.';
-            return $state;
-        }
+        $form = $this->formData($data);
+        $state['errors'] = $this->validateForm($form);
 
-        if ($form['email_khoa'] !== '' && !filter_var($form['email_khoa'], FILTER_VALIDATE_EMAIL)) {
-            $state['errors']['email_khoa'] = 'Email không hợp lệ.';
+        if (!empty($state['errors'])) {
             return $state;
         }
 
         if ($this->model->existsByAbbreviationExceptMa($form['ma_khoa'], $originalMa)) {
-            $state['errors']['ma_khoa'] = 'Mã khoa đã tồn tại.';
+            $state['errors']['ma_khoa'] = 'Mã khoa/bộ môn đã tồn tại.';
+            return $state;
+        }
+
+        if ($this->model->existsByNameExceptMa($form['ten_khoa'], $originalMa)) {
+            $state['errors']['ten_khoa'] = 'Tên khoa/bộ môn đã tồn tại.';
             return $state;
         }
 
@@ -158,11 +145,24 @@ class KhoaController
             $state['updated'] = $updated;
             $state['toast'] = [
                 'type' => $updated ? 'success' : 'error',
-                'message' => $updated ? 'Cập nhật khoa thành công.' : 'Không có thay đổi nào được thực hiện.',
+                'message' => $updated ? 'Cập nhật khoa/bộ môn thành công.' : 'Không có thay đổi nào được thực hiện.',
             ];
         } catch (Throwable $e) {
             error_log($e->getMessage());
-            $state['toast'] = ['type' => 'error', 'message' => 'Có lỗi khi cập nhật khoa.'];
+
+            if ($this->model->isDuplicateException($e)) {
+                if ($this->model->existsByAbbreviationExceptMa($form['ma_khoa'], $originalMa)) {
+                    $state['errors']['ma_khoa'] = 'Mã khoa/bộ môn đã tồn tại.';
+                    return $state;
+                }
+
+                if ($this->model->existsByNameExceptMa($form['ten_khoa'], $originalMa)) {
+                    $state['errors']['ten_khoa'] = 'Tên khoa/bộ môn đã tồn tại.';
+                    return $state;
+                }
+            }
+
+            $state['toast'] = ['type' => 'error', 'message' => 'Có lỗi khi cập nhật khoa/bộ môn. Vui lòng thử lại.'];
         }
 
         return $state;
@@ -170,12 +170,30 @@ class KhoaController
 
     public function delete(string $ma): array
     {
+        $ma = trim($ma);
+        if ($ma === '' || !$this->model->existsByMa($ma)) {
+            return ['success' => false, 'message' => 'Không tìm thấy khoa/bộ môn cần xóa.'];
+        }
+
         try {
+            if ($this->model->hasRelatedData($ma)) {
+                return ['success' => false, 'message' => 'Không thể xóa khoa/bộ môn vì đang được sử dụng.'];
+            }
+
             $deleted = $this->model->deleteByMa($ma);
-            return ['success' => $deleted, 'message' => $deleted ? 'Xóa khoa thành công.' : 'Xóa thất bại.'];
+
+            return [
+                'success' => $deleted,
+                'message' => $deleted ? 'Xóa khoa/bộ môn thành công.' : 'Xóa khoa/bộ môn thất bại.',
+            ];
         } catch (Throwable $e) {
             error_log($e->getMessage());
-            return ['success' => false, 'message' => 'Có lỗi khi xóa khoa.'];
+
+            if ($this->model->isConstraintException($e)) {
+                return ['success' => false, 'message' => 'Không thể xóa khoa/bộ môn vì đang được sử dụng.'];
+            }
+
+            return ['success' => false, 'message' => 'Có lỗi khi xóa khoa/bộ môn. Vui lòng thử lại.'];
         }
     }
 
@@ -228,7 +246,7 @@ class KhoaController
             ];
             $state['toast'] = [
                 'type' => 'error',
-                'message' => $keyword === '' ? 'Không thể tải danh sách khoa.' : 'Đã xảy ra lỗi khi tìm kiếm. Vui lòng thử lại.',
+                'message' => $keyword === '' ? 'Không thể tải danh sách khoa/bộ môn.' : 'Đã xảy ra lỗi khi tìm kiếm. Vui lòng thử lại.',
             ];
         }
 
@@ -247,7 +265,7 @@ class KhoaController
 
         $ma = trim($ma);
         if ($ma === '') {
-            $state['toast'] = ['type' => 'error', 'message' => 'Mã khoa không hợp lệ.'];
+            $state['toast'] = ['type' => 'error', 'message' => 'Mã khoa/bộ môn không hợp lệ.'];
             $state['redirect'] = '?page=list_khoa';
             return $state;
         }
@@ -257,13 +275,7 @@ class KhoaController
             $updateState = $this->update($originalMa, $data);
             $state['errors'] = $updateState['errors'] ?? [];
             $state['toast'] = $updateState['toast'] ?? null;
-            $state['formData'] = [
-                'original_ma' => $originalMa,
-                'ma_khoa' => $this->normalizeAbbreviation($data['ma_khoa'] ?? ''),
-                'ten_khoa' => trim($data['ten_khoa'] ?? ''),
-                'email_khoa' => trim($data['email_khoa'] ?? ''),
-                'so_dien_thoai_khoa' => trim($data['so_dien_thoai_khoa'] ?? ''),
-            ];
+            $state['formData'] = $this->formData($data) + ['original_ma' => $originalMa];
 
             if (!empty($updateState['updated'])) {
                 $state['redirect'] = '?page=list_khoa';
@@ -274,7 +286,7 @@ class KhoaController
 
         $found = $this->find($ma);
         if ($found === null) {
-            $state['toast'] = ['type' => 'error', 'message' => 'Không tìm thấy khoa.'];
+            $state['toast'] = ['type' => 'error', 'message' => 'Không tìm thấy khoa/bộ môn.'];
             $state['redirect'] = '?page=list_khoa';
             return $state;
         }
@@ -316,24 +328,46 @@ class KhoaController
         return ['page' => $page, 'formData' => [], 'errors' => [], 'toast' => null, 'khoas' => [], 'pagination' => [], 'redirect' => null, 'isEdit' => false];
     }
 
-    private function validateCreate(array $form): array
+    private function formData(array $data): array
+    {
+        return [
+            'ma_khoa' => $this->normalizeAbbreviation((string) ($data['ma_khoa'] ?? '')),
+            'ten_khoa' => trim((string) ($data['ten_khoa'] ?? '')),
+            'email_khoa' => trim((string) ($data['email_khoa'] ?? '')),
+            'so_dien_thoai_khoa' => trim((string) ($data['so_dien_thoai_khoa'] ?? '')),
+        ];
+    }
+
+    private function validateForm(array $form): array
     {
         $errors = [];
 
         if ($form['ma_khoa'] === '') {
-            $errors['ma_khoa'] = 'Vui lòng nhập mã khoa.';
+            $errors['ma_khoa'] = 'Vui lòng nhập mã khoa/bộ môn.';
+        } elseif ($this->length($form['ma_khoa']) > 20) {
+            $errors['ma_khoa'] = 'Mã khoa/bộ môn không được vượt quá 20 ký tự.';
+        } elseif (!preg_match('/^[A-Z0-9]+$/u', $form['ma_khoa'])) {
+            $errors['ma_khoa'] = 'Mã khoa/bộ môn chỉ được gồm chữ cái không dấu và số.';
         }
 
         if ($form['ten_khoa'] === '') {
-            $errors['ten_khoa'] = 'Vui lòng nhập tên khoa.';
+            $errors['ten_khoa'] = 'Vui lòng nhập tên khoa/bộ môn.';
+        } elseif ($this->length($form['ten_khoa']) > 150) {
+            $errors['ten_khoa'] = 'Tên khoa/bộ môn không được vượt quá 150 ký tự.';
+        } elseif (!preg_match('/^[\p{L}\p{M}\p{N}\s\/&().,\-]+$/u', $form['ten_khoa'])) {
+            $errors['ten_khoa'] = 'Tên khoa/bộ môn chứa ký tự không hợp lệ.';
         }
 
-        if ($form['email_khoa'] !== '' && !filter_var($form['email_khoa'], FILTER_VALIDATE_EMAIL)) {
-            $errors['email_khoa'] = 'Email không hợp lệ (ví dụ: tennguoidung@truonghoc.edu.vn).';
+        if ($form['email_khoa'] !== '') {
+            if ($this->length($form['email_khoa']) > 100) {
+                $errors['email_khoa'] = 'Email không được vượt quá 100 ký tự.';
+            } elseif (!filter_var($form['email_khoa'], FILTER_VALIDATE_EMAIL)) {
+                $errors['email_khoa'] = 'Email không hợp lệ (ví dụ: tennguoidung@truonghoc.edu.vn).';
+            }
         }
 
         if ($form['so_dien_thoai_khoa'] !== '' && !preg_match('/^0\d{9,10}$/', $form['so_dien_thoai_khoa'])) {
-            $errors['so_dien_thoai_khoa'] = 'Số điện thoại không hợp lệ. Vui lòng nhập đúng định dạng (chỉ gồm số, 10–11 chữ số và phải bắt đầu bằng số 0).';
+            $errors['so_dien_thoai_khoa'] = 'Vui lòng nhập đúng định dạng (chỉ gồm số, 10-11 chữ số và phải bắt đầu bằng số 0).';
         }
 
         return $errors;
@@ -344,5 +378,10 @@ class KhoaController
         $abbreviation = trim($abbreviation);
 
         return function_exists('mb_strtoupper') ? mb_strtoupper($abbreviation, 'UTF-8') : strtoupper($abbreviation);
+    }
+
+    private function length(string $value): int
+    {
+        return function_exists('mb_strlen') ? mb_strlen($value, 'UTF-8') : strlen($value);
     }
 }

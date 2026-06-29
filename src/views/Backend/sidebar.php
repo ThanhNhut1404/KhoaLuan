@@ -124,6 +124,40 @@
         <div class="nav-item">
             <a href="#">
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <circle cx="12" cy="8" r="3" stroke="#cbd5f5" stroke-width="2" />
+                    <path d="M5 20v-2a7 7 0 0 1 14 0v2" stroke="#cbd5f5" stroke-width="2" stroke-linecap="round" />
+                </svg>
+                <span class="nav-text">Quản lý tài khoản</span>
+                <svg class="nav-caret" width="14" height="14" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M6 9l6 6 6-6" stroke="#cbd5f5" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+            </a>
+            <div class="nav-sub">
+                <a href="?page=create_account"><span class="nav-text">Cấp tài khoản</span></a>
+                <a href="?page=list_accounts"><span class="nav-text">Danh sách tài khoản</span></a>
+            </div>
+        </div>
+
+        <div class="nav-item">
+            <a href="#">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M12 2l7 4v6c0 6-7 10-7 10S5 12 5 8V6l7-4Z" stroke="#cbd5f5" stroke-width="2" fill="none" />
+                    <path d="M8 10h8" stroke="#cbd5f5" stroke-width="2" stroke-linecap="round" />
+                    <path d="M12 14h.01" stroke="#cbd5f5" stroke-width="2" stroke-linecap="round" />
+                </svg>
+                <span class="nav-text">Quản lý phân quyền</span>
+                <svg class="nav-caret" width="14" height="14" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M6 9l6 6 6-6" stroke="#cbd5f5" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+            </a>
+            <div class="nav-sub">
+                <a href="?page=roles"><span class="nav-text">Danh sách phân quyền</span></a>
+            </div>
+        </div>
+
+        <div class="nav-item">
+            <a href="#">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                     <path d="M12 2l7 4v6c0 6-7 10-7 10S5 12 5 8V6l7-4Z" stroke="#cbd5f5" stroke-width="2" fill="none" />
                 </svg>
                 <span class="nav-text">Quản lý đoàn trường</span>
@@ -198,40 +232,6 @@
             </a>
             <div class="nav-sub">
                 <a href="#"><span class="nav-text">Danh sách thống kê</span></a>
-            </div>
-        </div>
-
-        <div class="nav-item">
-            <a href="#">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <circle cx="12" cy="8" r="3" stroke="#cbd5f5" stroke-width="2" />
-                    <path d="M5 20v-2a7 7 0 0 1 14 0v2" stroke="#cbd5f5" stroke-width="2" stroke-linecap="round" />
-                </svg>
-                <span class="nav-text">Quản lý tài khoản</span>
-                <svg class="nav-caret" width="14" height="14" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M6 9l6 6 6-6" stroke="#cbd5f5" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                </svg>
-            </a>
-            <div class="nav-sub">
-                <a href="?page=create_account"><span class="nav-text">Cấp tài khoản</span></a>
-                <a href="?page=list_accounts"><span class="nav-text">Danh sách tài khoản</span></a>
-            </div>
-        </div>
-
-        <div class="nav-item">
-            <a href="#">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M12 2l7 4v6c0 6-7 10-7 10S5 12 5 8V6l7-4Z" stroke="#cbd5f5" stroke-width="2" fill="none" />
-                    <path d="M8 10h8" stroke="#cbd5f5" stroke-width="2" stroke-linecap="round" />
-                    <path d="M12 14h.01" stroke="#cbd5f5" stroke-width="2" stroke-linecap="round" />
-                </svg>
-                <span class="nav-text">Quản lý phân quyền</span>
-                <svg class="nav-caret" width="14" height="14" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M6 9l6 6 6-6" stroke="#cbd5f5" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                </svg>
-            </a>
-            <div class="nav-sub">
-                <a href="?page=roles"><span class="nav-text">Danh sách phân quyền</span></a>
             </div>
         </div>
     </nav>
