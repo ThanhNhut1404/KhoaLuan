@@ -30,9 +30,7 @@
                             value="<?= isset($formData['class_code']) ? htmlspecialchars($formData['class_code']) : '' ?>"
                             required
                         />
-                        <?php if(isset($errors['class_code'])): ?>
-                            <span class="field-error"><?= $errors['class_code'] ?></span>
-                        <?php endif; ?>
+                        <span class="field-error<?= isset($errors['class_code']) ? '' : ' is-empty' ?>"><?= isset($errors['class_code']) ? htmlspecialchars($errors['class_code']) : '&nbsp;' ?></span>
                     </div>
 
                     <!-- Tên lớp -->
@@ -49,9 +47,7 @@
                             value="<?= isset($formData['class_name']) ? htmlspecialchars($formData['class_name']) : '' ?>"
                             required
                         />
-                        <?php if(isset($errors['class_name'])): ?>
-                            <span class="field-error"><?= $errors['class_name'] ?></span>
-                        <?php endif; ?>
+                        <span class="field-error<?= isset($errors['class_name']) ? '' : ' is-empty' ?>"><?= isset($errors['class_name']) ? htmlspecialchars($errors['class_name']) : '&nbsp;' ?></span>
                     </div>
 
                     <!-- Niên khóa -->
@@ -67,9 +63,7 @@
                                 </option>
                             <?php endforeach; ?>
                         </select>
-                        <?php if(isset($errors['academic_year'])): ?>
-                            <span class="field-error"><?= $errors['academic_year'] ?></span>
-                        <?php endif; ?>
+                        <span class="field-error<?= isset($errors['academic_year']) ? '' : ' is-empty' ?>"><?= isset($errors['academic_year']) ? htmlspecialchars($errors['academic_year']) : '&nbsp;' ?></span>
                     </div>
 
                     <!-- Khoa -->
@@ -85,9 +79,7 @@
                                 </option>
                             <?php endforeach; ?>
                         </select>
-                        <?php if(isset($errors['department'])): ?>
-                            <span class="field-error"><?= $errors['department'] ?></span>
-                        <?php endif; ?>
+                        <span class="field-error<?= isset($errors['department']) ? '' : ' is-empty' ?>"><?= isset($errors['department']) ? htmlspecialchars($errors['department']) : '&nbsp;' ?></span>
                     </div>
 
                     <!-- Chuyên ngành -->
@@ -103,9 +95,7 @@
                                 </option>
                             <?php endforeach; ?>
                         </select>
-                        <?php if(isset($errors['major'])): ?>
-                            <span class="field-error"><?= $errors['major'] ?></span>
-                        <?php endif; ?>
+                        <span class="field-error<?= isset($errors['major']) ? '' : ' is-empty' ?>"><?= isset($errors['major']) ? htmlspecialchars($errors['major']) : '&nbsp;' ?></span>
                     </div>
 
                     <!-- Cố vấn -->
@@ -121,9 +111,7 @@
                                 </option>
                             <?php endforeach; ?>
                         </select>
-                        <?php if(isset($errors['advisor'])): ?>
-                            <span class="field-error"><?= $errors['advisor'] ?></span>
-                        <?php endif; ?>
+                        <span class="field-error<?= isset($errors['advisor']) ? '' : ' is-empty' ?>"><?= isset($errors['advisor']) ? htmlspecialchars($errors['advisor']) : '&nbsp;' ?></span>
                     </div>
 
                     <!-- Số lượng -->
@@ -140,9 +128,7 @@
                             value="<?= isset($formData['capacity']) ? htmlspecialchars($formData['capacity']) : '' ?>"
                             min="0"
                         />
-                        <?php if(isset($errors['capacity'])): ?>
-                            <span class="field-error"><?= $errors['capacity'] ?></span>
-                        <?php endif; ?>
+                        <span class="field-error<?= isset($errors['capacity']) ? '' : ' is-empty' ?>"><?= isset($errors['capacity']) ? htmlspecialchars($errors['capacity']) : '&nbsp;' ?></span>
                     </div>
 
                     <!-- Trạng thái -->
@@ -156,9 +142,7 @@
                             <option value="active" <?= (isset($formData['status']) && $formData['status'] === 'active') ? 'selected' : '' ?>>Đang diễn ra</option>
                             <option value="completed" <?= (isset($formData['status']) && $formData['status'] === 'completed') ? 'selected' : '' ?>>Đã hoàn thành</option>
                         </select>
-                        <?php if(isset($errors['status'])): ?>
-                            <span class="field-error"><?= $errors['status'] ?></span>
-                        <?php endif; ?>
+                        <span class="field-error<?= isset($errors['status']) ? '' : ' is-empty' ?>"><?= isset($errors['status']) ? htmlspecialchars($errors['status']) : '&nbsp;' ?></span>
                     </div>
 
                     <!-- Ghi chú -->
@@ -172,9 +156,7 @@
                             class="field-input textarea-input form-control"
                             placeholder="Nhập ghi chú"
                         ><?= isset($formData['notes']) ? htmlspecialchars($formData['notes']) : '' ?></textarea>
-                        <?php if(isset($errors['notes'])): ?>
-                            <span class="field-error"><?= $errors['notes'] ?></span>
-                        <?php endif; ?>
+                        <span class="field-error<?= isset($errors['notes']) ? '' : ' is-empty' ?>"><?= isset($errors['notes']) ? htmlspecialchars($errors['notes']) : '&nbsp;' ?></span>
                     </div>
                 </div>
 
@@ -236,13 +218,13 @@
     .form-grid {
         display: grid;
         grid-template-columns: repeat(2, minmax(0, 1fr));
-        gap: 20px;
-        margin-bottom: 24px;
+        gap: 0 14px;
+        margin-bottom: 8px;
     }
 
     .form-field {
         display: grid;
-        gap: 6px;
+        gap: 3px;
     }
 
     .field-label {
@@ -300,6 +282,13 @@
         font-size: 12px;
         color: #dc2626;
         display: block;
+        line-height: 1.2;
+        min-height: 18px;
+        overflow-wrap: anywhere;
+    }
+
+    .field-error.is-empty {
+        visibility: hidden;
     }
 
     .form-actions {
@@ -373,7 +362,7 @@
     @media (max-width: 768px) {
         .form-grid {
             grid-template-columns: 1fr;
-            gap: 16px;
+            gap: 0;
         }
 
         .form-actions {

@@ -30,9 +30,7 @@
                             value="<?= isset($formData['activity_name']) ? htmlspecialchars($formData['activity_name']) : '' ?>"
                             required
                         />
-                        <?php if(isset($errors['activity_name'])): ?>
-                            <span class="field-error"><?= $errors['activity_name'] ?></span>
-                        <?php endif; ?>
+                        <span class="field-error<?= isset($errors['activity_name']) ? '' : ' is-empty' ?>"><?= isset($errors['activity_name']) ? htmlspecialchars($errors['activity_name']) : '&nbsp;' ?></span>
                     </div>
 
                     <!-- Đơn vị tổ chức -->
@@ -48,9 +46,7 @@
                                 </option>
                             <?php endforeach; ?>
                         </select>
-                        <?php if(isset($errors['organizing_unit'])): ?>
-                            <span class="field-error"><?= $errors['organizing_unit'] ?></span>
-                        <?php endif; ?>
+                        <span class="field-error<?= isset($errors['organizing_unit']) ? '' : ' is-empty' ?>"><?= isset($errors['organizing_unit']) ? htmlspecialchars($errors['organizing_unit']) : '&nbsp;' ?></span>
                     </div>
 
                     <!-- Thời gian hoạt động -->
@@ -66,9 +62,7 @@
                                 </option>
                             <?php endforeach; ?>
                         </select>
-                        <?php if(isset($errors['activity_period'])): ?>
-                            <span class="field-error"><?= $errors['activity_period'] ?></span>
-                        <?php endif; ?>
+                        <span class="field-error<?= isset($errors['activity_period']) ? '' : ' is-empty' ?>"><?= isset($errors['activity_period']) ? htmlspecialchars($errors['activity_period']) : '&nbsp;' ?></span>
                     </div>
 
                     <!-- Upload background -->
@@ -83,9 +77,7 @@
                             class="field-input form-control"
                             accept="image/*"
                         />
-                        <?php if(isset($errors['background_image'])): ?>
-                            <span class="field-error"><?= $errors['background_image'] ?></span>
-                        <?php endif; ?>
+                        <span class="field-error<?= isset($errors['background_image']) ? '' : ' is-empty' ?>"><?= isset($errors['background_image']) ? htmlspecialchars($errors['background_image']) : '&nbsp;' ?></span>
                     </div>
 
                     <!-- Giờ -->
@@ -101,9 +93,7 @@
                             value="<?= isset($formData['activity_time']) ? htmlspecialchars($formData['activity_time']) : '' ?>"
                             required
                         />
-                        <?php if(isset($errors['activity_time'])): ?>
-                            <span class="field-error"><?= $errors['activity_time'] ?></span>
-                        <?php endif; ?>
+                        <span class="field-error<?= isset($errors['activity_time']) ? '' : ' is-empty' ?>"><?= isset($errors['activity_time']) ? htmlspecialchars($errors['activity_time']) : '&nbsp;' ?></span>
                     </div>
 
                     <!-- Địa điểm -->
@@ -120,9 +110,7 @@
                             value="<?= isset($formData['location']) ? htmlspecialchars($formData['location']) : '' ?>"
                             required
                         />
-                        <?php if(isset($errors['location'])): ?>
-                            <span class="field-error"><?= $errors['location'] ?></span>
-                        <?php endif; ?>
+                        <span class="field-error<?= isset($errors['location']) ? '' : ' is-empty' ?>"><?= isset($errors['location']) ? htmlspecialchars($errors['location']) : '&nbsp;' ?></span>
                     </div>
 
                     <!-- Ngày bắt đầu -->
@@ -139,9 +127,7 @@
                             required
                         />
                         <small class="field-hint">Định dạng: dd/mm/yyyy</small>
-                        <?php if(isset($errors['start_date'])): ?>
-                            <span class="field-error"><?= $errors['start_date'] ?></span>
-                        <?php endif; ?>
+                        <span class="field-error<?= isset($errors['start_date']) ? '' : ' is-empty' ?>"><?= isset($errors['start_date']) ? htmlspecialchars($errors['start_date']) : '&nbsp;' ?></span>
                     </div>
 
                     <!-- Ngày kết thúc -->
@@ -158,9 +144,7 @@
                             required
                         />
                         <small class="field-hint">Định dạng: dd/mm/yyyy</small>
-                        <?php if(isset($errors['end_date'])): ?>
-                            <span class="field-error"><?= $errors['end_date'] ?></span>
-                        <?php endif; ?>
+                        <span class="field-error<?= isset($errors['end_date']) ? '' : ' is-empty' ?>"><?= isset($errors['end_date']) ? htmlspecialchars($errors['end_date']) : '&nbsp;' ?></span>
                     </div>
 
                     <!-- Loại hoạt động -->
@@ -176,9 +160,7 @@
                                 </option>
                             <?php endforeach; ?>
                         </select>
-                        <?php if(isset($errors['activity_type'])): ?>
-                            <span class="field-error"><?= $errors['activity_type'] ?></span>
-                        <?php endif; ?>
+                        <span class="field-error<?= isset($errors['activity_type']) ? '' : ' is-empty' ?>"><?= isset($errors['activity_type']) ? htmlspecialchars($errors['activity_type']) : '&nbsp;' ?></span>
                     </div>
 
                     <!-- Cấp hoạt động -->
@@ -194,9 +176,7 @@
                                 </option>
                             <?php endforeach; ?>
                         </select>
-                        <?php if(isset($errors['activity_level'])): ?>
-                            <span class="field-error"><?= $errors['activity_level'] ?></span>
-                        <?php endif; ?>
+                        <span class="field-error<?= isset($errors['activity_level']) ? '' : ' is-empty' ?>"><?= isset($errors['activity_level']) ? htmlspecialchars($errors['activity_level']) : '&nbsp;' ?></span>
                     </div>
 
                     <!-- Đối tượng -->
@@ -213,9 +193,7 @@
                             value="<?= isset($formData['target_audience']) ? htmlspecialchars($formData['target_audience']) : '' ?>"
                             required
                         />
-                        <?php if(isset($errors['target_audience'])): ?>
-                            <span class="field-error"><?= $errors['target_audience'] ?></span>
-                        <?php endif; ?>
+                        <span class="field-error<?= isset($errors['target_audience']) ? '' : ' is-empty' ?>"><?= isset($errors['target_audience']) ? htmlspecialchars($errors['target_audience']) : '&nbsp;' ?></span>
                     </div>
 
                     <!-- Trang phục -->
@@ -231,9 +209,7 @@
                             placeholder="Nhập trang phục"
                             value="<?= isset($formData['dress_code']) ? htmlspecialchars($formData['dress_code']) : '' ?>"
                         />
-                        <?php if(isset($errors['dress_code'])): ?>
-                            <span class="field-error"><?= $errors['dress_code'] ?></span>
-                        <?php endif; ?>
+                        <span class="field-error<?= isset($errors['dress_code']) ? '' : ' is-empty' ?>"><?= isset($errors['dress_code']) ? htmlspecialchars($errors['dress_code']) : '&nbsp;' ?></span>
                     </div>
 
                     <!-- Nội dung -->
@@ -247,9 +223,7 @@
                             class="field-input textarea-input form-control"
                             placeholder="Nhập nội dung hoạt động"
                         ><?= isset($formData['content']) ? htmlspecialchars($formData['content']) : '' ?></textarea>
-                        <?php if(isset($errors['content'])): ?>
-                            <span class="field-error"><?= $errors['content'] ?></span>
-                        <?php endif; ?>
+                        <span class="field-error<?= isset($errors['content']) ? '' : ' is-empty' ?>"><?= isset($errors['content']) ? htmlspecialchars($errors['content']) : '&nbsp;' ?></span>
                     </div>
 
                     <!-- Quyền lợi -->
@@ -263,9 +237,7 @@
                             class="field-input textarea-input form-control"
                             placeholder="Nhập quyền lợi"
                         ><?= isset($formData['benefits']) ? htmlspecialchars($formData['benefits']) : '' ?></textarea>
-                        <?php if(isset($errors['benefits'])): ?>
-                            <span class="field-error"><?= $errors['benefits'] ?></span>
-                        <?php endif; ?>
+                        <span class="field-error<?= isset($errors['benefits']) ? '' : ' is-empty' ?>"><?= isset($errors['benefits']) ? htmlspecialchars($errors['benefits']) : '&nbsp;' ?></span>
                     </div>
 
                     <!-- Điểm cộng -->
@@ -282,9 +254,7 @@
                             value="<?= isset($formData['bonus_points']) ? htmlspecialchars($formData['bonus_points']) : '' ?>"
                             min="0"
                         />
-                        <?php if(isset($errors['bonus_points'])): ?>
-                            <span class="field-error"><?= $errors['bonus_points'] ?></span>
-                        <?php endif; ?>
+                        <span class="field-error<?= isset($errors['bonus_points']) ? '' : ' is-empty' ?>"><?= isset($errors['bonus_points']) ? htmlspecialchars($errors['bonus_points']) : '&nbsp;' ?></span>
                     </div>
 
                     <!-- Số lượng -->
@@ -301,9 +271,7 @@
                             value="<?= isset($formData['capacity']) ? htmlspecialchars($formData['capacity']) : '' ?>"
                             min="0"
                         />
-                        <?php if(isset($errors['capacity'])): ?>
-                            <span class="field-error"><?= $errors['capacity'] ?></span>
-                        <?php endif; ?>
+                        <span class="field-error<?= isset($errors['capacity']) ? '' : ' is-empty' ?>"><?= isset($errors['capacity']) ? htmlspecialchars($errors['capacity']) : '&nbsp;' ?></span>
                     </div>
 
                     <!-- Người đại diện -->
@@ -319,9 +287,7 @@
                             placeholder="Nhập người đại diện"
                             value="<?= isset($formData['representative']) ? htmlspecialchars($formData['representative']) : '' ?>"
                         />
-                        <?php if(isset($errors['representative'])): ?>
-                            <span class="field-error"><?= $errors['representative'] ?></span>
-                        <?php endif; ?>
+                        <span class="field-error<?= isset($errors['representative']) ? '' : ' is-empty' ?>"><?= isset($errors['representative']) ? htmlspecialchars($errors['representative']) : '&nbsp;' ?></span>
                     </div>
 
                     <!-- Số điện thoại -->
@@ -337,9 +303,7 @@
                             placeholder="Nhập số điện thoại"
                             value="<?= isset($formData['phone']) ? htmlspecialchars($formData['phone']) : '' ?>"
                         />
-                        <?php if(isset($errors['phone'])): ?>
-                            <span class="field-error"><?= $errors['phone'] ?></span>
-                        <?php endif; ?>
+                        <span class="field-error<?= isset($errors['phone']) ? '' : ' is-empty' ?>"><?= isset($errors['phone']) ? htmlspecialchars($errors['phone']) : '&nbsp;' ?></span>
                     </div>
 
                     <!-- Trạng thái -->
@@ -353,9 +317,7 @@
                             <option value="active" <?= (isset($formData['status']) && $formData['status'] === 'active') ? 'selected' : '' ?>>Đang diễn ra</option>
                             <option value="completed" <?= (isset($formData['status']) && $formData['status'] === 'completed') ? 'selected' : '' ?>>Đã hoàn thành</option>
                         </select>
-                        <?php if(isset($errors['status'])): ?>
-                            <span class="field-error"><?= $errors['status'] ?></span>
-                        <?php endif; ?>
+                        <span class="field-error<?= isset($errors['status']) ? '' : ' is-empty' ?>"><?= isset($errors['status']) ? htmlspecialchars($errors['status']) : '&nbsp;' ?></span>
                     </div>
                 </div>
 
@@ -417,13 +379,13 @@
     .form-grid {
         display: grid;
         grid-template-columns: repeat(2, minmax(0, 1fr));
-        gap: 20px;
-        margin-bottom: 24px;
+        gap: 0 14px;
+        margin-bottom: 8px;
     }
 
     .form-field {
         display: grid;
-        gap: 6px;
+        gap: 3px;
     }
 
     .field-label {
@@ -487,6 +449,13 @@
         font-size: 12px;
         color: #dc2626;
         display: block;
+        line-height: 1.2;
+        min-height: 18px;
+        overflow-wrap: anywhere;
+    }
+
+    .field-error.is-empty {
+        visibility: hidden;
     }
 
     .form-actions {
@@ -560,7 +529,7 @@
     @media (max-width: 768px) {
         .form-grid {
             grid-template-columns: 1fr;
-            gap: 16px;
+            gap: 0;
         }
 
         .form-actions {

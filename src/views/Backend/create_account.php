@@ -11,7 +11,7 @@ $errors = $errors ?? [];
 
 $value = static fn(string $key): string => htmlspecialchars($formData[$key] ?? '');
 $selected = static fn(string $key, string $value): string => (string)($formData[$key] ?? '') === $value ? 'selected' : '';
-$error = static fn(string $key): string => !empty($errors[$key]) ? '<span class="field-error">' . htmlspecialchars($errors[$key]) . '</span>' : '';
+$error = static fn(string $key): string => '<span class="field-error' . (empty($errors[$key]) ? ' is-empty' : '') . '">' . (!empty($errors[$key]) ? htmlspecialchars($errors[$key]) : '&nbsp;') . '</span>';
 $roleLabel = static function (string $roleName): string {
     $labels = [
         'DOAN_TRUONG' => 'Đoàn trường',
@@ -213,18 +213,19 @@ $roleLabel = static function (string $roleName): string {
     .panel-header { padding: 12px 14px; border-bottom: 1px solid #e5e7eb; background: #f9fafb; }
     .panel-title { font-size: 14px; font-weight: 700; color: #0f2a5a; margin: 0; }
     .panel-body { padding: 20px; }
-    .form-section { display: grid; gap: 14px; margin-bottom: 22px; }
+    .form-section { display: grid; gap: 8px; margin-bottom: 12px; }
     .profile-section { display: none; }
     .section-title { font-size: 13px; font-weight: 800; color: #0f2a5a; text-transform: uppercase; letter-spacing: 0.04em; }
-    .form-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 18px 20px; }
-    .form-field { display: grid; gap: 6px; }
+    .form-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0 14px; }
+    .form-field { display: grid; gap: 3px; }
     .role-field { display: none; }
     .field-label { font-size: 12px; font-weight: 700; color: #0f2a5a; display: block; }
     .required { color: #dc2626; font-weight: 700; }
     .field-input { padding: 10px; border-radius: 10px; border: 1px solid #e5e7eb; background: #f9fafb; font-size: 13px; color: #1f2937; font-family: inherit; height: 40px; box-sizing: border-box; }
     .field-input:focus { outline: none; border-color: #0f2a5a; box-shadow: 0 0 0 3px rgba(15,42,90,0.08); background: #ffffff; }
     select.field-input { cursor: pointer; }
-    .field-error { color: #dc2626; font-size: 12px; font-weight: 600; }
+    .field-error { color: #dc2626; display: block; font-size: 12px; font-weight: 600; line-height: 1.2; min-height: 18px; overflow-wrap: anywhere; }
+    .field-error.is-empty { visibility: hidden; }
     .form-actions { display: flex; justify-content: flex-end; gap: 12px; padding-top: 16px; border-top: 1px solid #e8ecf3; }
     .action-btn { padding: 8px 20px; border-radius: 10px; border: 1px solid #e5e7eb; background: #ffffff; color: #0f2a5a; font-size: 13px; font-weight: 700; cursor: pointer; text-decoration: none; display: inline-flex; align-items: center; justify-content: center; white-space: nowrap; }
     .action-btn:hover { background: #f3f4f6; border-color: #d1d5db; }
@@ -232,7 +233,7 @@ $roleLabel = static function (string $roleName): string {
     .action-btn.primary:hover { background: linear-gradient(180deg, #0d2449 0%, #091a3d 100%); border-color: #0a1838; }
 
     @media (max-width: 768px) {
-        .form-grid { grid-template-columns: 1fr; gap: 16px; }
+        .form-grid { grid-template-columns: 1fr; gap: 0; }
         .form-actions { flex-direction: column-reverse; }
         .action-btn { width: 100%; }
     }

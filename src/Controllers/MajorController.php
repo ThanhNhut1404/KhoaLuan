@@ -99,9 +99,13 @@ class MajorController
     public function listing(array $data, array $query, string $method): array
     {
         $page = max(1, (int) ($query['page_num'] ?? 1));
+        $statusFilter = trim((string) ($query['status'] ?? ''));
+        if ($statusFilter !== '' && !in_array($statusFilter, array_column(self::STATUS_OPTIONS, 'value'), true)) {
+            $statusFilter = '';
+        }
         $filters = [
-            'keyword' => trim($query['keyword'] ?? $query['q'] ?? $query['search'] ?? ''),
-            'status' => trim($query['status'] ?? ''),
+            'keyword' => $this->searchKeyword($query['keyword'] ?? $query['q'] ?? $query['search'] ?? ''),
+            'status' => $statusFilter,
         ];
         $state = [
             'majors' => [],
@@ -123,7 +127,33 @@ class MajorController
             $state['toast'] = $this->handleListAction($data);
         }
 
-        return $this->loadListState($state, $page, $filters);
+        try {
+            return $this->loadListState($state, $page, $filters);
+        } catch (Throwable $exception) {
+            error_log($exception->getMessage());
+
+            $state['majors'] = [];
+            $hasFilters = $filters['keyword'] !== '' || $filters['status'] !== '';
+            $state['emptyMessage'] = $hasFilters
+                ? 'Không có ngành học phù hợp.'
+                : 'Chưa có ngành học nào.';
+            $state['pagination'] = [
+                'current_page' => 1,
+                'total_items' => 0,
+                'items_per_page' => self::LIST_PER_PAGE,
+                'total_pages' => 1,
+                'from' => 0,
+                'to' => 0,
+            ];
+            $state['toast'] ??= [
+                'type' => 'error',
+                'message' => !$hasFilters
+                    ? 'Không thể tải danh sách ngành học.'
+                    : 'Đã xảy ra lỗi khi tải danh sách ngành học. Vui lòng thử lại.',
+            ];
+
+            return $state;
+        }
     }
 
     public function editState(int $id, array $data, string $method): array
@@ -261,7 +291,7 @@ class MajorController
 
     private function loadListState(array $state, int $requestedPage, array $filters = []): array
     {
-        $keyword = trim((string) ($filters['keyword'] ?? ''));
+        $keyword = $this->searchKeyword($filters['keyword'] ?? '');
         $status = trim((string) ($filters['status'] ?? ''));
         $hasFilters = $keyword !== '' || $status !== '';
         $totalItems = $hasFilters
@@ -276,7 +306,7 @@ class MajorController
             : [];
 
         $state['majors'] = array_map(fn (array $major): array => $this->formatListRow($major), $majors);
-        $state['emptyMessage'] = $hasFilters ? 'Không tìm thấy ngành học phù hợp.' : 'Chưa có ngành học nào.';
+        $state['emptyMessage'] = $hasFilters ? 'Không có ngành học phù hợp.' : 'Chưa có ngành học nào.';
         $state['pagination'] = [
             'current_page' => $currentPage,
             'total_items' => $totalItems,
@@ -317,7 +347,7 @@ class MajorController
             }
 
             if ((string) ($major['status'] ?? '') === $status) {
-                return ['type' => 'success', 'message' => 'Cập nhật trạng thái ngành học thành công.'];
+                return ['type' => 'error', 'message' => 'Trạng thái mới trùng với trạng thái hiện tại.'];
             }
 
             try {
@@ -438,5 +468,19 @@ class MajorController
     private function length(string $value): int
     {
         return function_exists('mb_strlen') ? mb_strlen($value, 'UTF-8') : strlen($value);
+    }
+
+    private function searchKeyword(mixed $value): string
+    {
+        $keyword = preg_replace('/\s+/u', ' ', trim((string) $value));
+        if ($keyword === '') {
+            return '';
+        }
+
+        if ($this->length($keyword) <= 100) {
+            return $keyword;
+        }
+
+        return function_exists('mb_substr') ? mb_substr($keyword, 0, 100, 'UTF-8') : substr($keyword, 0, 100);
     }
 }

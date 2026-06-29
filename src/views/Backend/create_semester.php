@@ -124,9 +124,7 @@
                                 </option>
                             <?php endforeach; ?>
                         </select>
-                        <?php if(isset($errors['academic_year'])): ?>
-                            <span class="field-error"><?= $errors['academic_year'] ?></span>
-                        <?php endif; ?>
+                        <span class="field-error<?= isset($errors['academic_year']) ? '' : ' is-empty' ?>"><?= isset($errors['academic_year']) ? htmlspecialchars($errors['academic_year']) : '&nbsp;' ?></span>
                     </div>
 
                     <!-- Tên học kỳ -->
@@ -144,9 +142,7 @@
                             required 
                         />
                         <small class="field-hint">Ví dụ: Học kỳ 1</small>
-                        <?php if(isset($errors['semester_name'])): ?>
-                            <span class="field-error"><?= $errors['semester_name'] ?></span>
-                        <?php endif; ?>
+                        <span class="field-error<?= isset($errors['semester_name']) ? '' : ' is-empty' ?>"><?= isset($errors['semester_name']) ? htmlspecialchars($errors['semester_name']) : '&nbsp;' ?></span>
                     </div>
 
                     <!-- Ngày bắt đầu -->
@@ -163,9 +159,7 @@
                             required 
                         />
                         <small class="field-hint">Định dạng: dd/mm/yyyy</small>
-                        <?php if(isset($errors['start_date'])): ?>
-                            <span class="field-error"><?= $errors['start_date'] ?></span>
-                        <?php endif; ?>
+                        <span class="field-error<?= isset($errors['start_date']) ? '' : ' is-empty' ?>"><?= isset($errors['start_date']) ? htmlspecialchars($errors['start_date']) : '&nbsp;' ?></span>
                     </div>
 
                     <!-- Ngày kết thúc -->
@@ -182,9 +176,7 @@
                             required 
                         />
                         <small class="field-hint">Định dạng: dd/mm/yyyy</small>
-                        <?php if(isset($errors['end_date'])): ?>
-                            <span class="field-error"><?= $errors['end_date'] ?></span>
-                        <?php endif; ?>
+                        <span class="field-error<?= isset($errors['end_date']) ? '' : ' is-empty' ?>"><?= isset($errors['end_date']) ? htmlspecialchars($errors['end_date']) : '&nbsp;' ?></span>
                     </div>
 
                     
@@ -200,9 +192,7 @@
                             <option value="active" <?= (isset($formData['status']) && $formData['status'] === 'active') ? 'selected' : '' ?>>Đang diễn ra</option>
                             <option value="completed" <?= (isset($formData['status']) && $formData['status'] === 'completed') ? 'selected' : '' ?>>Đã hoàn thành</option>
                         </select>
-                        <?php if(isset($errors['status'])): ?>
-                            <span class="field-error"><?= $errors['status'] ?></span>
-                        <?php endif; ?>
+                        <span class="field-error<?= isset($errors['status']) ? '' : ' is-empty' ?>"><?= isset($errors['status']) ? htmlspecialchars($errors['status']) : '&nbsp;' ?></span>
                     </div>
                 </div>
 
@@ -290,14 +280,14 @@
     .form-grid {
         display: grid;
         grid-template-columns: repeat(2, minmax(0, 1fr));
-        gap: 20px;
-        margin-bottom: 24px;
+        gap: 0 14px;
+        margin-bottom: 8px;
         align-items: start; /* ensure fields align to top */
     }
 
     .form-field {
         display: grid;
-        gap: 6px;
+        gap: 3px;
     }
 
     .field-label {
@@ -354,6 +344,13 @@
         font-size: 12px;
         color: #dc2626;
         display: block;
+        line-height: 1.2;
+        min-height: 18px;
+        overflow-wrap: anywhere;
+    }
+
+    .field-error.is-empty {
+        visibility: hidden;
     }
 
     .form-actions {
@@ -427,7 +424,7 @@
     @media (max-width: 768px) {
         .form-grid {
             grid-template-columns: 1fr;
-            gap: 16px;
+            gap: 0;
         }
 
         .form-actions {

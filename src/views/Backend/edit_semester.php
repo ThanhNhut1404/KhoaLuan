@@ -31,7 +31,7 @@
                         <?php endforeach; ?>
                     </select>
                     <small class="field-hint">&nbsp;</small>
-                    <?php if(isset($errors['academic_year'])): ?><span class="field-error"><?= $errors['academic_year'] ?></span><?php endif; ?>
+                    <span class="field-error<?= isset($errors['academic_year']) ? '' : ' is-empty' ?>"><?= isset($errors['academic_year']) ? htmlspecialchars($errors['academic_year']) : '&nbsp;' ?></span>
                 </div>
 
                 <!-- Tên học kỳ -->
@@ -39,7 +39,7 @@
                     <label class="field-label form-label" for="semester_name">Tên học kỳ <span class="required">*</span></label>
                     <input type="text" id="semester_name" name="semester_name" class="field-input form-control" placeholder="Nhập tên học kỳ" value="<?= htmlspecialchars($formData['name'] ?? $formData['semester_name'] ?? '') ?>" required />
                     <small class="field-hint">Ví dụ: Học kỳ 1</small>
-                    <?php if(isset($errors['semester_name'])): ?><span class="field-error"><?= $errors['semester_name'] ?></span><?php endif; ?>
+                    <span class="field-error<?= isset($errors['semester_name']) ? '' : ' is-empty' ?>"><?= isset($errors['semester_name']) ? htmlspecialchars($errors['semester_name']) : '&nbsp;' ?></span>
                 </div>
 
                 <!-- Ngày bắt đầu -->
@@ -47,7 +47,7 @@
                     <label class="field-label form-label" for="start_date">Ngày bắt đầu <span class="required">*</span></label>
                     <input type="date" id="start_date" name="start_date" class="field-input form-control" value="<?= htmlspecialchars($formData['start_date'] ?? '') ?>" required />
                     <small class="field-hint">Định dạng: dd/mm/yyyy</small>
-                    <?php if(isset($errors['start_date'])): ?><span class="field-error"><?= $errors['start_date'] ?></span><?php endif; ?>
+                    <span class="field-error<?= isset($errors['start_date']) ? '' : ' is-empty' ?>"><?= isset($errors['start_date']) ? htmlspecialchars($errors['start_date']) : '&nbsp;' ?></span>
                 </div>
 
                 <!-- Ngày kết thúc -->
@@ -55,7 +55,7 @@
                     <label class="field-label form-label" for="end_date">Ngày kết thúc <span class="required">*</span></label>
                     <input type="date" id="end_date" name="end_date" class="field-input form-control" value="<?= htmlspecialchars($formData['end_date'] ?? '') ?>" required />
                     <small class="field-hint">Định dạng: dd/mm/yyyy</small>
-                    <?php if(isset($errors['end_date'])): ?><span class="field-error"><?= $errors['end_date'] ?></span><?php endif; ?>
+                    <span class="field-error<?= isset($errors['end_date']) ? '' : ' is-empty' ?>"><?= isset($errors['end_date']) ? htmlspecialchars($errors['end_date']) : '&nbsp;' ?></span>
                 </div>
 
                 
@@ -70,7 +70,7 @@
                         <option value="completed" <?= (isset($formData['status']) && $formData['status'] === 'completed') ? 'selected' : '' ?>>Đã hoàn thành</option>
                     </select>
                     <small class="field-hint">&nbsp;</small>
-                    <?php if(isset($errors['status'])): ?><span class="field-error"><?= $errors['status'] ?></span><?php endif; ?>
+                    <span class="field-error<?= isset($errors['status']) ? '' : ' is-empty' ?>"><?= isset($errors['status']) ? htmlspecialchars($errors['status']) : '&nbsp;' ?></span>
                 </div>
             </div>
 
@@ -120,12 +120,12 @@
     .form-grid {
         display: grid;
         grid-template-columns: repeat(2, minmax(0, 1fr));
-        gap: 20px;
-        margin-bottom: 24px;
+        gap: 0 14px;
+        margin-bottom: 8px;
         align-items: start;
     }
 
-    .form-field { display: grid; gap: 6px; }
+    .form-field { display: grid; gap: 3px; }
 
     .field-label { font-size: 12px; font-weight: 700; color: #0f2a5a; }
 
@@ -145,7 +145,8 @@
     .field-input:focus { outline: none; border-color: #0f2a5a; box-shadow: 0 0 0 3px rgba(15,42,90,0.08); background:#fff }
 
     .field-hint { font-size: 11px; color: #9ca3af; display: block; }
-    .field-error { font-size: 12px; color: #dc2626; display: block; }
+    .field-error { font-size: 12px; color: #dc2626; display: block; line-height: 1.2; min-height: 18px; overflow-wrap: anywhere; }
+    .field-error.is-empty { visibility: hidden; }
 
     .form-actions {
         display: flex;
@@ -184,7 +185,7 @@
     .action-btn.primary:hover { background: linear-gradient(180deg,#0d2449 0%,#091a3d 100%); border-color:#0a1838 }
 
     @media (max-width: 768px) {
-        .form-grid { grid-template-columns: 1fr; gap: 16px; }
+        .form-grid { grid-template-columns: 1fr; gap: 0; }
         .form-actions { flex-direction: column-reverse; }
         .action-btn { width: 100%; justify-content: center; }
     }

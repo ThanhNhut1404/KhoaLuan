@@ -179,11 +179,18 @@ class KhoaModel
 
     public function update(string $originalMa, array $data): bool
     {
+        $abbreviation = trim((string) ($data['ma_khoa'] ?? ''));
+        $name = trim((string) ($data['ten_khoa'] ?? ''));
+
+        if ($abbreviation === '' || $name === '') {
+            return false;
+        }
+
         $sql = 'UPDATE khoa_bo_mon SET TEN_VIET_TAT_KHOA = :ten_viet_tat, TEN_KHOA = :ten, EMAIL_KHOA = :email, SO_DIEN_THOAI_KHOA = :phone WHERE MA_KHOA = :ma';
         $stmt = $this->db->prepare($sql);
         $stmt->execute([
-            'ten_viet_tat' => $data['ma_khoa'],
-            'ten' => $data['ten_khoa'],
+            'ten_viet_tat' => $abbreviation,
+            'ten' => $name,
             'email' => ($data['email_khoa'] ?? '') === '' ? null : $data['email_khoa'],
             'phone' => ($data['so_dien_thoai_khoa'] ?? '') === '' ? null : $data['so_dien_thoai_khoa'],
             'ma' => $originalMa,

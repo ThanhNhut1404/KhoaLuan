@@ -187,7 +187,7 @@ class MajorModel
         );
 
         foreach ($params as $name => $value) {
-            $statement->bindValue($name, $value);
+            $statement->bindValue(':' . ltrim((string) $name, ':'), $value);
         }
 
         $statement->bindValue('limit', $perPage, PDO::PARAM_INT);
@@ -298,14 +298,20 @@ class MajorModel
         $conditions = [];
         $params = [];
 
+        $keyword = preg_replace('/\s+/u', ' ', trim($keyword));
         if ($keyword !== '') {
-            $conditions[] = '(nganh_hoc.TEN_NGANH LIKE :keyword
-                OR nganh_hoc.TEN_VIET_TAT LIKE :keyword
-                OR CAST(nganh_hoc.MA_NGANH AS CHAR) LIKE :keyword
-                OR CAST(nganh_hoc.MA_KHOA AS CHAR) LIKE :keyword
-                OR khoa_bo_mon.TEN_VIET_TAT_KHOA LIKE :keyword
-                OR khoa_bo_mon.TEN_KHOA LIKE :keyword)';
-            $params['keyword'] = '%' . $keyword . '%';
+            $textKeyword = function_exists('mb_strtolower') ? mb_strtolower($keyword, 'UTF-8') : strtolower($keyword);
+
+            $conditions[] = '(LOWER(nganh_hoc.TEN_NGANH) LIKE :keyword_name
+                OR LOWER(nganh_hoc.TEN_VIET_TAT) LIKE :keyword_code
+                OR CAST(nganh_hoc.MA_NGANH AS CHAR) LIKE :keyword_id
+                OR LOWER(khoa_bo_mon.TEN_VIET_TAT_KHOA) LIKE :keyword_department_code
+                OR LOWER(khoa_bo_mon.TEN_KHOA) LIKE :keyword_department_name)';
+            $params['keyword_name'] = '%' . $textKeyword . '%';
+            $params['keyword_code'] = '%' . $textKeyword . '%';
+            $params['keyword_id'] = '%' . $keyword . '%';
+            $params['keyword_department_code'] = '%' . $textKeyword . '%';
+            $params['keyword_department_name'] = '%' . $textKeyword . '%';
         }
 
         if ($status !== '') {

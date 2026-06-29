@@ -20,7 +20,7 @@
 
         <div class="panel-body card-body">
             <form id="createYearForm" method="POST" action="?page=create_year">
-                <div class="row g-3 g-md-4 year-form-row">
+                <div class="row g-1 year-form-row">
                     <!-- Tên niên khóa -->
                     <div class="col-12 col-md-6 year-field">
                         <label class="field-label form-label" for="year_name">
@@ -36,9 +36,7 @@
                             required 
                         />
                         <small class="field-hint">&nbsp;</small>
-                        <?php if(isset($errors['year_name'])): ?>
-                            <div class="invalid-feedback"><?= htmlspecialchars($errors['year_name']) ?></div>
-                        <?php endif; ?>
+                        <div class="invalid-feedback<?= isset($errors['year_name']) ? '' : ' is-empty' ?>"><?= isset($errors['year_name']) ? htmlspecialchars($errors['year_name']) : '&nbsp;' ?></div>
                     </div>
 
                     <!-- Ngày bắt đầu -->
@@ -55,9 +53,7 @@
                             required 
                         />
                         <small class="field-hint">Định dạng: dd/mm/yyyy</small>
-                        <?php if(isset($errors['start_date'])): ?>
-                            <div class="invalid-feedback"><?= htmlspecialchars($errors['start_date']) ?></div>
-                        <?php endif; ?>
+                        <div class="invalid-feedback<?= isset($errors['start_date']) ? '' : ' is-empty' ?>"><?= isset($errors['start_date']) ? htmlspecialchars($errors['start_date']) : '&nbsp;' ?></div>
                     </div>
 
                     <!-- Trạng thái -->
@@ -73,9 +69,7 @@
                             <?php endforeach; ?>
                         </select>
                         <small class="field-hint">&nbsp;</small>
-                        <?php if(isset($errors['status'])): ?>
-                            <div class="invalid-feedback"><?= htmlspecialchars($errors['status']) ?></div>
-                        <?php endif; ?>
+                        <div class="invalid-feedback<?= isset($errors['status']) ? '' : ' is-empty' ?>"><?= isset($errors['status']) ? htmlspecialchars($errors['status']) : '&nbsp;' ?></div>
                     </div>
 
                     <!-- Ngày kết thúc -->
@@ -92,9 +86,7 @@
                             required 
                         />
                         <small class="field-hint">Định dạng: dd/mm/yyyy</small>
-                        <?php if(isset($errors['end_date'])): ?>
-                            <div class="invalid-feedback"><?= htmlspecialchars($errors['end_date']) ?></div>
-                        <?php endif; ?>
+                        <div class="invalid-feedback<?= isset($errors['end_date']) ? '' : ' is-empty' ?>"><?= isset($errors['end_date']) ? htmlspecialchars($errors['end_date']) : '&nbsp;' ?></div>
                     </div>
                 </div>
 
@@ -171,7 +163,7 @@
     }
 
     .year-form-row {
-        margin-bottom: 24px;
+        margin-bottom: 8px;
         align-items: start;
     }
 
@@ -234,12 +226,20 @@
         font-size: 11px;
         color: #9ca3af;
         display: block;
-        margin-top: 6px;
+        margin-top: 3px;
     }
 
     .invalid-feedback {
+        display: block;
         font-size: 12px;
-        margin-top: 6px;
+        margin-top: 3px;
+        line-height: 1.2;
+        min-height: 18px;
+        overflow-wrap: anywhere;
+    }
+
+    .invalid-feedback.is-empty {
+        visibility: hidden;
     }
 
     .form-actions {

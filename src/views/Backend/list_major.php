@@ -16,11 +16,30 @@
     $total_items = (int) ($pagination['total_items'] ?? count($majors));
     $items_per_page = (int) ($pagination['items_per_page'] ?? 10);
     $total_pages = (int) ($pagination['total_pages'] ?? 1);
+    $filters = $filters ?? [];
+    $currentStatusFilter = trim((string) ($filters['status'] ?? ($_GET['status'] ?? '')));
+    $statusValues = array_column($statusOptions, 'value');
+    if (!in_array($currentStatusFilter, $statusValues, true)) {
+        $currentStatusFilter = '';
+    }
     $emptyMessage = $emptyMessage ?? 'Chưa có ngành học nào.';
     $paginationUrl = static function (int $pageNum): string {
         $params = $_GET;
         $params['page'] = 'list_major';
         $params['page_num'] = $pageNum;
+
+        return '?' . http_build_query($params);
+    };
+    $filterUrl = static function (string $status): string {
+        $params = $_GET;
+        $params['page'] = 'list_major';
+        unset($params['page_num']);
+
+        if ($status === '') {
+            unset($params['status']);
+        } else {
+            $params['status'] = $status;
+        }
 
         return '?' . http_build_query($params);
     };
@@ -31,6 +50,21 @@
         <div class="panel-header card-header">
             <div class="header-content">
                 <h2 class="panel-title">DANH SÁCH NGÀNH HỌC</h2>
+                <div class="filter-wrap" id="majorStatusFilter">
+                    <button type="button" id="majorStatusFilterToggle" class="filter-btn btn btn-outline-secondary" title="Lọc trạng thái" aria-label="Lọc trạng thái" aria-expanded="false">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M4 5h16l-6 7v5l-4 2v-7L4 5Z" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" />
+                        </svg>
+                    </button>
+                    <div class="filter-menu" id="majorStatusFilterMenu" role="menu" aria-labelledby="majorStatusFilterToggle">
+                        <a href="<?= htmlspecialchars($filterUrl('')) ?>" class="<?= $currentStatusFilter === '' ? 'active' : '' ?>" role="menuitem">Tất cả</a>
+                        <?php foreach ($statusOptions as $option): ?>
+                            <a href="<?= htmlspecialchars($filterUrl((string) $option['value'])) ?>" class="<?= $currentStatusFilter === $option['value'] ? 'active' : '' ?>" role="menuitem">
+                                <?= htmlspecialchars($option['label']) ?>
+                            </a>
+                        <?php endforeach; ?>
+                    </div>
+                </div>
             </div>
         </div>
 
@@ -68,7 +102,7 @@
                                     <td class="col-status">
                                         <form method="POST" style="display:inline-block;">
                                             <input type="hidden" name="_row_id" value="<?= (int) $major['id'] ?>" />
-                                            <select name="status[<?= (int) $major['id'] ?>]" class="status-select <?= htmlspecialchars($major['status_class'] ?? '') ?> form-select" data-previous-value="<?= htmlspecialchars($major['status'] ?? '') ?>" onchange="updateStatusSelect(this)">
+                                            <select name="status[<?= (int) $major['id'] ?>]" class="status-select <?= htmlspecialchars($major['status_class'] ?? '') ?> form-select" data-previous-value="<?= htmlspecialchars($major['status'] ?? '') ?>" data-major-name="<?= htmlspecialchars($major['name'] ?? '') ?>" onchange="updateStatusSelect(this)">
                                                 <?php foreach ($statusOptions as $option): ?>
                                                     <option value="<?= htmlspecialchars($option['value']) ?>" <?= (($major['status'] ?? '') === $option['value']) ? 'selected' : '' ?>>
                                                         <?= htmlspecialchars($option['label']) ?>
@@ -141,6 +175,14 @@
     .panel-header { padding: 12px 14px; border-bottom: 1px solid #e5e7eb; background: #f9fafb; }
     .header-content { display:flex; justify-content:space-between; align-items:center; }
     .panel-title { font-size:14px; font-weight:700; color:#0f2a5a; margin:0; }
+    .filter-wrap { position:relative; display:inline-flex; align-items:center; }
+    .filter-btn { width:32px; height:32px; border:1px solid #e5e7eb; border-radius:6px; background:#fff; color:#0f2a5a; cursor:pointer; display:inline-flex; align-items:center; justify-content:center; padding:0; }
+    .filter-btn:hover { background:#f8fafc; color:#0b1f45; }
+    .filter-menu { position:absolute; top:calc(100% + 6px); right:0; z-index:30; display:none; min-width:180px; padding:6px; background:#fff; border:1px solid #e5e7eb; border-radius:6px; box-shadow:0 8px 20px rgba(15,42,90,0.12); }
+    .filter-wrap.open .filter-menu { display:block; }
+    .filter-menu a { display:block; padding:8px 10px; border-radius:6px; color:#1f2937; font-size:13px; font-weight:600; text-decoration:none; white-space:nowrap; }
+    .filter-menu a:hover,
+    .filter-menu a.active { background:#f1f5f9; color:#0f2a5a; }
     .btn-create { padding:8px 14px; background:linear-gradient(180deg,#0f2a5a 0%,#0b1f45 100%); color:#fff; border-radius:6px; text-decoration:none; font-weight:700 }
     .panel-body { padding:0; }
     .table-wrapper { overflow-x:auto; }
@@ -151,11 +193,11 @@
     .data-table tbody tr:nth-child(odd) { background:#f9fafb; }
     .data-table tbody tr:hover { background:#f0f1f3; }
     .data-table td { padding:12px 14px; color:#1f2937; text-align:center; border-right:1px solid #e5e7eb; }
-    .col-stt { width:50px; }
-    .col-code { width:12%; }
-    .col-name { width:24%; }
-    .col-dept { width:12%; }
-    .col-dept-name { width:18%; }
+    .col-stt { width:5%; }
+    .col-code { width:9%; }
+    .col-name { width:26%; }
+    .col-dept { width:11%; }
+    .col-dept-name { width:20%; }
     .col-status { width:16%; }
     .col-action { width:8%; }
     .status-badge { display:inline-flex; align-items:center; gap:6px; padding:6px 12px; border-radius:999px; font-size:12px; font-weight:600; }
@@ -195,23 +237,62 @@
     function updateStatusSelect(el){
         var val = el.value;
         var previous = el.getAttribute('data-previous-value') || '';
-        var message = isActiveStatus(val)
-            ? 'Bạn có chắc muốn mở lại tuyển sinh ngành học này không?'
-            : 'Bạn có chắc muốn ngừng tuyển sinh ngành học này không?';
+        var majorName = el.getAttribute('data-major-name') || '';
 
-        if (!confirm(message)) {
-            el.value = previous;
+        if (val === previous) {
             setStatusClass(el, previous);
             return;
         }
 
-        setStatusClass(el, val);
-        el.form.submit();
+        el.value = previous;
+        setStatusClass(el, previous);
+
+        if (typeof showStatusConfirm !== 'function') {
+            return;
+        }
+
+        showStatusConfirm({
+            select: el,
+            moduleLabel: 'ngành học',
+            targetName: majorName,
+            previousStatus: previous,
+            nextStatus: val,
+            warning: 'Thao tác này sẽ thay đổi trạng thái tuyển sinh của ngành học.'
+        });
     }
 
     function showMajorDeleteConfirm(id, name) {
         showDeleteConfirm(id, 'ngành học', name);
     }
+
+    (function(){
+        var filterWrap = document.getElementById('majorStatusFilter');
+        var filterToggle = document.getElementById('majorStatusFilterToggle');
+
+        if (!filterWrap || !filterToggle) {
+            return;
+        }
+
+        filterToggle.addEventListener('click', function(event){
+            event.stopPropagation();
+            var isOpen = filterWrap.classList.toggle('open');
+            filterToggle.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+        });
+
+        document.addEventListener('click', function(event){
+            if (!filterWrap.contains(event.target)) {
+                filterWrap.classList.remove('open');
+                filterToggle.setAttribute('aria-expanded', 'false');
+            }
+        });
+
+        document.addEventListener('keydown', function(event){
+            if (event.key === 'Escape') {
+                filterWrap.classList.remove('open');
+                filterToggle.setAttribute('aria-expanded', 'false');
+            }
+        });
+    })();
 
     document.addEventListener('DOMContentLoaded', function(){
         document.querySelectorAll('.status-select').forEach(function(s){
@@ -221,4 +302,5 @@
     });
 </script>
 
+<?php include __DIR__ . '/confirm/confirm_status_modal.php'; ?>
 <?php include __DIR__ . '/confirm/confirm_delete_modal.php'; ?>

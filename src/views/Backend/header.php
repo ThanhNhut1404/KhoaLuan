@@ -6,7 +6,9 @@ $adminRole = $adminSession['TEN_VAI_TRO'] ?? '';
 
 <?php
     $currentPage = $_GET['page'] ?? 'dashboard';
-    $headerSearchValue = $currentPage === 'list_khoa'
+    $searchablePages = ['list_khoa', 'list_major'];
+    $isHeaderSearchEnabled = in_array($currentPage, $searchablePages, true);
+    $headerSearchValue = $isHeaderSearchEnabled
         ? trim((string) ($_GET['search'] ?? $_GET['keyword'] ?? $_GET['q'] ?? ''))
         : '';
 ?>
@@ -21,7 +23,7 @@ $adminRole = $adminSession['TEN_VAI_TRO'] ?? '';
         <!-- header logo removed per design: logo now shown in sidebar -->
     </div>
 
-    <form id="headerSearchForm" class="header-search" method="GET" action="/KhoaLuan/public/admin.php" data-search-enabled="<?= $currentPage === 'list_khoa' ? '1' : '0' ?>">
+    <form id="headerSearchForm" class="header-search" method="GET" action="/KhoaLuan/public/admin.php" data-search-enabled="<?= $isHeaderSearchEnabled ? '1' : '0' ?>" data-list-page="<?= htmlspecialchars($currentPage) ?>">
         <input type="hidden" name="page" value="<?= htmlspecialchars($currentPage) ?>" />
         <input id="headerSearchInput" type="text" name="search" class="form-control" placeholder="Tìm kiếm..." value="<?= htmlspecialchars($headerSearchValue) ?>" />
         <button type="submit" aria-label="Tìm kiếm">
@@ -88,11 +90,12 @@ $adminRole = $adminSession['TEN_VAI_TRO'] ?? '';
         var input = document.getElementById('headerSearchInput');
         if (!form || !input) return;
 
-        var listUrl = '/KhoaLuan/public/admin.php?page=list_khoa';
+        var listPage = form.dataset.listPage || 'dashboard';
+        var listUrl = '/KhoaLuan/public/admin.php?page=' + encodeURIComponent(listPage);
         var params = new URLSearchParams(window.location.search);
         var hasSearchQuery = params.has('search') || params.has('keyword') || params.has('q');
 
-        function resetKhoaList() {
+        function resetSearchList() {
             window.location.href = listUrl;
         }
 
@@ -104,13 +107,13 @@ $adminRole = $adminSession['TEN_VAI_TRO'] ?? '';
 
             if (input.value.trim() === '') {
                 event.preventDefault();
-                resetKhoaList();
+                resetSearchList();
             }
         });
 
         input.addEventListener('input', function() {
             if (form.dataset.searchEnabled === '1' && hasSearchQuery && input.value.trim() === '') {
-                resetKhoaList();
+                resetSearchList();
             }
         });
     })();

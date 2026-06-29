@@ -28,14 +28,14 @@
                     <div class="form-field">
                         <label class="field-label form-label" for="class_code">Mã lớp học <span class="required">*</span></label>
                         <input type="text" id="class_code" name="class_code" class="field-input form-control" placeholder="Nhập mã lớp học" value="<?= isset($formData['code'])?htmlspecialchars($formData['code']):(isset($formData['class_code'])?htmlspecialchars($formData['class_code']):'') ?>" required />
-                        <?php if(isset($errors['class_code'])): ?><span class="field-error"><?= $errors['class_code'] ?></span><?php endif; ?>
+                        <span class="field-error<?= isset($errors['class_code']) ? '' : ' is-empty' ?>"><?= isset($errors['class_code']) ? htmlspecialchars($errors['class_code']) : '&nbsp;' ?></span>
                     </div>
 
                     <!-- Tên lớp -->
                     <div class="form-field">
                         <label class="field-label form-label" for="class_name">Tên lớp <span class="required">*</span></label>
                         <input type="text" id="class_name" name="class_name" class="field-input form-control" placeholder="Nhập tên lớp" value="<?= isset($formData['name'])?htmlspecialchars($formData['name']):(isset($formData['class_name'])?htmlspecialchars($formData['class_name']):'') ?>" required />
-                        <?php if(isset($errors['class_name'])): ?><span class="field-error"><?= $errors['class_name'] ?></span><?php endif; ?>
+                        <span class="field-error<?= isset($errors['class_name']) ? '' : ' is-empty' ?>"><?= isset($errors['class_name']) ? htmlspecialchars($errors['class_name']) : '&nbsp;' ?></span>
                     </div>
 
                     <!-- Niên khóa -->
@@ -47,7 +47,7 @@
                                 <option value="<?= $y['id'] ?>" <?= (isset($formData['academic_year']) && $formData['academic_year'] == $y['id']) ? 'selected' : '' ?>><?= htmlspecialchars($y['name']) ?></option>
                             <?php endforeach; ?>
                         </select>
-                        <?php if(isset($errors['academic_year'])): ?><span class="field-error"><?= $errors['academic_year'] ?></span><?php endif; ?>
+                        <span class="field-error<?= isset($errors['academic_year']) ? '' : ' is-empty' ?>"><?= isset($errors['academic_year']) ? htmlspecialchars($errors['academic_year']) : '&nbsp;' ?></span>
                     </div>
 
                     <!-- Khoa -->
@@ -59,7 +59,7 @@
                                 <option value="<?= $department['id'] ?>" <?= (isset($formData['department']) && $formData['department'] == $department['id']) ? 'selected' : '' ?>><?= htmlspecialchars($department['name']) ?></option>
                             <?php endforeach; ?>
                         </select>
-                        <?php if(isset($errors['department'])): ?><span class="field-error"><?= $errors['department'] ?></span><?php endif; ?>
+                        <span class="field-error<?= isset($errors['department']) ? '' : ' is-empty' ?>"><?= isset($errors['department']) ? htmlspecialchars($errors['department']) : '&nbsp;' ?></span>
                     </div>
 
                     <!-- Chuyên ngành -->
@@ -71,7 +71,7 @@
                                 <option value="<?= $major['id'] ?>" <?= (isset($formData['major']) && $formData['major'] == $major['id']) ? 'selected' : '' ?>><?= htmlspecialchars($major['name']) ?></option>
                             <?php endforeach; ?>
                         </select>
-                        <?php if(isset($errors['major'])): ?><span class="field-error"><?= $errors['major'] ?></span><?php endif; ?>
+                        <span class="field-error<?= isset($errors['major']) ? '' : ' is-empty' ?>"><?= isset($errors['major']) ? htmlspecialchars($errors['major']) : '&nbsp;' ?></span>
                     </div>
 
                     <!-- Cố vấn -->
@@ -83,14 +83,14 @@
                                 <option value="<?= $advisor['id'] ?>" <?= (isset($formData['advisor']) && $formData['advisor'] == $advisor['id']) ? 'selected' : '' ?>><?= htmlspecialchars($advisor['name']) ?></option>
                             <?php endforeach; ?>
                         </select>
-                        <?php if(isset($errors['advisor'])): ?><span class="field-error"><?= $errors['advisor'] ?></span><?php endif; ?>
+                        <span class="field-error<?= isset($errors['advisor']) ? '' : ' is-empty' ?>"><?= isset($errors['advisor']) ? htmlspecialchars($errors['advisor']) : '&nbsp;' ?></span>
                     </div>
 
                     <!-- Số lượng -->
                     <div class="form-field">
                         <label class="field-label form-label" for="capacity">Số lượng</label>
                         <input type="number" id="capacity" name="capacity" class="field-input form-control" placeholder="Nhập số lượng" value="<?= isset($formData['capacity'])?htmlspecialchars($formData['capacity']):'' ?>" min="0" />
-                        <?php if(isset($errors['capacity'])): ?><span class="field-error"><?= $errors['capacity'] ?></span><?php endif; ?>
+                        <span class="field-error<?= isset($errors['capacity']) ? '' : ' is-empty' ?>"><?= isset($errors['capacity']) ? htmlspecialchars($errors['capacity']) : '&nbsp;' ?></span>
                     </div>
 
                     <!-- Trạng thái -->
@@ -102,14 +102,14 @@
                             <option value="active" <?= (isset($formData['status']) && $formData['status'] === 'active') ? 'selected' : '' ?>>Đang diễn ra</option>
                             <option value="completed" <?= (isset($formData['status']) && $formData['status'] === 'completed') ? 'selected' : '' ?>>Đã hoàn thành</option>
                         </select>
-                        <?php if(isset($errors['status'])): ?><span class="field-error"><?= $errors['status'] ?></span><?php endif; ?>
+                        <span class="field-error<?= isset($errors['status']) ? '' : ' is-empty' ?>"><?= isset($errors['status']) ? htmlspecialchars($errors['status']) : '&nbsp;' ?></span>
                     </div>
 
                     <!-- Ghi chú -->
                     <div class="form-field">
                         <label class="field-label form-label" for="notes">Ghi chú</label>
                         <textarea id="notes" name="notes" class="field-input textarea-input form-control" placeholder="Nhập ghi chú"><?= isset($formData['notes'])?htmlspecialchars($formData['notes']):'' ?></textarea>
-                        <?php if(isset($errors['notes'])): ?><span class="field-error"><?= $errors['notes'] ?></span><?php endif; ?>
+                        <span class="field-error<?= isset($errors['notes']) ? '' : ' is-empty' ?>"><?= isset($errors['notes']) ? htmlspecialchars($errors['notes']) : '&nbsp;' ?></span>
                     </div>
                 </div>
                 <div class="form-actions">
@@ -129,17 +129,19 @@
     .panel-header { padding:12px 14px; border-bottom:1px solid #e5e7eb; background:#f9fafb }
     .panel-title { font-size:14px; font-weight:700; color:#0f2a5a; margin:0; display:flex; align-items:center; gap:8px }
     .panel-body { padding:20px }
-    .form-grid { display:grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap:20px; margin-bottom:24px }
-    .form-field { display:grid; gap:6px }
+    .form-grid { display:grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap:0 14px; margin-bottom:8px }
+    .form-field { display:grid; gap:3px }
     .field-label { font-size:12px; font-weight:700; color:#0f2a5a }
     .field-input { padding:10px; border-radius:10px; border:1px solid #e5e7eb; background:#f9fafb; font-size:13px; color:#1f2937; height:40px; box-sizing:border-box }
     .field-input:focus { outline:none; border-color:#0f2a5a; box-shadow:0 0 0 3px rgba(15,42,90,0.08); background:#fff }
+    .field-error { font-size:12px; color:#dc2626; display:block; line-height:1.2; min-height:18px; overflow-wrap:anywhere }
+    .field-error.is-empty { visibility:hidden }
     .form-actions { display:flex; justify-content:flex-end; gap:12px; padding-top:16px; border-top:1px solid #e8ecf3 }
     .action-btn { padding:8px 20px; border-radius:10px; border:1px solid #e5e7eb; background:#fff; color:#0f2a5a; font-size:13px; font-weight:700; cursor:pointer; text-decoration:none; display:inline-flex; align-items:center; gap:6px; transition:all 0.2s; white-space:nowrap }
     .action-btn:hover { background:#f3f4f6; border-color:#d1d5db }
     .action-btn.primary { background: linear-gradient(180deg,#0f2a5a 0%,#0b1f45 100%); border-color:#0f2a5a; color:#fff }
     .action-btn.primary:hover { background: linear-gradient(180deg,#0d2449 0%,#091a3d 100%); border-color:#0a1838 }
-    @media (max-width:768px) { .form-grid{grid-template-columns:1fr} .action-btn{width:100%; justify-content:center} }
+    @media (max-width:768px) { .form-grid{grid-template-columns:1fr; gap:0} .action-btn{width:100%; justify-content:center} }
 </style>
 
 <style>
