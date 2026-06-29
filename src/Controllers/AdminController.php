@@ -160,6 +160,90 @@ if (in_array($page, ['create_year', 'list_year', 'edit_year'], true)) {
     }
 }
 
+if (in_array($page, ['create_semester', 'list_semester', 'edit_semester'], true)) {
+    try {
+        $semesterController = new \KhoaLuan\QLDRL\Controllers\SemesterController();
+        $semesterState = $semesterController->handle($page, $_POST, $_GET, $_SERVER['REQUEST_METHOD']);
+
+        if ($page === 'create_semester') {
+            $formData = $semesterState['formData'];
+            $errors = $semesterState['errors'];
+            $academic_years = $semesterState['academic_years'];
+            $status_options = $semesterState['status_options'];
+            $adminToast = $semesterState['toast'];
+        }
+
+        if ($page === 'list_semester') {
+            if (!empty($semesterState['redirect'])) {
+                if (!empty($semesterState['toast'])) {
+                    $_SESSION['message'] = $semesterState['toast']['message'] ?? '';
+                    $_SESSION['message_type'] = $semesterState['toast']['type'] ?? 'info';
+                }
+                header('Location: ' . $semesterState['redirect']);
+                exit;
+            }
+
+            $semesters = $semesterState['semesters'];
+            $filters = $semesterState['filters'] ?? [];
+            $emptyMessage = $semesterState['emptyMessage'] ?? 'Chưa có học kỳ nào.';
+            $pagination = $semesterState['pagination'];
+            $adminToast = $semesterState['toast'] ?? null;
+        }
+
+        if ($page === 'edit_semester') {
+            if (!empty($semesterState['redirect'])) {
+                if (!empty($semesterState['toast'])) {
+                    $_SESSION['message'] = $semesterState['toast']['message'] ?? '';
+                    $_SESSION['message_type'] = $semesterState['toast']['type'] ?? 'info';
+                }
+                header('Location: ' . $semesterState['redirect']);
+                exit;
+            }
+
+            $formData = $semesterState['formData'];
+            $errors = $semesterState['errors'];
+            $academic_years = $semesterState['academic_years'];
+            $status_options = $semesterState['status_options'];
+            $adminToast = $semesterState['toast'] ?? null;
+            $isEdit = true;
+        }
+    } catch (\Throwable $e) {
+        error_log($e->getMessage());
+
+        if ($page === 'create_semester') {
+            $formData = $_SERVER['REQUEST_METHOD'] === 'POST' ? $_POST : [];
+            $errors = [];
+            $academic_years = [];
+            $status_options = [
+                ['value' => 'Sắp tới', 'label' => 'Sắp tới'],
+                ['value' => 'Đang diễn ra', 'label' => 'Đang diễn ra'],
+                ['value' => 'Đã hoàn thành', 'label' => 'Đã hoàn thành'],
+            ];
+            $adminToast = ['type' => 'error', 'message' => 'Có lỗi xảy ra khi tạo học kỳ. Vui lòng thử lại.'];
+        }
+
+        if ($page === 'list_semester') {
+            $semesters = [];
+            $filters = [];
+            $emptyMessage = 'Chưa có học kỳ nào.';
+            $pagination = ['current_page' => 1, 'total_items' => 0, 'items_per_page' => 10, 'total_pages' => 1, 'from' => 0, 'to' => 0];
+            $adminToast = ['type' => 'error', 'message' => 'Không thể tải danh sách học kỳ.'];
+        }
+
+        if ($page === 'edit_semester') {
+            $formData = $_SERVER['REQUEST_METHOD'] === 'POST' ? $_POST : [];
+            $errors = [];
+            $academic_years = [];
+            $status_options = [
+                ['value' => 'Sắp tới', 'label' => 'Sắp tới'],
+                ['value' => 'Đang diễn ra', 'label' => 'Đang diễn ra'],
+                ['value' => 'Đã hoàn thành', 'label' => 'Đã hoàn thành'],
+            ];
+            $adminToast = ['type' => 'error', 'message' => 'Có lỗi xảy ra khi tải dữ liệu học kỳ.'];
+        }
+    }
+}
+
 if (in_array($page, ['create_khoa', 'list_khoa', 'edit_khoa'], true)) {
     try {
         $khoaController = new \KhoaLuan\QLDRL\Controllers\KhoaController();

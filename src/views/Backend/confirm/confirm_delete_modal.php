@@ -101,6 +101,14 @@ function confirmDelete() {
         return;
     }
 
+    const semesterDeleteForm = document.getElementById('semesterDeleteForm');
+    const semesterDeleteId = document.getElementById('semesterDeleteId');
+    if (_deleteTargetLabel === 'học kỳ' && semesterDeleteForm && semesterDeleteId) {
+        semesterDeleteId.value = _deleteTargetId;
+        semesterDeleteForm.submit();
+        return;
+    }
+
     const row = document.querySelector('tr[data-id="' + _deleteTargetId + '"]');
     if (row) row.remove();
     hideDeleteConfirm();
