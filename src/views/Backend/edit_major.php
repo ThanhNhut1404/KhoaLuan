@@ -16,7 +16,7 @@
         </div>
 
         <div class="panel-body card-body">
-            <form id="editMajorForm" method="POST" action="?page=edit_major&id=<?= (int) $id ?>">
+            <form id="editMajorForm" method="POST" action="?page=edit_major&id=<?= (int) $id ?>" novalidate>
                 <div class="form-grid">
                     <div class="form-row row">
                         <div class="form-field col-12 col-md-6">
@@ -45,7 +45,7 @@
                                 class="field-input form-control"
                                 placeholder="Nhập tên ngành học"
                                 value="<?= htmlspecialchars($formData['major_name'] ?? '') ?>"
-                                required
+                                aria-invalid="<?= isset($errors['major_name']) ? 'true' : 'false' ?>"
                             />
                             <span class="field-error<?= isset($errors['major_name']) ? '' : ' is-empty' ?>"><?= isset($errors['major_name']) ? htmlspecialchars($errors['major_name']) : '&nbsp;' ?></span>
                         </div>
@@ -56,7 +56,7 @@
                             <label class="field-label form-label" for="department">
                                 Khoa trực thuộc <span class="required">*</span>
                             </label>
-                            <select id="department" name="department" class="field-input form-select" required>
+                            <select id="department" name="department" class="field-input form-select" aria-invalid="<?= isset($errors['department']) ? 'true' : 'false' ?>">
                                 <option value="">-- Chọn khoa quản lý --</option>
                                 <?php foreach ($departments as $dept): ?>
                                     <?php
@@ -75,7 +75,7 @@
                             <label class="field-label form-label" for="status">
                                 Trạng thái <span class="required">*</span>
                             </label>
-                            <select id="status" name="status" class="field-input form-select" required>
+                            <select id="status" name="status" class="field-input form-select" aria-invalid="<?= isset($errors['status']) ? 'true' : 'false' ?>">
                                 <option value="">-- Chọn trạng thái --</option>
                                 <?php foreach ($statusOptions as $option): ?>
                                     <option value="<?= htmlspecialchars($option['value']) ?>" <?= (isset($formData['status']) && $formData['status'] === $option['value']) ? 'selected' : '' ?>>
@@ -303,7 +303,7 @@
         const department = document.getElementById('department').value.trim();
         const status = document.getElementById('status').value.trim();
 
-        if (!majorName || !department || !status) {
+        if (false && (!majorName || !department || !status)) {
             e.preventDefault();
             alert('Vui lòng điền tất cả các trường bắt buộc!');
             return false;

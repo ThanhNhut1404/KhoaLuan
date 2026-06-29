@@ -37,12 +37,12 @@ class MajorModel
             'SELECT 1
              FROM nganh_hoc
              WHERE MA_KHOA = :department_id
-               AND TEN_NGANH = :name
+               AND LOWER(REPLACE(TRIM(TEN_NGANH), " ", "")) = :name
              LIMIT 1'
         );
         $statement->execute([
             'department_id' => $departmentId,
-            'name' => $name,
+            'name' => $this->normalizeNameForLookup($name),
         ]);
 
         return (bool) $statement->fetchColumn();
@@ -57,10 +57,10 @@ class MajorModel
         $statement = $this->db->prepare(
             'SELECT 1
              FROM nganh_hoc
-             WHERE TEN_VIET_TAT = :code
+             WHERE UPPER(TRIM(TEN_VIET_TAT)) = :code
              LIMIT 1'
         );
-        $statement->execute(['code' => $code]);
+        $statement->execute(['code' => $this->normalizeCode($code)]);
 
         return (bool) $statement->fetchColumn();
     }
@@ -71,13 +71,13 @@ class MajorModel
             'SELECT 1
              FROM nganh_hoc
              WHERE MA_KHOA = :department_id
-               AND TEN_NGANH = :name
+               AND LOWER(REPLACE(TRIM(TEN_NGANH), " ", "")) = :name
                AND MA_NGANH <> :exclude_id
              LIMIT 1'
         );
         $statement->execute([
             'department_id' => $departmentId,
-            'name' => $name,
+            'name' => $this->normalizeNameForLookup($name),
             'exclude_id' => $excludeId,
         ]);
 
@@ -93,12 +93,12 @@ class MajorModel
         $statement = $this->db->prepare(
             'SELECT 1
              FROM nganh_hoc
-             WHERE TEN_VIET_TAT = :code
+             WHERE UPPER(TRIM(TEN_VIET_TAT)) = :code
                AND MA_NGANH <> :exclude_id
              LIMIT 1'
         );
         $statement->execute([
-            'code' => $code,
+            'code' => $this->normalizeCode($code),
             'exclude_id' => $excludeId,
         ]);
 
@@ -113,14 +113,15 @@ class MajorModel
              VALUES
                 (:department_id, :name, :short_name, :description, :status)'
         );
-
-        return $statement->execute([
+        $created = $statement->execute([
             'department_id' => $data['department_id'],
             'name' => $data['name'],
             'short_name' => $data['short_name'] === '' ? null : $data['short_name'],
             'description' => $data['description'] === '' ? null : $data['description'],
             'status' => $data['status'],
         ]);
+
+        return $created && $statement->rowCount() > 0;
     }
 
     public function countAll(): int
@@ -160,8 +161,8 @@ class MajorModel
              ORDER BY nganh_hoc.MA_NGANH DESC
              LIMIT :limit OFFSET :offset'
         );
-        $statement->bindValue('limit', $perPage, PDO::PARAM_INT);
-        $statement->bindValue('offset', $offset, PDO::PARAM_INT);
+        $statement->bindValue(':limit', $perPage, PDO::PARAM_INT);
+        $statement->bindValue(':offset', $offset, PDO::PARAM_INT);
         $statement->execute();
 
         return $statement->fetchAll();
@@ -190,8 +191,8 @@ class MajorModel
             $statement->bindValue(':' . ltrim((string) $name, ':'), $value);
         }
 
-        $statement->bindValue('limit', $perPage, PDO::PARAM_INT);
-        $statement->bindValue('offset', $offset, PDO::PARAM_INT);
+        $statement->bindValue(':limit', $perPage, PDO::PARAM_INT);
+        $statement->bindValue(':offset', $offset, PDO::PARAM_INT);
         $statement->execute();
 
         return $statement->fetchAll();
@@ -261,9 +262,9 @@ class MajorModel
             }
 
             $statement = $this->db->prepare(sprintf(
-                'SELECT 1 FROM %s WHERE %s = :id LIMIT 1',
-                $table,
-                $column
+                'SELECT 1 FROM `%s` WHERE `%s` = :id LIMIT 1',
+                str_replace('`', '``', $table),
+                str_replace('`', '``', $column)
             ));
             $statement->execute(['id' => $id]);
 
@@ -283,9 +284,11 @@ class MajorModel
         return $statement->rowCount() > 0;
     }
 
-    public function isDuplicateException(\Throwable $exception): bool
+    public function isDuplicateException(Throwable $exception): bool
     {
-        return $exception instanceof PDOException && $exception->getCode() === '23000';
+        return $exception instanceof PDOException
+            && $exception->getCode() === '23000'
+            && (int) ($exception->errorInfo[1] ?? 0) === 1062;
     }
 
     public function isConstraintException(Throwable $exception): bool
@@ -324,7 +327,7 @@ class MajorModel
 
     private function relatedChecks(): array
     {
-        return [
+        $checks = [
             ['lop_hoc', 'MA_NGANH'],
             ['sinh_vien', 'MA_NGANH'],
             ['bang_drl', 'MA_NGANH'],
@@ -333,12 +336,53 @@ class MajorModel
             ['phieu_danh_gia', 'MA_NGANH'],
             ['ket_qua_ren_luyen', 'MA_NGANH'],
         ];
+
+        foreach ($this->foreignKeyChecks() as $check) {
+            $checks[] = $check;
+        }
+
+        $uniqueChecks = [];
+        foreach ($checks as $check) {
+            $uniqueChecks[$check[0] . '.' . $check[1]] = $check;
+        }
+
+        return array_values($uniqueChecks);
+    }
+
+    private function foreignKeyChecks(): array
+    {
+        try {
+            $statement = $this->db->prepare(
+                'SELECT TABLE_NAME AS table_name, COLUMN_NAME AS column_name
+                 FROM information_schema.KEY_COLUMN_USAGE
+                 WHERE TABLE_SCHEMA = DATABASE()
+                   AND REFERENCED_TABLE_NAME = :table
+                   AND REFERENCED_COLUMN_NAME = :column'
+            );
+            $statement->execute([
+                'table' => 'nganh_hoc',
+                'column' => 'MA_NGANH',
+            ]);
+
+            return array_map(
+                static fn (array $row): array => [$row['table_name'], $row['column_name']],
+                $statement->fetchAll()
+            );
+        } catch (Throwable) {
+            return [];
+        }
     }
 
     private function tableExists(string $table): bool
     {
         try {
-            $statement = $this->db->prepare('SHOW TABLES LIKE :table');
+            $statement = $this->db->prepare(
+                'SELECT 1
+                 FROM information_schema.TABLES
+                 WHERE TABLE_SCHEMA = DATABASE()
+                   AND TABLE_NAME = :table
+                 LIMIT 1'
+            );
             $statement->execute(['table' => $table]);
 
             return (bool) $statement->fetchColumn();
@@ -350,12 +394,36 @@ class MajorModel
     private function hasColumn(string $table, string $column): bool
     {
         try {
-            $statement = $this->db->query('SHOW COLUMNS FROM ' . $table);
-            $columns = array_column($statement->fetchAll(), 'Field');
+            $statement = $this->db->prepare(
+                'SELECT 1
+                 FROM information_schema.COLUMNS
+                 WHERE TABLE_SCHEMA = DATABASE()
+                   AND TABLE_NAME = :table
+                   AND COLUMN_NAME = :column
+                 LIMIT 1'
+            );
+            $statement->execute([
+                'table' => $table,
+                'column' => $column,
+            ]);
 
-            return in_array($column, $columns, true);
+            return (bool) $statement->fetchColumn();
         } catch (Throwable) {
             return false;
         }
+    }
+
+    private function normalizeNameForLookup(string $name): string
+    {
+        $name = preg_replace('/\s+/u', '', trim($name));
+
+        return function_exists('mb_strtolower') ? mb_strtolower($name, 'UTF-8') : strtolower($name);
+    }
+
+    private function normalizeCode(string $code): string
+    {
+        $code = trim($code);
+
+        return function_exists('mb_strtoupper') ? mb_strtoupper($code, 'UTF-8') : strtoupper($code);
     }
 }

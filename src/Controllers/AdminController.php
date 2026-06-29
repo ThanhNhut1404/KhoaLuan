@@ -237,6 +237,8 @@ if (in_array($page, ['create_major', 'list_major', 'edit_major'], true)) {
             $majors = $majorState['majors'];
             $pagination = $majorState['pagination'];
             $statusOptions = $majorState['statusOptions'];
+            $filters = $majorState['filters'] ?? [];
+            $emptyMessage = $majorState['emptyMessage'] ?? 'Chưa có ngành học nào.';
             $adminToast = $majorState['toast'] ?? null;
         }
 
@@ -258,6 +260,7 @@ if (in_array($page, ['create_major', 'list_major', 'edit_major'], true)) {
             $isEdit = true;
         }
     } catch (\Throwable $e) {
+        error_log($e->getMessage());
         $statusOptions = [
             ['value' => 'Hoạt động', 'label' => 'Hoạt động'],
             ['value' => 'Ngừng tuyển sinh', 'label' => 'Ngừng tuyển sinh'],
@@ -267,12 +270,14 @@ if (in_array($page, ['create_major', 'list_major', 'edit_major'], true)) {
             $formData = $_SERVER['REQUEST_METHOD'] === 'POST' ? $_POST : [];
             $errors = [];
             $departments = [];
-            $adminToast = ['type' => 'error', 'message' => 'Có lỗi khi xử lý yêu cầu tạo ngành học.'];
+            $adminToast = ['type' => 'error', 'message' => 'Có lỗi khi xử lý yêu cầu tạo ngành học. Vui lòng thử lại.'];
         }
 
         if ($page === 'list_major') {
             $majors = [];
-            $pagination = ['current_page' => 1, 'total_items' => 0, 'items_per_page' => 6, 'total_pages' => 1, 'from' => 0, 'to' => 0];
+            $filters = [];
+            $emptyMessage = 'Chưa có ngành học nào.';
+            $pagination = ['current_page' => 1, 'total_items' => 0, 'items_per_page' => 10, 'total_pages' => 1, 'from' => 0, 'to' => 0];
             $adminToast = ['type' => 'error', 'message' => 'Không thể tải danh sách ngành học.'];
         }
 
@@ -280,7 +285,7 @@ if (in_array($page, ['create_major', 'list_major', 'edit_major'], true)) {
             $formData = $_SERVER['REQUEST_METHOD'] === 'POST' ? $_POST : [];
             $errors = [];
             $departments = [];
-            $adminToast = ['type' => 'error', 'message' => 'Có lỗi khi tải dữ liệu ngành học.'];
+            $adminToast = ['type' => 'error', 'message' => 'Có lỗi khi tải dữ liệu ngành học. Vui lòng thử lại.'];
         }
     }
 }

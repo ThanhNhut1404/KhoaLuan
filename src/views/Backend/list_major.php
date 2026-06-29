@@ -57,10 +57,10 @@
                         </svg>
                     </button>
                     <div class="filter-menu" id="majorStatusFilterMenu" role="menu" aria-labelledby="majorStatusFilterToggle">
-                        <a href="<?= htmlspecialchars($filterUrl('')) ?>" class="<?= $currentStatusFilter === '' ? 'active' : '' ?>" role="menuitem">Tất cả</a>
+                        <a href="<?= htmlspecialchars($filterUrl(''), ENT_QUOTES, 'UTF-8') ?>" class="<?= $currentStatusFilter === '' ? 'active' : '' ?>" role="menuitem">Tất cả</a>
                         <?php foreach ($statusOptions as $option): ?>
-                            <a href="<?= htmlspecialchars($filterUrl((string) $option['value'])) ?>" class="<?= $currentStatusFilter === $option['value'] ? 'active' : '' ?>" role="menuitem">
-                                <?= htmlspecialchars($option['label']) ?>
+                            <a href="<?= htmlspecialchars($filterUrl((string) $option['value']), ENT_QUOTES, 'UTF-8') ?>" class="<?= $currentStatusFilter === $option['value'] ? 'active' : '' ?>" role="menuitem">
+                                <?= htmlspecialchars($option['label'], ENT_QUOTES, 'UTF-8') ?>
                             </a>
                         <?php endforeach; ?>
                     </div>
@@ -74,7 +74,7 @@
                     <svg width="48" height="48" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                         <path d="M9 13h6M9 17h3M5 21h14a2 2 0 0 0 2-2V5a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
                     </svg>
-                    <h3><?= htmlspecialchars($emptyMessage) ?></h3>
+                    <h3><?= htmlspecialchars($emptyMessage, ENT_QUOTES, 'UTF-8') ?></h3>
                 </div>
             <?php else: ?>
                 <div class="table-wrapper">
@@ -95,17 +95,17 @@
                                 <?php $rowNumber = (($current_page - 1) * $items_per_page) + $index + 1; ?>
                                 <tr data-id="<?= (int) $major['id'] ?>">
                                     <td class="col-stt"><?= str_pad((string) $rowNumber, 2, '0', STR_PAD_LEFT) ?></td>
-                                    <td class="col-code"><?= htmlspecialchars($major['code'] ?? '--') ?></td>
-                                    <td class="col-name"><?= htmlspecialchars($major['name'] ?? '--') ?></td>
-                                    <td class="col-dept"><?= htmlspecialchars($major['department'] ?? '--') ?></td>
-                                    <td class="col-dept-name"><?= htmlspecialchars($major['department_name'] ?? '--') ?></td>
+                                    <td class="col-code"><?= htmlspecialchars($major['code'] ?? '--', ENT_QUOTES, 'UTF-8') ?></td>
+                                    <td class="col-name"><?= htmlspecialchars($major['name'] ?? '--', ENT_QUOTES, 'UTF-8') ?></td>
+                                    <td class="col-dept"><?= htmlspecialchars($major['department'] ?? '--', ENT_QUOTES, 'UTF-8') ?></td>
+                                    <td class="col-dept-name"><?= htmlspecialchars($major['department_name'] ?? '--', ENT_QUOTES, 'UTF-8') ?></td>
                                     <td class="col-status">
                                         <form method="POST" style="display:inline-block;">
                                             <input type="hidden" name="_row_id" value="<?= (int) $major['id'] ?>" />
-                                            <select name="status[<?= (int) $major['id'] ?>]" class="status-select <?= htmlspecialchars($major['status_class'] ?? '') ?> form-select" data-previous-value="<?= htmlspecialchars($major['status'] ?? '') ?>" data-major-name="<?= htmlspecialchars($major['name'] ?? '') ?>" onchange="updateStatusSelect(this)">
+                                            <select name="status[<?= (int) $major['id'] ?>]" class="status-select <?= htmlspecialchars($major['status_class'] ?? '', ENT_QUOTES, 'UTF-8') ?> form-select" data-previous-value="<?= htmlspecialchars($major['status'] ?? '', ENT_QUOTES, 'UTF-8') ?>" data-major-name="<?= htmlspecialchars($major['name'] ?? '', ENT_QUOTES, 'UTF-8') ?>" onchange="updateStatusSelect(this)">
                                                 <?php foreach ($statusOptions as $option): ?>
-                                                    <option value="<?= htmlspecialchars($option['value']) ?>" <?= (($major['status'] ?? '') === $option['value']) ? 'selected' : '' ?>>
-                                                        <?= htmlspecialchars($option['label']) ?>
+                                                    <option value="<?= htmlspecialchars($option['value'], ENT_QUOTES, 'UTF-8') ?>" <?= (($major['status'] ?? '') === $option['value']) ? 'selected' : '' ?>>
+                                                        <?= htmlspecialchars($option['label'], ENT_QUOTES, 'UTF-8') ?>
                                                     </option>
                                                 <?php endforeach; ?>
                                             </select>
@@ -138,20 +138,20 @@
                     </div>
                     <div class="pagination mb-0">
                         <?php if ($current_page > 1): ?>
-                            <a href="<?= htmlspecialchars($paginationUrl(1)) ?>" class="pagination-btn first page-link page-item">&lt;&lt;</a>
-                            <a href="<?= htmlspecialchars($paginationUrl($current_page - 1)) ?>" class="pagination-btn prev page-link page-item">&lt;</a>
+                            <a href="<?= htmlspecialchars($paginationUrl(1), ENT_QUOTES, 'UTF-8') ?>" class="pagination-btn first page-link page-item">&lt;&lt;</a>
+                            <a href="<?= htmlspecialchars($paginationUrl($current_page - 1), ENT_QUOTES, 'UTF-8') ?>" class="pagination-btn prev page-link page-item">&lt;</a>
                         <?php else: ?>
                             <span class="pagination-btn first page-link page-item disabled">&lt;&lt;</span>
                             <span class="pagination-btn prev page-link page-item disabled">&lt;</span>
                         <?php endif; ?>
 
                         <?php for ($i = 1; $i <= $total_pages; $i++): ?>
-                            <a href="<?= htmlspecialchars($paginationUrl($i)) ?>" class="pagination-btn page-link page-item <?= $i === $current_page ? 'active' : '' ?>"><?= $i ?></a>
+                            <a href="<?= htmlspecialchars($paginationUrl($i), ENT_QUOTES, 'UTF-8') ?>" class="pagination-btn page-link page-item <?= $i === $current_page ? 'active' : '' ?>"><?= $i ?></a>
                         <?php endfor; ?>
 
                         <?php if ($current_page < $total_pages): ?>
-                            <a href="<?= htmlspecialchars($paginationUrl($current_page + 1)) ?>" class="pagination-btn next page-link page-item">&gt;</a>
-                            <a href="<?= htmlspecialchars($paginationUrl($total_pages)) ?>" class="pagination-btn last page-link page-item">&gt;&gt;</a>
+                            <a href="<?= htmlspecialchars($paginationUrl($current_page + 1), ENT_QUOTES, 'UTF-8') ?>" class="pagination-btn next page-link page-item">&gt;</a>
+                            <a href="<?= htmlspecialchars($paginationUrl($total_pages), ENT_QUOTES, 'UTF-8') ?>" class="pagination-btn last page-link page-item">&gt;&gt;</a>
                         <?php else: ?>
                             <span class="pagination-btn next page-link page-item disabled">&gt;</span>
                             <span class="pagination-btn last page-link page-item disabled">&gt;&gt;</span>
@@ -163,13 +163,12 @@
     </div>
 </div>
 
-<form id="majorDeleteForm" method="POST" action="<?= htmlspecialchars($_SERVER['REQUEST_URI'] ?? '?page=list_major') ?>" style="display:none;">
+<form id="majorDeleteForm" method="POST" action="<?= htmlspecialchars($_SERVER['REQUEST_URI'] ?? '?page=list_major', ENT_QUOTES, 'UTF-8') ?>" style="display:none;">
     <input type="hidden" name="action" value="delete" />
     <input type="hidden" name="id" id="majorDeleteId" value="" />
 </form>
 
 <style>
-    /* Reuse styles from list_year with adjusted columns */
     .list-major-page { padding: 24px; }
     .page-panel { background: #fff; border: 1px solid #e8ecf3; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.06); overflow: hidden; }
     .panel-header { padding: 12px 14px; border-bottom: 1px solid #e5e7eb; background: #f9fafb; }
@@ -183,7 +182,6 @@
     .filter-menu a { display:block; padding:8px 10px; border-radius:6px; color:#1f2937; font-size:13px; font-weight:600; text-decoration:none; white-space:nowrap; }
     .filter-menu a:hover,
     .filter-menu a.active { background:#f1f5f9; color:#0f2a5a; }
-    .btn-create { padding:8px 14px; background:linear-gradient(180deg,#0f2a5a 0%,#0b1f45 100%); color:#fff; border-radius:6px; text-decoration:none; font-weight:700 }
     .panel-body { padding:0; }
     .table-wrapper { overflow-x:auto; }
     .data-table { width:100%; border-collapse:collapse; font-size:13px; }
@@ -200,9 +198,6 @@
     .col-dept-name { width:20%; }
     .col-status { width:16%; }
     .col-action { width:8%; }
-    .status-badge { display:inline-flex; align-items:center; gap:6px; padding:6px 12px; border-radius:999px; font-size:12px; font-weight:600; }
-    .status-active { background:#d1fae5; color:#065f46; }
-    .status-inactive { background:#fee2e2; color:#991b1b; }
     .action-group { display:flex; gap:8px; justify-content:center; }
     .action-btn { width:32px; height:32px; border:1px solid #e5e7eb; border-radius:6px; background:#fff; cursor:pointer; display:inline-flex; align-items:center; justify-content:center; padding:0; }
     .action-btn.edit { color:#1d4ed8; }
@@ -213,8 +208,6 @@
     .pagination-btn.active { background:linear-gradient(180deg,#0f2a5a 0%,#0b1f45 100%); color:#fff; border-color:#0f2a5a; }
     .pagination-btn.disabled { opacity:.45; cursor:not-allowed; pointer-events:none; background:#f9fafb; color:#9ca3af; }
     @media (max-width:768px) { .data-table { min-width:900px; } }
-
-    /* Status select styling (matched to list_activity) */
     .data-table .status-select { padding:6px 12px 6px 8px; border-radius:12px; border:1px solid #e5e7eb; background:#f9fafb; font-size:13px; color:#0f2a5a; appearance:none; -webkit-appearance:none; font-weight:700; padding-right:36px; background-position: right 10px center; background-repeat: no-repeat; }
     .data-table .status-select option { color:#0f2a5a; }
     .data-table .status-select.active { background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24'%3E%3Cpath d='M6 9l6 6 6-6' stroke='%23065546' stroke-width='2' stroke-linecap='round' stroke-linejoin='round' fill='none'/%3E%3C/svg%3E") no-repeat right 10px center, linear-gradient(90deg, #bbf7d0, #34d399); background-size:12px, auto; color:#065f46; border-color:#34d399; font-weight:700; }
@@ -223,10 +216,10 @@
 </style>
 
 <script>
-    function editMajor(id) { window.location.href = '?page=edit_major&id=' + id; }
+    function editMajor(id) { window.location.href = '?page=edit_major&id=' + encodeURIComponent(id); }
 
     function isActiveStatus(value) {
-        return value === 'Hoạt động' || value === 'Hoáº¡t Ä‘á»™ng';
+        return value === 'Hoạt động';
     }
 
     function setStatusClass(el, value) {
