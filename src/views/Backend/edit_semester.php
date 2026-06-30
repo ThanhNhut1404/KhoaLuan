@@ -5,6 +5,7 @@
     $academic_years = $academic_years ?? [];
     $status_options = $status_options ?? [];
     $isEdit = $isEdit ?? true;
+    $returnUrl = $returnUrl ?? ($_GET['return'] ?? '?page=list_semester');
 ?>
 
 <div class="edit-semester-page">
@@ -14,7 +15,8 @@
         </div>
 
         <div class="panel-body card-body">
-            <form id="editSemesterForm" method="POST" action="?page=edit_semester&id=<?= $id ?>" novalidate>
+            <form id="editSemesterForm" method="POST" action="?page=edit_semester&id=<?= $id ?>&return=<?= urlencode($returnUrl) ?>" novalidate>
+                <input type="hidden" name="return" value="<?= htmlspecialchars($returnUrl, ENT_QUOTES, 'UTF-8') ?>" />
                 <div class="form-grid">
                     <div class="form-row">
                         <div class="form-field">
@@ -114,7 +116,7 @@
                     </div>
 
                     <div class="form-actions">
-                        <a href="?page=list_semester" class="action-btn">
+                        <a href="<?= htmlspecialchars($returnUrl, ENT_QUOTES, 'UTF-8') ?>" class="action-btn">
                             Hủy
                         </a>
                         <button type="submit" class="action-btn primary">

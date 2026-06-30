@@ -205,6 +205,14 @@ if (in_array($page, ['create_year', 'list_year', 'edit_year'], true)) {
             $adminToast = $academicYearState['toast'] ?? null;
         }
     } catch (\Throwable $exception) {
+        error_log(sprintf(
+            '[AcademicYear:%s] %s in %s:%d',
+            $page,
+            $exception->getMessage(),
+            $exception->getFile(),
+            $exception->getLine()
+        ));
+
         if ($page === 'create_year') {
             $formData = $_SERVER['REQUEST_METHOD'] === 'POST' ? $_POST : [];
             $errors = [];
@@ -224,6 +232,8 @@ if (in_array($page, ['create_year', 'list_year', 'edit_year'], true)) {
         }
 
         if ($page === 'list_year') {
+            $searchKeyword = trim((string) ($_GET['search'] ?? $_GET['keyword'] ?? $_GET['q'] ?? ''));
+            $statusFilter = trim((string) ($_GET['status'] ?? ''));
             $years = [];
             $statusOptions = [
                 ['value' => 'Sắp diễn ra', 'label' => 'Sắp diễn ra'],
@@ -231,7 +241,7 @@ if (in_array($page, ['create_year', 'list_year', 'edit_year'], true)) {
                 ['value' => 'Đã hoàn thành', 'label' => 'Đã hoàn thành'],
             ];
             $pagination = ['current_page' => 1, 'total_items' => 0, 'items_per_page' => 10, 'total_pages' => 1, 'from' => 0, 'to' => 0];
-            $emptyMessage = 'Chưa có niên khóa nào.';
+            $emptyMessage = ($searchKeyword !== '' || $statusFilter !== '') ? 'Không có niên khóa phù hợp.' : 'Chưa có niên khóa nào.';
             $adminToast = ['type' => 'error', 'message' => 'Không thể tải danh sách niên khóa.'];
         }
 
@@ -275,6 +285,7 @@ if (in_array($page, ['create_semester', 'list_semester', 'edit_semester'], true)
             $filters = $semesterState['filters'] ?? [];
             $emptyMessage = $semesterState['emptyMessage'] ?? 'Chưa có học kỳ nào.';
             $pagination = $semesterState['pagination'];
+            $status_options = $semesterState['status_options'] ?? [];
             $adminToast = $semesterState['toast'] ?? null;
         }
 
@@ -292,6 +303,7 @@ if (in_array($page, ['create_semester', 'list_semester', 'edit_semester'], true)
             $errors = $semesterState['errors'];
             $academic_years = $semesterState['academic_years'];
             $status_options = $semesterState['status_options'];
+            $returnUrl = $semesterState['returnUrl'] ?? '?page=list_semester';
             $adminToast = $semesterState['toast'] ?? null;
             $isEdit = true;
         }
@@ -303,18 +315,27 @@ if (in_array($page, ['create_semester', 'list_semester', 'edit_semester'], true)
             $errors = [];
             $academic_years = [];
             $status_options = [
-                ['value' => 'Sắp tới', 'label' => 'Sắp tới'],
+                ['value' => 'Sắp diễn ra', 'label' => 'Sắp diễn ra'],
                 ['value' => 'Đang diễn ra', 'label' => 'Đang diễn ra'],
                 ['value' => 'Đã hoàn thành', 'label' => 'Đã hoàn thành'],
+                ['value' => 'Tạm khóa', 'label' => 'Tạm khóa'],
             ];
             $adminToast = ['type' => 'error', 'message' => 'Có lỗi xảy ra khi tạo học kỳ. Vui lòng thử lại.'];
         }
 
         if ($page === 'list_semester') {
             $semesters = [];
-            $filters = [];
-            $emptyMessage = 'Chưa có học kỳ nào.';
+            $searchKeyword = trim((string) ($_GET['search'] ?? $_GET['keyword'] ?? $_GET['q'] ?? ''));
+            $statusFilter = trim((string) ($_GET['status'] ?? ''));
+            $filters = ['keyword' => $searchKeyword, 'status' => $statusFilter];
+            $emptyMessage = ($searchKeyword !== '' || $statusFilter !== '') ? 'Không có học kỳ phù hợp.' : 'Chưa có học kỳ nào.';
             $pagination = ['current_page' => 1, 'total_items' => 0, 'items_per_page' => 10, 'total_pages' => 1, 'from' => 0, 'to' => 0];
+            $status_options = [
+                ['value' => 'Sắp diễn ra', 'label' => 'Sắp diễn ra'],
+                ['value' => 'Đang diễn ra', 'label' => 'Đang diễn ra'],
+                ['value' => 'Đã hoàn thành', 'label' => 'Đã hoàn thành'],
+                ['value' => 'Tạm khóa', 'label' => 'Tạm khóa'],
+            ];
             $adminToast = ['type' => 'error', 'message' => 'Không thể tải danh sách học kỳ.'];
         }
 
@@ -323,9 +344,10 @@ if (in_array($page, ['create_semester', 'list_semester', 'edit_semester'], true)
             $errors = [];
             $academic_years = [];
             $status_options = [
-                ['value' => 'Sắp tới', 'label' => 'Sắp tới'],
+                ['value' => 'Sắp diễn ra', 'label' => 'Sắp diễn ra'],
                 ['value' => 'Đang diễn ra', 'label' => 'Đang diễn ra'],
                 ['value' => 'Đã hoàn thành', 'label' => 'Đã hoàn thành'],
+                ['value' => 'Tạm khóa', 'label' => 'Tạm khóa'],
             ];
             $adminToast = ['type' => 'error', 'message' => 'Có lỗi xảy ra khi tải dữ liệu học kỳ.'];
         }
@@ -505,18 +527,23 @@ if (in_array($page, ['create_class', 'list_class', 'edit_class'], true)) {
         error_log($e->getMessage());
 
         if (in_array($page, ['create_class', 'edit_class'], true)) {
-        $formData = $_SERVER['REQUEST_METHOD'] === 'POST' ? $_POST : [];
-        $errors = [];
-        $academic_years = [];
-        $departments = [];
-        $majors = [];
-        $statusOptions = [
-            ['value' => 'Hoạt động', 'label' => 'Hoạt động'],
-            ['value' => 'Không hoạt động', 'label' => 'Không hoạt động'],
-            ['value' => 'Ngừng tuyển sinh', 'label' => 'Ngừng tuyển sinh'],
-        ];
-        $adminToast = ['type' => 'error', 'message' => 'Có lỗi khi xử lý yêu cầu tạo lớp học. Vui lòng thử lại.'];
-    }
+            $formData = $_SERVER['REQUEST_METHOD'] === 'POST' ? $_POST : [];
+            $errors = [];
+            $academic_years = [];
+            $departments = [];
+            $majors = [];
+            $statusOptions = [
+                ['value' => 'Hoạt động', 'label' => 'Hoạt động'],
+                ['value' => 'Không hoạt động', 'label' => 'Không hoạt động'],
+                ['value' => 'Ngừng tuyển sinh', 'label' => 'Ngừng tuyển sinh'],
+            ];
+            $adminToast = [
+                'type' => 'error',
+                'message' => $page === 'edit_class'
+                    ? 'Có lỗi khi xử lý yêu cầu cập nhật lớp học. Vui lòng thử lại.'
+                    : 'Có lỗi khi xử lý yêu cầu tạo lớp học. Vui lòng thử lại.',
+            ];
+        }
         if ($page === 'list_class') {
             $classes = [];
             $filters = [];

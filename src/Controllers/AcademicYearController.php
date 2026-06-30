@@ -19,7 +19,7 @@ class AcademicYearController
 
     public function create(array $data, string $method): array
     {
-        $statusOptions = $this->years->getStatusOptions();
+        $statusOptions = $this->years->getListStatusOptions();
         $defaultStatus = $this->defaultStatusValue($statusOptions);
         $state = [
             'formData' => $method === 'POST' ? $data : ['status' => $defaultStatus],
@@ -36,8 +36,9 @@ class AcademicYearController
             'year_name' => $data['year_name'] ?? '',
             'start_date' => trim($data['start_date'] ?? ''),
             'end_date' => trim($data['end_date'] ?? ''),
-            'status' => trim($data['status'] ?? '') ?: $defaultStatus,
         ];
+        $state['formData']['status'] = trim($data['status'] ?? '')
+            ?: $this->calculatedStatusValue($state['formData']['start_date'], $state['formData']['end_date'], $statusOptions);
         $state['errors'] = $this->validate($state['formData'], $statusOptions);
 
         if (!empty($state['errors'])) {
@@ -81,13 +82,22 @@ class AcademicYearController
 
     public function listing(array $data, array $query, string $method): array
     {
+        $this->syncStatusesByDate();
+
         $page = max(1, (int) ($query['page_num'] ?? 1));
+        $statusOptions = $this->years->getListStatusOptions();
+        $statusFilter = trim((string) ($query['status'] ?? ''));
+        if ($statusFilter !== '' && !in_array($statusFilter, array_column($statusOptions, 'value'), true)) {
+            $statusFilter = '';
+        }
+
         $filters = [
             'keyword' => trim($query['keyword'] ?? $query['q'] ?? $query['search'] ?? ''),
+            'status' => $statusFilter,
         ];
         $state = [
             'years' => [],
-            'statusOptions' => $this->years->getListStatusOptions(),
+            'statusOptions' => $statusOptions,
             'filters' => $filters,
             'emptyMessage' => 'Chưa có niên khóa nào.',
             'pagination' => [
@@ -130,7 +140,7 @@ class AcademicYearController
 
     public function editState(int $id, array $data, string $method): array
     {
-        $statusOptions = $this->years->getStatusOptions();
+        $statusOptions = $this->years->getListStatusOptions();
         $state = [
             'formData' => [],
             'errors' => [],
@@ -154,12 +164,22 @@ class AcademicYearController
         }
 
         if ($method === 'POST') {
+            $currentYear = $this->years->findById($id);
+            if ($currentYear === null) {
+                $state['toast'] = ['type' => 'error', 'message' => 'Niên khóa không tồn tại.'];
+                $state['redirect'] = '?page=list_year';
+                return $state;
+            }
+
             $state['formData'] = [
                 'year_name' => trim($data['year_name'] ?? ''),
                 'start_date' => trim($data['start_date'] ?? ''),
                 'end_date' => trim($data['end_date'] ?? ''),
                 'status' => trim($data['status'] ?? ''),
             ];
+            if ($state['formData']['status'] === '') {
+                $state['formData']['status'] = $this->calculatedStatusValue($state['formData']['start_date'], $state['formData']['end_date'], $statusOptions);
+            }
             $state['errors'] = $this->validate($state['formData'], $statusOptions, $id);
 
             if (!empty($state['errors'])) {
@@ -167,6 +187,11 @@ class AcademicYearController
             }
 
             try {
+                if (($currentYear['start_date'] ?? '') !== $state['formData']['start_date']
+                    || ($currentYear['end_date'] ?? '') !== $state['formData']['end_date']) {
+                    $state['formData']['status'] = $this->calculatedStatusValue($state['formData']['start_date'], $state['formData']['end_date'], $statusOptions);
+                }
+
                 $updated = $this->update($id, $state['formData']);
                 $state['toast'] = [
                     'type' => $updated ? 'success' : 'error',
@@ -311,12 +336,11 @@ class AcademicYearController
         }
 
         if ($data['status'] === '') {
+            $data['status'] = $this->calculatedStatusValue((string) ($data['start_date'] ?? ''), (string) ($data['end_date'] ?? ''), $statusOptions);
+        }
+
+        if (!in_array($data['status'], $statusValues, true)) {
             $errors['status'] = 'Vui lòng chọn trạng thái.';
-        } elseif (!in_array($data['status'], $statusValues, true)) {
-            $errors['status'] = 'Vui lòng chọn trạng thái.';
-        } elseif ($this->isActiveStatus($data['status'], $statusOptions)
-            && $this->years->activeYearExists($this->activeStatusValues($statusOptions))) {
-            $errors['status'] = 'Đã tồn tại một niên khóa đang hoạt động.';
         }
 
         if (!isset($errors['year_name'])
@@ -336,7 +360,7 @@ class AcademicYearController
             && !isset($errors['end_date'])
             && $data['start_date'] !== ''
             && $data['end_date'] !== ''
-            && $this->years->dateRangeOverlaps($data['start_date'], $data['end_date'])) {
+            && $this->years->dateRangeOverlaps($data['start_date'], $data['end_date'], $excludeId)) {
             $errors['end_date'] = 'Khoảng thời gian của niên khóa bị trùng với niên khóa khác.';
         }
 
@@ -346,13 +370,14 @@ class AcademicYearController
     private function loadListState(array $state, int $requestedPage, array $filters = []): array
     {
         $keyword = trim((string) ($filters['keyword'] ?? ''));
-        $hasFilters = $keyword !== '';
-        $totalItems = $hasFilters ? $this->years->countFiltered($keyword) : $this->years->countAll();
+        $status = trim((string) ($filters['status'] ?? ''));
+        $hasFilters = $keyword !== '' || $status !== '';
+        $totalItems = $hasFilters ? $this->years->countFiltered($keyword, $status) : $this->years->countAll();
         $totalPages = max(1, (int) ceil($totalItems / self::LIST_PER_PAGE));
         $currentPage = min(max(1, $requestedPage), $totalPages);
         $years = $totalItems > 0
             ? ($hasFilters
-                ? $this->years->listFilteredPaginated($currentPage, self::LIST_PER_PAGE, $keyword)
+                ? $this->years->listFilteredPaginated($currentPage, self::LIST_PER_PAGE, $keyword, $status)
                 : $this->years->listPaginated($currentPage, self::LIST_PER_PAGE))
             : [];
 
@@ -360,7 +385,7 @@ class AcademicYearController
             fn (array $year): array => $this->formatListRow($year, $state['statusOptions']),
             $years
         );
-        $state['emptyMessage'] = $hasFilters ? 'Không tìm thấy niên khóa phù hợp.' : 'Chưa có niên khóa nào.';
+        $state['emptyMessage'] = $hasFilters ? 'Không có niên khóa phù hợp.' : 'Chưa có niên khóa nào.';
         $state['pagination'] = [
             'current_page' => $currentPage,
             'total_items' => $totalItems,
@@ -404,15 +429,6 @@ class AcademicYearController
             return ['type' => 'error', 'message' => 'Vui lòng chọn trạng thái hợp lệ.'];
         }
 
-        if ($this->isListActiveStatus($status, $statusOptions)
-            && $this->years->activeYearExistsExcept($this->activeListStatusValues($statusOptions), $id)) {
-            return ['type' => 'error', 'message' => 'Đã tồn tại một niên khóa đang hoạt động.'];
-        }
-
-        if (!$this->statusMatchesDateRange($status, $statusOptions, $year)) {
-            return ['type' => 'error', 'message' => 'Trạng thái không phù hợp với khoảng thời gian của niên khóa.'];
-        }
-
         if ((string) ($year['status'] ?? '') === $status) {
             return ['type' => 'success', 'message' => 'Cập nhật trạng thái thành công.'];
         }
@@ -452,6 +468,62 @@ class AcademicYearController
         }
 
         return ['type' => 'success', 'message' => 'Xóa niên khóa thành công.'];
+    }
+
+    private function syncStatusesByDate(): void
+    {
+        $statusOptions = $this->years->getListStatusOptions();
+
+        foreach ($this->years->allForStatusSync() as $year) {
+            $status = $this->calculatedStatusValue(
+                (string) ($year['start_date'] ?? ''),
+                (string) ($year['end_date'] ?? ''),
+                $statusOptions
+            );
+
+            if ((string) ($year['status'] ?? '') !== $status) {
+                $this->years->updateStatus((int) ($year['id'] ?? 0), $status);
+            }
+        }
+    }
+
+    private function calculatedStatusValue(string $startDate, string $endDate, array $statusOptions): string
+    {
+        $today = new \DateTimeImmutable('today');
+        $start = $this->parseDate($startDate);
+        $end = $this->parseDate($endDate);
+
+        if ($start !== false && $today < $start) {
+            return $this->statusValueForCanonical('sap dien ra', $statusOptions, 'Sắp diễn ra');
+        }
+
+        if ($start !== false && $end !== false && $today >= $start && $today <= $end) {
+            return $this->statusValueForCanonical('dang hoat dong', $statusOptions, 'Đang hoạt động');
+        }
+
+        if ($end !== false && $today > $end) {
+            return $this->statusValueForCanonical('da hoan thanh', $statusOptions, 'Đã hoàn thành');
+        }
+
+        return $this->statusValueForCanonical('sap dien ra', $statusOptions, 'Sắp diễn ra');
+    }
+
+    private function statusValueForCanonical(string $canonical, array $statusOptions, string $fallback): string
+    {
+        foreach ($statusOptions as $option) {
+            if ((string) ($option['value'] ?? '') === $fallback) {
+                return $fallback;
+            }
+        }
+
+        foreach ($statusOptions as $option) {
+            if ($this->normalizedStatusLabel((string) ($option['value'] ?? ''), $statusOptions) === $canonical
+                || $this->normalizedStatusLabel((string) ($option['label'] ?? ''), $statusOptions) === $canonical) {
+                return (string) $option['value'];
+            }
+        }
+
+        return $fallback;
     }
 
     private function formatListRow(array $year, array $statusOptions): array
@@ -562,7 +634,7 @@ class AcademicYearController
 
     private function parseDate(string $value): \DateTimeImmutable|false
     {
-        $date = \DateTimeImmutable::createFromFormat('Y-m-d', $value);
+        $date = \DateTimeImmutable::createFromFormat('!Y-m-d', $value);
         if ($date !== false) {
             return $date;
         }

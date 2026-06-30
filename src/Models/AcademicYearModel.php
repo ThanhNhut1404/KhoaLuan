@@ -73,11 +73,12 @@ class AcademicYearModel
         return (int) $this->db->query('SELECT COUNT(*) FROM nien_khoa')->fetchColumn();
     }
 
-    public function countFiltered(string $keyword = ''): int
+    public function countFiltered(string $keyword = '', string $status = ''): int
     {
-        [$where, $params] = $this->filterClause($keyword);
+        [$where, $params] = $this->filterClause($keyword, $status);
         $statement = $this->db->prepare('SELECT COUNT(*) FROM nien_khoa nk' . $where);
-        $statement->execute($params);
+        $this->bindNamedParams($statement, $params);
+        $statement->execute();
 
         return (int) $statement->fetchColumn();
     }
@@ -125,14 +126,14 @@ class AcademicYearModel
                 $idColumn
             )
         );
-        $statement->bindValue('limit', $perPage, PDO::PARAM_INT);
-        $statement->bindValue('offset', $offset, PDO::PARAM_INT);
+        $statement->bindValue(':limit', $perPage, PDO::PARAM_INT);
+        $statement->bindValue(':offset', $offset, PDO::PARAM_INT);
         $statement->execute();
 
         return $statement->fetchAll();
     }
 
-    public function listFilteredPaginated(int $page, int $perPage, string $keyword = ''): array
+    public function listFilteredPaginated(int $page, int $perPage, string $keyword = '', string $status = ''): array
     {
         $idColumn = $this->column('id');
         $nameColumn = $this->column('name');
@@ -141,7 +142,7 @@ class AcademicYearModel
         $statusColumn = $this->column('status', false);
         $offset = max(0, ($page - 1) * $perPage);
 
-        [$where, $params] = $this->filterClause($keyword);
+        [$where, $params] = $this->filterClause($keyword, $status);
         $statusSelect = $statusColumn !== null ? sprintf('nk.%s AS status', $statusColumn) : 'NULL AS status';
         $semesterJoin = $this->hasColumn('hoc_ky', 'MA_NIEN_KHOA')
             ? 'LEFT JOIN hoc_ky hk ON hk.MA_NIEN_KHOA = nk.' . $idColumn
@@ -179,12 +180,10 @@ class AcademicYearModel
             )
         );
 
-        foreach ($params as $name => $value) {
-            $statement->bindValue($name, $value);
-        }
+        $this->bindNamedParams($statement, $params);
 
-        $statement->bindValue('limit', $perPage, PDO::PARAM_INT);
-        $statement->bindValue('offset', $offset, PDO::PARAM_INT);
+        $statement->bindValue(':limit', $perPage, PDO::PARAM_INT);
+        $statement->bindValue(':offset', $offset, PDO::PARAM_INT);
         $statement->execute();
 
         return $statement->fetchAll();
@@ -217,6 +216,30 @@ class AcademicYearModel
         $row = $statement->fetch();
 
         return $row ?: null;
+    }
+
+    public function allForStatusSync(): array
+    {
+        $idColumn = $this->column('id');
+        $startColumn = $this->column('start_date');
+        $endColumn = $this->column('end_date');
+        $statusColumn = $this->column('status', false);
+
+        if ($statusColumn === null) {
+            return [];
+        }
+
+        $statement = $this->db->query(
+            sprintf(
+                'SELECT %s AS id, %s AS start_date, %s AS end_date, %s AS status FROM nien_khoa',
+                $idColumn,
+                $startColumn,
+                $endColumn,
+                $statusColumn
+            )
+        );
+
+        return $statement->fetchAll();
     }
 
     public function updateStatus(int $id, string $status): bool
@@ -353,21 +376,28 @@ class AcademicYearModel
         return (bool) $statement->fetchColumn();
     }
 
-    public function dateRangeOverlaps(string $startDate, string $endDate): bool
+    public function dateRangeOverlaps(string $startDate, string $endDate, int $exceptId = 0): bool
     {
         $startColumn = $this->column('start_date');
         $endColumn = $this->column('end_date');
+        $idColumn = $this->column('id');
+        $exceptClause = $exceptId > 0 ? sprintf(' AND %s <> :except_id', $idColumn) : '';
         $statement = $this->db->prepare(
             sprintf(
-                'SELECT 1 FROM nien_khoa WHERE %s <= :end_date AND %s >= :start_date LIMIT 1',
+                'SELECT 1 FROM nien_khoa WHERE %s <= :end_date AND %s >= :start_date%s LIMIT 1',
                 $startColumn,
-                $endColumn
+                $endColumn,
+                $exceptClause
             )
         );
-        $statement->execute([
+        $params = [
             'start_date' => $startDate,
             'end_date' => $endDate,
-        ]);
+        ];
+        if ($exceptId > 0) {
+            $params['except_id'] = $exceptId;
+        }
+        $statement->execute($params);
 
         return (bool) $statement->fetchColumn();
     }
@@ -491,28 +521,54 @@ class AcademicYearModel
         ];
     }
 
-    private function filterClause(string $keyword): array
+    private function filterClause(string $keyword, string $status = ''): array
     {
+        $conditions = [];
+        $params = [];
         $keyword = trim($keyword);
-        if ($keyword === '') {
-            return ['', []];
+
+        if ($keyword !== '') {
+            $nameColumn = $this->column('name');
+            $startColumn = $this->column('start_date');
+            $endColumn = $this->column('end_date');
+            $conditions[] = sprintf(
+                '(nk.%s LIKE :keyword_name
+                    OR DATE_FORMAT(nk.%s, "%%Y-%%m-%%d") LIKE :keyword_start_iso
+                    OR DATE_FORMAT(nk.%s, "%%d/%%m/%%Y") LIKE :keyword_start_display
+                    OR DATE_FORMAT(nk.%s, "%%Y-%%m-%%d") LIKE :keyword_end_iso
+                    OR DATE_FORMAT(nk.%s, "%%d/%%m/%%Y") LIKE :keyword_end_display)',
+                $nameColumn,
+                $startColumn,
+                $startColumn,
+                $endColumn,
+                $endColumn
+            );
+            $keywordParam = '%' . $keyword . '%';
+            $params['keyword_name'] = $keywordParam;
+            $params['keyword_start_iso'] = $keywordParam;
+            $params['keyword_start_display'] = $keywordParam;
+            $params['keyword_end_iso'] = $keywordParam;
+            $params['keyword_end_display'] = $keywordParam;
         }
 
-        $nameColumn = $this->column('name');
-        $startColumn = $this->column('start_date');
-        $endColumn = $this->column('end_date');
+        $status = trim($status);
         $statusColumn = $this->column('status', false);
-        $conditions = [
-            sprintf('nk.%s LIKE :keyword', $nameColumn),
-            sprintf('CAST(nk.%s AS CHAR) LIKE :keyword', $startColumn),
-            sprintf('CAST(nk.%s AS CHAR) LIKE :keyword', $endColumn),
-        ];
-
         if ($statusColumn !== null) {
-            $conditions[] = sprintf('nk.%s LIKE :keyword', $statusColumn);
+            if ($status !== '') {
+                $conditions[] = sprintf('nk.%s = :status', $statusColumn);
+                $params['status'] = $status;
+            }
         }
 
-        return [' WHERE ' . implode(' OR ', $conditions), ['keyword' => '%' . $keyword . '%']];
+        return [empty($conditions) ? '' : ' WHERE ' . implode(' AND ', $conditions), $params];
+    }
+
+    private function bindNamedParams(\PDOStatement $statement, array $params): void
+    {
+        foreach ($params as $name => $value) {
+            $placeholder = ':' . ltrim((string) $name, ':');
+            $statement->bindValue($placeholder, $value);
+        }
     }
 
     private function nextId(string $column): int

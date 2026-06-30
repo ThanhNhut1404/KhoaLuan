@@ -234,6 +234,11 @@ class ClassController
                     return $state;
                 }
 
+                if ($this->model->countStudents($id) > (int) $form['capacity']) {
+                    $state['errors']['capacity'] = 'Sĩ số không được nhỏ hơn số sinh viên hiện có trong lớp.';
+                    return $state;
+                }
+
                 if ($this->model->codeExistsExcept($form['class_code'], $id)) {
                     $state['errors']['class_code'] = 'Mã lớp học đã tồn tại.';
                     return $state;
@@ -338,11 +343,29 @@ class ClassController
 
     private function handleListAction(array $data): ?array
     {
-        if (($data['action'] ?? '') === 'delete') {
+        $action = trim((string) ($data['action'] ?? ''));
+
+        if ($action === 'delete') {
             return $this->deleteFromList((int) ($data['id'] ?? 0));
         }
 
-        if (!isset($data['status']) || !is_array($data['status'])) {
+        if ($action !== 'status') {
+            return null;
+        }
+
+        if (!isset($data['status']) || !is_array($data['status']) || count($data['status']) !== 1) {
+            return ['type' => 'error', 'message' => 'Yêu cầu cập nhật trạng thái không hợp lệ.'];
+        }
+
+        if (!isset($data['_row_id']) || !ctype_digit((string) $data['_row_id'])) {
+            return ['type' => 'error', 'message' => 'Lớp học không hợp lệ.'];
+        }
+
+        if (!array_key_exists((string) $data['_row_id'], $data['status'])) {
+            return ['type' => 'error', 'message' => 'Yêu cầu cập nhật trạng thái không hợp lệ.'];
+        }
+
+        if (empty($data['status'])) {
             return null;
         }
 
@@ -363,7 +386,7 @@ class ClassController
                 }
 
                 if ((string) ($class['status'] ?? '') === $status) {
-                    return ['type' => 'error', 'message' => 'Trạng thái mới trùng với trạng thái hiện tại.'];
+                    return null;
                 }
 
                 if (!$this->model->updateStatus($id, $status)) {

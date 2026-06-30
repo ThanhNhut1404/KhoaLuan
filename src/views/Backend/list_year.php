@@ -13,6 +13,14 @@
         'from' => empty($years) ? 0 : 1,
         'to' => count($years),
     ];
+    $filters = $filters ?? [];
+    $currentKeyword = trim((string) ($filters['keyword'] ?? ($_GET['search'] ?? $_GET['keyword'] ?? $_GET['q'] ?? '')));
+    $currentStatusFilter = trim((string) ($filters['status'] ?? ($_GET['status'] ?? '')));
+    $statusValues = array_column($statusOptions, 'value');
+    if (!in_array($currentStatusFilter, $statusValues, true)) {
+        $currentStatusFilter = '';
+    }
+    $hasActiveFilters = $currentStatusFilter !== '';
     $emptyMessage = $emptyMessage ?? 'Chưa có niên khóa nào.';
     $paginationUrl = static function (int $pageNum): string {
         $params = $_GET;
@@ -37,10 +45,38 @@
         <div class="panel-header card-header">
             <div class="header-content">
                 <h2 class="panel-title">DANH SÁCH NIÊN KHÓA</h2>
+                <div class="filter-wrap <?= $hasActiveFilters ? 'has-active' : '' ?>" id="yearStatusFilter">
+                    <button type="button" id="yearStatusFilterToggle" class="filter-btn btn btn-outline-secondary" title="B&#7897; l&#7885;c" aria-label="B&#7897; l&#7885;c" aria-expanded="false">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M4 5h16l-6 7v5l-4 2v-7L4 5Z" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" />
+                        </svg>
+                    </button>
+                    <div class="filter-menu" id="yearStatusFilterMenu" aria-labelledby="yearStatusFilterToggle">
+                        <form method="GET" action="/KhoaLuan/public/admin.php" class="filter-form">
+                            <input type="hidden" name="page" value="list_year" />
+                            <?php if ($currentKeyword !== ''): ?>
+                                <input type="hidden" name="search" value="<?= htmlspecialchars($currentKeyword, ENT_QUOTES, 'UTF-8') ?>" />
+                            <?php endif; ?>
+                            <label class="filter-label" for="filter_year_status">Tr&#7841;ng th&aacute;i</label>
+                            <select id="filter_year_status" name="status" class="filter-select form-select">
+                                <option value="">T&#7845;t c&#7843; tr&#7841;ng th&aacute;i</option>
+                                <?php foreach ($statusOptions as $option): ?>
+                                    <option value="<?= htmlspecialchars((string) $option['value'], ENT_QUOTES, 'UTF-8') ?>" <?= $currentStatusFilter === $option['value'] ? 'selected' : '' ?>>
+                                        <?= htmlspecialchars($option['label'], ENT_QUOTES, 'UTF-8') ?>
+                                    </option>
+                                <?php endforeach; ?>
+                            </select>
+                            <div class="filter-actions">
+                                <a href="?page=list_year<?= $currentKeyword !== '' ? '&search=' . urlencode($currentKeyword) : '' ?>" class="filter-clear btn btn-outline-secondary">&#272;&#7863;t l&#7841;i</a>
+                                <button type="submit" class="filter-apply btn btn-primary">L&#7885;c</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
             </div>
         </div>
 
-        <div class="panel-body card-body">
+        <div class="panel-body card-body" id="yearListContent">
             <?php if (empty($years)): ?>
                 <div class="empty-state">
                     <svg width="48" height="48" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -55,7 +91,8 @@
                             <tr>
                                 <th class="col-stt">STT</th>
                                 <th class="col-name">TÊN NIÊN KHÓA</th>
-                                <th class="col-time">THỜI GIAN</th>
+                                <th class="col-start">THỜI GIAN BẮT ĐẦU</th>
+                                <th class="col-end">THỜI GIAN KẾT THÚC</th>
                                 <th class="col-semester">SỐ HỌC KỲ</th>
                                 <th class="col-status">TRẠNG THÁI</th>
                                 <th class="col-action">THAO TÁC</th>
@@ -72,7 +109,8 @@
                                 <tr data-id="<?= (int) $year['id'] ?>">
                                     <td class="col-stt"><?= str_pad((string) $rowNumber, 2, '0', STR_PAD_LEFT) ?></td>
                                     <td class="col-name"><?= htmlspecialchars($year['name'] ?? '--') ?></td>
-                                    <td class="col-time"><?= htmlspecialchars($year['time'] ?? '--') ?></td>
+                                    <td class="col-start"><?= htmlspecialchars($year['start_date'] ?? '--') ?></td>
+                                    <td class="col-end"><?= htmlspecialchars($year['end_date'] ?? '--') ?></td>
                                     <td class="col-semester"><?= ($year['semesters'] === null || $year['semesters'] === '') ? '--' : htmlspecialchars((string) $year['semesters']) ?></td>
                                     <td class="col-status">
                                         <form method="POST" class="inline-form">
@@ -226,6 +264,89 @@
         margin: 0;
     }
 
+    .filter-wrap {
+        position: relative;
+        display: inline-flex;
+        align-items: center;
+    }
+
+    .filter-btn {
+        width: 32px;
+        height: 32px;
+        border: 1px solid #e5e7eb;
+        border-radius: 6px;
+        background: #ffffff;
+        color: #0f2a5a;
+        cursor: pointer;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        padding: 0;
+    }
+
+    .filter-wrap.has-active .filter-btn {
+        background: #eff6ff;
+        border-color: #bfdbfe;
+        color: #1d4ed8;
+    }
+
+    .filter-btn:hover {
+        background: #f8fafc;
+        color: #0b1f45;
+    }
+
+    .filter-menu {
+        position: absolute;
+        top: calc(100% + 6px);
+        right: 0;
+        z-index: 30;
+        display: none;
+        width: 260px;
+        padding: 12px;
+        background: #ffffff;
+        border: 1px solid #e5e7eb;
+        border-radius: 8px;
+        box-shadow: 0 8px 20px rgba(15, 42, 90, 0.12);
+    }
+
+    .filter-wrap.open .filter-menu {
+        display: block;
+    }
+
+    .filter-form {
+        display: grid;
+        gap: 8px;
+    }
+
+    .filter-label {
+        font-size: 12px;
+        font-weight: 700;
+        color: #0f2a5a;
+        margin: 0;
+    }
+
+    .filter-select {
+        min-height: 36px;
+        font-size: 13px;
+        border-radius: 8px;
+        border-color: #e5e7eb;
+    }
+
+    .filter-actions {
+        display: flex;
+        justify-content: flex-end;
+        gap: 8px;
+        padding-top: 6px;
+    }
+
+    .filter-clear,
+    .filter-apply {
+        font-size: 13px;
+        font-weight: 700;
+        border-radius: 8px;
+        padding: 7px 12px;
+    }
+
     .panel-body {
         padding: 0;
     }
@@ -298,9 +419,10 @@
         border-right: 1px solid #e5e7eb;
     }
 
-    .col-stt { width: 45px; }
-    .col-name { width: 20%; }
-    .col-time { width: 24%; white-space: nowrap; }
+    .col-stt { width: 35px; }
+    .col-name { width: 18%; }
+    .col-start { width: 14%; white-space: nowrap; }
+    .col-end { width: 14%; white-space: nowrap; }
     .col-semester { width: 12%; }
     .col-status { width: 18%; }
     .col-action { width: 10%; }
@@ -532,6 +654,11 @@
             min-width: 800px;
         }
 
+        .filter-menu {
+            right: -4px;
+            width: min(260px, calc(100vw - 48px));
+        }
+
         .pagination-container {
             align-items: flex-start;
             flex-direction: column;
@@ -560,4 +687,33 @@
         modal.classList.remove('active');
         modal.setAttribute('aria-hidden', 'true');
     }
+
+    (function() {
+        var filterWrap = document.getElementById('yearStatusFilter');
+        var filterToggle = document.getElementById('yearStatusFilterToggle');
+
+        if (!filterWrap || !filterToggle) {
+            return;
+        }
+
+        filterToggle.addEventListener('click', function(event) {
+            event.stopPropagation();
+            var isOpen = filterWrap.classList.toggle('open');
+            filterToggle.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+        });
+
+        document.addEventListener('click', function(event) {
+            if (!filterWrap.contains(event.target)) {
+                filterWrap.classList.remove('open');
+                filterToggle.setAttribute('aria-expanded', 'false');
+            }
+        });
+
+        document.addEventListener('keydown', function(event) {
+            if (event.key === 'Escape') {
+                filterWrap.classList.remove('open');
+                filterToggle.setAttribute('aria-expanded', 'false');
+            }
+        });
+    })();
 </script>

@@ -120,9 +120,17 @@
                                     <td class="col-year"><?= htmlspecialchars($class['academic_year'] ?? '', ENT_QUOTES, 'UTF-8') ?></td>
                                     <td class="col-capacity"><?= htmlspecialchars($class['capacity'] ?? '', ENT_QUOTES, 'UTF-8') ?></td>
                                     <td class="col-status">
-                                        <span class="status-badge status-<?= htmlspecialchars($class['status_class'] ?? 'unknown', ENT_QUOTES, 'UTF-8') ?>">
-                                            <?= htmlspecialchars($class['status'] ?? '', ENT_QUOTES, 'UTF-8') ?>
-                                        </span>
+                                        <form method="POST" action="<?= htmlspecialchars($_SERVER['REQUEST_URI'] ?? '?page=list_class', ENT_QUOTES, 'UTF-8') ?>" style="display:inline-block;">
+                                            <input type="hidden" name="action" value="status" />
+                                            <input type="hidden" name="_row_id" value="<?= $id ?>" />
+                                            <select name="status[<?= $id ?>]" class="status-select <?= htmlspecialchars($class['status_class'] ?? 'unknown', ENT_QUOTES, 'UTF-8') ?> form-select" data-previous-value="<?= htmlspecialchars($class['status'] ?? '', ENT_QUOTES, 'UTF-8') ?>" data-class-name="<?= htmlspecialchars($class['name'] ?? '', ENT_QUOTES, 'UTF-8') ?>" onchange="updateStatusSelect(this)">
+                                                <?php foreach ($statusOptions as $option): ?>
+                                                    <option value="<?= htmlspecialchars($option['value'], ENT_QUOTES, 'UTF-8') ?>" <?= (($class['status'] ?? '') === $option['value']) ? 'selected' : '' ?>>
+                                                        <?= htmlspecialchars($option['label'], ENT_QUOTES, 'UTF-8') ?>
+                                                    </option>
+                                                <?php endforeach; ?>
+                                            </select>
+                                        </form>
                                     </td>
                                     <td class="col-action">
                                         <div class="action-group">
@@ -224,8 +232,15 @@
     .status-badge { display:inline-flex; align-items:center; justify-content:center; gap:6px; min-width:92px; padding:6px 12px; border-radius:999px; font-size:12px; font-weight:700; white-space:nowrap; }
     .status-active { background:#d1fae5; color:#065f46; }
     .status-inactive { background:#fee2e2; color:#991b1b; }
-    .status-stopped { background:#fef3c7; color:#92400e; }
+    .status-stopped { background:#fed7d7; color:#7f1d1d; }
     .status-unknown { background:#e5e7eb; color:#374151; }
+    .data-table .status-select { min-width:150px; padding:6px 34px 6px 10px; border-radius:12px; border:1px solid #e5e7eb; background:#f9fafb; font-size:13px; appearance:none; -webkit-appearance:none; font-weight:700; background-position:right 10px center; background-repeat:no-repeat; }
+    .data-table .status-select option { color:#0f2a5a; background:#fff; }
+    .data-table .status-select.active { background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24'%3E%3Cpath d='M6 9l6 6 6-6' stroke='%23065f46' stroke-width='2' stroke-linecap='round' stroke-linejoin='round' fill='none'/%3E%3C/svg%3E") no-repeat right 10px center, linear-gradient(90deg,#d1fae5,#6ee7b7); background-size:12px, auto; color:#065f46; border-color:#34d399; }
+    .data-table .status-select.inactive { background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24'%3E%3Cpath d='M6 9l6 6 6-6' stroke='%23991b1b' stroke-width='2' stroke-linecap='round' stroke-linejoin='round' fill='none'/%3E%3C/svg%3E") no-repeat right 10px center, linear-gradient(90deg,#fee2e2,#fca5a5); background-size:12px, auto; color:#991b1b; border-color:#f87171; }
+    .data-table .status-select.stopped { background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24'%3E%3Cpath d='M6 9l6 6 6-6' stroke='%237f1d1d' stroke-width='2' stroke-linecap='round' stroke-linejoin='round' fill='none'/%3E%3C/svg%3E") no-repeat right 10px center, linear-gradient(90deg, #fed7d7, #f87171); background-size:12px, auto; color:#7f1d1d; border-color:#f87171; font-weight:700; }
+    .data-table .status-select.unknown { background:#e5e7eb; color:#374151; border-color:#d1d5db; }
+    .data-table .status-select:focus { outline:none; box-shadow:0 0 0 3px rgba(15,42,90,0.12); }
     .action-group { display:flex; align-items:center; justify-content:center; gap:8px; }
     .action-btn { display:inline-flex; align-items:center; justify-content:center; width:32px; height:32px; border:1px solid #e5e7eb; border-radius:6px; background:#fff; cursor:pointer; transition:all .2s; padding:0; }
     .action-btn:hover { border-color:#d1d5db; background:#f9fafb; }
@@ -250,6 +265,52 @@
 <script>
     function editClass(id) {
         window.location.href = '?page=edit_class&id=' + encodeURIComponent(id);
+    }
+
+    function statusClassName(value) {
+        if (value === 'Hoạt động') {
+            return 'active';
+        }
+        if (value === 'Không hoạt động') {
+            return 'inactive';
+        }
+        if (value === 'Ngừng tuyển sinh') {
+            return 'stopped';
+        }
+        return 'unknown';
+    }
+
+    function setStatusClass(el, value) {
+        el.classList.remove('active', 'inactive', 'stopped', 'unknown');
+        el.classList.add(statusClassName(value));
+    }
+
+    function updateStatusSelect(el) {
+        const nextStatus = el.value;
+        const previousStatus = el.getAttribute('data-previous-value') || '';
+        const className = el.getAttribute('data-class-name') || '';
+
+        if (nextStatus === previousStatus) {
+            setStatusClass(el, previousStatus);
+            return;
+        }
+
+        el.value = previousStatus;
+        setStatusClass(el, previousStatus);
+
+        if (typeof showStatusConfirm !== 'function') {
+            return;
+        }
+
+        showStatusConfirm({
+            select: el,
+            moduleLabel: 'lớp học',
+            targetName: className,
+            previousStatus: previousStatus,
+            nextStatus: nextStatus,
+            question: 'Bạn có chắc chắn muốn thay đổi trạng thái lớp học này không?',
+            warning: 'Trạng thái lớp học sẽ được cập nhật sau khi xác nhận.'
+        });
     }
 
     (function() {
@@ -278,5 +339,13 @@
         }
 
     })();
+
+    document.addEventListener('DOMContentLoaded', function() {
+        document.querySelectorAll('.status-select').forEach(function(select) {
+            select.setAttribute('data-previous-value', select.value);
+            setStatusClass(select, select.value);
+        });
+    });
 </script>
+<?php include __DIR__ . '/confirm/confirm_status_modal.php'; ?>
 <?php include __DIR__ . '/confirm/confirm_delete_modal.php'; ?>

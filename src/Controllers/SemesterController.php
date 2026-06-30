@@ -47,6 +47,9 @@ class SemesterController
             'end_date' => trim($data['end_date'] ?? ''),
             'status' => trim($data['status'] ?? ''),
         ];
+        if ($form['status'] === '') {
+            $form['status'] = $this->calculatedStatusValue($form['start_date'], $form['end_date']);
+        }
 
         $state['formData'] = $form;
         $state['errors'] = $this->validateForm($form, $state['status_options']);
@@ -83,13 +86,22 @@ class SemesterController
 
     private function handleList(array $data, array $query, string $method): array
     {
+        $this->syncStatusesByDate();
+
         $page = max(1, (int) ($query['page_num'] ?? 1));
         $keyword = trim($query['keyword'] ?? $query['q'] ?? $query['search'] ?? '');
+        $statusOptions = $this->model->getStatusOptions();
+        $status = trim((string) ($query['status'] ?? ''));
+        if ($status !== '' && !in_array($status, array_column($statusOptions, 'value'), true)) {
+            $status = '';
+        }
+        $hasFilters = $keyword !== '' || $status !== '';
 
         $state = [
             'semesters' => [],
-            'filters' => ['keyword' => $keyword],
-            'emptyMessage' => $keyword === '' ? 'Chưa có học kỳ nào.' : 'Không tìm thấy học kỳ phù hợp.',
+            'filters' => ['keyword' => $keyword, 'status' => $status],
+            'status_options' => $statusOptions,
+            'emptyMessage' => $hasFilters ? 'Không có học kỳ phù hợp.' : 'Chưa có học kỳ nào.',
             'pagination' => [
                 'current_page' => $page,
                 'total_items' => 0,
@@ -102,8 +114,9 @@ class SemesterController
             'redirect' => null,
         ];
 
-        // Xử lý DELETE
-        if ($method === 'POST' && !empty($data['action']) && $data['action'] === 'delete') {
+        $action = trim((string) ($data['action'] ?? ''));
+
+        if ($method === 'POST' && $action === 'delete') {
             $id = (int) ($data['id'] ?? 0);
             if ($id > 0) {
                 $deleteState = $this->delete($id);
@@ -111,34 +124,43 @@ class SemesterController
                     'type' => $deleteState['success'] ? 'success' : 'error',
                     'message' => $deleteState['message'],
                 ];
+            } else {
+                $state['toast'] = ['type' => 'error', 'message' => 'ID học kỳ không hợp lệ.'];
             }
         }
 
-        // Xử lý thay đổi trạng thái
-        if ($method === 'POST' && !empty($data['status_change'])) {
+        if ($method === 'POST' && $action === 'status') {
+            $statusState = $this->handleStatusChange($data);
+            $state['toast'] = $statusState === null ? null : [
+                'type' => $statusState['success'] ? 'success' : 'error',
+                'message' => $statusState['message'],
+            ];
+        }
+
+        if ($method === 'POST' && $action === '' && !empty($data['status_change'])) {
             $id = (int) ($data['semester_id'] ?? 0);
             $newStatus = trim($data['new_status'] ?? '');
-            if ($id > 0 && $newStatus !== '') {
-                $statusState = $this->changeStatus($id, $newStatus);
-                $state['toast'] = [
-                    'type' => $statusState['success'] ? 'success' : 'error',
-                    'message' => $statusState['message'],
-                ];
-            }
+            $statusState = $this->changeStatus($id, $newStatus);
+            $state['toast'] = [
+                'type' => $statusState['success'] ? 'success' : 'error',
+                'message' => $statusState['message'],
+            ];
         }
 
         try {
-            $totalItems = $this->model->countFiltered($keyword);
+            $totalItems = $hasFilters
+                ? $this->model->countFiltered($keyword, $status)
+                : $this->model->countAll();
             $totalPages = max(1, (int) ceil($totalItems / self::LIST_PER_PAGE));
             $page = min($page, $totalPages);
 
             $state['semesters'] = $totalItems > 0
-                ? ($keyword === ''
-                    ? $this->model->listPaginated($page, self::LIST_PER_PAGE)
-                    : $this->model->listFilteredPaginated($page, self::LIST_PER_PAGE, $keyword))
+                ? ($hasFilters
+                    ? $this->model->listFilteredPaginated($page, self::LIST_PER_PAGE, $keyword, $status)
+                    : $this->model->listPaginated($page, self::LIST_PER_PAGE))
                 : [];
 
-            $state['emptyMessage'] = $keyword === '' ? 'Chưa có học kỳ nào.' : 'Không tìm thấy học kỳ phù hợp.';
+            $state['emptyMessage'] = $hasFilters ? 'Không có học kỳ phù hợp.' : 'Chưa có học kỳ nào.';
             $state['pagination'] = [
                 'current_page' => $page,
                 'total_items' => $totalItems,
@@ -151,7 +173,7 @@ class SemesterController
             error_log($e->getMessage());
             $state['toast'] = [
                 'type' => 'error',
-                'message' => $keyword === ''
+                'message' => !$hasFilters
                     ? 'Không thể tải danh sách học kỳ.'
                     : 'Đã xảy ra lỗi khi tìm kiếm. Vui lòng thử lại.',
             ];
@@ -162,6 +184,7 @@ class SemesterController
 
     private function handleEdit(int $id, array $data, string $method): array
     {
+        $returnUrl = $this->safeListReturnUrl($data['return'] ?? $_GET['return'] ?? '');
         $state = [
             'formData' => [],
             'errors' => [],
@@ -169,15 +192,23 @@ class SemesterController
             'status_options' => $this->model->getStatusOptions(),
             'toast' => null,
             'redirect' => null,
+            'returnUrl' => $returnUrl,
         ];
 
         if ($id === 0) {
             $state['toast'] = ['type' => 'error', 'message' => 'ID học kỳ không hợp lệ.'];
-            $state['redirect'] = '?page=list_semester';
+            $state['redirect'] = $returnUrl;
             return $state;
         }
 
         if ($method === 'POST') {
+            $currentSemester = $this->model->findById($id);
+            if (!$currentSemester) {
+                $state['toast'] = ['type' => 'error', 'message' => 'Không tìm thấy học kỳ cần chỉnh sửa.'];
+                $state['redirect'] = $returnUrl;
+                return $state;
+            }
+
             $form = [
                 'academic_year' => trim($data['academic_year'] ?? ''),
                 'semester_name' => trim($data['semester_name'] ?? ''),
@@ -185,16 +216,24 @@ class SemesterController
                 'end_date' => trim($data['end_date'] ?? ''),
                 'status' => trim($data['status'] ?? ''),
             ];
+            if ($form['status'] === '') {
+                $form['status'] = $this->calculatedStatusValue($form['start_date'], $form['end_date']);
+            }
 
             $state['formData'] = $form;
             $state['errors'] = $this->validateForm($form, $state['status_options']);
 
             if (empty($state['errors'])) {
                 try {
+                    if (($currentSemester['start_date'] ?? '') !== $form['start_date']
+                        || ($currentSemester['end_date'] ?? '') !== $form['end_date']) {
+                        $form['status'] = $this->calculatedStatusValue($form['start_date'], $form['end_date']);
+                    }
+
                     $updated = $this->model->update($id, $form);
                     if ($updated) {
                         $state['toast'] = ['type' => 'success', 'message' => 'Cập nhật học kỳ thành công.'];
-                        $state['redirect'] = '?page=list_semester';
+                        $state['redirect'] = $returnUrl;
                     } else {
                         $state['toast'] = ['type' => 'info', 'message' => 'Không có thay đổi nào được thực hiện.'];
                     }
@@ -210,7 +249,7 @@ class SemesterController
         $semester = $this->model->findById($id);
         if (!$semester) {
             $state['toast'] = ['type' => 'error', 'message' => 'Không tìm thấy học kỳ cần chỉnh sửa.'];
-            $state['redirect'] = '?page=list_semester';
+            $state['redirect'] = $returnUrl;
             return $state;
         }
 
@@ -223,6 +262,79 @@ class SemesterController
         ];
 
         return $state;
+    }
+
+    private function safeListReturnUrl(mixed $value): string
+    {
+        $value = trim((string) $value);
+        if ($value === '') {
+            return '?page=list_semester';
+        }
+
+        $parts = parse_url($value);
+        if ($parts === false || isset($parts['scheme'], $parts['host'])) {
+            return '?page=list_semester';
+        }
+
+        parse_str($parts['query'] ?? ltrim($value, '?'), $params);
+        if (($params['page'] ?? '') !== 'list_semester') {
+            return '?page=list_semester';
+        }
+
+        return '?' . http_build_query($params);
+    }
+
+    private function syncStatusesByDate(): void
+    {
+        foreach ($this->model->allForStatusSync() as $semester) {
+            if ((string) ($semester['status'] ?? '') === 'Tạm khóa') {
+                continue;
+            }
+
+            $status = $this->calculatedStatusValue(
+                (string) ($semester['start_date'] ?? ''),
+                (string) ($semester['end_date'] ?? '')
+            );
+
+            if ((string) ($semester['status'] ?? '') !== $status) {
+                $this->model->updateStatus((int) ($semester['id'] ?? 0), $status);
+            }
+        }
+    }
+
+    private function calculatedStatusValue(string $startDate, string $endDate): string
+    {
+        $today = new \DateTimeImmutable('today');
+        $start = $this->parseDate($startDate);
+        $end = $this->parseDate($endDate);
+
+        if ($start !== false && $today < $start) {
+            return 'Sắp diễn ra';
+        }
+
+        if ($start !== false && $end !== false && $today >= $start && $today <= $end) {
+            return 'Đang diễn ra';
+        }
+
+        if ($end !== false && $today > $end) {
+            return 'Đã hoàn thành';
+        }
+
+        return 'Sắp diễn ra';
+    }
+
+    private function parseDate(string $value): \DateTimeImmutable|false
+    {
+        $date = \DateTimeImmutable::createFromFormat('!Y-m-d', $value);
+        if ($date !== false) {
+            return $date;
+        }
+
+        try {
+            return new \DateTimeImmutable($value);
+        } catch (Throwable) {
+            return false;
+        }
     }
 
     private function validateForm(array $form, array $statusOptions): array
@@ -314,6 +426,10 @@ class SemesterController
 
     private function changeStatus(int $id, string $status): array
     {
+        if ($id < 1) {
+            return ['success' => false, 'message' => 'Cập nhật trạng thái học kỳ thất bại.'];
+        }
+
         $semester = $this->model->findById($id);
         if (!$semester) {
             return ['success' => false, 'message' => 'Không tìm thấy học kỳ.'];
@@ -325,17 +441,39 @@ class SemesterController
         }
 
         try {
+            if ((string) ($semester['status'] ?? '') === $status) {
+                return ['success' => true, 'message' => 'Cập nhật trạng thái học kỳ thành công.'];
+            }
+
             $updated = $this->model->updateStatus($id, $status);
 
             return [
                 'success' => $updated,
                 'message' => $updated
-                    ? 'Cập nhật trạng thái thành công.'
-                    : 'Cập nhật trạng thái thất bại. Vui lòng thử lại.',
+                    ? 'Cập nhật trạng thái học kỳ thành công.'
+                    : 'Cập nhật trạng thái học kỳ thất bại.',
             ];
         } catch (Throwable $e) {
             error_log($e->getMessage());
-            return ['success' => false, 'message' => 'Có lỗi xảy ra khi cập nhật trạng thái. Vui lòng thử lại.'];
+            return ['success' => false, 'message' => 'Cập nhật trạng thái học kỳ thất bại.'];
         }
+    }
+
+    private function handleStatusChange(array $data): ?array
+    {
+        if (!isset($data['status']) || !is_array($data['status']) || count($data['status']) !== 1) {
+            return ['success' => false, 'message' => 'Cập nhật trạng thái học kỳ thất bại.'];
+        }
+
+        if (!isset($data['_row_id']) || !ctype_digit((string) $data['_row_id'])) {
+            return ['success' => false, 'message' => 'Cập nhật trạng thái học kỳ thất bại.'];
+        }
+
+        $id = (int) $data['_row_id'];
+        if (!array_key_exists((string) $id, $data['status'])) {
+            return ['success' => false, 'message' => 'Cập nhật trạng thái học kỳ thất bại.'];
+        }
+
+        return $this->changeStatus($id, trim((string) $data['status'][$id]));
     }
 }

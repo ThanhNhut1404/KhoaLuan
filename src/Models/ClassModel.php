@@ -269,16 +269,43 @@ class ClassModel
         return $statement->rowCount() > 0;
     }
 
-    public function hasRelatedData(int $id): bool
+    public function countStudents(int $id): int
     {
         if (!$this->tableHasColumn('sinh_vien', 'MA_LOP')) {
-            return false;
+            return 0;
         }
 
-        $statement = $this->db->prepare('SELECT 1 FROM sinh_vien WHERE MA_LOP = :id LIMIT 1');
+        $statement = $this->db->prepare('SELECT COUNT(*) FROM sinh_vien WHERE MA_LOP = :id');
         $statement->execute(['id' => $id]);
 
-        return (bool) $statement->fetchColumn();
+        return (int) $statement->fetchColumn();
+    }
+
+    public function hasRelatedData(int $id): bool
+    {
+        foreach ($this->referencingColumns('lop_hoc', 'MA_LOP') as $reference) {
+            if ($this->hasReferenceRows($reference['table'], $reference['column'], $id)) {
+                return true;
+            }
+        }
+
+        return $this->countStudents($id) > 0;
+    }
+
+    private function hasReferenceRows(string $table, string $column, int $id): bool
+    {
+        try {
+            $statement = $this->db->prepare(sprintf(
+                'SELECT 1 FROM `%s` WHERE `%s` = :id LIMIT 1',
+                str_replace('`', '``', $table),
+                str_replace('`', '``', $column)
+            ));
+            $statement->execute(['id' => $id]);
+
+            return (bool) $statement->fetchColumn();
+        } catch (Throwable) {
+            return false;
+        }
     }
 
     public function delete(int $id): bool
@@ -332,6 +359,30 @@ class ClassModel
             return (bool) $statement->fetchColumn();
         } catch (Throwable) {
             return false;
+        }
+    }
+
+    private function referencingColumns(string $referencedTable, string $referencedColumn): array
+    {
+        try {
+            $statement = $this->db->prepare(
+                'SELECT TABLE_NAME AS table_name, COLUMN_NAME AS column_name
+                 FROM information_schema.KEY_COLUMN_USAGE
+                 WHERE TABLE_SCHEMA = DATABASE()
+                   AND REFERENCED_TABLE_NAME = :referenced_table
+                   AND REFERENCED_COLUMN_NAME = :referenced_column'
+            );
+            $statement->execute([
+                'referenced_table' => $referencedTable,
+                'referenced_column' => $referencedColumn,
+            ]);
+
+            return array_map(static fn (array $row): array => [
+                'table' => (string) ($row['table_name'] ?? ''),
+                'column' => (string) ($row['column_name'] ?? ''),
+            ], $statement->fetchAll());
+        } catch (Throwable) {
+            return [];
         }
     }
 

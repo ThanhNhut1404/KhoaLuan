@@ -62,21 +62,20 @@ class SemesterModel
         return (int) $stmt->fetchColumn();
     }
 
-    public function countFiltered(string $keyword = ''): int
+    public function countFiltered(string $keyword = '', string $status = ''): int
     {
-        if (trim($keyword) === '') {
+        if (trim($keyword) === '' && trim($status) === '') {
             return $this->countAll();
         }
 
+        [$where, $params] = $this->filterClause($keyword, $status);
         $stmt = $this->db->prepare(
             'SELECT COUNT(*) FROM hoc_ky h
-             JOIN nien_khoa n ON h.MA_NIEN_KHOA = n.MA_NIEN_KHOA
-             WHERE LOWER(h.TEN_HOC_KY) LIKE :keyword
-                OR LOWER(n.TEN_NIEN_KHOA) LIKE :keyword
-                OR h.TRANG_THAI_HK LIKE :keyword'
+             JOIN nien_khoa n ON h.MA_NIEN_KHOA = n.MA_NIEN_KHOA' . $where
         );
-        $keyword = '%' . strtolower(trim($keyword)) . '%';
-        $stmt->execute(['keyword' => $keyword]);
+        $this->bindNamedParams($stmt, $params);
+        $stmt->execute();
+
         return (int) $stmt->fetchColumn();
     }
 
@@ -98,10 +97,10 @@ class SemesterModel
         return $stmt->fetchAll();
     }
 
-    public function listFilteredPaginated(int $page, int $perPage, string $keyword = ''): array
+    public function listFilteredPaginated(int $page, int $perPage, string $keyword = '', string $status = ''): array
     {
         $offset = max(0, ($page - 1) * $perPage);
-        $keyword = '%' . strtolower(trim($keyword)) . '%';
+        [$where, $params] = $this->filterClause($keyword, $status);
         
         $stmt = $this->db->prepare(
             'SELECT h.MA_HOC_KY AS id, h.TEN_HOC_KY AS name, 
@@ -109,13 +108,11 @@ class SemesterModel
                     h.TRANG_THAI_HK AS status, n.TEN_NIEN_KHOA AS academic_year
              FROM hoc_ky h
              JOIN nien_khoa n ON h.MA_NIEN_KHOA = n.MA_NIEN_KHOA
-             WHERE LOWER(h.TEN_HOC_KY) LIKE :keyword
-                OR LOWER(n.TEN_NIEN_KHOA) LIKE :keyword
-                OR h.TRANG_THAI_HK LIKE :keyword
+             ' . $where . '
              ORDER BY h.MA_HOC_KY DESC
              LIMIT :limit OFFSET :offset'
         );
-        $stmt->bindValue(':keyword', $keyword);
+        $this->bindNamedParams($stmt, $params);
         $stmt->bindValue(':limit', $perPage, PDO::PARAM_INT);
         $stmt->bindValue(':offset', $offset, PDO::PARAM_INT);
         $stmt->execute();
@@ -136,6 +133,16 @@ class SemesterModel
         $stmt->execute(['id' => (int) $id]);
         $row = $stmt->fetch();
         return $row ?: null;
+    }
+
+    public function allForStatusSync(): array
+    {
+        $stmt = $this->db->query(
+            'SELECT MA_HOC_KY AS id, THOI_GIAN_BDHK AS start_date, THOI_GIAN_KTHK AS end_date, TRANG_THAI_HK AS status
+             FROM hoc_ky'
+        );
+
+        return $stmt->fetchAll();
     }
 
     public function update(int $id, array $data): bool
@@ -213,9 +220,10 @@ class SemesterModel
     public function getStatusOptions(): array
     {
         return [
-            ['value' => 'Sắp tới', 'label' => 'Sắp tới'],
+            ['value' => 'Sắp diễn ra', 'label' => 'Sắp diễn ra'],
             ['value' => 'Đang diễn ra', 'label' => 'Đang diễn ra'],
             ['value' => 'Đã hoàn thành', 'label' => 'Đã hoàn thành'],
+            ['value' => 'Tạm khóa', 'label' => 'Tạm khóa'],
         ];
     }
 
@@ -260,6 +268,45 @@ class SemesterModel
             return (bool) $stmt->fetchColumn();
         } catch (Throwable) {
             return false;
+        }
+    }
+
+    private function filterClause(string $keyword = '', string $status = ''): array
+    {
+        $conditions = [];
+        $params = [];
+        $keyword = trim($keyword);
+
+        if ($keyword !== '') {
+            $conditions[] = '(LOWER(h.TEN_HOC_KY) LIKE :keyword_semester
+                OR LOWER(n.TEN_NIEN_KHOA) LIKE :keyword_year
+                OR DATE_FORMAT(h.THOI_GIAN_BDHK, "%Y-%m-%d") LIKE :keyword_start_iso
+                OR DATE_FORMAT(h.THOI_GIAN_BDHK, "%d/%m/%Y") LIKE :keyword_start_display
+                OR DATE_FORMAT(h.THOI_GIAN_KTHK, "%Y-%m-%d") LIKE :keyword_end_iso
+                OR DATE_FORMAT(h.THOI_GIAN_KTHK, "%d/%m/%Y") LIKE :keyword_end_display)';
+            $keywordParam = '%' . strtolower($keyword) . '%';
+            $dateKeywordParam = '%' . $keyword . '%';
+            $params['keyword_semester'] = $keywordParam;
+            $params['keyword_year'] = $keywordParam;
+            $params['keyword_start_iso'] = $dateKeywordParam;
+            $params['keyword_start_display'] = $dateKeywordParam;
+            $params['keyword_end_iso'] = $dateKeywordParam;
+            $params['keyword_end_display'] = $dateKeywordParam;
+        }
+
+        $status = trim($status);
+        if ($status !== '') {
+            $conditions[] = 'h.TRANG_THAI_HK = :status';
+            $params['status'] = $status;
+        }
+
+        return [empty($conditions) ? '' : ' WHERE ' . implode(' AND ', $conditions), $params];
+    }
+
+    private function bindNamedParams(\PDOStatement $statement, array $params): void
+    {
+        foreach ($params as $name => $value) {
+            $statement->bindValue(':' . ltrim((string) $name, ':'), $value);
         }
     }
 }

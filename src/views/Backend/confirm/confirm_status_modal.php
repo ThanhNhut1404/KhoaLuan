@@ -60,7 +60,7 @@ function showStatusConfirm(options) {
     const moduleLabel = (options.moduleLabel || 'mục').toString();
     const displayName = targetName !== '' ? '"' + targetName + '"' : 'này';
 
-    question.textContent = 'Bạn có chắc chắn muốn chuyển ' + moduleLabel + ' ' + displayName + ' từ "' + _statusConfirmPrevious + '" sang "' + _statusConfirmNext + '" không?';
+    question.textContent = options.question || ('Bạn có chắc chắn muốn chuyển ' + moduleLabel + ' ' + displayName + ' từ "' + _statusConfirmPrevious + '" sang "' + _statusConfirmNext + '" không?');
     warning.textContent = options.warning || 'Thao tác này sẽ thay đổi trạng thái của dữ liệu.';
 
     modal.classList.add('active');

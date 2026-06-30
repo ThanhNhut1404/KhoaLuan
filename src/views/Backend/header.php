@@ -6,7 +6,7 @@ $adminRole = $adminSession['TEN_VAI_TRO'] ?? '';
 
 <?php
     $currentPage = $_GET['page'] ?? 'dashboard';
-    $searchablePages = ['list_khoa', 'list_major', 'list_class'];
+    $searchablePages = ['list_khoa', 'list_major', 'list_class', 'list_semester', 'list_year'];
     $isHeaderSearchEnabled = in_array($currentPage, $searchablePages, true);
     $headerSearchValue = $isHeaderSearchEnabled
         ? trim((string) ($_GET['search'] ?? $_GET['keyword'] ?? $_GET['q'] ?? ''))

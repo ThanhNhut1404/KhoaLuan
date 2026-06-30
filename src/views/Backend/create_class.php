@@ -408,5 +408,10 @@
         });
 
         resetMajorOptions(selectedMajor);
+
+        const firstInvalidField = document.querySelector('[aria-invalid="true"]');
+        if (firstInvalidField && typeof firstInvalidField.focus === 'function') {
+            firstInvalidField.focus();
+        }
     })();
 </script>
