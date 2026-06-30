@@ -9,6 +9,8 @@ use Throwable;
 class SemesterController
 {
     private const LIST_PER_PAGE = 10;
+    private const MAX_SEMESTERS_PER_YEAR = 12;
+    private const SEMESTER_LIMIT_MESSAGE = 'Niên khóa này đã có tối đa 12 học kỳ. Không thể tạo thêm.';
     private SemesterModel $model;
 
     public function __construct(?SemesterModel $model = null)
@@ -58,6 +60,11 @@ class SemesterController
             return $state;
         }
 
+        if ($this->academicYearReachedSemesterLimit((int) $form['academic_year'])) {
+            $state['errors']['academic_year'] = self::SEMESTER_LIMIT_MESSAGE;
+            return $state;
+        }
+
         try {
             $created = $this->model->create($form);
 
@@ -95,12 +102,23 @@ class SemesterController
         if ($status !== '' && !in_array($status, array_column($statusOptions, 'value'), true)) {
             $status = '';
         }
-        $hasFilters = $keyword !== '' || $status !== '';
+        $academicYears = $this->model->getAcademicYears();
+        $academicYearId = trim((string) ($query['academic_year_id'] ?? $query['academic_year'] ?? ''));
+        $academicYearIds = array_map(
+            static fn (array $year): string => (string) ($year['id'] ?? $year['MA_NIEN_KHOA'] ?? ''),
+            $academicYears
+        );
+        $academicYearIds = array_values(array_filter($academicYearIds, static fn (string $id): bool => $id !== ''));
+        if ($academicYearId !== '' && !in_array($academicYearId, $academicYearIds, true)) {
+            $academicYearId = '';
+        }
+        $hasFilters = $keyword !== '' || $status !== '' || $academicYearId !== '';
 
         $state = [
             'semesters' => [],
-            'filters' => ['keyword' => $keyword, 'status' => $status],
+            'filters' => ['keyword' => $keyword, 'status' => $status, 'academic_year_id' => $academicYearId],
             'status_options' => $statusOptions,
+            'academic_years' => $academicYears,
             'emptyMessage' => $hasFilters ? 'Không có học kỳ phù hợp.' : 'Chưa có học kỳ nào.',
             'pagination' => [
                 'current_page' => $page,
@@ -149,14 +167,14 @@ class SemesterController
 
         try {
             $totalItems = $hasFilters
-                ? $this->model->countFiltered($keyword, $status)
+                ? $this->model->countFiltered($keyword, $status, $academicYearId)
                 : $this->model->countAll();
             $totalPages = max(1, (int) ceil($totalItems / self::LIST_PER_PAGE));
             $page = min($page, $totalPages);
 
             $state['semesters'] = $totalItems > 0
                 ? ($hasFilters
-                    ? $this->model->listFilteredPaginated($page, self::LIST_PER_PAGE, $keyword, $status)
+                    ? $this->model->listFilteredPaginated($page, self::LIST_PER_PAGE, $keyword, $status, $academicYearId)
                     : $this->model->listPaginated($page, self::LIST_PER_PAGE))
                 : [];
 
@@ -224,6 +242,12 @@ class SemesterController
             $state['errors'] = $this->validateForm($form, $state['status_options']);
 
             if (empty($state['errors'])) {
+                $academicYearChanged = (int) ($currentSemester['academic_year'] ?? 0) !== (int) $form['academic_year'];
+                if ($academicYearChanged && $this->academicYearReachedSemesterLimit((int) $form['academic_year'])) {
+                    $state['errors']['academic_year'] = self::SEMESTER_LIMIT_MESSAGE;
+                    return $state;
+                }
+
                 try {
                     if (($currentSemester['start_date'] ?? '') !== $form['start_date']
                         || ($currentSemester['end_date'] ?? '') !== $form['end_date']) {
@@ -392,6 +416,11 @@ class SemesterController
         }
 
         return false;
+    }
+
+    private function academicYearReachedSemesterLimit(int $academicYearId): bool
+    {
+        return $this->model->countByAcademicYear($academicYearId) >= self::MAX_SEMESTERS_PER_YEAR;
     }
 
     private function delete(int $id): array

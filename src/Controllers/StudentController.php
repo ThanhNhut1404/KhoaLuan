@@ -285,7 +285,7 @@ class StudentController
             trim((string) ($data['address_line1'] ?? '')),
             trim((string) ($data['address_line2'] ?? '')),
             trim((string) ($data['address_line3'] ?? '')),
-            trim((string) ($data['address_line4'] ?? '')),
+            trim((string) ($data['address_province'] ?? '')),
         ];
 
         $address = implode(', ', array_filter($addressLines, static fn(string $line): bool => $line !== ''));
@@ -306,7 +306,7 @@ class StudentController
             'address_line1' => $addressLines[0],
             'address_line2' => $addressLines[1],
             'address_line3' => $addressLines[2],
-            'address_line4' => $addressLines[3],
+            'address_province' => $addressLines[3],
             'address' => $address,
             'status' => trim((string) ($data['status'] ?? 'Đang học')),
         ];
@@ -359,16 +359,16 @@ class StudentController
         }
 
         if ($form['address_line1'] === '') {
-            $errors['address_line1'] = 'Vui lòng nhập địa chỉ dòng 1.';
+            $errors['address_line1'] = 'Vui lòng nhập số nhà.';
         }
         if ($form['address_line2'] === '') {
-            $errors['address_line2'] = 'Vui lòng nhập địa chỉ dòng 2.';
+            $errors['address_line2'] = 'Vui lòng nhập đường / ấp / khóm.';
         }
         if ($form['address_line3'] === '') {
-            $errors['address_line3'] = 'Vui lòng nhập địa chỉ dòng 3.';
+            $errors['address_line3'] = 'Vui lòng nhập xã / phường.';
         }
-        if ($form['address_line4'] === '') {
-            $errors['address_line4'] = 'Vui lòng nhập địa chỉ dòng 4.';
+        if ($form['address_province'] === '') {
+            $errors['address_province'] = 'Vui lòng nhập tỉnh / thành phố.';
         }
 
         if ($form['class_id'] === '' || !ctype_digit($form['class_id'])) {

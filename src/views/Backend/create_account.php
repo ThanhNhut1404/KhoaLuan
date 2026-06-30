@@ -65,13 +65,41 @@ $roleLabel = static function (string $roleName): string {
 
                         <div class="form-field">
                             <label class="field-label form-label" for="password">Mật khẩu <span class="required">*</span></label>
-                            <input id="password" name="password" class="field-input form-control" type="password" placeholder="Nhập mật khẩu" />
+                            <div class="account-password-wrap">
+                                <input id="password" name="password" class="field-input form-control" type="password" placeholder="Nhập mật khẩu" />
+                                <button class="account-password-toggle" type="button" aria-label="Hiện mật khẩu" data-target="password">
+                                    <svg class="eye-on" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                        <path d="M2 12s3.5-6 10-6 10 6 10 6-3.5 6-10 6-10-6-10-6Z" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                        <circle cx="12" cy="12" r="3" stroke-width="2" />
+                                    </svg>
+                                    <svg class="eye-off" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                        <path d="M3 3l18 18" stroke-width="2" stroke-linecap="round"/>
+                                        <path d="M10.5 6.5A9.9 9.9 0 0 1 12 6c6.5 0 10 6 10 6a18.2 18.2 0 0 1-3.4 4.4" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                        <path d="M6.6 6.6A18 18 0 0 0 2 12s3.5 6 10 6c1.8 0 3.4-.4 4.8-1.1" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                        <path d="M9.9 9.9a3 3 0 0 0 4.2 4.2" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                    </svg>
+                                </button>
+                            </div>
                             <?= $error('password') ?>
                         </div>
 
                         <div class="form-field">
                             <label class="field-label form-label" for="confirm_password">Xác nhận mật khẩu <span class="required">*</span></label>
-                            <input id="confirm_password" name="confirm_password" class="field-input form-control" type="password" placeholder="Nhập lại mật khẩu" />
+                            <div class="account-password-wrap">
+                                <input id="confirm_password" name="confirm_password" class="field-input form-control" type="password" placeholder="Nhập lại mật khẩu" />
+                                <button class="account-password-toggle" type="button" aria-label="Hiện mật khẩu" data-target="confirm_password">
+                                    <svg class="eye-on" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                        <path d="M2 12s3.5-6 10-6 10 6 10 6-3.5 6-10 6-10-6-10-6Z" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                        <circle cx="12" cy="12" r="3" stroke-width="2" />
+                                    </svg>
+                                    <svg class="eye-off" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                        <path d="M3 3l18 18" stroke-width="2" stroke-linecap="round"/>
+                                        <path d="M10.5 6.5A9.9 9.9 0 0 1 12 6c6.5 0 10 6 10 6a18.2 18.2 0 0 1-3.4 4.4" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                        <path d="M6.6 6.6A18 18 0 0 0 2 12s3.5 6 10 6c1.8 0 3.4-.4 4.8-1.1" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                        <path d="M9.9 9.9a3 3 0 0 0 4.2 4.2" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                    </svg>
+                                </button>
+                            </div>
                             <?= $error('confirm_password') ?>
                         </div>
                     </div>
@@ -223,6 +251,13 @@ $roleLabel = static function (string $roleName): string {
     .required { color: #dc2626; font-weight: 700; }
     .field-input { padding: 10px; border-radius: 10px; border: 1px solid #e5e7eb; background: #f9fafb; font-size: 13px; color: #1f2937; font-family: inherit; height: 40px; box-sizing: border-box; }
     .field-input:focus { outline: none; border-color: #0f2a5a; box-shadow: 0 0 0 3px rgba(15,42,90,0.08); background: #ffffff; }
+    .account-password-wrap { position: relative; }
+    .account-password-wrap .field-input { width: 100%; padding-right: 42px; }
+    .account-password-toggle { position: absolute; right: 8px; top: 50%; transform: translateY(-50%); border: 0; background: transparent; color: #0f2a5a; cursor: pointer; padding: 4px; display: inline-flex; align-items: center; justify-content: center; }
+    .account-password-toggle svg { width: 18px; height: 18px; stroke: currentColor; fill: none; }
+    .account-password-toggle .eye-off { display: none; }
+    .account-password-toggle.is-visible .eye-on { display: none; }
+    .account-password-toggle.is-visible .eye-off { display: block; }
     select.field-input { cursor: pointer; }
     .field-error { color: #dc2626; display: block; font-size: 12px; font-weight: 600; line-height: 1.2; min-height: 18px; overflow-wrap: anywhere; }
     .field-error.is-empty { visibility: hidden; }
@@ -271,5 +306,21 @@ $roleLabel = static function (string $roleName): string {
             roleSelect.addEventListener('change', updateProfileFields);
             updateProfileFields();
         }
+
+        document.querySelectorAll('.account-password-toggle').forEach(function(button) {
+            button.addEventListener('click', function() {
+                var targetId = button.getAttribute('data-target');
+                var input = document.getElementById(targetId);
+
+                if (!input) {
+                    return;
+                }
+
+                var isHidden = input.type === 'password';
+                input.type = isHidden ? 'text' : 'password';
+                button.classList.toggle('is-visible', isHidden);
+                button.setAttribute('aria-label', isHidden ? 'Ẩn mật khẩu' : 'Hiện mật khẩu');
+            });
+        });
     })();
 </script>

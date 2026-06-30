@@ -104,7 +104,6 @@ class ClassController
         if ($created) {
             $state['toast'] = ['type' => 'success', 'message' => 'Tạo lớp học thành công.'];
             $state['formData'] = [];
-            $state['redirect'] = '?page=list_class';
             return $state;
         }
 

@@ -1,5 +1,6 @@
 <?php
     $semesters = $semesters ?? [];
+    $academic_years = $academic_years ?? [];
     $status_options = $status_options ?? [
         ['value' => 'Sắp diễn ra', 'label' => 'Sắp diễn ra'],
         ['value' => 'Đang diễn ra', 'label' => 'Đang diễn ra'],
@@ -22,10 +23,16 @@
     $filters = $filters ?? [];
     $currentKeyword = trim((string) ($filters['keyword'] ?? ($_GET['search'] ?? $_GET['keyword'] ?? $_GET['q'] ?? '')));
     $currentStatusFilter = trim((string) ($filters['status'] ?? ($_GET['status'] ?? '')));
+    $currentAcademicYearFilter = trim((string) ($filters['academic_year_id'] ?? ($_GET['academic_year_id'] ?? $_GET['academic_year'] ?? '')));
     if (!in_array($currentStatusFilter, $statusValues, true)) {
         $currentStatusFilter = '';
     }
-    $hasActiveFilters = $currentStatusFilter !== '';
+    $academicYearValues = array_map(static fn (array $year): string => (string) ($year['id'] ?? $year['MA_NIEN_KHOA'] ?? ''), $academic_years);
+    $academicYearValues = array_values(array_filter($academicYearValues, static fn (string $value): bool => $value !== ''));
+    if ($currentAcademicYearFilter !== '' && !empty($academicYearValues) && !in_array($currentAcademicYearFilter, $academicYearValues, true)) {
+        $currentAcademicYearFilter = '';
+    }
+    $hasActiveFilters = $currentStatusFilter !== '' || $currentAcademicYearFilter !== '';
     $emptyMessage = $emptyMessage ?? 'Chưa có học kỳ nào.';
     $paginationUrl = static function (int $pageNum): string {
         $params = $_GET;
@@ -70,6 +77,19 @@
                             <?php if ($currentKeyword !== ''): ?>
                                 <input type="hidden" name="search" value="<?= htmlspecialchars($currentKeyword, ENT_QUOTES, 'UTF-8') ?>" />
                             <?php endif; ?>
+                            <label class="filter-label" for="filter_semester_year">Niên khóa</label>
+                            <select id="filter_semester_year" name="academic_year_id" class="filter-select form-select">
+                                <option value="">Tất cả</option>
+                                <?php foreach ($academic_years as $year): ?>
+                                    <?php
+                                        $yearId = (string) ($year['id'] ?? $year['MA_NIEN_KHOA'] ?? '');
+                                        $yearName = (string) ($year['name'] ?? $year['TEN_NIEN_KHOA'] ?? '');
+                                    ?>
+                                    <option value="<?= htmlspecialchars($yearId, ENT_QUOTES, 'UTF-8') ?>" <?= $currentAcademicYearFilter === $yearId ? 'selected' : '' ?>>
+                                        <?= htmlspecialchars($yearName, ENT_QUOTES, 'UTF-8') ?>
+                                    </option>
+                                <?php endforeach; ?>
+                            </select>
                             <label class="filter-label" for="filter_semester_status">Trạng thái</label>
                             <select id="filter_semester_status" name="status" class="filter-select form-select">
                                 <option value="">Tất cả</option>
@@ -208,7 +228,8 @@
     .filter-wrap.open .filter-menu { display:block; }
     .filter-form { display:grid; gap:8px; }
     .filter-label { font-size:12px; font-weight:700; color:#0f2a5a; margin:0; }
-    .filter-select { min-height:36px; font-size:13px; border-radius:8px; border-color:#e5e7eb; }
+    .filter-select { min-height:36px; font-size:13px; border-radius:8px; border-color:#e5e7eb; position:relative; z-index:1; }
+    #filter_semester_year:focus { margin-bottom:96px; z-index:5; }
     .filter-actions { display:flex; justify-content:flex-end; gap:8px; padding-top:6px; }
     .filter-clear,
     .filter-apply { font-size:13px; font-weight:700; border-radius:8px; padding:7px 12px; }

@@ -62,13 +62,21 @@ class SemesterModel
         return (int) $stmt->fetchColumn();
     }
 
-    public function countFiltered(string $keyword = '', string $status = ''): int
+    public function countByAcademicYear(int $academicYearId): int
     {
-        if (trim($keyword) === '' && trim($status) === '') {
+        $stmt = $this->db->prepare('SELECT COUNT(*) FROM hoc_ky WHERE MA_NIEN_KHOA = :year_id');
+        $stmt->execute(['year_id' => $academicYearId]);
+
+        return (int) $stmt->fetchColumn();
+    }
+
+    public function countFiltered(string $keyword = '', string $status = '', string $academicYear = ''): int
+    {
+        if (trim($keyword) === '' && trim($status) === '' && trim($academicYear) === '') {
             return $this->countAll();
         }
 
-        [$where, $params] = $this->filterClause($keyword, $status);
+        [$where, $params] = $this->filterClause($keyword, $status, $academicYear);
         $stmt = $this->db->prepare(
             'SELECT COUNT(*) FROM hoc_ky h
              JOIN nien_khoa n ON h.MA_NIEN_KHOA = n.MA_NIEN_KHOA' . $where
@@ -97,10 +105,10 @@ class SemesterModel
         return $stmt->fetchAll();
     }
 
-    public function listFilteredPaginated(int $page, int $perPage, string $keyword = '', string $status = ''): array
+    public function listFilteredPaginated(int $page, int $perPage, string $keyword = '', string $status = '', string $academicYear = ''): array
     {
         $offset = max(0, ($page - 1) * $perPage);
-        [$where, $params] = $this->filterClause($keyword, $status);
+        [$where, $params] = $this->filterClause($keyword, $status, $academicYear);
         
         $stmt = $this->db->prepare(
             'SELECT h.MA_HOC_KY AS id, h.TEN_HOC_KY AS name, 
@@ -271,7 +279,7 @@ class SemesterModel
         }
     }
 
-    private function filterClause(string $keyword = '', string $status = ''): array
+    private function filterClause(string $keyword = '', string $status = '', string $academicYear = ''): array
     {
         $conditions = [];
         $params = [];
@@ -298,6 +306,12 @@ class SemesterModel
         if ($status !== '') {
             $conditions[] = 'h.TRANG_THAI_HK = :status';
             $params['status'] = $status;
+        }
+
+        $academicYear = trim($academicYear);
+        if ($academicYear !== '') {
+            $conditions[] = 'h.MA_NIEN_KHOA = :academic_year';
+            $params['academic_year'] = (int) $academicYear;
         }
 
         return [empty($conditions) ? '' : ' WHERE ' . implode(' AND ', $conditions), $params];

@@ -286,6 +286,7 @@ if (in_array($page, ['create_semester', 'list_semester', 'edit_semester'], true)
             $emptyMessage = $semesterState['emptyMessage'] ?? 'Chưa có học kỳ nào.';
             $pagination = $semesterState['pagination'];
             $status_options = $semesterState['status_options'] ?? [];
+            $academic_years = $semesterState['academic_years'] ?? [];
             $adminToast = $semesterState['toast'] ?? null;
         }
 
@@ -327,9 +328,11 @@ if (in_array($page, ['create_semester', 'list_semester', 'edit_semester'], true)
             $semesters = [];
             $searchKeyword = trim((string) ($_GET['search'] ?? $_GET['keyword'] ?? $_GET['q'] ?? ''));
             $statusFilter = trim((string) ($_GET['status'] ?? ''));
-            $filters = ['keyword' => $searchKeyword, 'status' => $statusFilter];
-            $emptyMessage = ($searchKeyword !== '' || $statusFilter !== '') ? 'Không có học kỳ phù hợp.' : 'Chưa có học kỳ nào.';
+            $academicYearFilter = trim((string) ($_GET['academic_year_id'] ?? $_GET['academic_year'] ?? ''));
+            $filters = ['keyword' => $searchKeyword, 'status' => $statusFilter, 'academic_year_id' => $academicYearFilter];
+            $emptyMessage = ($searchKeyword !== '' || $statusFilter !== '' || $academicYearFilter !== '') ? 'Không có học kỳ phù hợp.' : 'Chưa có học kỳ nào.';
             $pagination = ['current_page' => 1, 'total_items' => 0, 'items_per_page' => 10, 'total_pages' => 1, 'from' => 0, 'to' => 0];
+            $academic_years = [];
             $status_options = [
                 ['value' => 'Sắp diễn ra', 'label' => 'Sắp diễn ra'],
                 ['value' => 'Đang diễn ra', 'label' => 'Đang diễn ra'],
