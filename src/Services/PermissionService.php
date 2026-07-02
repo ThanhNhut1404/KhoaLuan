@@ -155,6 +155,8 @@ class PermissionService
             'list_activity' => ['list_activities'],
             'roles' => ['role_permission'],
             'role_permission' => ['roles'],
+            'list_criteria' => ['setup_criteria'],
+            'configure_criteria' => ['setup_criteria'],
         ];
 
         return array_values(array_unique(array_merge([$page], $aliases[$page] ?? [])));
@@ -238,6 +240,8 @@ class PermissionService
                 'icon' => 'criteria',
                 'children' => [
                     ['page' => 'setup_criteria', 'label' => 'Thiết lập tiêu chí', 'url' => '?page=setup_criteria'],
+                    ['page' => 'list_criteria', 'label' => 'Danh sách tiêu chí', 'url' => '?page=list_criteria'],
+                    ['page' => 'configure_criteria', 'label' => 'Cấu hình thang điểm', 'url' => '?page=configure_criteria'],
                 ],
             ],
             [

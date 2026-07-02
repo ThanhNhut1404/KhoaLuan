@@ -134,6 +134,8 @@ function adminRequiredPermissionForPage(string $page): string
         'list_class' => 'list_classes',
         'list_year' => 'list_academic_years',
         'list_activity' => 'list_activities',
+        'list_criteria' => 'setup_criteria',
+        'configure_criteria' => 'setup_criteria',
     ];
 
     return $map[$page] ?? $page;
@@ -198,6 +200,10 @@ function adminRequiredPermissionForAction(string $page, array $post, string $met
             'approve' => 'approve_activity',
             'reject' => 'reject_activity',
             default => $hasStatusPayload ? 'change_status_activity' : null,
+        },
+        'configure_criteria' => match ($action) {
+            'save' => isset($post['id']) && trim((string) ($post['id'] ?? '')) !== '' ? 'edit_criteria' : 'create_criteria',
+            default => null,
         },
         default => null,
     };
@@ -863,6 +869,61 @@ if (in_array($page, ['create_class', 'list_class', 'edit_class'], true)) {
             $emptyMessage = 'Chưa có lớp học nào.';
             $adminToast = ['type' => 'error', 'message' => 'Không thể tải danh sách lớp học.'];
         }
+    }
+}
+
+if (in_array($page, ['setup_criteria', 'list_criteria', 'configure_criteria'], true)) {
+    try {
+        $criteriaController = new \KhoaLuan\QLDRL\Controllers\CriteriaController();
+        $criteriaState = $criteriaController->handle($page, $_POST, $_GET, $_SERVER['REQUEST_METHOD']);
+
+        if (!empty($criteriaState['redirect'])) {
+            if (!empty($criteriaState['toast'])) {
+                $_SESSION['message'] = $criteriaState['toast']['message'] ?? '';
+                $_SESSION['message_type'] = $criteriaState['toast']['type'] ?? 'info';
+            }
+            header('Location: ' . adminRedirectLocation($criteriaState['redirect']));
+            exit;
+        }
+
+        if ($page === 'setup_criteria') {
+            $semesters = $criteriaState['semesters'];
+            $selectedSemesterId = $criteriaState['selectedSemesterId'];
+            $criteria = $criteriaState['criteria'];
+            $adminToast = $criteriaState['toast'] ?? null;
+        }
+
+        if ($page === 'list_criteria') {
+            $semesters = $criteriaState['semesters'];
+            $selectedSemesterId = $criteriaState['selectedSemesterId'];
+            $criteria = $criteriaState['criteria'];
+            $filters = $criteriaState['filters'] ?? [];
+            $adminToast = $criteriaState['toast'] ?? null;
+        }
+
+        if ($page === 'configure_criteria') {
+            $semesters = $criteriaState['semesters'];
+            $selectedSemesterId = $criteriaState['selectedSemesterId'];
+            $statusOptions = $criteriaState['statusOptions'];
+            $formData = $criteriaState['formData'];
+            $errors = $criteriaState['errors'];
+            $adminToast = $criteriaState['toast'] ?? null;
+            $isEdit = $criteriaState['isEdit'] ?? false;
+        }
+    } catch (\Throwable $e) {
+        error_log($e->getMessage());
+
+        $semesters = [];
+        $selectedSemesterId = 0;
+        $criteria = [];
+        $filters = [];
+        $statusOptions = [
+            ['value' => 'Hoạt động', 'label' => 'Hoạt động'],
+            ['value' => 'Tạm khóa', 'label' => 'Tạm khóa'],
+        ];
+        $formData = $_SERVER['REQUEST_METHOD'] === 'POST' ? $_POST : [];
+        $errors = [];
+        $adminToast = ['type' => 'error', 'message' => 'Có lỗi khi tải chức năng tiêu chí.'];
     }
 }
 

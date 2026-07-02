@@ -597,6 +597,46 @@ class StudentModel
         return $statement->rowCount() > 0;
     }
 
+    public function updatePortalStudentProfile(int $id, array $data): bool
+    {
+        $sets = [
+            'HO_TEN = :full_name',
+            'NGAY_SINH = :birth_date',
+            'GIO_TINH = :gender',
+            'EMAIL_SV = :email',
+            'SO_DIEN_THOAI = :phone',
+            'DIA_CHI = :address',
+        ];
+        $params = [
+            'full_name' => trim((string) ($data['full_name'] ?? '')),
+            'birth_date' => trim((string) ($data['birth_date'] ?? '')),
+            'gender' => trim((string) ($data['gender'] ?? '')),
+            'email' => trim((string) ($data['email'] ?? '')),
+            'phone' => trim((string) ($data['phone'] ?? '')),
+            'address' => trim((string) ($data['address'] ?? '')),
+            'id' => $id,
+        ];
+
+        if (array_key_exists('avatar', $data) && $this->tableHasColumn('sinh_vien', 'AVATAR')) {
+            $sets[] = 'AVATAR = :avatar';
+            $params['avatar'] = trim((string) $data['avatar']);
+        }
+
+        $statement = $this->db->prepare(
+            'UPDATE sinh_vien
+             SET ' . implode(', ', $sets) . '
+             WHERE MA_SV = :id'
+        );
+        $statement->execute($params);
+
+        return $statement->rowCount() > 0;
+    }
+
+    public function studentAvatarColumnExists(): bool
+    {
+        return $this->tableHasColumn('sinh_vien', 'AVATAR');
+    }
+
     private function findAcademicYearNameById(int $academicYearId): ?string
     {
         if ($academicYearId < 1) {

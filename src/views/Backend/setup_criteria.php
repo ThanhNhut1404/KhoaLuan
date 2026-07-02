@@ -132,7 +132,7 @@ $title = 'Thiết lập tiêu chí';
             </div>
 
             <div style="display:flex;justify-content:center;margin-top:26px;">
-                <button class="action-btn primary btn btn-primary">Lưu cấu hình tiêu chí</button>
+                <button class="action-btn primary btn btn-primary">Lưu cấu hình thang điểm</button>
             </div>
         </div>
     </div>

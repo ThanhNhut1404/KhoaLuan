@@ -248,6 +248,103 @@ class StudentController
         exit;
     }
 
+    public function handleUpdateProfile(): void
+    {
+        $this->requireStudentLogin();
+
+        $student = $this->currentPortalStudent();
+        $studentId = (int) ($student['student_id'] ?? 0);
+        if ($studentId < 1) {
+            $_SESSION['student_profile_toast'] = ['type' => 'error', 'message' => 'Không tìm thấy thông tin sinh viên.'];
+            header('Location: /KhoaLuan/public/student.php?action=profile');
+            exit;
+        }
+
+        $form = $this->normalizePortalProfileData($_POST);
+        $errors = $this->validatePortalProfile($studentId, $form);
+        $avatarFile = $_FILES['avatar'] ?? null;
+        $hasAvatarUpload = is_array($avatarFile) && (int) ($avatarFile['error'] ?? UPLOAD_ERR_NO_FILE) !== UPLOAD_ERR_NO_FILE;
+        $newAvatarPath = null;
+        $newAvatarAbsolutePath = null;
+
+        if ($hasAvatarUpload) {
+            $avatarValidationError = $this->validateAvatarUpload($avatarFile);
+            if ($avatarValidationError !== null) {
+                $errors['avatar'] = $avatarValidationError;
+            } elseif (!$this->model->studentAvatarColumnExists()) {
+                $errors['avatar'] = 'CSDL chưa có cột AVATAR để lưu ảnh đại diện.';
+            }
+        }
+
+        if (!empty($errors)) {
+            $_SESSION['student_profile_errors'] = $errors;
+            $_SESSION['student_profile_form_data'] = $form;
+            $_SESSION['student_profile_toast'] = ['type' => 'error', 'message' => reset($errors) ?: 'Dữ liệu cập nhật không hợp lệ.'];
+            header('Location: /KhoaLuan/public/student.php?action=profile');
+            exit;
+        }
+
+        $hasProfileChanges = !$this->portalProfileHasNoChanges($student, $form);
+        if (!$hasProfileChanges && !$hasAvatarUpload) {
+            $_SESSION['student_profile_toast'] = ['type' => 'info', 'message' => 'Không có thay đổi nào được thực hiện.'];
+            header('Location: /KhoaLuan/public/student.php?action=profile');
+            exit;
+        }
+
+        if ($hasAvatarUpload) {
+            try {
+                [$newAvatarPath, $newAvatarAbsolutePath] = $this->storeAvatarUpload($studentId, $avatarFile);
+            } catch (Throwable $exception) {
+                error_log($exception->getMessage());
+                $_SESSION['student_profile_errors'] = ['avatar' => 'Không thể tải avatar lên. Vui lòng thử lại.'];
+                $_SESSION['student_profile_form_data'] = $form;
+                $_SESSION['student_profile_toast'] = ['type' => 'error', 'message' => 'Không thể tải avatar lên. Vui lòng thử lại.'];
+                header('Location: /KhoaLuan/public/student.php?action=profile');
+                exit;
+            }
+        }
+
+        $updateData = [
+            'full_name' => $form['full_name'],
+            'birth_date' => $form['birth_date'],
+            'gender' => $form['gender'],
+            'email' => $form['email'],
+            'phone' => $form['phone'],
+            'address' => $form['address'],
+        ];
+        if ($newAvatarPath !== null) {
+            $updateData['avatar'] = $newAvatarPath;
+        }
+
+        try {
+            $updated = $this->model->updatePortalStudentProfile($studentId, $updateData);
+            if (!$updated) {
+                if ($newAvatarAbsolutePath !== null && is_file($newAvatarAbsolutePath)) {
+                    @unlink($newAvatarAbsolutePath);
+                }
+                $_SESSION['student_profile_toast'] = ['type' => 'error', 'message' => 'Cập nhật thông tin thất bại. Vui lòng thử lại.'];
+                header('Location: /KhoaLuan/public/student.php?action=profile');
+                exit;
+            }
+
+            if ($newAvatarPath !== null) {
+                $this->deleteOldAvatarFile((string) ($student['avatar'] ?? ''), $newAvatarPath);
+            }
+
+            $_SESSION['student_name'] = $form['full_name'];
+            $_SESSION['student_profile_toast'] = ['type' => 'success', 'message' => 'Cập nhật thông tin sinh viên thành công.'];
+        } catch (Throwable $exception) {
+            error_log($exception->getMessage());
+            if ($newAvatarAbsolutePath !== null && is_file($newAvatarAbsolutePath)) {
+                @unlink($newAvatarAbsolutePath);
+            }
+            $_SESSION['student_profile_toast'] = ['type' => 'error', 'message' => 'Cập nhật thông tin thất bại. Vui lòng thử lại.'];
+        }
+
+        header('Location: /KhoaLuan/public/student.php?action=profile');
+        exit;
+    }
+
     public function handle(string $page, array $post, array $get, string $method): array
     {
         if ($page === 'list_students') {
@@ -558,11 +655,20 @@ class StudentController
             return;
         }
 
-        $passwordToast = $_SESSION['student_password_toast'] ?? null;
+        $passwordToast = $_SESSION['student_profile_toast'] ?? ($_SESSION['student_password_toast'] ?? null);
         $changePasswordErrors = $_SESSION['student_change_password_errors'] ?? [];
         $openChangePasswordModal = !empty($changePasswordErrors);
+        $profileErrors = $_SESSION['student_profile_errors'] ?? [];
+        $profileFormData = $_SESSION['student_profile_form_data'] ?? [];
+        $openEditProfileModal = !empty($profileErrors);
 
-        unset($_SESSION['student_password_toast'], $_SESSION['student_change_password_errors']);
+        unset(
+            $_SESSION['student_password_toast'],
+            $_SESSION['student_change_password_errors'],
+            $_SESSION['student_profile_toast'],
+            $_SESSION['student_profile_errors'],
+            $_SESSION['student_profile_form_data']
+        );
 
         require __DIR__ . '/../views/Frontend/layout.php';
     }
@@ -745,6 +851,158 @@ class StudentController
         $params['page'] = 'list_students';
 
         return '?' . http_build_query($params);
+    }
+
+    private function normalizePortalProfileData(array $data): array
+    {
+        $addressLines = [
+            trim((string) ($data['address_line1'] ?? '')),
+            trim((string) ($data['address_line2'] ?? '')),
+            trim((string) ($data['address_line3'] ?? '')),
+            trim((string) ($data['address_province'] ?? '')),
+        ];
+
+        return [
+            'full_name' => trim((string) ($data['ho_ten'] ?? '')),
+            'birth_date' => trim((string) ($data['ngay_sinh'] ?? '')),
+            'gender' => trim((string) ($data['gioi_tinh'] ?? '')),
+            'email' => trim((string) ($data['email'] ?? '')),
+            'phone' => trim((string) ($data['so_dien_thoai'] ?? '')),
+            'address_line1' => $addressLines[0],
+            'address_line2' => $addressLines[1],
+            'address_line3' => $addressLines[2],
+            'address_province' => $addressLines[3],
+            'address' => implode(', ', array_filter($addressLines, static fn(string $line): bool => $line !== '')),
+        ];
+    }
+
+    private function validatePortalProfile(int $studentId, array $form): array
+    {
+        $errors = [];
+
+        if ($form['full_name'] === '') {
+            $errors['ho_ten'] = 'Vui lòng nhập họ và tên.';
+        }
+
+        if ($form['birth_date'] === '') {
+            $errors['ngay_sinh'] = 'Vui lòng nhập ngày sinh.';
+        } else {
+            $date = \DateTime::createFromFormat('Y-m-d', $form['birth_date']);
+            if (!$date || $date->format('Y-m-d') !== $form['birth_date']) {
+                $errors['ngay_sinh'] = 'Ngày sinh không hợp lệ.';
+            }
+        }
+
+        if ($form['gender'] === '') {
+            $errors['gioi_tinh'] = 'Vui lòng chọn giới tính.';
+        } elseif (!in_array($form['gender'], ['Nam', 'Nữ'], true)) {
+            $errors['gioi_tinh'] = 'Giới tính không hợp lệ.';
+        }
+
+        if ($form['email'] === '') {
+            $errors['email'] = 'Vui lòng nhập email.';
+        } elseif (!filter_var($form['email'], FILTER_VALIDATE_EMAIL)) {
+            $errors['email'] = 'Email không hợp lệ.';
+        } elseif ($this->model->emailExists($form['email'], $studentId)) {
+            $errors['email'] = 'Email đã tồn tại.';
+        }
+
+        if ($form['phone'] === '') {
+            $errors['so_dien_thoai'] = 'Vui lòng nhập số điện thoại.';
+        } elseif (!preg_match('/^(0|\+84)(3|5|7|8|9)[0-9]{8}$/', $form['phone'])) {
+            $errors['so_dien_thoai'] = 'Số điện thoại không hợp lệ.';
+        }
+
+        if ($form['address_line1'] === '') {
+            $errors['address_line1'] = 'Vui lòng nhập số nhà.';
+        }
+        if ($form['address_line2'] === '') {
+            $errors['address_line2'] = 'Vui lòng nhập đường / ấp / khóm.';
+        }
+        if ($form['address_line3'] === '') {
+            $errors['address_line3'] = 'Vui lòng nhập xã / phường.';
+        }
+        if ($form['address_province'] === '') {
+            $errors['address_province'] = 'Vui lòng nhập tỉnh / thành phố.';
+        }
+
+        return $errors;
+    }
+
+    private function validateAvatarUpload(array $file): ?string
+    {
+        $error = (int) ($file['error'] ?? UPLOAD_ERR_NO_FILE);
+        if ($error !== UPLOAD_ERR_OK) {
+            return 'File avatar không hợp lệ.';
+        }
+
+        if ((int) ($file['size'] ?? 0) > 2 * 1024 * 1024) {
+            return 'Avatar không được vượt quá 2MB.';
+        }
+
+        $tmpName = (string) ($file['tmp_name'] ?? '');
+        if ($tmpName === '' || !is_uploaded_file($tmpName)) {
+            return 'File avatar không hợp lệ.';
+        }
+
+        $mime = mime_content_type($tmpName);
+        $allowedMimes = ['image/jpeg', 'image/png', 'image/webp'];
+        if (!in_array($mime, $allowedMimes, true)) {
+            return 'Avatar chỉ hỗ trợ JPG, JPEG, PNG hoặc WEBP.';
+        }
+
+        return null;
+    }
+
+    private function storeAvatarUpload(int $studentId, array $file): array
+    {
+        $tmpName = (string) $file['tmp_name'];
+        $mime = mime_content_type($tmpName);
+        $extension = match ($mime) {
+            'image/png' => 'png',
+            'image/webp' => 'webp',
+            default => 'jpg',
+        };
+
+        $uploadDir = dirname(__DIR__, 2) . DIRECTORY_SEPARATOR . 'public' . DIRECTORY_SEPARATOR . 'uploads' . DIRECTORY_SEPARATOR . 'avatars';
+        if (!is_dir($uploadDir) && !mkdir($uploadDir, 0775, true) && !is_dir($uploadDir)) {
+            throw new \RuntimeException('Cannot create avatar upload directory.');
+        }
+
+        $filename = 'avatar_' . $studentId . '_' . time() . '_' . bin2hex(random_bytes(4)) . '.' . $extension;
+        $absolutePath = $uploadDir . DIRECTORY_SEPARATOR . $filename;
+        if (!move_uploaded_file($tmpName, $absolutePath)) {
+            throw new \RuntimeException('Cannot move avatar upload.');
+        }
+
+        return ['uploads/avatars/' . $filename, $absolutePath];
+    }
+
+    private function deleteOldAvatarFile(string $oldAvatar, string $newAvatar): void
+    {
+        $oldAvatar = trim($oldAvatar);
+        if ($oldAvatar === '' || $oldAvatar === $newAvatar || !str_starts_with($oldAvatar, 'uploads/avatars/')) {
+            return;
+        }
+
+        $publicDir = dirname(__DIR__, 2) . DIRECTORY_SEPARATOR . 'public';
+        $avatarDir = realpath($publicDir . DIRECTORY_SEPARATOR . 'uploads' . DIRECTORY_SEPARATOR . 'avatars');
+        $oldPath = realpath($publicDir . DIRECTORY_SEPARATOR . str_replace(['/', '\\'], DIRECTORY_SEPARATOR, $oldAvatar));
+        if ($avatarDir === false || $oldPath === false || !str_starts_with($oldPath, $avatarDir) || !is_file($oldPath)) {
+            return;
+        }
+
+        @unlink($oldPath);
+    }
+
+    private function portalProfileHasNoChanges(array $student, array $form): bool
+    {
+        return trim((string) ($student['ho_ten'] ?? '')) === $form['full_name']
+            && trim((string) ($student['ngay_sinh'] ?? '')) === $form['birth_date']
+            && trim((string) ($student['gioi_tinh'] ?? '')) === $form['gender']
+            && trim((string) ($student['email'] ?? '')) === $form['email']
+            && trim((string) ($student['so_dien_thoai'] ?? '')) === $form['phone']
+            && trim((string) ($student['dia_chi'] ?? ($student['dia_chi_thuong_tru'] ?? ''))) === $form['address'];
     }
 
     private function normalizeFormData(array $data): array
