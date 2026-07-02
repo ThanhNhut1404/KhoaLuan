@@ -24,8 +24,9 @@ class UserModel
         return $password === false ? null : (string) $password;
     }
 
-    public function updatePlainPassword(string $username, string $password): bool
+    public function updatePassword(string $username, string $password): bool
     {
+        $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
         $statement = $this->db->prepare(
             'UPDATE nguoi_dung
              SET MAT_KHAU = :password
@@ -33,28 +34,30 @@ class UserModel
         );
 
         return $statement->execute([
-            'password' => $password,
+            'password' => $hashedPassword,
             'username' => $username,
         ]) && $statement->rowCount() > 0;
     }
 
-    public function findActiveByPlainCredentials(string $username, string $password): ?array
+    public function findActiveByCredentials(string $username, string $password): ?array
     {
         $statement = $this->db->prepare(
-            "SELECT TEN_DANG_NHAP
+            "SELECT TEN_DANG_NHAP, MAT_KHAU
              FROM nguoi_dung
              WHERE TEN_DANG_NHAP = :username
-               AND MAT_KHAU = :password
                AND TRANG_THAI_ND = 'HOAT_DONG'
              LIMIT 1"
         );
         $statement->execute([
             'username' => $username,
-            'password' => $password,
         ]);
         $account = $statement->fetch();
 
-        return $account ?: null;
+        if (!$account || !password_verify($password, (string) $account['MAT_KHAU'])) {
+            return null;
+        }
+
+        return $account;
     }
 
     public function getFirstRole(string $username): ?array
@@ -71,6 +74,21 @@ class UserModel
         $role = $statement->fetch();
 
         return $role ?: null;
+    }
+
+    public function getRoles(string $username): array
+    {
+        $statement = $this->db->prepare(
+            'SELECT ndvt.MA_VAI_TRO, vt.TEN_VAI_TRO
+             FROM nguoi_dung nd
+             INNER JOIN nguoi_dung_vai_tro ndvt ON ndvt.TEN_DANG_NHAP = nd.TEN_DANG_NHAP
+             INNER JOIN vai_tro vt ON vt.MA_VAI_TRO = ndvt.MA_VAI_TRO
+             WHERE nd.TEN_DANG_NHAP = :username
+             ORDER BY ndvt.MA_VAI_TRO'
+        );
+        $statement->execute(['username' => $username]);
+
+        return $statement->fetchAll() ?: [];
     }
 
     public function getProfileForRole(string $username, string $roleName): ?array

@@ -1,3 +1,7 @@
+<?php
+$studentDisplayName = $_SESSION['student_name'] ?? 'Sinh viên';
+?>
+
 <header class="student-header navbar navbar-expand-lg">
     <div class="header-left navbar-brand">
         <a class="logo" href="/KhoaLuan/public/student.php" aria-label="Trang sinh viên">
@@ -39,7 +43,7 @@
                         <path d="M4 20c1.6-3 5-4 8-4s6.4 1 8 4" stroke-width="2" stroke-linecap="round"/>
                     </svg>
                 </div>
-                <span class="user-name">Nguyễn Văn A</span>
+                <span class="user-name"><?= htmlspecialchars($studentDisplayName, ENT_QUOTES, 'UTF-8') ?></span>
                 <svg class="user-caret" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
                     <path d="M6 9l6 6 6-6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
                 </svg>
@@ -61,7 +65,7 @@
                     Đổi mật khẩu
                 </a>
                 <div class="dropdown-divider"></div>
-                <a class="dropdown-item" href="#logout" onclick="logout()">
+                <a class="dropdown-item" href="/KhoaLuan/public/student.php?action=logout" onclick="return confirmStudentLogout();">
                     <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                         <path d="M10 17l-1 1a2 2 0 0 1-2.83 0L4 15.83a2 2 0 0 1 0-2.83L6.17 11a2 2 0 0 1 2.83 0l1 1" stroke-width="2" stroke-linecap="round"/>
                         <path d="M7 14h10" stroke-width="2" stroke-linecap="round"/>
@@ -93,9 +97,7 @@
         }
     });
 
-    function logout() {
-        if (confirm('Bạn có chắc muốn đăng xuất?')) {
-            window.location.href = '/KhoaLuan/public/logout.php';
-        }
+    function confirmStudentLogout() {
+        return confirm('Bạn có chắc muốn đăng xuất?');
     }
 </script>

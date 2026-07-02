@@ -254,12 +254,19 @@ class SemesterController
                         $form['status'] = $this->calculatedStatusValue($form['start_date'], $form['end_date']);
                     }
 
+                    if ($this->semesterHasNoChanges($currentSemester, $form)) {
+                        $state['toast'] = ['type' => 'info', 'message' => 'Không có thay đổi nào được thực hiện.'];
+                        $state['redirect'] = $returnUrl;
+                        return $state;
+                    }
+
                     $updated = $this->model->update($id, $form);
                     if ($updated) {
                         $state['toast'] = ['type' => 'success', 'message' => 'Cập nhật học kỳ thành công.'];
                         $state['redirect'] = $returnUrl;
                     } else {
                         $state['toast'] = ['type' => 'info', 'message' => 'Không có thay đổi nào được thực hiện.'];
+                        $state['redirect'] = $returnUrl;
                     }
                 } catch (Throwable $e) {
                     error_log($e->getMessage());
@@ -359,6 +366,15 @@ class SemesterController
         } catch (Throwable) {
             return false;
         }
+    }
+
+    private function semesterHasNoChanges(array $currentSemester, array $form): bool
+    {
+        return (int) ($currentSemester['academic_year'] ?? 0) === (int) $form['academic_year']
+            && trim((string) ($currentSemester['name'] ?? '')) === $form['name']
+            && trim((string) ($currentSemester['start_date'] ?? '')) === $form['start_date']
+            && trim((string) ($currentSemester['end_date'] ?? '')) === $form['end_date']
+            && trim((string) ($currentSemester['status'] ?? '')) === $form['status'];
     }
 
     private function validateForm(array $form, array $statusOptions): array

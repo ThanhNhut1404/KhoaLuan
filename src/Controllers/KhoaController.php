@@ -141,10 +141,16 @@ class KhoaController
         }
 
         try {
+            $current = $this->model->findByMa($originalMa);
+            if ($current !== null && $this->khoaHasNoChanges($current, $form)) {
+                $state['toast'] = ['type' => 'info', 'message' => 'Không có thay đổi nào được thực hiện.'];
+                return $state;
+            }
+
             $updated = $this->model->update($originalMa, $form);
             $state['updated'] = $updated;
             $state['toast'] = [
-                'type' => $updated ? 'success' : 'error',
+                'type' => $updated ? 'success' : 'info',
                 'message' => $updated ? 'Cập nhật khoa/bộ môn thành công.' : 'Không có thay đổi nào được thực hiện.',
             ];
         } catch (Throwable $e) {
@@ -253,6 +259,14 @@ class KhoaController
         return $state;
     }
 
+    private function khoaHasNoChanges(array $current, array $form): bool
+    {
+        return trim((string) ($current['ten_viet_tat'] ?? '')) === $form['ma_khoa']
+            && trim((string) ($current['ten'] ?? '')) === $form['ten_khoa']
+            && trim((string) ($current['email'] ?? '')) === $form['email_khoa']
+            && trim((string) ($current['phone'] ?? '')) === $form['so_dien_thoai_khoa'];
+    }
+
     public function editState(string $ma, array $data, string $method): array
     {
         $state = [
@@ -277,7 +291,7 @@ class KhoaController
             $state['toast'] = $updateState['toast'] ?? null;
             $state['formData'] = $this->formData($data) + ['original_ma' => $originalMa];
 
-            if (!empty($updateState['updated'])) {
+            if (empty($state['errors']) && in_array($state['toast']['type'] ?? '', ['success', 'info'], true)) {
                 $state['redirect'] = '?page=list_khoa';
             }
 

@@ -25,6 +25,10 @@
     }
     $hasActiveFilters = $currentStatusFilter !== '';
     $emptyMessage = $emptyMessage ?? 'Chưa có ngành học nào.';
+    $canEditMajor = is_callable($canAccessPermission ?? null) && $canAccessPermission('edit_major');
+    $canDeleteMajor = is_callable($canAccessPermission ?? null) && $canAccessPermission('delete_major');
+    $canChangeStatusMajor = is_callable($canAccessPermission ?? null) && $canAccessPermission('change_status_major');
+    $showActions = $canEditMajor || $canDeleteMajor;
     $paginationUrl = static function (int $pageNum): string {
         $params = $_GET;
         $params['page'] = 'list_major';
@@ -89,7 +93,9 @@
                                 <th class="col-dept">MÃ KHOA/BỘ MÔN</th>
                                 <th class="col-dept-name">TÊN KHOA/BỘ MÔN</th>
                                 <th class="col-status">TRẠNG THÁI</th>
-                                <th class="col-action">THAO TÁC</th>
+                                <?php if ($showActions): ?>
+                                    <th class="col-action">THAO TÁC</th>
+                                <?php endif; ?>
                             </tr>
                         </thead>
                         <tbody>
@@ -102,6 +108,7 @@
                                     <td class="col-dept"><?= htmlspecialchars($major['department'] ?? '--', ENT_QUOTES, 'UTF-8') ?></td>
                                     <td class="col-dept-name"><?= htmlspecialchars($major['department_name'] ?? '--', ENT_QUOTES, 'UTF-8') ?></td>
                                     <td class="col-status">
+                                        <?php if ($canChangeStatusMajor): ?>
                                         <form method="POST" style="display:inline-block;">
                                             <input type="hidden" name="_row_id" value="<?= (int) $major['id'] ?>" />
                                             <select name="status[<?= (int) $major['id'] ?>]" class="status-select <?= htmlspecialchars($major['status_class'] ?? '', ENT_QUOTES, 'UTF-8') ?> form-select" data-previous-value="<?= htmlspecialchars($major['status'] ?? '', ENT_QUOTES, 'UTF-8') ?>" data-major-name="<?= htmlspecialchars($major['name'] ?? '', ENT_QUOTES, 'UTF-8') ?>" onchange="updateStatusSelect(this)">
@@ -112,22 +119,31 @@
                                                 <?php endforeach; ?>
                                             </select>
                                         </form>
+                                        <?php else: ?>
+                                            <?= htmlspecialchars($major['status_label'] ?? $major['status'] ?? '--', ENT_QUOTES, 'UTF-8') ?>
+                                        <?php endif; ?>
                                     </td>
+                                    <?php if ($showActions): ?>
                                     <td class="col-action">
                                         <div class="action-group">
+                                            <?php if ($canEditMajor): ?>
                                             <button type="button" class="action-btn edit btn btn-outline-primary" title="Chỉnh sửa" onclick="editMajor(<?= (int) $major['id'] ?>)">
                                                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                                                     <path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
                                                     <path d="M15.5 3.5a2.121 2.121 0 1 1 3 3L18 7.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
                                                 </svg>
                                             </button>
+                                            <?php endif; ?>
+                                            <?php if ($canDeleteMajor): ?>
                                             <button type="button" class="action-btn delete btn btn-danger" title="Xóa" onclick="showMajorDeleteConfirm(<?= (int) $major['id'] ?>, <?= htmlspecialchars(json_encode((string) ($major['name'] ?? ''), JSON_UNESCAPED_UNICODE | JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP), ENT_QUOTES, 'UTF-8') ?>)">
                                                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                                                     <path d="M19 7l-1 12a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2l-1-12M9 7V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v3M9 11v6M15 11v6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
                                                 </svg>
                                             </button>
+                                            <?php endif; ?>
                                         </div>
                                     </td>
+                                    <?php endif; ?>
                                 </tr>
                             <?php endforeach; ?>
                         </tbody>
@@ -165,10 +181,12 @@
     </div>
 </div>
 
-<form id="majorDeleteForm" method="POST" action="<?= htmlspecialchars($_SERVER['REQUEST_URI'] ?? '?page=list_major', ENT_QUOTES, 'UTF-8') ?>" style="display:none;">
-    <input type="hidden" name="action" value="delete" />
-    <input type="hidden" name="id" id="majorDeleteId" value="" />
-</form>
+<?php if ($canDeleteMajor): ?>
+    <form id="majorDeleteForm" method="POST" action="<?= htmlspecialchars($_SERVER['REQUEST_URI'] ?? '?page=list_major', ENT_QUOTES, 'UTF-8') ?>" style="display:none;">
+        <input type="hidden" name="action" value="delete" />
+        <input type="hidden" name="id" id="majorDeleteId" value="" />
+    </form>
+<?php endif; ?>
 
 <style>
     .list-major-page { padding: 24px; }

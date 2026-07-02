@@ -1,10 +1,20 @@
 <?php
     $student = $student ?? [];
+    $studentFound = !empty($student);
+    $emptyText = 'Chưa cập nhật';
+    $valueOrEmpty = static function ($value) use ($emptyText): string {
+        $value = trim((string) ($value ?? ''));
+        return $value !== '' ? $value : $emptyText;
+    };
     $avatar = $student['avatar'] ?? '';
     $hasAvatar = is_string($avatar) && trim($avatar) !== '';
-    $fullName = $student['ho_ten'] ?? 'Nguyen Van A';
-    $mssv = $student['mssv'] ?? '22123456';
-    $lop = $student['lop_hoc'] ?? 'K15A1';
+    $fullName = trim((string) ($student['ho_ten'] ?? ''));
+    $mssv = trim((string) ($student['mssv'] ?? ''));
+    $lop = trim((string) ($student['lop_hoc'] ?? ''));
+    $avatarInitial = '?';
+    if ($fullName !== '') {
+        $avatarInitial = function_exists('mb_substr') ? mb_substr($fullName, 0, 1, 'UTF-8') : substr($fullName, 0, 1);
+    }
 ?>
 
 <style>
@@ -288,26 +298,31 @@
         <div class="profile-card-header card-header">
             <div class="profile-card-title">Thông tin sinh viên</div>
         </div>
+        <?php if (!$studentFound): ?>
+            <div class="profile-section card-body">
+                <div class="section-title">Không tìm thấy thông tin sinh viên.</div>
+            </div>
+        <?php else: ?>
         <div class="profile-hero">
             <div class="profile-hero__row">
                 <div class="profile-avatar">
                     <?php if ($hasAvatar): ?>
                         <img src="<?= htmlspecialchars($avatar, ENT_QUOTES, 'UTF-8') ?>" alt="Avatar" />
                     <?php else: ?>
-                        <span><?= htmlspecialchars(substr($fullName, 0, 1), ENT_QUOTES, 'UTF-8') ?></span>
+                        <span><?= htmlspecialchars($avatarInitial, ENT_QUOTES, 'UTF-8') ?></span>
                     <?php endif; ?>
                 </div>
                 <div>
                     <div class="profile-name">
-                        <?= htmlspecialchars($fullName, ENT_QUOTES, 'UTF-8') ?>
-                        <span class="profile-badge badge rounded-pill">DANG HOC</span>
+                        <?= htmlspecialchars($valueOrEmpty($fullName), ENT_QUOTES, 'UTF-8') ?>
+                        <span class="profile-badge badge rounded-pill"><?= htmlspecialchars($valueOrEmpty($student['trang_thai_hoc_tap'] ?? ''), ENT_QUOTES, 'UTF-8') ?></span>
                     </div>
                     <div class="profile-meta">
-                        <span>MSSV: <?= htmlspecialchars($mssv, ENT_QUOTES, 'UTF-8') ?></span>
+                        <span>MSSV: <?= htmlspecialchars($valueOrEmpty($mssv), ENT_QUOTES, 'UTF-8') ?></span>
                         <span>&#8226;</span>
-                        <span><?= htmlspecialchars($student['nganh'] ?? 'Cong nghe thong tin', ENT_QUOTES, 'UTF-8') ?></span>
+                        <span><?= htmlspecialchars($valueOrEmpty($student['nganh'] ?? ''), ENT_QUOTES, 'UTF-8') ?></span>
                         <span>&#8226;</span>
-                        <span>Nien khoa <?= htmlspecialchars($student['khoa_hoc'] ?? '2021 - 2025', ENT_QUOTES, 'UTF-8') ?></span>
+                        <span>Khóa học <?= htmlspecialchars($valueOrEmpty($student['khoa_hoc'] ?? ''), ENT_QUOTES, 'UTF-8') ?></span>
                     </div>
                 </div>
                 <div class="profile-actions">
@@ -330,23 +345,11 @@
             <div class="info-grid">
                 <div class="info-item">
                     <span>Ngày sinh:</span>
-                    <span><?= htmlspecialchars($student['ngay_sinh'] ?? '20/05/2003', ENT_QUOTES, 'UTF-8') ?></span>
+                    <span><?= htmlspecialchars($valueOrEmpty($student['ngay_sinh'] ?? ''), ENT_QUOTES, 'UTF-8') ?></span>
                 </div>
                 <div class="info-item">
                     <span>Giới tính:</span>
-                    <span><?= htmlspecialchars($student['gioi_tinh'] ?? 'Nam', ENT_QUOTES, 'UTF-8') ?></span>
-                </div>
-                <div class="info-item">
-                    <span>Nơi sinh:</span>
-                    <span><?= htmlspecialchars($student['noi_sinh'] ?? 'TP. Ho Chi Minh', ENT_QUOTES, 'UTF-8') ?></span>
-                </div>
-                <div class="info-item">
-                    <span>Dân tộc:</span>
-                    <span><?= htmlspecialchars($student['dan_toc'] ?? 'Kinh', ENT_QUOTES, 'UTF-8') ?></span>
-                </div>
-                <div class="info-item">
-                    <span>Tôn giáo:</span>
-                    <span><?= htmlspecialchars($student['ton_giao'] ?? 'Không', ENT_QUOTES, 'UTF-8') ?></span>
+                    <span><?= htmlspecialchars($valueOrEmpty($student['gioi_tinh'] ?? ''), ENT_QUOTES, 'UTF-8') ?></span>
                 </div>
             </div>
         </div>
@@ -364,27 +367,15 @@
             <div class="info-grid">
                 <div class="info-item">
                     <span>Lớp:</span>
-                    <span><?= htmlspecialchars($lop, ENT_QUOTES, 'UTF-8') ?></span>
+                    <span><?= htmlspecialchars($valueOrEmpty($lop), ENT_QUOTES, 'UTF-8') ?></span>
                 </div>
                 <div class="info-item">
                     <span>Ngành:</span>
-                    <span><?= htmlspecialchars($student['nganh'] ?? 'Cong nghe thong tin', ENT_QUOTES, 'UTF-8') ?></span>
-                </div>
-                <div class="info-item">
-                    <span>Bậc đào tạo:</span>
-                    <span><?= htmlspecialchars($student['bac_dao_tao'] ?? 'Đại học', ENT_QUOTES, 'UTF-8') ?></span>
-                </div>
-                <div class="info-item">
-                    <span>Loại hình đào tạo:</span>
-                    <span><?= htmlspecialchars($student['loai_hinh_dao_tao'] ?? 'Chính quy', ENT_QUOTES, 'UTF-8') ?></span>
+                    <span><?= htmlspecialchars($valueOrEmpty($student['nganh'] ?? ''), ENT_QUOTES, 'UTF-8') ?></span>
                 </div>
                 <div class="info-item">
                     <span>Khóa học:</span>
-                    <span><?= htmlspecialchars($student['khoa_hoc'] ?? 'Khoa 2021', ENT_QUOTES, 'UTF-8') ?></span>
-                </div>
-                <div class="info-item">
-                    <span>Năm thứ:</span>
-                    <span><?= htmlspecialchars($student['nam_thu'] ?? 'Nam 3', ENT_QUOTES, 'UTF-8') ?></span>
+                    <span><?= htmlspecialchars($valueOrEmpty($student['khoa_hoc'] ?? ''), ENT_QUOTES, 'UTF-8') ?></span>
                 </div>
             </div>
         </div>
@@ -407,7 +398,7 @@
                             <path d="m4 7 8 6 8-6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
                         </svg>
                     </span>
-                    <?= htmlspecialchars($student['email'] ?? 'student@example.com', ENT_QUOTES, 'UTF-8') ?>
+                    <?= htmlspecialchars($valueOrEmpty($student['email'] ?? ''), ENT_QUOTES, 'UTF-8') ?>
                 </div>
                 <div class="contact-pill badge rounded-pill">
                     <span class="contact-icon">
@@ -415,7 +406,7 @@
                             <path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7 12.7 12.7 0 0 0 .7 2.8 2 2 0 0 1-.5 2.1l-1.2 1.2a16 16 0 0 0 6 6l1.2-1.2a2 2 0 0 1 2.1-.5 12.7 12.7 0 0 0 2.8.7 2 2 0 0 1 1.7 2Z" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
                         </svg>
                     </span>
-                    <?= htmlspecialchars($student['so_dien_thoai'] ?? '0123 456 789', ENT_QUOTES, 'UTF-8') ?>
+                    <?= htmlspecialchars($valueOrEmpty($student['so_dien_thoai'] ?? ''), ENT_QUOTES, 'UTF-8') ?>
                 </div>
                 <div class="contact-pill badge rounded-pill">
                     <span class="contact-icon">
@@ -424,12 +415,15 @@
                             <circle cx="12" cy="10" r="2" stroke-width="2" />
                         </svg>
                     </span>
-                    <?= htmlspecialchars($student['dia_chi_thuong_tru'] ?? '123 Duong 3/2, TP. Can Tho', ENT_QUOTES, 'UTF-8') ?>
+                    <?= htmlspecialchars($valueOrEmpty($student['dia_chi'] ?? ($student['dia_chi_thuong_tru'] ?? '')), ENT_QUOTES, 'UTF-8') ?>
                 </div>
             </div>
         </div>
+        <?php endif; ?>
     </section>
-    <?php include __DIR__ . '/edit_profile.php'; ?>
+    <?php if ($studentFound): ?>
+        <?php include __DIR__ . '/edit_profile.php'; ?>
+    <?php endif; ?>
 </div>
 
 <script>

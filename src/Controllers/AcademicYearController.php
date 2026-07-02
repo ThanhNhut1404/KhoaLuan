@@ -192,12 +192,18 @@ class AcademicYearController
                     $state['formData']['status'] = $this->calculatedStatusValue($state['formData']['start_date'], $state['formData']['end_date'], $statusOptions);
                 }
 
+                if ($this->yearHasNoChanges($currentYear, $state['formData'])) {
+                    $state['toast'] = ['type' => 'info', 'message' => 'Không có thay đổi nào được thực hiện.'];
+                    $state['redirect'] = '?page=list_year';
+                    return $state;
+                }
+
                 $updated = $this->update($id, $state['formData']);
                 $state['toast'] = [
-                    'type' => $updated ? 'success' : 'error',
+                    'type' => $updated ? 'success' : 'info',
                     'message' => $updated ? 'Cập nhật niên khóa thành công.' : 'Không có thay đổi nào được thực hiện.',
                 ];
-                if ($updated) {
+                if ($updated || ($state['toast']['type'] ?? '') === 'info') {
                     $state['redirect'] = '?page=list_year';
                 }
             } catch (Throwable $exception) {
@@ -222,6 +228,14 @@ class AcademicYearController
         ];
 
         return $state;
+    }
+
+    private function yearHasNoChanges(array $currentYear, array $form): bool
+    {
+        return trim((string) ($currentYear['name'] ?? '')) === $form['year_name']
+            && trim((string) ($currentYear['start_date'] ?? '')) === $form['start_date']
+            && trim((string) ($currentYear['end_date'] ?? '')) === $form['end_date']
+            && trim((string) ($currentYear['status'] ?? '')) === $form['status'];
     }
 
     public function update(int $id, array $data): bool

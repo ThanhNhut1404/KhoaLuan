@@ -1,8 +1,18 @@
 <?php
 // Giao diện đăng nhập sinh viên (hai cột, header, responsive)
-$title = 'Đăng nhập';
+$title = 'Đăng nhập Sinh viên';
 $error = $error ?? '';
+$success = $success ?? '';
+$username = $username ?? '';
+$redirectToStudent = $redirectToStudent ?? false;
 ?>
+
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title><?= htmlspecialchars($title, ENT_QUOTES, 'UTF-8') ?></title>
 
 <style>
     @import url('https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap');
@@ -320,7 +330,14 @@ $error = $error ?? '';
     }
 
     .modal-btn:hover { filter: brightness(0.96); }
-    .error { color:#b91c1c; background:#fff1f2; padding:8px 10px; border-radius:10px; border:1px solid #fecaca; margin-bottom:12px; }
+    .login-message {
+        font-size: 13px;
+        font-weight: 800;
+        text-align: center;
+        margin-bottom: 2px;
+    }
+    .login-message.error { color:#b91c1c; }
+    .login-message.success { color:#15803d; }
 
     @keyframes floaty { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-6px); } }
     @keyframes rise { from { transform: translateY(8px); opacity:0; } to { transform: translateY(0); opacity:1; } }
@@ -338,6 +355,8 @@ $error = $error ?? '';
         .welcome-title { font-size:36px; }
     }
 </style>
+</head>
+<body>
 
 <div class="login-wrapper container-fluid">
     <header class="login-header navbar">
@@ -387,14 +406,10 @@ $error = $error ?? '';
             <img class="login-logo" src="/KhoaLuan/public/images/logo1.png" alt="Logo" />
             <h3>Đăng nhập hệ thống</h3>
 
-            <?php if (!empty($error)): ?>
-                <div class="error alert alert-danger"><?= htmlspecialchars($error) ?></div>
-            <?php endif; ?>
-
-            <form method="post" action="/student.php?action=login">
+            <form method="post" action="/KhoaLuan/public/student.php?action=login">
                 <div class="form-row">
                     <label class="form-label" for="mssv">Mã số sinh viên</label>
-                    <input id="mssv" name="mssv" class="form-control" type="text" placeholder="Nhập MSSV" required autofocus />
+                    <input id="mssv" name="mssv" class="form-control" type="text" value="<?= htmlspecialchars($username, ENT_QUOTES, 'UTF-8') ?>" placeholder="Nhập MSSV" required autofocus />
                 </div>
 
                 <div class="form-row">
@@ -436,6 +451,11 @@ $error = $error ?? '';
                 </div>
 
                 <div class="form-actions">
+                    <?php if (!empty($success)): ?>
+                        <div class="login-message success"><?= htmlspecialchars($success) ?></div>
+                    <?php elseif (!empty($error)): ?>
+                        <div class="login-message error"><?= htmlspecialchars($error) ?></div>
+                    <?php endif; ?>
                     <button class="btn-login btn btn-success" type="submit">Đăng nhập</button>
                     <div style="font-size:13px; color:var(--muted); text-align:center;">Chưa có tài khoản? <a href="#" style="color:var(--brand); text-decoration:none; font-weight:700;">Liên hệ</a></div>
                 </div>
@@ -482,4 +502,12 @@ $error = $error ?? '';
             closeForgotModal();
         }
     });
+
+    <?php if ($redirectToStudent): ?>
+    window.setTimeout(function() {
+        window.location.href = '/KhoaLuan/public/student.php';
+    }, 2000);
+    <?php endif; ?>
 </script>
+</body>
+</html>

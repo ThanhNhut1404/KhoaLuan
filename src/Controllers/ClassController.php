@@ -195,9 +195,11 @@ class ClassController
         if ($method === 'POST') {
             $form = $this->formData($data);
             $state['formData'] = $form;
+            $class = null;
 
             try {
-                if ($this->model->findById($id) === null) {
+                $class = $this->model->findById($id);
+                if ($class === null) {
                     $state['toast'] = ['type' => 'error', 'message' => 'Lớp học không tồn tại hoặc đã bị xóa.'];
                     $state['redirect'] = '?page=list_class';
                     return $state;
@@ -243,6 +245,12 @@ class ClassController
                     return $state;
                 }
 
+                if ($this->classHasNoChanges($class, $form, $departmentId, $majorId, $academicYearId)) {
+                    $state['toast'] = ['type' => 'info', 'message' => 'Không có thay đổi nào được thực hiện.'];
+                    $state['redirect'] = '?page=list_class';
+                    return $state;
+                }
+
                 $updated = $this->model->update($id, [
                     'department_id' => $departmentId,
                     'major_id' => $majorId,
@@ -270,13 +278,12 @@ class ClassController
                 return $state;
             }
 
-            if ($updated) {
-                $state['toast'] = ['type' => 'success', 'message' => 'Cập nhật lớp học thành công.'];
-                $state['redirect'] = '?page=list_class';
-                return $state;
-            }
+            $state['toast'] = [
+                'type' => $updated ? 'success' : 'info',
+                'message' => $updated ? 'Cập nhật lớp học thành công.' : 'Không có thay đổi nào được thực hiện.',
+            ];
+            $state['redirect'] = '?page=list_class';
 
-            $state['toast'] = ['type' => 'error', 'message' => 'Cập nhật lớp học thất bại. Vui lòng thử lại.'];
             return $state;
         }
 
@@ -338,6 +345,18 @@ class ClassController
         }
 
         return ['type' => 'success', 'message' => 'Xóa lớp học thành công.'];
+    }
+
+    private function classHasNoChanges(array $class, array $form, int $departmentId, int $majorId, int $academicYearId): bool
+    {
+        return (int) ($class['department_id'] ?? 0) === $departmentId
+            && (int) ($class['major_id'] ?? 0) === $majorId
+            && (int) ($class['academic_year_id'] ?? 0) === $academicYearId
+            && trim((string) ($class['name'] ?? '')) === $form['class_name']
+            && trim((string) ($class['code'] ?? '')) === $form['class_code']
+            && (int) ($class['capacity'] ?? 0) === (int) $form['capacity']
+            && trim((string) ($class['status'] ?? '')) === $form['status']
+            && trim((string) ($class['notes'] ?? '')) === $form['notes'];
     }
 
     private function handleListAction(array $data): ?array

@@ -1,6 +1,6 @@
 <?php
 $students = $students ?? [];
-pagination = $pagination ?? [
+$pagination = $pagination ?? [
     'current_page' => 1,
     'total_items' => count($students),
     'items_per_page' => 10,
@@ -9,6 +9,10 @@ pagination = $pagination ?? [
     'to' => count($students),
 ];
 $emptyMessage = $emptyMessage ?? 'Chưa có sinh viên nào.';
+$canCreateStudent = is_callable($canAccessPermission ?? null) && $canAccessPermission('create_student');
+$canEditStudent = is_callable($canAccessPermission ?? null) && $canAccessPermission('edit_student');
+$canDeleteStudent = is_callable($canAccessPermission ?? null) && $canAccessPermission('delete_student');
+$showActions = $canEditStudent || $canDeleteStudent;
 
 $paginationUrl = static function (int $pageNum): string {
     $params = $_GET;
@@ -19,12 +23,20 @@ $paginationUrl = static function (int $pageNum): string {
 };
 ?>
 
+<?php if ($canDeleteStudent): ?>
+    <form id="studentDeleteForm" method="post" action="/KhoaLuan/public/admin.php?page=delete_student" style="display:none;">
+        <input type="hidden" name="student_id" id="studentDeleteId" value="" />
+    </form>
+<?php endif; ?>
+
 <div class="list-student-page">
     <div class="page-panel card">
         <div class="panel-header card-header">
             <div class="header-content">
                 <h2 class="panel-title">DANH SÁCH SINH VIÊN</h2>
-                <a href="?page=create_student" class="action-btn btn btn-primary">Tạo sinh viên</a>
+                <?php if ($canCreateStudent): ?>
+                    <a href="?page=create_student" class="action-btn btn btn-primary">Tạo sinh viên</a>
+                <?php endif; ?>
             </div>
         </div>
 
@@ -46,7 +58,9 @@ $paginationUrl = static function (int $pageNum): string {
                                 <th>Số điện thoại</th>
                                 <th>Khóa học</th>
                                 <th>Trạng thái</th>
-                                <th>Thao tác</th>
+                                <?php if ($showActions): ?>
+                                    <th>Thao tác</th>
+                                <?php endif; ?>
                             </tr>
                         </thead>
                         <tbody>
@@ -60,13 +74,19 @@ $paginationUrl = static function (int $pageNum): string {
                                     <td><?= htmlspecialchars($student['phone'] ?? '') ?></td>
                                     <td><?= htmlspecialchars($student['academic_year'] ?? '') ?></td>
                                     <td><?= htmlspecialchars($student['status'] ?? '') ?></td>
-                                    <td>
-                                        <a href="?page=edit_student&id=<?= htmlspecialchars((string) ($student['id'] ?? '')) ?>" class="btn btn-outline-primary">Sửa</a>
-                                        <form method="post" action="?page=delete_student" style="display:inline">
-                                            <input type="hidden" name="student_id" value="<?= htmlspecialchars((string) ($student['id'] ?? '')) ?>" />
-                                            <button type="submit" class="btn btn-danger" onclick="return confirm('Bạn có chắc chắn muốn xóa sinh viên này không?');">Xóa</button>
-                                        </form>
-                                    </td>
+                                    <?php if ($showActions): ?>
+                                        <td>
+                                            <?php if ($canEditStudent): ?>
+                                                <a href="?page=edit_student&id=<?= htmlspecialchars((string) ($student['id'] ?? '')) ?>" class="btn btn-outline-primary">Sửa</a>
+                                            <?php endif; ?>
+                                            <?php if ($canDeleteStudent): ?>
+                                                <form method="post" action="/KhoaLuan/public/admin.php?page=delete_student" style="display:inline">
+                                                    <input type="hidden" name="student_id" value="<?= htmlspecialchars((string) ($student['id'] ?? '')) ?>" />
+                                                    <button type="button" class="btn btn-danger" onclick="showStudentDeleteConfirm(<?= (int) ($student['id'] ?? 0) ?>)">Xóa</button>
+                                                </form>
+                                            <?php endif; ?>
+                                        </td>
+                                    <?php endif; ?>
                                 </tr>
                             <?php endforeach; ?>
                         </tbody>
@@ -129,3 +149,11 @@ $paginationUrl = static function (int $pageNum): string {
     .page-item.disabled .page-link { color: #94a3b8; cursor: not-allowed; }
     @media (max-width: 768px) { .header-content { flex-direction: column; align-items: stretch; } }
 </style>
+
+<script>
+    function showStudentDeleteConfirm(id) {
+        showDeleteConfirm(id, 'student', '');
+    }
+</script>
+
+<?php include __DIR__ . '/confirm/confirm_delete_modal.php'; ?>

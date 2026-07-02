@@ -43,7 +43,7 @@ class PasswordController
         }
 
         $storedPassword = $this->users->getPasswordByUsername($username);
-        if ($storedPassword === null || $currentPassword !== $storedPassword) {
+        if ($storedPassword === null || !password_verify($currentPassword, $storedPassword)) {
             $state['errors']['current_password'] = 'Mật khẩu cũ không chính xác.';
             return $state;
         }
@@ -61,7 +61,7 @@ class PasswordController
 
         $state['openModal'] = false;
 
-        if (!$this->users->updatePlainPassword($username, $newPassword)) {
+        if (!$this->users->updatePassword($username, $newPassword)) {
             $state['toast'] = [
                 'type' => 'error',
                 'message' => 'Đổi mật khẩu thất bại. Vui lòng thử lại sau.',

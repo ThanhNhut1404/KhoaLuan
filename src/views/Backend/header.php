@@ -6,7 +6,7 @@ $adminRole = $adminSession['TEN_VAI_TRO'] ?? '';
 
 <?php
     $currentPage = $_GET['page'] ?? 'dashboard';
-    $searchablePages = ['list_khoa', 'list_major', 'list_class', 'list_semester', 'list_year'];
+    $searchablePages = ['list_khoa', 'list_major', 'list_class', 'list_semester', 'list_year', 'list_students', 'list_role_permissions'];
     $isHeaderSearchEnabled = in_array($currentPage, $searchablePages, true);
     $headerSearchValue = $isHeaderSearchEnabled
         ? trim((string) ($_GET['search'] ?? $_GET['keyword'] ?? $_GET['q'] ?? ''))
@@ -81,7 +81,7 @@ $adminRole = $adminSession['TEN_VAI_TRO'] ?? '';
                     Đổi mật khẩu
                 </a>
                 <div class="menu-divider" role="separator" aria-hidden="true"></div>
-                <a href="/KhoaLuan/public/admin.php?page=logout" role="menuitem">
+                <a href="/KhoaLuan/public/admin.php?page=logout" role="menuitem" onclick="showAdminLogoutConfirm(event, this)">
                     <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                         <path d="M10 17l-1 1a2 2 0 0 1-2.83 0L4 15.83a2 2 0 0 1 0-2.83L6.17 11a2 2 0 0 1 2.83 0l1 1" stroke-width="2" stroke-linecap="round"/>
                         <path d="M7 14h10" stroke-width="2" stroke-linecap="round"/>

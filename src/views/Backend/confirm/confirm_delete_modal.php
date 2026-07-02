@@ -59,7 +59,9 @@ function showDeleteConfirm(id, label, targetName) {
     const warning = modal.querySelector('.confirm-warning');
     const fallbackText = modal.querySelector('.confirm-text');
     const target = _deleteTargetName !== '' ? '"' + _deleteTargetName + '"' : '#' + id;
-    const questionText = 'Bạn có chắc chắn muốn xóa ' + _deleteTargetLabel + ' ' + target + ' không?';
+    const questionText = _deleteTargetLabel === 'student'
+        ? 'Bạn có chắc chắn muốn xóa sinh viên này không?'
+        : 'Bạn có chắc chắn muốn xóa ' + _deleteTargetLabel + ' ' + target + ' không?';
     const warningText = 'Thao tác này không thể hoàn tác.';
 
     if (question && warning) {
@@ -114,6 +116,14 @@ function confirmDelete() {
     if (_deleteTargetLabel === 'lớp học' && classDeleteForm && classDeleteId) {
         classDeleteId.value = _deleteTargetId;
         classDeleteForm.submit();
+        return;
+    }
+
+    const studentDeleteForm = document.getElementById('studentDeleteForm');
+    const studentDeleteId = document.getElementById('studentDeleteId');
+    if (_deleteTargetLabel === 'student' && studentDeleteForm && studentDeleteId) {
+        studentDeleteId.value = _deleteTargetId;
+        studentDeleteForm.submit();
         return;
     }
 

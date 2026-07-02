@@ -18,111 +18,105 @@
             <form id="editSemesterForm" method="POST" action="?page=edit_semester&id=<?= $id ?>&return=<?= urlencode($returnUrl) ?>" novalidate>
                 <input type="hidden" name="return" value="<?= htmlspecialchars($returnUrl, ENT_QUOTES, 'UTF-8') ?>" />
                 <div class="form-grid">
-                    <div class="form-row">
-                        <div class="form-field">
-                            <label class="field-label form-label" for="academic_year">
-                                Niên khóa <span class="required">*</span>
-                            </label>
-                            <select
-                                id="academic_year"
-                                name="academic_year"
-                                class="field-input form-select"
-                                required
-                            >
-                                <option value="">-- Chọn niên khóa --</option>
-                                <?php foreach ($academic_years as $year): ?>
-                                    <option
-                                        value="<?= htmlspecialchars($year['id']) ?>"
-                                        <?= (isset($formData['academic_year']) && $formData['academic_year'] == $year['id']) ? 'selected' : '' ?>
-                                    >
-                                        <?= htmlspecialchars($year['name']) ?>
-                                    </option>
-                                <?php endforeach; ?>
-                            </select>
-                            <span class="field-error<?= isset($errors['academic_year']) ? '' : ' is-empty' ?>"><?= isset($errors['academic_year']) ? htmlspecialchars($errors['academic_year']) : '&nbsp;' ?></span>
-                        </div>
-
-                        <div class="form-field">
-                            <label class="field-label form-label" for="semester_name">
-                                Tên học kỳ <span class="required">*</span>
-                            </label>
-                            <input
-                                id="semester_name"
-                                name="semester_name"
-                                class="field-input form-control"
-                                placeholder="Ví dụ: Học kỳ 1"
-                                value="<?= htmlspecialchars($formData['semester_name'] ?? '') ?>"
-                                required
-                            />
-                            <span class="field-error<?= isset($errors['semester_name']) ? '' : ' is-empty' ?>"><?= isset($errors['semester_name']) ? htmlspecialchars($errors['semester_name']) : '&nbsp;' ?></span>
-                        </div>
+                    <div class="form-field">
+                        <label class="field-label form-label" for="academic_year">
+                            Niên khóa <span class="required">*</span>
+                        </label>
+                        <select
+                            id="academic_year"
+                            name="academic_year"
+                            class="field-input form-select"
+                            required
+                        >
+                            <option value="">-- Chọn niên khóa --</option>
+                            <?php foreach ($academic_years as $year): ?>
+                                <option
+                                    value="<?= htmlspecialchars($year['id']) ?>"
+                                    <?= (isset($formData['academic_year']) && $formData['academic_year'] == $year['id']) ? 'selected' : '' ?>
+                                >
+                                    <?= htmlspecialchars($year['name']) ?>
+                                </option>
+                            <?php endforeach; ?>
+                        </select>
+                        <span class="field-error<?= isset($errors['academic_year']) ? '' : ' is-empty' ?>"><?= isset($errors['academic_year']) ? htmlspecialchars($errors['academic_year']) : '&nbsp;' ?></span>
                     </div>
 
-                    <div class="form-row">
-                        <div class="form-field">
-                            <label class="field-label form-label" for="start_date">
-                                Ngày bắt đầu <span class="required">*</span>
-                            </label>
-                            <input
-                                id="start_date"
-                                name="start_date"
-                                type="date"
-                                class="field-input form-control"
-                                value="<?= htmlspecialchars($formData['start_date'] ?? '') ?>"
-                                required
-                            />
-                            <span class="field-error<?= isset($errors['start_date']) ? '' : ' is-empty' ?>"><?= isset($errors['start_date']) ? htmlspecialchars($errors['start_date']) : '&nbsp;' ?></span>
-                        </div>
-
-                        <div class="form-field">
-                            <label class="field-label form-label" for="end_date">
-                                Ngày kết thúc <span class="required">*</span>
-                            </label>
-                            <input
-                                id="end_date"
-                                name="end_date"
-                                type="date"
-                                class="field-input form-control"
-                                value="<?= htmlspecialchars($formData['end_date'] ?? '') ?>"
-                                required
-                            />
-                            <span class="field-error<?= isset($errors['end_date']) ? '' : ' is-empty' ?>"><?= isset($errors['end_date']) ? htmlspecialchars($errors['end_date']) : '&nbsp;' ?></span>
-                        </div>
+                    <div class="form-field">
+                        <label class="field-label form-label" for="semester_name">
+                            Tên học kỳ <span class="required">*</span>
+                        </label>
+                        <input
+                            id="semester_name"
+                            name="semester_name"
+                            class="field-input form-control"
+                            placeholder="Ví dụ: Học kỳ 1"
+                            value="<?= htmlspecialchars($formData['semester_name'] ?? '') ?>"
+                            required
+                        />
+                        <span class="field-error<?= isset($errors['semester_name']) ? '' : ' is-empty' ?>"><?= isset($errors['semester_name']) ? htmlspecialchars($errors['semester_name']) : '&nbsp;' ?></span>
                     </div>
 
-                    <div class="form-row">
-                        <div class="form-field">
-                            <label class="field-label form-label" for="status">
-                                Trạng thái <span class="required">*</span>
-                            </label>
-                            <select
-                                id="status"
-                                name="status"
-                                class="field-input form-select"
-                                required
-                            >
-                                <option value="">-- Chọn trạng thái --</option>
-                                <?php foreach ($status_options as $option): ?>
-                                    <option
-                                        value="<?= htmlspecialchars($option['value']) ?>"
-                                        <?= (isset($formData['status']) && $formData['status'] === $option['value']) ? 'selected' : '' ?>
-                                    >
-                                        <?= htmlspecialchars($option['label']) ?>
-                                    </option>
-                                <?php endforeach; ?>
-                            </select>
-                            <span class="field-error<?= isset($errors['status']) ? '' : ' is-empty' ?>"><?= isset($errors['status']) ? htmlspecialchars($errors['status']) : '&nbsp;' ?></span>
-                        </div>
+                    <div class="form-field">
+                        <label class="field-label form-label" for="start_date">
+                            Ngày bắt đầu <span class="required">*</span>
+                        </label>
+                        <input
+                            id="start_date"
+                            name="start_date"
+                            type="date"
+                            class="field-input form-control"
+                            value="<?= htmlspecialchars($formData['start_date'] ?? '') ?>"
+                            required
+                        />
+                        <span class="field-error<?= isset($errors['start_date']) ? '' : ' is-empty' ?>"><?= isset($errors['start_date']) ? htmlspecialchars($errors['start_date']) : '&nbsp;' ?></span>
                     </div>
 
-                    <div class="form-actions">
-                        <a href="<?= htmlspecialchars($returnUrl, ENT_QUOTES, 'UTF-8') ?>" class="action-btn">
-                            Hủy
-                        </a>
-                        <button type="submit" class="action-btn primary">
-                            Lưu thay đổi
-                        </button>
+                    <div class="form-field">
+                        <label class="field-label form-label" for="end_date">
+                            Ngày kết thúc <span class="required">*</span>
+                        </label>
+                        <input
+                            id="end_date"
+                            name="end_date"
+                            type="date"
+                            class="field-input form-control"
+                            value="<?= htmlspecialchars($formData['end_date'] ?? '') ?>"
+                            required
+                        />
+                        <span class="field-error<?= isset($errors['end_date']) ? '' : ' is-empty' ?>"><?= isset($errors['end_date']) ? htmlspecialchars($errors['end_date']) : '&nbsp;' ?></span>
                     </div>
+
+                    <div class="form-field">
+                        <label class="field-label form-label" for="status">
+                            Trạng thái <span class="required">*</span>
+                        </label>
+                        <select
+                            id="status"
+                            name="status"
+                            class="field-input form-select"
+                            required
+                        >
+                            <option value="">-- Chọn trạng thái --</option>
+                            <?php foreach ($status_options as $option): ?>
+                                <option
+                                    value="<?= htmlspecialchars($option['value']) ?>"
+                                    <?= (isset($formData['status']) && $formData['status'] === $option['value']) ? 'selected' : '' ?>
+                                >
+                                    <?= htmlspecialchars($option['label']) ?>
+                                </option>
+                            <?php endforeach; ?>
+                        </select>
+                        <span class="field-error<?= isset($errors['status']) ? '' : ' is-empty' ?>"><?= isset($errors['status']) ? htmlspecialchars($errors['status']) : '&nbsp;' ?></span>
+                    </div>
+                </div>
+
+                <div class="form-actions">
+                    <a href="<?= htmlspecialchars($returnUrl, ENT_QUOTES, 'UTF-8') ?>" class="action-btn secondary cancel-btn btn btn-outline-secondary">
+                        Hủy
+                    </a>
+                    <button type="submit" class="action-btn primary save-change-btn btn btn-primary">
+                        Lưu thay đổi
+                    </button>
                 </div>
             </form>
         </div>
@@ -130,212 +124,32 @@
 </div>
 
 <style>
-    .edit-semester-page {
-        display: grid;
-        gap: 0;
-        padding: 24px;
-    }
-
-    .page-header {
-        margin-bottom: 0;
-    }
-
-    .page-title {
-        font-size: 20px;
-        font-weight: 800;
-        color: #0f2a5a;
-        text-transform: none;
-        letter-spacing: 0.6px;
-        margin: 0 0 4px 0;
-    }
-
-    .page-subtitle {
-        font-size: 13px;
-        color: #6b7280;
-        margin: 0;
-    }
-
-    .page-panel {
-        background: #ffffff;
-        border: 1px solid #e8ecf3;
-        border-radius: 8px;
-        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
-        overflow: hidden;
-    }
-
-    .panel-header {
-        padding: 12px 14px;
-        border-bottom: 1px solid #e5e7eb;
-        background: #f9fafb;
-    }
-
-    .panel-title {
-        font-size: 14px;
-        font-weight: 700;
-        color: #0f2a5a;
-        margin: 0;
-        display: flex;
-        align-items: center;
-        gap: 8px;
-    }
-
-    .panel-title svg {
-        width: 18px;
-        height: 18px;
-        color: #0f2a5a;
-    }
-
-    .panel-body {
-        padding: 20px;
-    }
-
-    .form-grid {
-        display: flex;
-        flex-direction: column;
-        gap: 0;
-        margin-bottom: 8px;
-    }
-
-    .form-row {
-        display: grid;
-        grid-template-columns: repeat(2, minmax(0, 1fr));
-        column-gap: 14px;
-        row-gap: 0;
-        margin: 0;
-    }
-
-    .form-row > .form-field {
-        width: auto;
-        max-width: none;
-        padding: 0;
-    }
-
-    .form-field {
-        display: flex;
-        flex-direction: column;
-        gap: 4px;
-        min-width: 0;
-    }
-
-    .field-label {
-        font-size: 12px;
-        font-weight: 700;
-        color: #0f2a5a;
-        text-transform: none;
-        letter-spacing: 0.4px;
-        display: block;
-    }
-
-    .required {
-        color: #dc2626;
-        font-weight: 700;
-    }
-
-    .field-input {
-        display: flex;
-        align-items: center;
-        padding: 8px 10px;
-        border-radius: 10px;
-        border: 1px solid #e5e7eb;
-        background: #f9fafb;
-        font-size: 13px;
-        color: #1f2937;
-        font-family: inherit;
-        height: 40px;
-        box-sizing: border-box;
-        transition: border-color 0.2s, box-shadow 0.2s;
-    }
-
-    .field-input:focus {
-        outline: none;
-        border-color: #0f2a5a;
-        box-shadow: 0 0 0 3px rgba(15, 42, 90, 0.08);
-        background: #ffffff;
-    }
-
-    .field-hint {
-        font-size: 11px;
-        color: #9ca3af;
-        display: block;
-    }
-
-    .field-error {
-        font-size: 12px;
-        color: #dc2626;
-        display: block;
-        line-height: 1.2;
-        min-height: 18px;
-        overflow-wrap: anywhere;
-    }
-
-    .field-error.is-empty {
-        visibility: hidden;
-    }
-
-    .form-actions {
-        display: flex;
-        justify-content: flex-end;
-        gap: 12px;
-        padding-top: 16px;
-        border-top: 1px solid #e8ecf3;
-    }
-
-    .action-btn {
-        padding: 8px 20px;
-        border-radius: 10px;
-        border: 1px solid #e5e7eb;
-        background: #ffffff;
-        color: #0f2a5a;
-        font-size: 13px;
-        font-weight: 700;
-        cursor: pointer;
-        text-decoration: none;
-        display: inline-flex;
-        align-items: center;
-        gap: 6px;
-        transition: all 0.2s;
-        white-space: nowrap;
-    }
-
-    .action-btn:hover {
-        background: #f3f4f6;
-        border-color: #d1d5db;
-    }
-
-    .action-btn.primary {
-        background: linear-gradient(180deg, #0f2a5a 0%, #0b1f45 100%);
-        border-color: #0f2a5a;
-        color: #ffffff;
-        font-weight: 700;
-    }
-
-    .action-btn.primary:hover {
-        background: linear-gradient(180deg, #0d2449 0%, #091a3d 100%);
-        border-color: #0a1838;
-    }
-
-    @media (max-width: 768px) {
-        .edit-semester-page {
-            padding: 16px;
-        }
-
-        .form-grid {
-            gap: 0;
-        }
-
-        .form-row {
-            grid-template-columns: 1fr;
-            gap: 0;
-        }
-
-        .form-actions {
-            flex-direction: column-reverse;
-        }
-
-        .action-btn {
-            width: 100%;
-            justify-content: center;
-        }
+    .edit-semester-page { display:grid; gap:0; padding:24px; }
+    .page-panel { background:#fff; border:1px solid #e8ecf3; border-radius:8px; box-shadow:0 2px 8px rgba(0,0,0,0.06); overflow:hidden; }
+    .panel-header { padding:12px 14px; border-bottom:1px solid #e5e7eb; background:#f9fafb; }
+    .panel-title { font-size:14px; font-weight:700; color:#0f2a5a; margin:0; display:flex; align-items:center; gap:8px; }
+    .panel-body { padding:20px; }
+    .form-grid { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:0 14px; margin-bottom:8px; align-items:start; }
+    .form-field { display:grid; gap:3px; min-width:0; }
+    .field-label { font-size:12px; font-weight:700; color:#0f2a5a; letter-spacing:0.4px; display:block; margin:0; }
+    .required { color:#dc2626; font-weight:700; }
+    .field-input { padding:10px; border-radius:10px; border:1px solid #e5e7eb; background:#f9fafb; font-size:13px; color:#1f2937; font-family:inherit; height:40px; box-sizing:border-box; width:100%; transition:border-color 0.2s, box-shadow 0.2s; }
+    .field-input:focus { outline:none; border-color:#0f2a5a; box-shadow:0 0 0 3px rgba(15,42,90,0.08); background:#fff; }
+    .field-error { font-size:12px; color:#dc2626; display:block; line-height:1.2; min-height:18px; overflow-wrap:anywhere; }
+    .field-error.is-empty { visibility:hidden; }
+    .form-actions { display:flex; justify-content:flex-end; gap:12px; padding-top:16px; border-top:1px solid #e8ecf3; }
+    .action-btn { min-height:40px; padding:8px 20px; border-radius:10px; border:1px solid #e5e7eb; background:#fff; color:#0f2a5a; font-size:13px; font-weight:700; cursor:pointer; text-decoration:none; display:inline-flex; align-items:center; justify-content:center; gap:6px; transition:all 0.2s; white-space:nowrap; }
+    .action-btn:hover,
+    .action-btn:focus { background:#f3f4f6; border-color:#d1d5db; color:#0f2a5a; outline:none; }
+    .action-btn.primary { background:linear-gradient(180deg,#0f2a5a 0%,#0b1f45 100%); border-color:#0f2a5a; color:#fff; }
+    .action-btn.primary:hover,
+    .action-btn.primary:focus { background:linear-gradient(180deg,#0d2449 0%,#091a3d 100%); border-color:#0a1838; color:#fff; }
+    @media (max-width:768px) {
+        .edit-semester-page { padding:16px; }
+        .panel-body { padding:16px; }
+        .form-grid { grid-template-columns:1fr; gap:0; }
+        .form-actions { flex-direction:column-reverse; }
+        .action-btn { width:100%; justify-content:center; }
     }
 </style>
 

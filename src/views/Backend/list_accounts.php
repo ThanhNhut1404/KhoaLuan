@@ -8,6 +8,10 @@
     $total_items = count($accounts);
     $items_per_page = 10;
     $total_pages = max(1, (int) ceil($total_items / $items_per_page));
+    $canEditAccount = is_callable($canAccessPermission ?? null) && $canAccessPermission('edit_account');
+    $canDeleteAccount = is_callable($canAccessPermission ?? null) && $canAccessPermission('delete_account');
+    $canChangeStatusAccount = is_callable($canAccessPermission ?? null) && $canAccessPermission('change_status_account');
+    $showActions = $canEditAccount || $canDeleteAccount;
 ?>
 <div class="list-accounts-page">
     <div class="page-panel card">
@@ -84,7 +88,9 @@
                                 <th class="col-phone">SỐ ĐIỆN THOẠI</th>
                                 <th class="col-role">VAI TRÒ</th>
                                 <th class="col-status">TRẠNG THÁI</th>
-                                <th class="col-action">THAO TÁC</th>
+                                <?php if ($showActions): ?>
+                                    <th class="col-action">THAO TÁC</th>
+                                <?php endif; ?>
                             </tr>
                         </thead>
                         <tbody>
@@ -98,6 +104,7 @@
                                     <td class="col-phone"><?= htmlspecialchars($a['phone']) ?></td>
                                     <td class="col-role"><?= htmlspecialchars($a['role']) ?></td>
                                     <td class="col-status">
+                                        <?php if ($canChangeStatusAccount): ?>
                                         <form method="POST" style="display:inline-block;">
                                             <input type="hidden" name="_row_id" value="<?= $a['id'] ?>" />
                                             <select name="status[<?= $a['id'] ?>]" class="status-select form-select" onchange="updateStatusSelect(this)">
@@ -105,13 +112,22 @@
                                                 <option value="inactive" <?= $a['status'] === 'inactive' ? 'selected' : '' ?>>Không hoạt động</option>
                                             </select>
                                         </form>
+                                        <?php else: ?>
+                                            <?= htmlspecialchars($statuses[$a['status']] ?? $a['status']) ?>
+                                        <?php endif; ?>
                                     </td>
+                                    <?php if ($showActions): ?>
                                     <td class="col-action">
                                         <div class="action-group">
+                                            <?php if ($canEditAccount): ?>
                                             <button class="action-btn edit btn btn-outline-primary" title="Chỉnh sửa" onclick="editAccount(<?= $a['id'] ?>)">✎</button>
+                                            <?php endif; ?>
+                                            <?php if ($canDeleteAccount): ?>
                                             <button class="action-btn delete btn btn-danger" title="Xóa" onclick="showDeleteConfirm(<?= $a['id'] ?>, 'tài khoản', <?= htmlspecialchars(json_encode((string) ($a['full_name'] ?? ''), JSON_UNESCAPED_UNICODE | JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP), ENT_QUOTES, 'UTF-8') ?>)">🗑</button>
+                                            <?php endif; ?>
                                         </div>
                                     </td>
+                                    <?php endif; ?>
                                 </tr>
                             <?php endforeach; ?>
                         </tbody>

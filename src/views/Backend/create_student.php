@@ -14,6 +14,23 @@ $statusOptions = $statusOptions ?? [
 $value = static fn(string $key): string => htmlspecialchars($formData[$key] ?? '');
 $selected = static fn(string $key, string $val): string => (string) ($formData[$key] ?? '') === $val ? 'selected' : '';
 $error = static fn(string $key): string => '<span class="field-error' . (empty($errors[$key]) ? ' is-empty' : '') . '">' . (!empty($errors[$key]) ? htmlspecialchars($errors[$key]) : '&nbsp;') . '</span>';
+$selectedDepartmentId = (string) ($formData['department_id'] ?? '');
+$selectedMajorId = (string) ($formData['major_id'] ?? '');
+$selectedClassId = (string) ($formData['class_id'] ?? '');
+$studentDependencyData = [
+    'majors' => array_map(static fn(array $nganh): array => [
+        'id' => (string) ($nganh['MA_NGANH'] ?? ''),
+        'department_id' => (string) ($nganh['MA_KHOA'] ?? ''),
+        'name' => (string) ($nganh['TEN_NGANH'] ?? ''),
+    ], $listNganh),
+    'classes' => array_map(static fn(array $lop): array => [
+        'id' => (string) ($lop['MA_LOP'] ?? ''),
+        'department_id' => (string) ($lop['MA_KHOA'] ?? ''),
+        'major_id' => (string) ($lop['MA_NGANH'] ?? ''),
+        'year_id' => (string) ($lop['MA_NIEN_KHOA'] ?? ''),
+        'name' => (string) ($lop['TEN_LOP'] ?? ''),
+    ], $listLop),
+];
 ?>
 
 <div class="student-form-page">
@@ -44,11 +61,8 @@ $error = static fn(string $key): string => '<span class="field-error' . (empty($
 
                     <div class="form-field">
                         <label class="field-label form-label" for="major_id">Ngành học <span class="required">*</span></label>
-                        <select id="major_id" name="major_id" class="field-input form-select">
-                            <option value="">-- Chọn ngành học --</option>
-                            <?php foreach ($listNganh as $nganh): ?>
-                                <option value="<?= htmlspecialchars($nganh['MA_NGANH']) ?>" data-ma-khoa="<?= htmlspecialchars($nganh['MA_KHOA']) ?>" <?= $selected('major_id', (string) $nganh['MA_NGANH']) ?>><?= htmlspecialchars($nganh['TEN_NGANH']) ?></option>
-                            <?php endforeach; ?>
+                        <select id="major_id" name="major_id" class="field-input form-select" data-selected-value="<?= htmlspecialchars($selectedMajorId, ENT_QUOTES, 'UTF-8') ?>" <?= $selectedDepartmentId === '' ? 'disabled' : '' ?>>
+                            <option value=""><?= $selectedDepartmentId === '' ? 'Vui lòng chọn khoa/bộ môn trước' : '-- Chọn ngành học --' ?></option>
                         </select>
                         <?= $error('major_id') ?>
                     </div>
@@ -66,11 +80,8 @@ $error = static fn(string $key): string => '<span class="field-error' . (empty($
 
                     <div class="form-field">
                         <label class="field-label form-label" for="class_id">Lớp học <span class="required">*</span></label>
-                        <select id="class_id" name="class_id" class="field-input form-select">
-                            <option value="">-- Chọn lớp học --</option>
-                            <?php foreach ($listLop as $lop): ?>
-                                <option value="<?= htmlspecialchars($lop['MA_LOP']) ?>" data-ma-khoa="<?= htmlspecialchars($lop['MA_KHOA']) ?>" data-ma-nganh="<?= htmlspecialchars($lop['MA_NGANH']) ?>" data-ma-nien-khoa="<?= htmlspecialchars($lop['MA_NIEN_KHOA']) ?>" <?= $selected('class_id', (string) $lop['MA_LOP']) ?>><?= htmlspecialchars($lop['TEN_LOP']) ?></option>
-                            <?php endforeach; ?>
+                        <select id="class_id" name="class_id" class="field-input form-select" data-selected-value="<?= htmlspecialchars($selectedClassId, ENT_QUOTES, 'UTF-8') ?>" <?= $selectedMajorId === '' ? 'disabled' : '' ?>>
+                            <option value=""><?= $selectedMajorId === '' ? 'Vui lòng chọn ngành học trước' : '-- Chọn lớp học --' ?></option>
                         </select>
                         <?= $error('class_id') ?>
                     </div>
@@ -139,7 +150,7 @@ $error = static fn(string $key): string => '<span class="field-error' . (empty($
                 </div>
 
                 <div class="form-footer">
-                    <p class="hint">MSSV sẽ được tạo tự động; mật khẩu sinh viên được sinh từ họ tên + <strong>#tdu1234</strong>.</p>
+                    <p class="hint">MSSV được tự sinh theo Mã ngành + Mã niên khóa + STT; mật khẩu mặc định là <strong>#Tdu1234</strong>.</p>
 
                     <div class="form-actions">
                         <a href="/KhoaLuan/public/admin.php?page=list_students" class="action-btn secondary cancel-btn btn btn-outline-secondary">Hủy</a>
@@ -164,6 +175,7 @@ $error = static fn(string $key): string => '<span class="field-error' . (empty($
     .required { color: #dc2626; font-weight: 700; }
     .field-input { padding: 10px; border: 1px solid #e5e7eb; border-radius: 10px; background: #f9fafb; font-size: 13px; color: #1f2937; font-family: inherit; height: 40px; box-sizing: border-box; width: 100%; transition: border-color 0.2s, box-shadow 0.2s; }
     .field-input:focus { outline: none; border-color: #0f2a5a; box-shadow: 0 0 0 3px rgba(15, 42, 90, 0.08); background: #ffffff; }
+    .field-input:disabled { cursor: not-allowed; color: #64748b; background-color: #eef2f7; }
     select.field-input { cursor: pointer; appearance: none; background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%231f2937' stroke-width='2'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e"); background-repeat: no-repeat; background-position: right 10px center; background-size: 16px; padding-right: 32px; }
     .field-error { color: #dc2626; display: block; font-size: 12px; font-weight: 600; line-height: 1.2; min-height: 18px; overflow-wrap: anywhere; }
     .field-error.is-empty { visibility: hidden; }
@@ -183,3 +195,111 @@ $error = static fn(string $key): string => '<span class="field-error' . (empty($
         .action-btn { width: 100%; justify-content: center; }
     }
 </style>
+
+<script type="application/json" id="studentDependencyData">
+<?= json_encode($studentDependencyData, JSON_UNESCAPED_UNICODE | JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP) ?>
+</script>
+
+<script>
+    (function() {
+        const departmentSelect = document.getElementById('department_id');
+        const majorSelect = document.getElementById('major_id');
+        const classSelect = document.getElementById('class_id');
+        const dataNode = document.getElementById('studentDependencyData');
+
+        if (!departmentSelect || !majorSelect || !classSelect || !dataNode) {
+            return;
+        }
+
+        let dependencyData = { majors: [], classes: [] };
+        try {
+            dependencyData = JSON.parse(dataNode.textContent || '{}');
+        } catch (error) {
+            dependencyData = { majors: [], classes: [] };
+        }
+
+        const majors = Array.isArray(dependencyData.majors) ? dependencyData.majors : [];
+        const classes = Array.isArray(dependencyData.classes) ? dependencyData.classes : [];
+        const initialMajorId = majorSelect.dataset.selectedValue || '';
+        const initialClassId = classSelect.dataset.selectedValue || '';
+
+        function replaceOptions(select, placeholder, options, selectedValue) {
+            select.innerHTML = '';
+
+            const placeholderOption = document.createElement('option');
+            placeholderOption.value = '';
+            placeholderOption.textContent = placeholder;
+            select.appendChild(placeholderOption);
+
+            options.forEach(function(optionData) {
+                const option = document.createElement('option');
+                option.value = String(optionData.id || '');
+                option.textContent = String(optionData.name || '');
+                if (option.value === selectedValue) {
+                    option.selected = true;
+                }
+                select.appendChild(option);
+            });
+        }
+
+        function populateMajors(selectedValue) {
+            const departmentId = departmentSelect.value;
+
+            if (departmentId === '') {
+                replaceOptions(majorSelect, 'Vui lòng chọn khoa/bộ môn trước', [], '');
+                majorSelect.disabled = true;
+                populateClasses('');
+                return;
+            }
+
+            const filteredMajors = majors.filter(function(major) {
+                return String(major.department_id || '') === departmentId;
+            });
+
+            replaceOptions(majorSelect, '-- Chọn ngành học --', filteredMajors, selectedValue);
+            majorSelect.disabled = false;
+
+            if (!filteredMajors.some(function(major) { return String(major.id || '') === majorSelect.value; })) {
+                majorSelect.value = '';
+            }
+
+            populateClasses(majorSelect.value === selectedValue ? initialClassId : '');
+        }
+
+        function populateClasses(selectedValue) {
+            const departmentId = departmentSelect.value;
+            const majorId = majorSelect.value;
+
+            if (majorId === '') {
+                replaceOptions(classSelect, 'Vui lòng chọn ngành học trước', [], '');
+                classSelect.disabled = true;
+                return;
+            }
+
+            const filteredClasses = classes.filter(function(classItem) {
+                return String(classItem.department_id || '') === departmentId
+                    && String(classItem.major_id || '') === majorId;
+            });
+
+            replaceOptions(classSelect, '-- Chọn lớp học --', filteredClasses, selectedValue);
+            classSelect.disabled = false;
+
+            if (!filteredClasses.some(function(classItem) { return String(classItem.id || '') === classSelect.value; })) {
+                classSelect.value = '';
+            }
+        }
+
+        departmentSelect.addEventListener('change', function() {
+            majorSelect.dataset.selectedValue = '';
+            classSelect.dataset.selectedValue = '';
+            populateMajors('');
+        });
+
+        majorSelect.addEventListener('change', function() {
+            classSelect.dataset.selectedValue = '';
+            populateClasses('');
+        });
+
+        populateMajors(initialMajorId);
+    })();
+</script>

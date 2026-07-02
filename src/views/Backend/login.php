@@ -1,6 +1,6 @@
 <?php
 // Giao diện đăng nhập admin (hai cột, header, responsive)
-$title = 'Đăng nhập quản trị';
+$title = 'Đăng nhập Quản trị';
 $error = $error ?? '';
 $success = $success ?? '';
 $redirectToAdmin = $redirectToAdmin ?? false;

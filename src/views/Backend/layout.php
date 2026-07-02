@@ -850,6 +850,12 @@
 </head>
 
 <body>
+    <?php
+        $content = $content ?? (__DIR__ . '/dashboard.php');
+        if (!is_string($content) || !file_exists($content)) {
+            $content = __DIR__ . '/dashboard.php';
+        }
+    ?>
     <?php $activeToast = $adminToast ?? $changePasswordToast ?? null; ?>
     <?php if (!empty($activeToast)): ?>
         <div class="admin-toast <?= htmlspecialchars($activeToast['type']) ?>">
@@ -858,10 +864,10 @@
     <?php endif; ?>
 
     <div class="container admin-container container-fluid">
-        <?php include 'sidebar.php'; ?>
+        <?php include __DIR__ . '/sidebar.php'; ?>
 
         <div class="main">
-            <?php include 'header.php'; ?>
+            <?php include __DIR__ . '/header.php'; ?>
             <div class="content">
                 <?php include $content; ?>
             </div>
@@ -937,6 +943,7 @@
     </style>
 
     <?php include __DIR__ . '/change_password_modal.php'; ?>
+    <?php include __DIR__ . '/confirm/confirm_logout_modal.php'; ?>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     <script>

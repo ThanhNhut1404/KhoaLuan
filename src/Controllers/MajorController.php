@@ -178,9 +178,11 @@ class MajorController
         if ($method === 'POST') {
             $form = $this->formData($data);
             $state['formData'] = $form;
+            $major = null;
 
             try {
-                if ($this->model->findById($id) === null) {
+                $major = $this->model->findById($id);
+                if ($major === null) {
                     $state['toast'] = ['type' => 'error', 'message' => 'Ngành học không tồn tại hoặc đã bị xóa.'];
                     $state['redirect'] = '?page=list_major';
                     return $state;
@@ -214,6 +216,12 @@ class MajorController
                     return $state;
                 }
 
+                if ($this->majorHasNoChanges($major, $form, $departmentId)) {
+                    $state['toast'] = ['type' => 'info', 'message' => 'Không có thay đổi nào được thực hiện.'];
+                    $state['redirect'] = '?page=list_major';
+                    return $state;
+                }
+
                 $updated = $this->model->update($id, [
                     'department_id' => $departmentId,
                     'name' => $form['major_name'],
@@ -238,11 +246,11 @@ class MajorController
             }
 
             $state['toast'] = [
-                'type' => $updated ? 'success' : 'error',
-                'message' => $updated ? 'Cập nhật ngành học thành công.' : 'Cập nhật ngành học thất bại. Vui lòng thử lại.',
+                'type' => $updated ? 'success' : 'info',
+                'message' => $updated ? 'Cập nhật ngành học thành công.' : 'Không có thay đổi nào được thực hiện.',
             ];
 
-            if ($updated) {
+            if ($updated || ($state['toast']['type'] ?? '') === 'info') {
                 $state['redirect'] = '?page=list_major';
             }
 
@@ -333,6 +341,15 @@ class MajorController
         ];
 
         return $state;
+    }
+
+    private function majorHasNoChanges(array $major, array $form, int $departmentId): bool
+    {
+        return (int) ($major['department_id'] ?? 0) === $departmentId
+            && trim((string) ($major['name'] ?? '')) === $form['major_name']
+            && trim((string) ($major['code'] ?? '')) === $form['major_code']
+            && trim((string) ($major['description'] ?? '')) === $form['description']
+            && trim((string) ($major['status'] ?? '')) === $form['status'];
     }
 
     private function handleListAction(array $data): ?array

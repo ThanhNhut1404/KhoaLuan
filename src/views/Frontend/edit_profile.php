@@ -14,6 +14,11 @@
     }
     $avatar = $student['avatar'] ?? '';
     $hasAvatar = is_string($avatar) && trim($avatar) !== '';
+    $studentName = trim((string) ($student['ho_ten'] ?? ''));
+    $avatarInitial = '?';
+    if ($studentName !== '') {
+        $avatarInitial = function_exists('mb_substr') ? mb_substr($studentName, 0, 1, 'UTF-8') : substr($studentName, 0, 1);
+    }
 ?>
 
 <style>
@@ -147,7 +152,7 @@
                     <?php if ($hasAvatar): ?>
                         <img id="avatarPreviewImg" src="<?= htmlspecialchars($avatar, ENT_QUOTES, 'UTF-8') ?>" alt="Avatar" />
                     <?php else: ?>
-                        <span id="avatarPreviewText"><?= htmlspecialchars(substr($student['ho_ten'] ?? 'S', 0, 1), ENT_QUOTES, 'UTF-8') ?></span>
+                        <span id="avatarPreviewText"><?= htmlspecialchars($avatarInitial, ENT_QUOTES, 'UTF-8') ?></span>
                         <img id="avatarPreviewImg" src="" alt="Avatar" style="display:none" />
                     <?php endif; ?>
                 </div>
@@ -200,18 +205,6 @@
                         <option <?= (isset($student['gioi_tinh']) && $student['gioi_tinh'] === 'Nữ') ? 'selected' : '' ?>>Nữ</option>
                         <option <?= (isset($student['gioi_tinh']) && $student['gioi_tinh'] === 'Khác') ? 'selected' : '' ?>>Khác</option>
                     </select>
-                </div>
-                <div class="modal-field">
-                    <label class="form-label">Nơi sinh</label>
-                    <input class="form-control" name="noi_sinh" value="<?= htmlspecialchars($student['noi_sinh'] ?? '', ENT_QUOTES, 'UTF-8') ?>" />
-                </div>
-                <div class="modal-field">
-                    <label class="form-label">Dân tộc</label>
-                    <input class="form-control" name="dan_toc" value="<?= htmlspecialchars($student['dan_toc'] ?? '', ENT_QUOTES, 'UTF-8') ?>" />
-                </div>
-                <div class="modal-field">
-                    <label class="form-label">Tôn giáo</label>
-                    <input class="form-control" name="ton_giao" value="<?= htmlspecialchars($student['ton_giao'] ?? '', ENT_QUOTES, 'UTF-8') ?>" />
                 </div>
                 <div class="modal-field">
                     <label class="form-label">Email</label>

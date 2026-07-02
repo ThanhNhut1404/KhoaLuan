@@ -30,6 +30,11 @@
         return '?' . http_build_query($params);
     };
 
+    $canEditYear = is_callable($canAccessPermission ?? null) && $canAccessPermission('edit_year');
+    $canDeleteYear = is_callable($canAccessPermission ?? null) && $canAccessPermission('delete_year');
+    $canChangeStatusYear = is_callable($canAccessPermission ?? null) && $canAccessPermission('change_status_year');
+    $showActions = $canEditYear || $canDeleteYear;
+
     $statusClass = function (string $label): string {
         return match ($label) {
             'Sắp diễn ra' => 'upcoming',
@@ -95,7 +100,9 @@
                                 <th class="col-end">THỜI GIAN KẾT THÚC</th>
                                 <th class="col-semester">SỐ HỌC KỲ</th>
                                 <th class="col-status">TRẠNG THÁI</th>
-                                <th class="col-action">THAO TÁC</th>
+                                <?php if ($showActions): ?>
+                                    <th class="col-action">THAO TÁC</th>
+                                <?php endif; ?>
                             </tr>
                         </thead>
                         <tbody>
@@ -113,6 +120,7 @@
                                     <td class="col-end"><?= htmlspecialchars($year['end_date'] ?? '--') ?></td>
                                     <td class="col-semester"><?= ($year['semesters'] === null || $year['semesters'] === '') ? '--' : htmlspecialchars((string) $year['semesters']) ?></td>
                                     <td class="col-status">
+                                        <?php if ($canChangeStatusYear): ?>
                                         <form method="POST" class="inline-form">
                                             <input type="hidden" name="action" value="update_status" />
                                             <input type="hidden" name="year_id" value="<?= (int) $year['id'] ?>" />
@@ -127,9 +135,14 @@
                                                 <?php endforeach; ?>
                                             </select>
                                         </form>
+                                        <?php else: ?>
+                                            <?= htmlspecialchars($currentStatusLabel) ?>
+                                        <?php endif; ?>
                                     </td>
+                                    <?php if ($showActions): ?>
                                     <td class="col-action">
                                         <div class="action-group">
+                                            <?php if ($canEditYear): ?>
                                             <form method="POST" class="inline-form">
                                                 <input type="hidden" name="action" value="edit" />
                                                 <input type="hidden" name="year_id" value="<?= (int) $year['id'] ?>" />
@@ -140,6 +153,8 @@
                                                     </svg>
                                                 </button>
                                             </form>
+                                            <?php endif; ?>
+                                            <?php if ($canDeleteYear): ?>
                                             <button
                                                 class="action-btn delete btn btn-danger"
                                                 type="button"
@@ -151,8 +166,10 @@
                                                     <path d="M19 7l-1 12a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2l-1-12M9 7V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v3M9 11v6M15 11v6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
                                                 </svg>
                                             </button>
+                                            <?php endif; ?>
                                         </div>
                                     </td>
+                                    <?php endif; ?>
                                 </tr>
                             <?php endforeach; ?>
                         </tbody>
@@ -210,6 +227,7 @@
     </div>
 </div>
 
+<?php if ($canDeleteYear): ?>
 <div class="modal modal-overlay" id="yearDeleteModal" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered year-delete-dialog">
     <div class="modal-card modal-content year-delete-card" role="dialog" aria-modal="true" aria-labelledby="yearDeleteTitle">
@@ -229,6 +247,7 @@
     </div>
     </div>
 </div>
+<?php endif; ?>
 
 <style>
     .list-year-page {

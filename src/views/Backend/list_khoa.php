@@ -13,6 +13,9 @@
     $items_per_page = (int) ($pagination['items_per_page'] ?? 10);
     $total_pages = (int) ($pagination['total_pages'] ?? 1);
     $emptyMessage = $emptyMessage ?? 'Chưa có khoa/bộ môn nào.';
+    $canEditKhoa = is_callable($canAccessPermission ?? null) && $canAccessPermission('edit_khoa');
+    $canDeleteKhoa = is_callable($canAccessPermission ?? null) && $canAccessPermission('delete_khoa');
+    $showActions = $canEditKhoa || $canDeleteKhoa;
     $paginationUrl = static function (int $pageNum): string {
         $params = $_GET;
         $params['page'] = 'list_khoa';
@@ -48,7 +51,9 @@
                                 <th class="col-name">TÊN KHOA/BỘ MÔN</th>
                                 <th class="col-email">EMAIL</th>
                                 <th class="col-phone">SỐ ĐIỆN THOẠI</th>
-                                <th class="col-action">THAO TÁC</th>
+                                <?php if ($showActions): ?>
+                                    <th class="col-action">THAO TÁC</th>
+                                <?php endif; ?>
                             </tr>
                         </thead>
                         <tbody>
@@ -60,21 +65,27 @@
                                     <td class="col-name"><?= htmlspecialchars($k['ten'] ?? '') ?></td>
                                     <td class="col-email"><?= htmlspecialchars($k['email'] ?? '') ?></td>
                                     <td class="col-phone"><?= htmlspecialchars($k['phone'] ?? '') ?></td>
+                                    <?php if ($showActions): ?>
                                     <td class="col-action">
                                         <div class="action-group">
+                                            <?php if ($canEditKhoa): ?>
                                             <a class="action-btn edit btn btn-outline-primary" title="Chỉnh sửa" href="?page=edit_khoa&ma=<?= urlencode($k['ma'] ?? '') ?>">
                                                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                                                     <path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
                                                     <path d="M15.5 3.5a2.121 2.121 0 1 1 3 3L18 7.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
                                                 </svg>
                                             </a>
+                                            <?php endif; ?>
+                                            <?php if ($canDeleteKhoa): ?>
                                             <button type="button" class="action-btn delete btn btn-danger" title="Xóa" onclick="showKhoaDeleteConfirm(<?= (int) ($k['ma'] ?? 0) ?>, <?= htmlspecialchars(json_encode((string) ($k['ten'] ?? ''), JSON_UNESCAPED_UNICODE | JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP), ENT_QUOTES, 'UTF-8') ?>)">
                                                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                                                     <path d="M19 7l-1 12a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2l-1-12M9 7V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v3M9 11v6M15 11v6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
                                                 </svg>
                                             </button>
+                                            <?php endif; ?>
                                         </div>
                                     </td>
+                                    <?php endif; ?>
                                 </tr>
                             <?php endforeach; ?>
                         </tbody>
@@ -112,10 +123,12 @@
     </div>
 </div>
 
-<form id="khoaDeleteForm" method="POST" action="<?= htmlspecialchars($_SERVER['REQUEST_URI'] ?? '?page=list_khoa') ?>" style="display:none;">
-    <input type="hidden" name="action" value="delete" />
-    <input type="hidden" name="ma" id="khoaDeleteId" value="" />
-</form>
+<?php if ($canDeleteKhoa): ?>
+    <form id="khoaDeleteForm" method="POST" action="<?= htmlspecialchars($_SERVER['REQUEST_URI'] ?? '?page=list_khoa') ?>" style="display:none;">
+        <input type="hidden" name="action" value="delete" />
+        <input type="hidden" name="ma" id="khoaDeleteId" value="" />
+    </form>
+<?php endif; ?>
 
 <style>
     .list-khoa-page { padding: 24px; }

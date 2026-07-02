@@ -1,10 +1,17 @@
 <?php
-session_start();
-require_once __DIR__ . '/../src/Controllers/StudentController.php';
+declare(strict_types=1);
+
+if (session_status() === PHP_SESSION_NONE) {
+	session_start();
+}
+
+require_once __DIR__ . '/../vendor/autoload.php';
+
+use KhoaLuan\QLDRL\Controllers\StudentController;
 
 $controller = new StudentController();
 
-$action = $_GET['action'] ?? '';
+$action = $_GET['action'] ?? 'dashboard';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && $action === 'login') {
 	$controller->handleLogin();
@@ -18,6 +25,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $action === 'change_password') {
 
 if ($action === 'login') {
 	$controller->login();
+} elseif ($action === 'logout') {
+	$controller->logout();
 } elseif ($action === 'profile') {
 	$controller->profile();
 } elseif ($action === 'phieudanhgia') {

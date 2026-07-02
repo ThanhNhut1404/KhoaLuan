@@ -81,6 +81,7 @@ class AccountModel
     public function createWithProfile(array $data, array $role): bool
     {
         $username = trim($data['username']);
+        $hashedPassword = password_hash($data['password'], PASSWORD_DEFAULT);
 
         $this->db->beginTransaction();
 
@@ -91,7 +92,7 @@ class AccountModel
             );
             $accountStatement->execute([
                 'username' => $username,
-                'password' => $data['password'],
+                'password' => $hashedPassword,
             ]);
 
             $roleStatement = $this->db->prepare(
@@ -122,13 +123,14 @@ class AccountModel
             case 'SINH_VIEN':
                 $statement = $this->db->prepare(
                     'INSERT INTO sinh_vien
-                     (MA_LOP, TEN_DANG_NHAP, MSSV, NGAY_SINH, GIO_TINH, EMAIL_SV, SO_DIEN_THOAI, DIA_CHI, TRANG_THAI_HOC_TAP)
-                     VALUES (:class_id, :username, :mssv, :birth_date, :gender, :email, :phone, :address, :status)'
+                     (MA_LOP, TEN_DANG_NHAP, MSSV, HO_TEN, NGAY_SINH, GIO_TINH, EMAIL_SV, SO_DIEN_THOAI, DIA_CHI, TRANG_THAI_HOC_TAP)
+                     VALUES (:class_id, :username, :mssv, :full_name, :birth_date, :gender, :email, :phone, :address, :status)'
                 );
                 $statement->execute([
                     'class_id' => $data['class_id'],
                     'username' => $username,
                     'mssv' => $username,
+                    'full_name' => trim($data['full_name']),
                     'birth_date' => $data['birth_date'],
                     'gender' => $data['gender'],
                     'email' => trim($data['email']),

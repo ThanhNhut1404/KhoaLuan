@@ -24,11 +24,49 @@
     $currentKeyword = trim((string) ($filters['keyword'] ?? ($_GET['search'] ?? $_GET['keyword'] ?? $_GET['q'] ?? '')));
     $currentStatusFilter = trim((string) ($filters['status'] ?? ($_GET['status'] ?? '')));
     $currentAcademicYearFilter = trim((string) ($filters['academic_year_id'] ?? ($_GET['academic_year_id'] ?? $_GET['academic_year'] ?? '')));
+    $extractAcademicYearId = static function (array $year): string {
+        foreach (['id', 'MA_NIEN_KHOA', 'academic_year_id', 'year_id'] as $key) {
+            if (array_key_exists($key, $year) && trim((string) $year[$key]) !== '') {
+                return trim((string) $year[$key]);
+            }
+        }
+
+        return '';
+    };
+    $extractAcademicYearName = static function (array $year): string {
+        foreach (['name', 'TEN_NIEN_KHOA', 'academic_year_name', 'year_name'] as $key) {
+            if (array_key_exists($key, $year) && trim((string) $year[$key]) !== '') {
+                return trim((string) $year[$key]);
+            }
+        }
+
+        return '';
+    };
+
+    $academicYearOptions = [];
+    foreach ($academic_years as $year) {
+        if (!is_array($year)) {
+            continue;
+        }
+
+        $yearId = $extractAcademicYearId($year);
+        if ($yearId === '') {
+            continue;
+        }
+
+        $academicYearOptions[] = [
+            'id' => $yearId,
+            'name' => $extractAcademicYearName($year),
+        ];
+    }
+
     if (!in_array($currentStatusFilter, $statusValues, true)) {
         $currentStatusFilter = '';
     }
-    $academicYearValues = array_map(static fn (array $year): string => (string) ($year['id'] ?? $year['MA_NIEN_KHOA'] ?? ''), $academic_years);
-    $academicYearValues = array_values(array_filter($academicYearValues, static fn (string $value): bool => $value !== ''));
+    $academicYearValues = array_values(array_map(
+        static fn (array $option): string => $option['id'],
+        $academicYearOptions
+    ));
     if ($currentAcademicYearFilter !== '' && !empty($academicYearValues) && !in_array($currentAcademicYearFilter, $academicYearValues, true)) {
         $currentAcademicYearFilter = '';
     }
@@ -40,6 +78,12 @@
         $params['page_num'] = $pageNum;
         return '?' . http_build_query($params);
     };
+    $permissionChecker = isset($canAccessPermission) && is_callable($canAccessPermission) ? $canAccessPermission : null;
+    $canEditSemester = $permissionChecker ? $permissionChecker('edit_semester') : false;
+    $canDeleteSemester = $permissionChecker ? $permissionChecker('delete_semester') : false;
+    $canChangeStatusSemester = $permissionChecker ? $permissionChecker('change_status_semester') : false;
+    $showActions = $canEditSemester || $canDeleteSemester;
+
     $formatDate = static function (?string $date): string {
         $date = trim((string) $date);
         if ($date === '') {
@@ -80,10 +124,10 @@
                             <label class="filter-label" for="filter_semester_year">Niên khóa</label>
                             <select id="filter_semester_year" name="academic_year_id" class="filter-select form-select">
                                 <option value="">Tất cả</option>
-                                <?php foreach ($academic_years as $year): ?>
+                                <?php foreach ($academicYearOptions as $year): ?>
                                     <?php
-                                        $yearId = (string) ($year['id'] ?? $year['MA_NIEN_KHOA'] ?? '');
-                                        $yearName = (string) ($year['name'] ?? $year['TEN_NIEN_KHOA'] ?? '');
+                                        $yearId = (string) ($year['id'] ?? '');
+                                        $yearName = (string) ($year['name'] ?? '');
                                     ?>
                                     <option value="<?= htmlspecialchars($yearId, ENT_QUOTES, 'UTF-8') ?>" <?= $currentAcademicYearFilter === $yearId ? 'selected' : '' ?>>
                                         <?= htmlspecialchars($yearName, ENT_QUOTES, 'UTF-8') ?>
@@ -128,7 +172,9 @@
                                 <th class="col-end">THỜI GIAN KẾT THÚC</th>
                                 <th class="col-year">NIÊN KHÓA</th>
                                 <th class="col-status">TRẠNG THÁI</th>
-                                <th class="col-action">THAO TÁC</th>
+                                <?php if ($showActions): ?>
+                                    <th class="col-action">THAO TÁC</th>
+                                <?php endif; ?>
                             </tr>
                         </thead>
                         <tbody>
@@ -142,6 +188,7 @@
                                     <td class="col-year"><?= htmlspecialchars($semester['academic_year'] ?? '') ?></td>
                                     <td class="col-status">
                                         <?php $currentStatus = (string) ($semester['status'] ?? ''); ?>
+                                        <?php if ($canChangeStatusSemester): ?>
                                         <form method="POST" action="<?= htmlspecialchars($_SERVER['REQUEST_URI'] ?? '?page=list_semester', ENT_QUOTES, 'UTF-8') ?>" style="display:inline-block;">
                                             <input type="hidden" name="action" value="status" />
                                             <input type="hidden" name="_row_id" value="<?= (int) ($semester['id'] ?? 0) ?>" />
@@ -156,22 +203,31 @@
                                                 <?php endforeach; ?>
                                             </select>
                                         </form>
+                                        <?php else: ?>
+                                            <?= htmlspecialchars($currentStatus, ENT_QUOTES, 'UTF-8') ?>
+                                        <?php endif; ?>
                                     </td>
+                                    <?php if ($showActions): ?>
                                     <td class="col-action">
                                         <div class="action-group">
+                                            <?php if ($canEditSemester): ?>
                                             <a class="action-btn edit btn btn-outline-primary" title="Chỉnh sửa" href="?page=edit_semester&id=<?= (int) ($semester['id'] ?? 0) ?>&return=<?= urlencode($paginationUrl($current_page)) ?>">
                                                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                                                     <path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
                                                     <path d="M15.5 3.5a2.121 2.121 0 1 1 3 3L18 7.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
                                                 </svg>
                                             </a>
+                                            <?php endif; ?>
+                                            <?php if ($canDeleteSemester): ?>
                                             <button type="button" class="action-btn delete btn btn-danger" title="Xóa" onclick="showSemesterDeleteConfirm(<?= (int) ($semester['id'] ?? 0) ?>, <?= htmlspecialchars(json_encode((string) ($semester['name'] ?? ''), JSON_UNESCAPED_UNICODE | JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP), ENT_QUOTES, 'UTF-8') ?>)">
                                                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                                                     <path d="M19 7l-1 12a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2l-1-12M9 7V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v3M9 11v6M15 11v6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
                                                 </svg>
                                             </button>
+                                            <?php endif; ?>
                                         </div>
                                     </td>
+                                    <?php endif; ?>
                                 </tr>
                             <?php endforeach; ?>
                         </tbody>
@@ -209,10 +265,12 @@
     </div>
 </div>
 
-<form id="semesterDeleteForm" method="POST" action="<?= htmlspecialchars($_SERVER['REQUEST_URI'] ?? '?page=list_semester') ?>" style="display:none;">
-    <input type="hidden" name="action" value="delete" />
-    <input type="hidden" name="id" id="semesterDeleteId" value="" />
-</form>
+<?php if ($canDeleteSemester): ?>
+    <form id="semesterDeleteForm" method="POST" action="<?= htmlspecialchars($_SERVER['REQUEST_URI'] ?? '?page=list_semester') ?>" style="display:none;">
+        <input type="hidden" name="action" value="delete" />
+        <input type="hidden" name="id" id="semesterDeleteId" value="" />
+    </form>
+<?php endif; ?>
 
 <style>
     .list-semester-page { padding: 24px; }
@@ -229,7 +287,6 @@
     .filter-form { display:grid; gap:8px; }
     .filter-label { font-size:12px; font-weight:700; color:#0f2a5a; margin:0; }
     .filter-select { min-height:36px; font-size:13px; border-radius:8px; border-color:#e5e7eb; position:relative; z-index:1; }
-    #filter_semester_year:focus { margin-bottom:96px; z-index:5; }
     .filter-actions { display:flex; justify-content:flex-end; gap:8px; padding-top:6px; }
     .filter-clear,
     .filter-apply { font-size:13px; font-weight:700; border-radius:8px; padding:7px 12px; }
