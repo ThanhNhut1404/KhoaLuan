@@ -14,6 +14,42 @@ if (empty($roleIds) && !empty($adminSession['MA_VAI_TRO'])) {
 $permissionService = $permissionService ?? new \KhoaLuan\QLDRL\Services\PermissionService();
 $sidebarMenu = $permissionService->buildSidebarMenu($roleIds);
 
+$criteriaParentIndex = null;
+foreach ($sidebarMenu as $index => $parent) {
+    if (($parent['label'] ?? '') === 'Quản lý tiêu chí điểm') {
+        $criteriaParentIndex = $index;
+        break;
+    }
+}
+
+$applyCriteriaChild = [
+    'page' => 'apply_criteria',
+    'label' => 'Áp dụng bộ tiêu chí',
+    'url' => '/KhoaLuan/public/admin.php?page=apply_criteria',
+];
+
+if ($criteriaParentIndex !== null) {
+    $existingChildren = $sidebarMenu[$criteriaParentIndex]['children'] ?? [];
+    $hasApplyCriteria = false;
+    foreach ($existingChildren as $child) {
+        if (($child['page'] ?? '') === 'apply_criteria') {
+            $hasApplyCriteria = true;
+            break;
+        }
+    }
+
+    if (!$hasApplyCriteria) {
+        $existingChildren[] = $applyCriteriaChild;
+        $sidebarMenu[$criteriaParentIndex]['children'] = $existingChildren;
+    }
+} else {
+    $sidebarMenu[] = [
+        'label' => 'Quản lý tiêu chí điểm',
+        'icon' => 'criteria',
+        'children' => [$applyCriteriaChild],
+    ];
+}
+
 if (!function_exists('renderBackendSidebarIcon')) {
     function renderBackendSidebarIcon(string $icon): string
     {

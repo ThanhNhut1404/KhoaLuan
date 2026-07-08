@@ -157,6 +157,7 @@ class PermissionService
             'role_permission' => ['roles'],
             'list_criteria' => ['setup_criteria'],
             'configure_criteria' => ['setup_criteria'],
+            'apply_criteria' => ['setup_criteria'],
         ];
 
         return array_values(array_unique(array_merge([$page], $aliases[$page] ?? [])));
@@ -239,9 +240,8 @@ class PermissionService
                 'label' => 'Quản lý tiêu chí điểm',
                 'icon' => 'criteria',
                 'children' => [
-                    ['page' => 'setup_criteria', 'label' => 'Thiết lập tiêu chí', 'url' => '?page=setup_criteria'],
-                    ['page' => 'list_criteria', 'label' => 'Danh sách tiêu chí', 'url' => '?page=list_criteria'],
-                    ['page' => 'configure_criteria', 'label' => 'Cấu hình thang điểm', 'url' => '?page=configure_criteria'],
+                    ['page' => 'setup_criteria', 'label' => 'Thiết lập bộ tiêu chí', 'url' => '?page=setup_criteria'],
+                    ['page' => 'apply_criteria', 'label' => 'Áp dụng bộ tiêu chí', 'url' => '/KhoaLuan/public/admin.php?page=apply_criteria'],
                 ],
             ],
             [

@@ -136,6 +136,7 @@ function adminRequiredPermissionForPage(string $page): string
         'list_activity' => 'list_activities',
         'list_criteria' => 'setup_criteria',
         'configure_criteria' => 'setup_criteria',
+        'apply_criteria' => 'setup_criteria',
     ];
 
     return $map[$page] ?? $page;
@@ -205,6 +206,10 @@ function adminRequiredPermissionForAction(string $page, array $post, string $met
             'save' => isset($post['id']) && trim((string) ($post['id'] ?? '')) !== '' ? 'edit_criteria' : 'create_criteria',
             default => null,
         },
+        'list_criteria' => match ($action) {
+            'save' => isset($post['id']) && trim((string) ($post['id'] ?? '')) !== '' ? 'edit_criteria' : 'create_criteria',
+            default => null,
+        },
         default => null,
     };
 }
@@ -260,6 +265,23 @@ if (empty($adminRoleIds) && !empty($_SESSION['admin']['MA_VAI_TRO'])) {
 $canAccessPermission = static function (string $permission) use ($authorizationPermissionService, $adminRoleIds, $isAdmin): bool {
     return $isAdmin || $authorizationPermissionService->canAccessAny($adminRoleIds, $permission);
 };
+
+if (in_array($page, ['ajax_semesters_by_academic_year', 'ajax_categories_by_semester'], true)) {
+    $criteriaController = new \KhoaLuan\QLDRL\Controllers\CriteriaController();
+    header('Content-Type: application/json; charset=utf-8');
+
+    if ($page === 'ajax_semesters_by_academic_year') {
+        $academicYearId = (int) ($_GET['MA_NIEN_KHOA'] ?? 0);
+        echo json_encode($criteriaController->getSemestersByAcademicYear($academicYearId), JSON_UNESCAPED_UNICODE);
+        exit;
+    }
+
+    if ($page === 'ajax_categories_by_semester') {
+        $semesterId = (int) ($_GET['MA_HOC_KY'] ?? 0);
+        echo json_encode($criteriaController->getCategoriesBySemester($semesterId), JSON_UNESCAPED_UNICODE);
+        exit;
+    }
+}
 
 if (!$canAccessPermission(adminRequiredPermissionForPage($page))) {
     showAdminForbiddenPage();
@@ -872,7 +894,7 @@ if (in_array($page, ['create_class', 'list_class', 'edit_class'], true)) {
     }
 }
 
-if (in_array($page, ['setup_criteria', 'list_criteria', 'configure_criteria'], true)) {
+if (in_array($page, ['setup_criteria', 'apply_criteria', 'list_criteria', 'configure_criteria'], true)) {
     try {
         $criteriaController = new \KhoaLuan\QLDRL\Controllers\CriteriaController();
         $criteriaState = $criteriaController->handle($page, $_POST, $_GET, $_SERVER['REQUEST_METHOD']);
@@ -887,22 +909,57 @@ if (in_array($page, ['setup_criteria', 'list_criteria', 'configure_criteria'], t
         }
 
         if ($page === 'setup_criteria') {
-            $semesters = $criteriaState['semesters'];
-            $selectedSemesterId = $criteriaState['selectedSemesterId'];
-            $criteria = $criteriaState['criteria'];
+            $academicYears = $criteriaState['academicYears'] ?? [];
+            $semesters = $criteriaState['semesters'] ?? [];
+            $selectedAcademicYearId = $criteriaState['selectedAcademicYearId'] ?? 0;
+            $selectedSemesterId = $criteriaState['selectedSemesterId'] ?? 0;
+            $masterTemplates = $criteriaState['masterTemplates'] ?? [];
+            $appliedTemplate = $criteriaState['appliedTemplate'] ?? null;
+            $selectedTemplateId = $criteriaState['selectedTemplateId'] ?? 0;
+            $categories = $criteriaState['categories'] ?? [];
+            $criteria = $criteriaState['criteria'] ?? [];
+            $criteriaByCategory = $criteriaState['criteriaByCategory'] ?? [];
+            $formData = $criteriaState['formData'] ?? [];
+            $errors = $criteriaState['errors'] ?? [];
+            $formType = $criteriaState['formType'] ?? '';
+            $adminToast = $criteriaState['toast'] ?? null;
+        }
+
+        if ($page === 'apply_criteria') {
+            $academicYears = $criteriaState['academicYears'] ?? [];
+            $semesters = $criteriaState['semesters'] ?? [];
+            $selectedAcademicYearId = $criteriaState['selectedAcademicYearId'] ?? 0;
+            $selectedSemesterId = $criteriaState['selectedSemesterId'] ?? 0;
+            $masterTemplates = $criteriaState['masterTemplates'] ?? [];
+            $selectedTemplateId = $criteriaState['selectedTemplateId'] ?? 0;
+            $appliedTemplate = $criteriaState['appliedTemplate'] ?? null;
+            $semesterRows = $criteriaState['semesterRows'] ?? [];
+            $formData = $criteriaState['formData'] ?? [];
+            $errors = $criteriaState['errors'] ?? [];
+            $formType = $criteriaState['formType'] ?? '';
             $adminToast = $criteriaState['toast'] ?? null;
         }
 
         if ($page === 'list_criteria') {
-            $semesters = $criteriaState['semesters'];
-            $selectedSemesterId = $criteriaState['selectedSemesterId'];
-            $criteria = $criteriaState['criteria'];
-            $filters = $criteriaState['filters'] ?? [];
-            $adminToast = $criteriaState['toast'] ?? null;
+            $academicYears = $criteriaState['academicYears'] ?? [];
+            $semesters = $criteriaState['semesters'] ?? $criteriaState['semesterOptions'] ?? [];
+            $selectedAcademicYearId = $criteriaState['selectedAcademicYearId'] ?? 0;
+            $selectedSemesterId = $criteriaState['selectedSemesterId'] ?? 0;
+            $categories = $criteriaState['categories'] ?? [];
+            $criteria = $criteriaState['criteria'] ?? [];
+            $criteriaByCategory = $criteriaState['criteriaByCategory'] ?? [];
+            $formData = $criteriaState['formData'] ?? [];
+            $errors = $criteriaState['errors'] ?? [];
+            $formType = $criteriaState['formType'] ?? '';
+            $toast = $criteriaState['toast'] ?? null;
+            $adminToast = $toast;
         }
 
         if ($page === 'configure_criteria') {
             $semesters = $criteriaState['semesters'];
+            $academicYears = $criteriaState['academicYears'] ?? [];
+            $hoc_ky_list = $criteriaState['hoc_ky_list'] ?? $criteriaState['semesters'];
+            $selectedAcademicYearId = $criteriaState['selectedAcademicYearId'] ?? 0;
             $selectedSemesterId = $criteriaState['selectedSemesterId'];
             $statusOptions = $criteriaState['statusOptions'];
             $formData = $criteriaState['formData'];
@@ -938,6 +995,18 @@ if (empty($adminToast) && !empty($_SESSION['message'])) {
 unset($_SESSION['message'], $_SESSION['message_type']);
 
 $content = $viewPath . $page . '.php';
+
+// Provide activity-selectable criteria to activity pages
+if (in_array($page, ['create_activity', 'edit_activity'], true)) {
+    $semesterId = (int) ($_GET['semester_id'] ?? $_GET['MA_HOC_KY'] ?? $_GET['MA_NIEN_KHOA'] ?? 0);
+    $semesterModel = new \KhoaLuan\QLDRL\Models\SemesterModel(\KhoaLuan\QLDRL\Config\Database::getConnection());
+    if ($semesterId <= 0) {
+        $activeSemesters = $semesterModel->getActiveSemesters();
+        $semesterId = !empty($activeSemesters) ? (int) ($activeSemesters[0]['MA_HOC_KY'] ?? $activeSemesters[0]['id'] ?? 0) : 0;
+    }
+    $criteriaModel = new \KhoaLuan\QLDRL\Models\CriteriaModel(\KhoaLuan\QLDRL\Config\Database::getConnection());
+    $activity_selectable_criteria = $criteriaModel->getActivitySelectableCriteriaBySemester($semesterId);
+}
 
 if (!file_exists($content)) {
     $content = $viewPath . 'dashboard.php';

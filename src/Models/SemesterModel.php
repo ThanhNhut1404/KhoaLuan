@@ -225,6 +225,57 @@ class SemesterModel
         return $stmt->fetchAll();
     }
 
+    public function getActiveSemesters(): array
+    {
+        $stmt = $this->db->query(
+            'SELECT MA_HOC_KY, TEN_HOC_KY
+             FROM hoc_ky
+             WHERE TRANG_THAI_HK IN (\'Sắp diễn ra\', \'Đang diễn ra\')
+             ORDER BY MA_HOC_KY DESC'
+        );
+        return $stmt->fetchAll(PDO::FETCH_ASSOC) ?: [];
+    }
+
+    public function getActiveSemestersByAcademicYear(int $academicYearId): array
+    {
+        $stmt = $this->db->prepare(
+            'SELECT MA_HOC_KY, TEN_HOC_KY
+             FROM hoc_ky
+             WHERE MA_NIEN_KHOA = :year_id
+             AND TRANG_THAI_HK IN (\'Sắp diễn ra\', \'Đang diễn ra\')
+             ORDER BY MA_HOC_KY DESC'
+        );
+        $stmt->execute(['year_id' => $academicYearId]);
+        return $stmt->fetchAll(PDO::FETCH_ASSOC) ?: [];
+    }
+
+    public function getSemestersByAcademicYear(int $academicYearId): array
+    {
+        $stmt = $this->db->prepare(
+            'SELECT
+                MA_HOC_KY,
+                MA_NIEN_KHOA,
+                TEN_HOC_KY,
+                THOI_GIAN_BDHK,
+                THOI_GIAN_KTHK,
+                TRANG_THAI_HK
+             FROM hoc_ky
+             WHERE MA_NIEN_KHOA = :academic_year_id
+             ORDER BY THOI_GIAN_BDHK ASC, MA_HOC_KY ASC'
+        );
+
+        $stmt->execute(['academic_year_id' => $academicYearId]);
+
+        return $stmt->fetchAll(PDO::FETCH_ASSOC) ?: [];
+    }
+
+    public function getAcademicYearIdBySemester(int $semesterId): int
+    {
+        $stmt = $this->db->prepare('SELECT MA_NIEN_KHOA FROM hoc_ky WHERE MA_HOC_KY = :id LIMIT 1');
+        $stmt->execute(['id' => $semesterId]);
+        return (int) $stmt->fetchColumn();
+    }
+
     public function getStatusOptions(): array
     {
         return [
