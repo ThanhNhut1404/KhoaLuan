@@ -5,6 +5,7 @@ $error = $error ?? '';
 $success = $success ?? '';
 $username = $username ?? '';
 $redirectToStudent = $redirectToStudent ?? false;
+$loginToast = $loginToast ?? null;
 ?>
 
 <!DOCTYPE html>
@@ -17,19 +18,44 @@ $redirectToStudent = $redirectToStudent ?? false;
 <style>
     @import url('https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap');
 
-    :root{ --brand:#1d4ed8; --brand-2:#0ea5e9; --muted:#6b7280; --ink:#0f172a; }
+    :root{
+        --primary: #1f6feb;
+        --primary-rgb: 31, 111, 235;
+        --primary-soft: #eaf3ff;
+        --brand: var(--primary);
+        --brand-2: #18a7e8;
+        --brand-deep: #1649b8;
+        --muted: #64748b;
+        --ink: #0f172a;
+        --line: #dbeafe;
+        --success: #22c55e;
+    }
+
     * { box-sizing: border-box; }
 
-    body { margin: 0; font-family: 'Manrope', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; color: var(--ink); }
+    html, body { min-height: 100%; }
+
+    body {
+        margin: 0;
+        font-family: 'Manrope', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        color: var(--ink);
+        background: #f7fbff;
+    }
+
+    button,
+    input {
+        font: inherit;
+    }
 
     .login-wrapper {
         min-height: 100vh;
-        display:flex;
-        flex-direction:column;
+        display: flex;
+        flex-direction: column;
         background:
-            radial-gradient(600px 260px at 8% 12%, rgba(14, 165, 233, 0.18), transparent 70%),
-            radial-gradient(520px 240px at 88% 10%, rgba(29, 78, 216, 0.18), transparent 72%),
-            linear-gradient(180deg,#f8fbff 0%, #ffffff 60%, #f2f6ff 100%);
+            radial-gradient(560px 280px at 6% 10%, rgba(24, 167, 232, 0.20), transparent 70%),
+            radial-gradient(520px 270px at 94% 8%, rgba(var(--primary-rgb), 0.18), transparent 72%),
+            radial-gradient(520px 280px at 78% 92%, rgba(34, 197, 94, 0.10), transparent 70%),
+            linear-gradient(135deg, #f7fbff 0%, #ffffff 48%, #edf6ff 100%);
         position: relative;
         overflow: hidden;
     }
@@ -38,25 +64,37 @@ $redirectToStudent = $redirectToStudent ?? false;
     .login-wrapper::after {
         content: "";
         position: absolute;
-        width: 280px;
-        height: 280px;
-        border-radius: 40% 60% 58% 42% / 50% 42% 58% 50%;
-        background: rgba(29, 78, 216, 0.08);
-        filter: blur(1px);
+        border-radius: 999px;
+        background: rgba(var(--primary-rgb), 0.08);
+        filter: blur(2px);
         animation: drift 12s ease-in-out infinite;
+        pointer-events: none;
     }
 
-    .login-wrapper::before { left: -120px; bottom: -120px; }
-    .login-wrapper::after { right: -140px; top: -120px; animation-delay: -3s; }
+    .login-wrapper::before {
+        width: 320px;
+        height: 320px;
+        left: -150px;
+        bottom: -130px;
+    }
+
+    .login-wrapper::after {
+        width: 270px;
+        height: 270px;
+        right: -120px;
+        top: -100px;
+        animation-delay: -3s;
+    }
 
     .login-header {
-        background: rgba(255, 255, 255, 0.78);
-        border-bottom:1px solid #eef2ff;
-        padding:0 28px;
-        height: 56px;
-        display:flex;
-        align-items:center;
-        justify-content:space-between;
+        background: rgba(255, 255, 255, 0.82);
+        border-bottom: 1px solid rgba(219, 234, 254, 0.9);
+        box-shadow: 0 10px 30px rgba(15, 23, 42, 0.06);
+        padding: 0 clamp(18px, 4vw, 48px);
+        height: 64px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
         gap: 16px;
         backdrop-filter: blur(10px);
         position: sticky;
@@ -72,7 +110,7 @@ $redirectToStudent = $redirectToStudent ?? false;
     }
 
     .header-logo {
-        height: 40px;
+        height: 48px;
         width: auto;
         display: block;
     }
@@ -87,74 +125,161 @@ $redirectToStudent = $redirectToStudent ?? false;
 
     .header-sub { font-size:12px; color:var(--muted); }
     .header-meta { display:none; }
-    .header-links { display:flex; align-items:center; gap:14px; font-size:13px; color:var(--muted); }
-    .header-link { color:var(--muted); text-decoration:none; font-weight:700; }
-    .header-link:hover { color:var(--brand); }
+
+    .header-links {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        font-size: 14px;
+        color: var(--muted);
+    }
+
+    .header-link {
+        color: #334155;
+        text-decoration: none;
+        font-weight: 800;
+        padding: 8px 12px;
+        border-radius: 999px;
+        display: inline-flex;
+        align-items: center;
+        gap: 7px;
+        transition: color 0.2s ease, background 0.2s ease;
+    }
+
+    .header-link:hover {
+        color: var(--brand);
+        background: rgba(var(--primary-rgb), 0.08);
+    }
+
+    .header-link svg {
+        width: 17px;
+        height: 17px;
+        stroke: currentColor;
+        fill: none;
+        flex: 0 0 17px;
+    }
 
     .login-page {
-        flex:1;
-        display:grid;
-        grid-template-columns: minmax(280px, 1.15fr) minmax(320px, 0.85fr);
-        gap:48px;
-        align-items:center;
-        justify-content:center;
-        max-width:1200px;
-        margin:0 auto;
-        padding:40px 24px;
-        width:100%;
+        flex: 1;
+        display: grid;
+        grid-template-columns: minmax(520px, 1.35fr) minmax(340px, 0.75fr);
+        gap: clamp(28px, 4vw, 56px);
+        align-items: center;
+        justify-content: center;
+        max-width: 1320px;
+        margin: 0 auto;
+        padding: clamp(28px, 5vw, 54px) 24px;
+        width: 100%;
+        position: relative;
+        z-index: 1;
     }
 
     .login-left {
-        padding:48px 52px;
-        border-radius:18px;
-        background: linear-gradient(135deg, #f1f7ff 0%, #ffffff 65%);
-        min-height:550px;
-        display:flex;
-        flex-direction:column;
-        justify-content:center;
-        gap:24px;
-        position:relative;
-        overflow:hidden;
-        box-shadow: inset 0 1px 0 #ffffff, 0 18px 36px rgba(2,6,23,0.06);
+        padding: clamp(34px, 5vw, 56px);
+        border-radius: 28px;
+        background:
+            radial-gradient(280px 190px at 92% 12%, rgba(var(--primary-rgb), 0.12), transparent 74%),
+            linear-gradient(135deg, rgba(236, 247, 255, 0.96) 0%, rgba(255, 255, 255, 0.96) 68%);
+        min-height: 560px;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        gap: 22px;
+        position: relative;
+        overflow: hidden;
+        border: 1px solid rgba(219, 234, 254, 0.92);
+        box-shadow: inset 0 1px 0 #ffffff, 0 24px 48px rgba(15, 78, 150, 0.08);
     }
 
     .login-left::after {
-        content:"";
-        position:absolute;
-        right:-80px;
-        top:-80px;
-        width:220px;
-        height:220px;
-        background: radial-gradient(circle at center, #dbeafe 0%, transparent 70%);
-        opacity:0.8;
+        content: "";
+        position: absolute;
+        right: -72px;
+        top: -86px;
+        width: 230px;
+        height: 230px;
+        border-radius: 999px;
+        background: rgba(191, 219, 254, 0.56);
+        opacity: 0.9;
     }
 
     .welcome-title {
-        font-size:52px;
+        font-size: clamp(42px, 5vw, 60px);
         color: var(--ink);
-        margin:0;
-        letter-spacing:1.6px;
+        margin: 0;
+        letter-spacing: 1px;
         text-transform: uppercase;
         line-height: 1.15;
+        font-weight: 800;
+        position: relative;
+        z-index: 1;
     }
 
-    .welcome-sub { color:var(--muted); font-size:16.5px; max-width:46ch; line-height:1.7; }
-    .welcome-list { display:grid; gap:10px; margin:0; padding:0; list-style:none; color:#334155; font-size:15.5px; }
-    .welcome-list li { display:flex; gap:10px; align-items:center; }
-    .welcome-dot { width:10px; height:10px; border-radius:50%; background:linear-gradient(135deg,var(--brand),var(--brand-2)); }
+    .welcome-title span {
+        display: block;
+    }
 
-    .illustration { width:100%; max-width:440px; margin-top:12px; animation: floaty 6s ease-in-out infinite; }
+    .welcome-title .accent {
+        color: var(--brand);
+    }
+
+    .welcome-sub {
+        color: var(--muted);
+        font-size: 16px;
+        max-width: 48ch;
+        line-height: 1.72;
+        margin: 0;
+        position: relative;
+        z-index: 1;
+    }
+
+    .welcome-list {
+        display: grid;
+        gap: 12px;
+        margin: 0;
+        padding: 0;
+        list-style: none;
+        color: #334155;
+        font-size: 15.5px;
+        position: relative;
+        z-index: 1;
+    }
+
+    .welcome-list li {
+        display: flex;
+        gap: 11px;
+        align-items: center;
+        min-width: 0;
+    }
+
+    .welcome-dot {
+        width: 10px;
+        height: 10px;
+        flex: 0 0 10px;
+        border-radius: 50%;
+        background: linear-gradient(135deg,var(--brand),var(--brand-2));
+        box-shadow: 0 0 0 5px rgba(var(--primary-rgb), 0.09);
+    }
+
+    .illustration {
+        width: 100%;
+        max-width: 460px;
+        margin-top: 8px;
+        animation: floaty 6s ease-in-out infinite;
+        position: relative;
+        z-index: 1;
+    }
 
     .login-card {
-        background:#fff;
-        border-radius:18px;
-        padding:34px 28px;
-        min-height:550px;
-        max-width:400px;
-        width:100%;
-        margin:0;
-        box-shadow:0 24px 54px rgba(13,38,76,0.14);
-        border:1px solid #eef2ff;
+        background: rgba(255, 255, 255, 0.98);
+        border-radius: 22px;
+        padding: 34px 30px;
+        min-height: 560px;
+        max-width: 420px;
+        width: 100%;
+        margin: 0 0 0 auto;
+        box-shadow: 0 26px 58px rgba(15, 78, 150, 0.15);
+        border: 1px solid rgba(219, 234, 254, 0.96);
         animation: rise 420ms ease-out;
         display: flex;
         flex-direction: column;
@@ -162,43 +287,124 @@ $redirectToStudent = $redirectToStudent ?? false;
     }
 
     .login-card h3 {
-        margin:0 0 16px 0;
-        color:var(--brand);
-        text-align:center;
-        text-transform:uppercase;
-        letter-spacing:1px;
-        font-size:22px;
+        margin: 0 0 22px 0;
+        color: var(--brand);
+        text-align: center;
+        text-transform: uppercase;
+        letter-spacing: 0.8px;
+        font-size: 22px;
+        line-height: 1.25;
+        position: relative;
+        font-weight: 800;
+    }
+
+    .login-card h3::after {
+        content: "";
+        position: absolute;
+        left: 50%;
+        bottom: -11px;
+        width: 58px;
+        height: 4px;
+        border-radius: 999px;
+        background: linear-gradient(90deg, var(--brand), var(--brand-2));
+        transform: translateX(-50%);
     }
 
     .login-logo {
         display: block;
-        height: 66px;
+        height: 78px;
         width: auto;
-        margin: -8px auto 16px;
+        margin: -8px auto 18px;
     }
 
     .card-sub { font-size:13px; color:var(--muted); margin-bottom:16px; text-align:center; }
-    .form-row { margin-bottom:14px; }
-    .form-label { display:block; font-size:13px; color:var(--ink); margin-bottom:6px; font-weight:600; }
-    .form-control { width:100%; padding:12px 14px; border-radius:12px; border:1px solid #e6eef8; font-size:14px; background:#fbfdff; transition: border-color 0.2s ease, box-shadow 0.2s ease; }
-    .form-control:focus { outline:none; border-color:#bfdbfe; box-shadow:0 0 0 4px rgba(29,78,216,0.12); }
-    .form-actions { display:flex; flex-direction:column; gap:8px; margin-top:18px; }
-    .btn-login { background:linear-gradient(135deg,#16a34a,#22c55e); color:#fff; padding:12px 18px; border-radius:12px; border:none; cursor:pointer; font-weight:800; letter-spacing:0.2px; box-shadow:0 10px 24px rgba(34,197,94,0.25); transition: transform 0.15s ease, box-shadow 0.15s ease; width:100%; }
-    .btn-login:hover { filter: brightness(0.95); }
+    .form-row { margin-bottom: 15px; }
+
+    .form-label {
+        display: block;
+        font-size: 13px;
+        color: var(--ink);
+        margin-bottom: 7px;
+        font-weight: 700;
+    }
+
+    .form-control {
+        width: 100%;
+        min-height: 46px;
+        padding: 12px 14px;
+        border-radius: 13px;
+        border: 1px solid #cfe2ff;
+        font-size: 14px;
+        background: #fbfdff;
+        color: var(--ink);
+        transition: border-color 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
+    }
+
+    .form-control::placeholder {
+        color: #94a3b8;
+    }
+
+    .form-control:focus {
+        outline: none;
+        border-color: #93c5fd;
+        background: #ffffff;
+        box-shadow: 0 0 0 4px rgba(var(--primary-rgb), 0.13);
+    }
+
+    .form-actions {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        margin-top: 18px;
+    }
+
+    .btn-login {
+        background: linear-gradient(135deg, #16a34a, var(--success));
+        color: #fff;
+        min-height: 44px;
+        padding: 10px 18px;
+        border-radius: 12px;
+        border: none;
+        cursor: pointer;
+        font-weight: 800;
+        letter-spacing: 0.2px;
+        box-shadow: 0 12px 25px rgba(34,197,94,0.26);
+        transition: transform 0.15s ease, box-shadow 0.15s ease, filter 0.15s ease;
+        width: 100%;
+    }
+
+    .btn-login:hover {
+        filter: brightness(0.93);
+    }
+
     .pwd-wrap { position: relative; }
+
+    .pwd-wrap .form-control {
+        padding-right: 48px;
+    }
+
     .toggle-btn {
         position: absolute;
-        right: 8px;
+        right: 9px;
         top: 50%;
         transform: translateY(-50%);
         border: none;
         background: transparent;
         color: var(--muted);
         cursor: pointer;
-        padding: 4px;
+        padding: 0;
+        width: 34px;
+        height: 34px;
+        border-radius: 10px;
         display: inline-flex;
         align-items: center;
         justify-content: center;
+        transition: color 0.2s ease, background 0.2s ease;
+    }
+
+    .toggle-btn:hover {
+        color: var(--brand);
+        background: rgba(var(--primary-rgb), 0.08);
     }
 
     .toggle-btn svg {
@@ -211,39 +417,75 @@ $redirectToStudent = $redirectToStudent ?? false;
     .toggle-btn .eye-off { display: none; }
     .toggle-btn.is-visible .eye-on { display: none; }
     .toggle-btn.is-visible .eye-off { display: block; }
-    .helper-row { display:flex; gap:10px; align-items:center; justify-content: space-between; font-size:13px; color:var(--muted); margin-top:8px; }
-    .captcha-row { display:flex; gap:10px; align-items:center; margin-top:10px; }
-    .captcha-input { flex: 0 0 140px; }
+
+    .helper-row {
+        display: flex;
+        gap: 12px;
+        align-items: center;
+        justify-content: space-between;
+        font-size: 13px;
+        color: var(--muted);
+        margin-top: 4px;
+    }
+
+    .helper-row label {
+        min-width: 0;
+        white-space: nowrap;
+    }
+
+    .forgot-link {
+        white-space: nowrap;
+    }
+
+    .captcha-row {
+        display: flex;
+        align-items: center;
+        margin-top: 10px;
+    }
+
+    .captcha-input {
+        flex: 1 1 132px;
+        min-width: 108px;
+        margin-right: 10px;
+    }
+
     .captcha-refresh {
-        width:40px;
-        height:40px;
-        border-radius:10px;
-        border:1px solid #e6eef8;
-        background:#ffffff;
-        color:var(--brand);
-        cursor:pointer;
-        display:inline-flex;
-        align-items:center;
-        justify-content:center;
+        width: auto;
+        min-width: 34px;
+        height: 46px;
+        flex: 0 0 auto;
+        border-radius: 12px;
+        border: none;
+        background: transparent;
+        color: var(--brand);
+        cursor: pointer;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        margin-right: 0;
+        padding: 0 5px;
         transition: 0.2s ease;
     }
-    .captcha-refresh:hover { background:#eef2ff; }
-    .captcha-refresh svg { width:18px; height:18px; stroke: currentColor; fill: none; }
+
+    .captcha-refresh:hover { background: rgba(var(--primary-rgb), 0.08); }
+    .captcha-refresh svg { width:22px; height:22px; stroke: currentColor; fill: none; }
+
     .captcha-image {
-        height:40px;
-        min-width:150px;
-        border-radius:10px;
-        border:1px dashed #cbd5f5;
-        background:#f8faff;
-        color:var(--muted);
-        font-size:12px;
-        font-weight:600;
-        display:flex;
-        align-items:center;
-        justify-content:center;
-        letter-spacing:1px;
-        user-select:none;
+        height: 46px;
+        min-width: 128px;
+        flex: 1 0 128px;
+        border-radius: 12px;
+        border: 1px dashed #9fc5ff;
+        background: #f3f8ff;
+        color: var(--muted);
+        font-size: 12px;
+        font-weight: 800;
+        display: block;
+        object-fit: cover;
+        letter-spacing: 1px;
+        user-select: none;
     }
+
     .modal-overlay {
         position: fixed;
         inset: 0;
@@ -274,7 +516,7 @@ $redirectToStudent = $redirectToStudent ?? false;
         align-items: center;
         justify-content: space-between;
         padding: 14px 16px;
-        border-bottom: 1px solid #eef2ff;
+        border-bottom: 1px solid var(--primary-soft);
         background: #f8faff;
     }
 
@@ -288,17 +530,21 @@ $redirectToStudent = $redirectToStudent ?? false;
         border: none;
         background: transparent;
         color: var(--brand);
-        font-size: 18px;
+        font-size: 31px;
+        line-height: 1;
         cursor: pointer;
-        width: 32px;
-        height: 32px;
+        width: 34px;
+        height: 34px;
         border-radius: 8px;
         display: inline-flex;
         align-items: center;
         justify-content: center;
     }
 
-    .modal-close:hover { background: #eef2ff; }
+    .modal-close:hover {
+        color: var(--brand);
+        background: #eef4ff;
+    }
 
     .modal-body {
         padding: 16px;
@@ -326,7 +572,7 @@ $redirectToStudent = $redirectToStudent ?? false;
         color: #ffffff;
         background: linear-gradient(135deg, var(--brand), #0b63c9);
         cursor: pointer;
-        box-shadow: 0 10px 24px rgba(29, 78, 216, 0.25);
+        box-shadow: 0 10px 24px rgba(var(--primary-rgb), 0.25);
     }
 
     .modal-btn:hover { filter: brightness(0.96); }
@@ -334,10 +580,39 @@ $redirectToStudent = $redirectToStudent ?? false;
         font-size: 13px;
         font-weight: 800;
         text-align: center;
-        margin-bottom: 2px;
+        min-height: 18px;
+        margin-bottom: 0;
     }
+
     .login-message.error { color:#b91c1c; }
     .login-message.success { color:#15803d; }
+
+    .login-toast {
+        position: fixed;
+        top: 18px;
+        right: 18px;
+        z-index: 2000;
+        max-width: min(360px, calc(100vw - 36px));
+        padding: 12px 16px;
+        border-radius: 12px;
+        background: #ffffff;
+        border: 1px solid #bbf7d0;
+        color: #166534;
+        box-shadow: 0 18px 45px rgba(15, 23, 42, 0.18);
+        font-size: 13px;
+        font-weight: 800;
+        transition: opacity 180ms ease, transform 180ms ease;
+    }
+
+    .login-toast.error {
+        border-color: #fecaca;
+        color: #b91c1c;
+    }
+
+    .login-toast.is-hiding {
+        opacity: 0;
+        transform: translateY(-8px);
+    }
 
     @keyframes floaty { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-6px); } }
     @keyframes rise { from { transform: translateY(8px); opacity:0; } to { transform: translateY(0); opacity:1; } }
@@ -345,18 +620,97 @@ $redirectToStudent = $redirectToStudent ?? false;
     @keyframes modalIn { from { transform: translateY(8px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
 
     @media (max-width: 980px) {
-        .login-page { grid-template-columns: 1fr; padding:28px; }
-        .login-left { order:1; }
-        .login-card { order:2; margin: 0 auto; }
+        .login-page {
+            grid-template-columns: 1fr;
+            padding: 28px;
+            max-width: 760px;
+        }
+
+        .login-card {
+            order: 1;
+            margin: 0 auto;
+            max-width: 480px;
+            min-height: auto;
+        }
+
+        .login-left {
+            order: 2;
+            min-height: auto;
+        }
     }
+
+    @media (max-width: 640px) {
+        .login-left {
+            display: none;
+        }
+
+        .header-logo {
+            height: 44px;
+        }
+
+        .header-links {
+            gap: 4px;
+            font-size: 13px;
+        }
+
+        .header-link {
+            padding: 7px 8px;
+        }
+    }
+
     @media (max-width:480px) {
-        .login-header { padding:0 14px; height: 58px; }
-        .login-page { padding:18px; gap:18px; }
-        .welcome-title { font-size:36px; }
+        .login-header {
+            padding: 0 14px;
+            height: 62px;
+        }
+
+        .login-page {
+            padding: 18px 14px 24px;
+            gap: 18px;
+            align-items: start;
+        }
+
+        .login-card {
+            padding: 28px 18px;
+            border-radius: 20px;
+            width: 100%;
+        }
+
+        .login-logo {
+            height: 68px;
+        }
+
+        .login-card h3 {
+            font-size: 19px;
+        }
+
+        .helper-row {
+            align-items: flex-start;
+            gap: 8px;
+            font-size: 12.5px;
+        }
+
+        .captcha-row {
+            flex-wrap: wrap;
+        }
+
+        .captcha-input {
+            flex: 1 1 calc(100% - 56px);
+        }
+
+        .captcha-image {
+            flex: 1 1 100%;
+            width: 100%;
+        }
     }
 </style>
 </head>
 <body>
+<?php if (!empty($loginToast)): ?>
+    <div class="login-toast <?= ($loginToast['type'] ?? '') === 'error' ? 'error' : 'success' ?>" role="status" aria-live="polite">
+        <?= htmlspecialchars($loginToast['message'] ?? '', ENT_QUOTES, 'UTF-8') ?>
+    </div>
+<?php endif; ?>
 
 <div class="login-wrapper container-fluid">
     <header class="login-header navbar">
@@ -366,14 +720,27 @@ $redirectToStudent = $redirectToStudent ?? false;
             </a>
         </div>
         <div class="header-links navbar-nav">
-            <a href="#" class="header-link nav-link">Hướng dẫn</a>
-            <a href="#" class="header-link nav-link">Hỗ trợ</a>
+            <a href="#" class="header-link nav-link">
+                <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                    <path d="M4 19.5V5.8A2.8 2.8 0 0 1 6.8 3H20v16H6.8A2.8 2.8 0 0 0 4 21.8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    <path d="M8 7h8M8 11h6" stroke-width="2" stroke-linecap="round"/>
+                </svg>
+                <span>Hướng dẫn</span>
+            </a>
+            <a href="#" class="header-link nav-link">
+                <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                    <path d="M12 18h.01" stroke-width="2.4" stroke-linecap="round"/>
+                    <path d="M9.2 9a3 3 0 1 1 5.2 2c-.8.7-1.5 1.2-1.9 1.9-.3.5-.5 1-.5 1.6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    <circle cx="12" cy="12" r="9" stroke-width="2"/>
+                </svg>
+                <span>Hỗ trợ</span>
+            </a>
         </div>
     </header>
 
     <main class="login-page">
         <section class="login-left">
-            <h1 class="welcome-title">Chào mừng<br/>trở lại!</h1>
+            <h1 class="welcome-title"><span>Chào mừng</span><span class="accent">trở lại!</span></h1>
             <p class="welcome-sub">Đăng nhập để truy cập điểm rèn luyện, hồ sơ học tập và thông báo mới nhất. Hệ thống bảo mật nhiều lớp để bảo vệ tài khoản của bạn.</p>
             <ul class="welcome-list">
                 <li><span class="welcome-dot"></span>Tra cứu điểm rèn luyện nhanh chóng</li>
@@ -388,7 +755,7 @@ $redirectToStudent = $redirectToStudent ?? false;
                         <stop offset="1" stop-color="#eef6ff" />
                     </linearGradient>
                     <linearGradient id="g2" x1="0" y1="0" x2="1" y2="1">
-                        <stop offset="0" stop-color="#1d4ed8" />
+                        <stop offset="0" stop-color="var(--primary)" />
                         <stop offset="1" stop-color="#0ea5e9" />
                     </linearGradient>
                 </defs>
@@ -409,7 +776,7 @@ $redirectToStudent = $redirectToStudent ?? false;
             <form method="post" action="/KhoaLuan/public/student.php?action=login">
                 <div class="form-row">
                     <label class="form-label" for="mssv">Mã số sinh viên</label>
-                    <input id="mssv" name="mssv" class="form-control" type="text" value="<?= htmlspecialchars($username, ENT_QUOTES, 'UTF-8') ?>" placeholder="Nhập MSSV" required autofocus />
+                    <input id="mssv" name="mssv" class="form-control" type="text" value="<?= htmlspecialchars($username, ENT_QUOTES, 'UTF-8') ?>" placeholder="Nhập MSSV của bạn" required autofocus />
                 </div>
 
                 <div class="form-row">
@@ -433,27 +800,27 @@ $redirectToStudent = $redirectToStudent ?? false;
 
                 <div class="form-row helper-row">
                     <label style="display:flex; align-items:center; gap:8px;"><input type="checkbox" name="remember" class="form-check-input" /> Ghi nhớ đăng nhập</label>
-                    <button type="button" class="forgot-link btn btn-link" onclick="openForgotModal()" style="color:var(--brand); text-decoration:none; font-weight:600; background:none; border:none; padding:0; cursor:pointer;">Quên mật khẩu?</button>
+                    <a href="/KhoaLuan/public/student.php?page=forgot_password" class="forgot-link btn btn-link" style="color:var(--brand); text-decoration:none; font-weight:600; background:none; border:none; padding:0; cursor:pointer;">Quên mật khẩu?</a>
                 </div>
 
                 <div class="form-row">
-                    <label class="form-label" for="captchaInput">Nhập mã</label>
+                    <label class="form-label" for="captcha">Nhập mã xác thực</label>
                     <div class="captcha-row">
-                        <input id="captchaInput" class="form-control captcha-input" type="text" placeholder="Nhập mã" aria-label="Nhập mã xác thực" />
-                        <button class="captcha-refresh btn btn-light" type="button" aria-label="Tải lại mã">
+                        <input id="captcha" name="captcha" class="form-control captcha-input" type="text" placeholder="Nhập mã" aria-label="Nhập mã xác thực" autocomplete="off" />
+                        <button id="refreshCaptcha" class="captcha-refresh btn btn-light" type="button" aria-label="Tải lại mã">
                             <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                                 <path d="M20 12a8 8 0 1 1-2.34-5.66" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
                                 <path d="M20 4v6h-6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
                             </svg>
                         </button>
-                        <div class="captcha-image" aria-label="Mã xác thực">CAPTCHA</div>
+                        <img id="captchaImage" class="captcha-image" src="/KhoaLuan/public/student.php?action=captcha" alt="Mã xác thực" />
                     </div>
                 </div>
 
                 <div class="form-actions">
-                    <?php if (!empty($success)): ?>
+                    <?php if (!empty($success) && empty($loginToast)): ?>
                         <div class="login-message success"><?= htmlspecialchars($success) ?></div>
-                    <?php elseif (!empty($error)): ?>
+                    <?php elseif (!empty($error) && empty($loginToast)): ?>
                         <div class="login-message error"><?= htmlspecialchars($error) ?></div>
                     <?php endif; ?>
                     <button class="btn-login btn btn-success" type="submit">Đăng nhập</button>
@@ -463,8 +830,6 @@ $redirectToStudent = $redirectToStudent ?? false;
         </aside>
     </main>
 </div>
-
-<?php include __DIR__ . '/forgot_password.php'; ?>
 
 <script>
     (function(){
@@ -479,29 +844,26 @@ $redirectToStudent = $redirectToStudent ?? false;
         });
     })();
 
-    function openForgotModal() {
-        var modal = document.getElementById('forgotModal');
-        if (!modal) return;
-        modal.classList.add('active');
-        modal.setAttribute('aria-hidden', 'false');
-        var emailInput = document.getElementById('forgotEmail');
-        if (emailInput) emailInput.focus();
-    }
+    window.setTimeout(function() {
+        document.querySelectorAll('.login-toast').forEach(function(toast) {
+            toast.classList.add('is-hiding');
+            window.setTimeout(function() { toast.remove(); }, 220);
+        });
+    }, 1800);
 
-    function closeForgotModal() {
-        var modal = document.getElementById('forgotModal');
-        if (!modal) return;
-        modal.classList.remove('active');
-        modal.setAttribute('aria-hidden', 'true');
-    }
-
-    document.addEventListener('click', function(event) {
-        var modal = document.getElementById('forgotModal');
-        if (!modal) return;
-        if (event.target === modal) {
-            closeForgotModal();
-        }
-    });
+    (function(){
+        var btn = document.getElementById('refreshCaptcha');
+        var img = document.getElementById('captchaImage');
+        var input = document.getElementById('captcha');
+        if (!btn || !img) return;
+        btn.addEventListener('click', function(){
+            img.src = '/KhoaLuan/public/student.php?action=captcha&t=' + Date.now();
+            if (input) {
+                input.value = '';
+                input.focus();
+            }
+        });
+    })();
 
     <?php if ($redirectToStudent): ?>
     window.setTimeout(function() {

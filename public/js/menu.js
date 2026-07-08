@@ -1,10 +1,17 @@
-// Expose toggleMenu immediately so hamburger can call it anytime
-window.toggleMenu = function() {
-    ['sidebar','menu'].forEach(function(id){
-        var el = document.getElementById(id);
-        if (el) el.classList.toggle('active');
-    });
-};
+// Expose a fallback only when the layout has not already registered toggleMenu.
+if (typeof window.toggleMenu !== 'function') {
+    window.toggleMenu = function() {
+        var sidebar = document.getElementById('sidebar');
+        if (!sidebar) return;
+
+        if (typeof window.setSidebarState === 'function') {
+            window.setSidebarState(!sidebar.classList.contains('active'));
+            return;
+        }
+
+        sidebar.classList.toggle('active');
+    };
+}
 
 document.addEventListener('DOMContentLoaded', function() {
     // Accordion behavior for sidebar: only one submenu open at a time
@@ -34,7 +41,6 @@ document.addEventListener('DOMContentLoaded', function() {
 // Open parent items that contain an active link
     menu.querySelectorAll('li.has-submenu').forEach(function(item){
         var activeLink = item.querySelector('a.active');
-        console.log(item.querySelector('span').textContent, '| active link found:', activeLink ? activeLink.textContent.trim() : 'none');
         if (activeLink) item.classList.add('open');
     });
 });

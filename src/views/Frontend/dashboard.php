@@ -8,9 +8,10 @@
 
 <style>
     .portal-grid {
+        --dashboard-grid-gap: 16px;
         display: grid;
         grid-template-columns: 1fr;
-        gap: 20px;
+        gap: var(--dashboard-grid-gap);
         align-items: start;
     }
 
@@ -22,7 +23,7 @@
         min-width: 0;
         display: grid;
         grid-template-columns: 1fr;
-        gap: 20px;
+        gap: var(--dashboard-grid-gap);
     }
 
     .portal-grid,
@@ -39,8 +40,8 @@
     .dashboard-top {
         display: grid;
         grid-template-columns: 1fr;
-        gap: 20px;
-        margin-bottom: 16px;
+        gap: var(--dashboard-grid-gap);
+        margin-bottom: 0;
     }
 
     .dashboard-top .student-profile {
@@ -53,8 +54,8 @@
 
     @media (min-width: 992px) {
         .portal-grid {
-            grid-template-columns: minmax(0, 1fr) 560px;
-            gap: 12px;
+            grid-template-columns: minmax(0, 1.55fr) minmax(360px, 0.95fr);
+            gap: var(--dashboard-grid-gap);
         }
 
         .dashboard-top {
@@ -71,7 +72,7 @@
     }
 
     .portal-full--stats {
-        margin-top: -14px;
+        margin-top: 0;
     }
 
     .portal-grid .card {
@@ -106,7 +107,7 @@
         align-items: center;
         gap: 10px;
         font-weight: 700;
-        color: #1d4ed8;
+        color: var(--primary);
         font-size: 14px;
         letter-spacing: 0.2px;
         margin: 0;
@@ -115,7 +116,7 @@
     .portal-grid .card-title svg {
         width: 16px;
         height: 16px;
-        color: #00a8e8;
+        color: var(--secondary);
         stroke: currentColor;
     }
 
@@ -144,7 +145,7 @@
 
     .news-item:hover {
         border-color: #dce1eb;
-        box-shadow: 0 4px 12px rgba(29, 78, 216, 0.08);
+        box-shadow: 0 4px 12px rgba(var(--primary-rgb), 0.08);
         transform: translateY(-1px);
     }
 
@@ -161,16 +162,17 @@
 
     @media (min-width: 768px) {
         .student-profile-grid {
-            grid-template-columns: 120px 1fr;
+            grid-template-columns: 126px 1fr;
             gap: 18px;
         }
     }
 
     .student-avatar {
-        width: 120px;
-        height: 120px;
-        border-radius: 10px;
-        background: linear-gradient(135deg, #1d4ed8 0%, #1047a1 100%);
+        width: 104px;
+        height: 139px;
+        aspect-ratio: 3 / 4;
+        border-radius: 8px;
+        background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
         display: flex;
         align-items: center;
         justify-content: center;
@@ -195,7 +197,7 @@
     .student-name {
         font-size: 18px;
         font-weight: 800;
-        color: #1d4ed8;
+        color: var(--primary);
         margin: 2px 0 10px 0;
         line-height: 1.2;
     }
@@ -207,22 +209,22 @@
     }
 
     .student-field {
-        display: grid;
-        grid-template-columns: 160px 1fr;
-        gap: 10px;
+        display: flex;
+        flex-wrap: nowrap;
+        gap: 8px;
+        align-items: center;
         padding: 0;
         border: none;
         border-radius: 0;
         background: transparent;
-    }
-
-    @media (max-width: 480px) {
-        .student-field {
-            grid-template-columns: 1fr;
-        }
+        min-width: 0;
     }
 
     .student-field .k {
+        flex: 0 0 auto;
+        min-width: auto;
+        max-width: 180px;
+        white-space: nowrap;
         font-size: 13px;
         font-weight: 600;
         color: #6b7280;
@@ -231,23 +233,36 @@
     }
 
     .student-field .v {
+        flex: 1 1 auto;
+        min-width: 0;
         font-size: 14px;
         font-weight: 700;
         color: #2c3e50;
         word-break: break-word;
+        overflow-wrap: anywhere;
+    }
+
+    @media (max-width: 480px) {
+        .student-field {
+            gap: 6px;
+        }
+
+        .student-field .k {
+            max-width: 140px;
+        }
     }
 
     .scores-grid {
         display: grid;
         grid-template-columns: 1fr;
-        gap: 20px;
-        margin-bottom: 30px;
+        gap: var(--dashboard-grid-gap);
+        margin-bottom: 0;
     }
 
     @media (min-width: 992px) {
         .scores-grid {
             grid-template-columns: minmax(0, 1fr) minmax(0, 0.85fr) minmax(0, 1.15fr);
-            gap: 20px;
+            gap: var(--dashboard-grid-gap);
         }
     }
 
@@ -304,8 +319,8 @@
     .stats-container {
         display: grid;
         grid-template-columns: repeat(auto-fit, minmax(145px, 1fr));
-        gap: 14px;
-        margin-bottom: 8px;
+        gap: var(--dashboard-grid-gap);
+        margin-bottom: 0;
     }
 
     @media (min-width: 1200px) {
@@ -336,7 +351,7 @@
 
     .stat-icon {
         margin-bottom: 12px;
-        color: #1d4ed8;
+        color: var(--primary);
     }
 
     .stat-card--center {
@@ -353,7 +368,7 @@
         right: 12px;
         top: 10px;
         font-size: 11px;
-        color: #2c387e;
+        color: var(--primary-muted);
         font-weight: 700;
     }
 
@@ -373,13 +388,13 @@
     }
 
     .stat-card:hover .stat-label {
-        color: #1d4ed8;
+        color: var(--primary);
     }
 
     .stat-value {
         font-size: 28px;
         font-weight: bold;
-        color: #2c387e;
+        color: var(--primary-muted);
     }
 
     .stat-card p {
@@ -404,7 +419,7 @@
     .section-title {
         font-size: 20px;
         font-weight: 600;
-        color: #1d4ed8;
+        color: var(--primary);
         margin-bottom: 20px;
         display: flex;
         align-items: center;
@@ -412,7 +427,7 @@
     }
 
     .section-title i {
-        color: #00a8e8;
+        color: var(--secondary);
     }
 
     .table-responsive {
@@ -432,7 +447,7 @@
     .portal-grid th {
         padding: 15px;
         text-align: left;
-        color: #1d4ed8;
+        color: var(--primary);
         font-weight: 600;
         font-size: 14px;
     }
@@ -504,7 +519,7 @@
     .info-value {
         font-size: 16px;
         font-weight: 600;
-        color: #1d4ed8;
+        color: var(--primary);
     }
 
     .portal-grid .btn-group {
@@ -525,18 +540,18 @@
     }
 
     .portal-grid .btn-primary {
-        background: #1d4ed8;
+        background: var(--primary);
         color: white;
     }
 
     .portal-grid .btn-primary:hover {
-        background: #1047a1;
-        box-shadow: 0 3px 8px rgba(29, 78, 216, 0.2);
+        background: var(--primary-dark);
+        box-shadow: 0 3px 8px rgba(var(--primary-rgb), 0.2);
     }
 
     .portal-grid .btn-secondary {
         background: #e8ecf3;
-        color: #1d4ed8;
+        color: var(--primary);
     }
 
     .portal-grid .btn-secondary:hover {
@@ -683,13 +698,13 @@
         <div class="card news-card">
             <div class="card-header">
                 <h3 class="card-title">
-                    <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" style="width: 16px; height: 16px; color: #1d4ed8; stroke: currentColor; margin-right: 4px;">
+                    <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" style="width: 16px; height: 16px; color: var(--primary); stroke: currentColor; margin-right: 4px;">
                         <path d="M18 8a6 6 0 1 0-12 0c0 7-3 7-3 7h18s-3 0-3-7Z" stroke-width="2" stroke-linecap="round"/>
                         <path d="M10 21a2 2 0 0 0 4 0" stroke-width="2" stroke-linecap="round"/>
                     </svg>
                     Thông báo
                 </h3>
-                <a href="/KhoaLuan/public/student.php?action=thongbao" style="font-size: 12px; color: var(--primary); text-decoration: none; font-weight: 700; display: flex; align-items: center; gap: 4px;">Xem tất cả <i class="fa-solid fa-angle-right"></i></a>
+                <a href="/KhoaLuan/public/student.php?action=thongbao" style="font-size: 12px; color: var(--primary); text-decoration: none; font-weight: 700; display: flex; align-items: center; gap: 4px;">Xem chi tiết <i class="fa-solid fa-angle-right"></i></a>
             </div>
             <div class="card-body">
                 <ul class="news-list">
@@ -796,7 +811,7 @@
                 <div class="stat-label">Hoạt động đã đăng ký</div>
             </a>
 
-            <div class="stat-card card stat-card--center">
+            <a class="stat-card card stat-card--center stat-card--link" href="/KhoaLuan/public/student.php?action=diemdanhhoatdong">
                 <div class="stat-icon">
                     <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                         <circle cx="12" cy="7" r="3" stroke-width="2" />
@@ -805,7 +820,7 @@
                     </svg>
                 </div>
                 <div class="stat-label">Điểm danh hoạt động</div>
-            </div>
+            </a>
         </div>
     </div>
 

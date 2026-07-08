@@ -11,7 +11,7 @@
     .activity-page-title {
         font-size: 18px;
         font-weight: 800;
-        color: #1d4ed8;
+        color: var(--primary);
         text-transform: none;
         letter-spacing: 0.6px;
     }
@@ -39,7 +39,14 @@
 
     .activity-filters {
         display: grid;
-        grid-template-columns: minmax(220px, 1.4fr) repeat(5, minmax(140px, 1fr)) auto;
+        grid-template-columns:
+            minmax(220px, 1.35fr)
+            minmax(180px, 1fr)
+            minmax(120px, 0.66fr)
+            minmax(170px, 0.9fr)
+            minmax(120px, 0.66fr)
+            minmax(150px, 0.78fr)
+            auto;
         gap: 12px;
         align-items: end;
         background: transparent;
@@ -53,7 +60,7 @@
         display: grid;
         gap: 6px;
         font-size: 12px;
-        color: #1d4ed8;
+        color: var(--primary);
         font-weight: 600;
     }
 
@@ -61,7 +68,8 @@
         display: flex;
         align-items: center;
         gap: 8px;
-        padding: 8px 10px;
+        min-height: 38px;
+        padding: 0 10px;
         border-radius: 10px;
         border: 1px solid #e5e7eb;
         background: #f9fafb;
@@ -74,21 +82,35 @@
         background: transparent;
         outline: none;
         width: 100%;
+        height: 100%;
         font-size: 13px;
         color: #1f2937;
     }
 
     .filter-select {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        padding: 8px 10px;
+        width: 100%;
+        min-height: 38px;
+        padding: 0 34px 0 10px;
         border-radius: 10px;
         border: 1px solid #e5e7eb;
-        background: #f9fafb;
+        background-color: #f9fafb;
+        background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%231047a1' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+        background-position: right 10px center;
+        background-size: 16px;
+        background-repeat: no-repeat;
         font-size: 13px;
         color: #1f2937;
         font-weight: 600;
+        outline: none;
+        cursor: pointer;
+        appearance: none;
+        -webkit-appearance: none;
+        -moz-appearance: none;
+    }
+
+    .filter-select:focus {
+        border-color: var(--primary-border-strong);
+        box-shadow: 0 0 0 0.2rem rgba(var(--primary-rgb), 0.12);
     }
 
     .filter-actions {
@@ -103,7 +125,7 @@
         border-radius: 10px;
         border: 1px solid #e5e7eb;
         background: #fff;
-        color: #1d4ed8;
+        color: var(--primary);
         font-size: 13px;
         font-weight: 700;
         cursor: pointer;
@@ -111,9 +133,50 @@
     }
 
     .filter-btn.primary {
-        background: #1d4ed8;
-        border-color: #1d4ed8;
+        background: var(--primary);
+        border-color: var(--primary);
         color: #fff;
+    }
+
+    .filter-actions .filter-reset-btn,
+    .filter-actions .filter-apply-btn {
+        min-height: 38px;
+        padding: 8px 20px;
+        border-radius: 10px;
+        border: 1px solid #e5e7eb;
+        font-size: 13px;
+        font-weight: 900 !important;
+        line-height: 1.2;
+        cursor: pointer;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        white-space: nowrap;
+    }
+
+    .filter-actions .filter-reset-btn {
+        color: #dc2626 !important;
+        background: #ffffff !important;
+        border-color: #e5e7eb !important;
+    }
+
+    .filter-actions .filter-reset-btn:hover {
+        color: #dc2626 !important;
+        background: #e5e7eb !important;
+        border-color: #cbd5e1 !important;
+    }
+
+    .filter-actions .filter-apply-btn {
+        color: #ffffff !important;
+        background: linear-gradient(180deg, #16a34a 0%, #15803d 100%) !important;
+        border-color: #16a34a !important;
+    }
+
+    .filter-actions .filter-apply-btn:hover {
+        color: #ffffff !important;
+        background: linear-gradient(180deg, #15803d 0%, #166534 100%) !important;
+        border-color: #15803d !important;
     }
 
     .activity-tabs {
@@ -147,7 +210,7 @@
 
     /* activity-detail styles moved to activity_detail_modal.php */
 
-    .activity-detail-close:hover { background: #eef2ff; }
+    .activity-detail-close:hover { background: var(--primary-soft); }
 
     .activity-detail-body {
         padding: 16px;
@@ -206,7 +269,7 @@
         text-transform: none;
         letter-spacing: 0.6px;
         font-weight: 800;
-        color: #1d4ed8;
+        color: var(--primary);
     }
 
     .activity-detail-summary-value {
@@ -237,7 +300,7 @@
         text-transform: none;
         letter-spacing: 0.6px;
         font-weight: 800;
-        color: #1d4ed8;
+        color: var(--primary);
     }
 
     .detail-label::before {
@@ -303,51 +366,90 @@
         display: flex;
         justify-content: flex-end;
         gap: 10px;
-        padding: 0 18px 18px;
+        padding: 8px 18px 8px;
     }
 
     .detail-action {
         border: 1px solid #e5e7eb;
         background: #fff;
-        color: #0f172a;
-        padding: 10px 14px;
-        border-radius: 12px;
-        font-weight: 700;
+        color: #dc2626;
+        min-height: 38px;
+        padding: 8px 20px;
+        border-radius: 10px;
+        font-size: 13px;
+        font-weight: 800;
+        line-height: 1.2;
         cursor: pointer;
-    }
-
-    .detail-action.primary {
-        background: #16a34a;
-        border-color: #16a34a;
-        color: #fff;
-    }
-
-    .activity-pagination {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        gap: 6px;
-        margin-top: 6px;
-    }
-
-    .page-btn {
-        width: 28px;
-        height: 28px;
-        border-radius: 8px;
-        border: 1px solid #e5e7eb;
-        background: #fff;
-        font-size: 12px;
-        font-weight: 700;
-        color: #64748b;
         display: inline-flex;
         align-items: center;
         justify-content: center;
     }
 
-    .page-btn.active {
-        background: #1d4ed8;
-        border-color: #1d4ed8;
+    .detail-action.primary {
+        background: linear-gradient(180deg, #16a34a 0%, #15803d 100%);
+        border-color: #16a34a;
         color: #fff;
+    }
+
+    .pagination-container {
+        padding: 16px 14px;
+        border-top: 1px solid #e8ecf3;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        font-size: 12px;
+        color: #6b7280;
+    }
+
+    .pagination {
+        display: flex;
+        gap: 6px;
+        align-items: center;
+    }
+
+    .pagination-btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-width: 32px;
+        height: 32px;
+        border: 1px solid #e5e7eb;
+        border-radius: 6px;
+        background: #fff;
+        color: #6b7280;
+        font-size: 12px;
+        font-weight: 600;
+        cursor: pointer;
+        text-decoration: none;
+        transition: all .2s;
+    }
+
+    .pagination-btn:hover {
+        border-color: #d1d5db;
+        background: #f9fafb;
+        color: #4b5563;
+    }
+
+    .pagination-btn.active {
+        background: var(--primary);
+        border-color: var(--primary);
+        color: #fff;
+    }
+
+    .pagination-btn.disabled {
+        opacity: .45;
+        cursor: not-allowed;
+        pointer-events: none;
+        background: #f9fafb;
+        color: #9ca3af;
+    }
+
+    .pagination-btn.prev,
+    .pagination-btn.next,
+    .pagination-btn.first,
+    .pagination-btn.last {
+        min-width: auto;
+        padding: 0 8px;
     }
 
     @media (max-width: 1100px) {
@@ -403,31 +505,48 @@
         display: flex;
         align-items: center;
         justify-content: space-between;
-        padding: 16px 18px;
-        border-bottom: 1px solid #eef2ff;
+        padding: 10px 18px;
+        border-bottom: 1px solid var(--primary-soft);
         background: #f8faff;
     }
 
     .activity-detail-header .modal-title {
         font-size: 16px;
         font-weight: 700;
-        color: #1d4ed8;
+        color: var(--primary);
     }
 
     .activity-detail-close {
         position: static;
-        width: 32px;
-        height: 32px;
-        border: none;
+        width: 34px;
+        height: 34px;
+        border: 0 !important;
         border-radius: 8px;
-        background: transparent;
-        color: #1f2937;
-        font-size: 18px;
-        font-weight: 700;
+        background: transparent !important;
+        color: var(--primary-dark) !important;
+        font-size: 31px;
+        font-weight: 400;
+        line-height: 1;
         cursor: pointer;
+        box-shadow: none !important;
+        padding: 0 !important;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
     }
 
-    .activity-detail-close:hover { background: #eef2ff; }
+    .activity-detail-close:hover {
+        color: var(--primary-dark) !important;
+        background: #eef4ff !important;
+        border-color: transparent !important;
+    }
+
+    .activity-detail-close:focus,
+    .activity-detail-close:active {
+        border: 0 !important;
+        box-shadow: none !important;
+        outline: none;
+    }
 
     .activity-detail-body {
         padding: 16px;
@@ -486,7 +605,7 @@
         text-transform: none;
         letter-spacing: 0.6px;
         font-weight: 800;
-        color: #1d4ed8;
+        color: var(--primary);
     }
 
     .activity-detail-summary-value {
@@ -517,7 +636,7 @@
         text-transform: none;
         letter-spacing: 0.6px;
         font-weight: 800;
-        color: #1d4ed8;
+        color: var(--primary);
     }
 
     .detail-label::before {
@@ -564,23 +683,43 @@
         display: flex;
         justify-content: flex-end;
         gap: 10px;
-        padding: 0 18px 18px;
+        padding: 8px 18px 8px;
     }
 
     .detail-action {
-        border: 1px solid #e5e7eb;
-        background: #fff;
-        color: #0f172a;
-        padding: 10px 14px;
-        border-radius: 12px;
+        min-height: 38px;
+        padding: 8px 20px;
+        border-radius: 10px;
+        border: 1px solid #e5e7eb !important;
+        background: #ffffff !important;
+        color: #dc2626 !important;
+        font-size: 13px;
         font-weight: 700;
+        line-height: 1.2;
         cursor: pointer;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        white-space: nowrap;
+    }
+
+    .detail-action:hover {
+        color: #dc2626 !important;
+        background: #e5e7eb !important;
+        border-color: #cbd5e1 !important;
     }
 
     .detail-action.primary {
-        background: #16a34a;
-        border-color: #16a34a;
-        color: #fff;
+        color: #ffffff !important;
+        background: linear-gradient(180deg, #16a34a 0%, #15803d 100%) !important;
+        border-color: #16a34a !important;
+    }
+
+    .detail-action.primary:hover {
+        color: #ffffff !important;
+        background: linear-gradient(180deg, #15803d 0%, #166534 100%) !important;
+        border-color: #15803d !important;
     }
 
     /* icon uses SVG data URI */
@@ -596,6 +735,20 @@
     }
 
     .stat-box.point-box .detail-value {
+        color: #166534;
+    }
+
+    .detail-box.clothing-box {
+        background: linear-gradient(90deg, #f0fdf4 0%, #fafdfb 100%);
+        border-color: #86efac;
+        box-shadow: 0 1px 0 rgba(22, 163, 74, 0.03);
+    }
+
+    .detail-box.clothing-box .detail-label {
+        color: #15803d;
+    }
+
+    .detail-box.clothing-box .detail-value {
         color: #166534;
     }
 
@@ -643,6 +796,16 @@
         color: #9333ea;
     }
 
+    .activity-detail-summary-item.time-box {
+        background: linear-gradient(135deg, #faf5ff 0%, #ffffff 100%);
+        border-color: #e9d5ff;
+        box-shadow: 0 4px 12px rgba(168, 85, 247, 0.04);
+    }
+
+    .activity-detail-summary-item.time-box .activity-detail-summary-label {
+        color: #9333ea;
+    }
+
     .detail-box.contact-box {
         background: #f8fafc;
         border-color: #e2e8f0;
@@ -663,17 +826,17 @@
         margin-top: 4px;
         width: fit-content;
     }
-    .badge-tinhnguyen { color: #16a34a; background: #f0fdf4; border-color: #bbf7d0; }
-    .badge-hocthuat { color: #2563eb; background: #eff6ff; border-color: #bfdbfe; }
-    .badge-thethao { color: #f97316; background: #fff7ed; border-color: #ffedd5; }
-    .badge-vanhoa { color: #db2777; background: #fdf2f8; border-color: #fce7f3; }
-    .badge-kynang { color: #7c3aed; background: #faf5ff; border-color: #f3e8ff; }
-    .badge-khac { color: #0f766e; background: #f0fdfa; border-color: #ccfbf1; }
+    .badge-study { color: var(--primary); background: #eff6ff; border-color: #bfdbfe; }
+    .badge-ethics { color: #16a34a; background: #f0fdf4; border-color: #bbf7d0; }
+    .badge-volunteer { color: #f59e0b; background: #fffbeb; border-color: #fde68a; }
+    .badge-fitness { color: #7c3aed; background: #faf5ff; border-color: #ddd6fe; }
+    .badge-integration { color: #14b8a6; background: #f0fdfa; border-color: #99f6e4; }
+    .badge-other { color: #6b7280; background: #f9fafb; border-color: #d1d5db; }
 
     /* Card visual improvements */
     .activity-grid {
         display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+        grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
         gap: 18px;
     }
 
@@ -686,6 +849,7 @@
         box-shadow: 0 6px 18px rgba(15,23,42,0.04);
         display: flex;
         flex-direction: column;
+        height: 100%;
         transition: transform .18s ease, box-shadow .18s ease;
     }
 
@@ -709,25 +873,125 @@
         backdrop-filter: blur(6px);
     }
 
-    .activity-body { padding: 14px; display:flex; flex-direction:column; gap:10px; }
-    .activity-title { font-size:16px; font-weight:800; color:#0f172a; }
-    .activity-meta { font-size:13px; color:#475569; display:flex; flex-direction:column; gap:6px; }
-    .activity-meta span { display:flex; gap:6px; align-items:center; flex-wrap:wrap; }
-    .activity-meta i { color: var(--primary); font-size: 13px; width: 16px; text-align: center; }
+    .activity-body { padding: 16px; display:flex; flex:1; flex-direction:column; gap:12px; }
+    .activity-title { font-size:16px; font-weight:800; color:#0f172a; line-height:1.35; }
+    .activity-meta {
+        display:grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap:10px 12px;
+        font-size:12px;
+        color:#0f172a;
+    }
+    .activity-meta > span {
+        position:relative;
+        display:block;
+        min-width:0;
+        padding-left:24px;
+        line-height:1.35;
+        overflow-wrap:normal;
+        word-break:normal;
+    }
+    .activity-meta i {
+        position:absolute;
+        left:0;
+        top:2px;
+        color: var(--primary);
+        font-size: 13px;
+        width: 16px;
+        text-align: center;
+    }
+    .activity-meta .meta-label {
+        display:block;
+        color:#64748b;
+        font-size:10.5px;
+        font-weight:800;
+        margin-bottom:2px;
+    }
+    .activity-clothing-meta {
+        color:#15803d;
+        font-weight:800;
+    }
+    .activity-clothing-meta i {
+        color: var(--primary);
+    }
 
-    .activity-score { display:grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap:8px; }
+    .activity-score {
+        display:grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap:8px;
+        max-width: 92%;
+    }
     .activity-score > div {
         background:#f8fafc;
         border:1px solid #e8ecf3;
         border-radius:12px;
-        padding:8px 10px;
-        font-size:13px;
+        min-height: auto;
+        padding:6px 10px;
+        font-size:12.5px;
         font-weight:800;
         color:#0f172a;
     }
+    .activity-score > div:first-child {
+        background:linear-gradient(135deg, #ecfdf5 0%, #f7fffb 100%);
+        border-color:#bbf7d0;
+        color:#15803d;
+    }
+    .activity-score > div:last-child {
+        position:relative;
+        overflow:hidden;
+        background:linear-gradient(135deg, #fff7ed 0%, #fffaf4 100%);
+        border-color:#fed7aa;
+        color:#b45309;
+    }
+    .activity-score .meta-label {
+        display:inline-flex;
+        align-items:center;
+        gap:5px;
+        color:inherit;
+        opacity:.86;
+    }
+    .activity-score .meta-label i {
+        width:13px;
+        text-align:center;
+        font-size:12px;
+    }
+    .activity-score strong {
+        font-size:15px;
+        line-height:1.3;
+    }
 
-    .activity-footer { margin-top:auto; display:flex; justify-content:space-between; align-items:center; gap:8px; }
-    .activity-btn { padding:8px 12px; border-radius:10px; background:#16a34a; color:#fff; border:none; cursor:pointer; font-weight:700; text-decoration:none; display:inline-flex; align-items:center; gap:8px; }
+    .activity-footer {
+        margin-top:auto;
+        display:flex;
+        justify-content:space-between;
+        align-items:center;
+        gap:8px;
+        width:100%;
+        flex-wrap:nowrap;
+    }
+    .activity-btn {
+        padding: 6px 12px;
+        border-radius: 10px;
+        background: linear-gradient(180deg, #16a34a 0%, #15803d 100%) !important;
+        color: #fff !important;
+        border: 1px solid #16a34a !important;
+        cursor: pointer;
+        font-weight: 700 !important;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        box-shadow: none !important;
+        flex:0 0 auto;
+    }
+
+    .activity-btn:hover,
+    .activity-btn:focus {
+        background: linear-gradient(180deg, #15803d 0%, #166534 100%) !important;
+        border-color: #15803d !important;
+        color: #fff !important;
+    }
 
     .activity-tag {
         display:inline-flex;
@@ -739,14 +1003,17 @@
         background:#fff;
         font-size:12px;
         font-weight:800;
+        flex:0 1 auto;
+        min-width:0;
+        white-space:nowrap;
     }
 
-    .activity-tag--tinhnguyen { color:#16a34a; border-color:#86efac; }
-    .activity-tag--hocthuat { color:#2563eb; border-color:#93c5fd; }
-    .activity-tag--thethao { color:#f97316; border-color:#fdba74; }
-    .activity-tag--vanhoa { color:#db2777; border-color:#f9a8d4; }
-    .activity-tag--kynang { color:#7c3aed; border-color:#c4b5fd; }
-    .activity-tag--khac { color:#0f766e; border-color:#5eead4; }
+    .activity-tag--study { color:var(--primary); border-color:var(--primary); }
+    .activity-tag--ethics { color:#16a34a; border-color:#16a34a; }
+    .activity-tag--volunteer { color:#f59e0b; border-color:#f59e0b; }
+    .activity-tag--fitness { color:#7c3aed; border-color:#7c3aed; }
+    .activity-tag--integration { color:#14b8a6; border-color:#14b8a6; }
+    .activity-tag--other { color:#6b7280; border-color:#6b7280; }
 
     @media (max-width: 640px) {
         .activity-filters {
@@ -786,8 +1053,18 @@
             min-width: 0;
         }
 
+        .activity-meta {
+            grid-template-columns: 1fr;
+        }
+
         .activity-footer {
-            flex-wrap: wrap;
+            flex-wrap: nowrap;
+        }
+
+        .pagination-container {
+            align-items: flex-start;
+            flex-direction: column;
+            gap: 10px;
         }
     }
 
@@ -809,40 +1086,59 @@
                     </div>
                     <div class="filter-field">
                         <span>Đơn vị tổ chức</span>
-                        <div class="filter-input">
-                            <input class="form-control" type="text" placeholder="Nhập đơn vị tổ chức..." />
-                        </div>
+                        <select class="filter-select form-select" aria-label="Lọc theo đơn vị tổ chức">
+                            <option>Tất cả</option>
+                            <option>Đoàn trường</option>
+                            <option>Hội Sinh viên</option>
+                            <option>Phòng CTSV</option>
+                            <option>Khoa</option>
+                            <option>Câu lạc bộ</option>
+                        </select>
                     </div>
-                    <div class="filter-field">
+                    <div class="filter-field filter-field--compact">
                         <span>Loại hoạt động</span>
-                        <div class="filter-select">Tất cả <span>v</span></div>
+                        <select class="filter-select form-select" aria-label="Lọc theo loại hoạt động">
+                            <option>Tất cả</option>
+                            <option>Học tập</option>
+                            <option>Đạo đức</option>
+                            <option>Thể lực</option>
+                            <option>Tình nguyện</option>
+                            <option>Hội nhập</option>
+                            <option>Khác</option>
+                        </select>
                     </div>
                     <div class="filter-field">
                         <span>Học kỳ</span>
-                        <div class="filter-select">Học kỳ 2 (2024 - 2025) <span>v</span></div>
+                        <select class="filter-select form-select" aria-label="Lọc theo học kỳ">
+                            <option>Học kỳ 2 (2024 - 2025)</option>
+                            <option>Học kỳ 1 (2024 - 2025)</option>
+                            <option>Học kỳ hè (2024 - 2025)</option>
+                            <option>Tất cả</option>
+                        </select>
                     </div>
-                    <div class="filter-field">
+                    <div class="filter-field filter-field--compact">
                         <span>Trạng thái</span>
-                        <div class="filter-select">Đang mở <span>v</span></div>
+                        <select class="filter-select form-select" aria-label="Lọc theo trạng thái">
+                            <option>Đang mở</option>
+                            <option>Sắp diễn ra</option>
+                            <option>Đã kết thúc</option>
+                            <option>Tạm ngưng</option>
+                            <option>Tất cả</option>
+                        </select>
+                    </div>
+                    <div class="filter-field filter-field--register">
+                        <span>Tình trạng đăng ký</span>
+                        <select class="filter-select form-select" aria-label="Lọc theo tình trạng đăng ký">
+                            <option>Tất cả</option>
+                            <option>Còn chỗ</option>
+                            <option>Đã đủ người</option>
+                        </select>
                     </div>
                     <div class="filter-actions">
-                        <button class="filter-btn btn btn-outline-secondary" type="button">Đặt lại</button>
-                        <button class="filter-btn primary btn btn-primary" type="button">Lọc & Tìm kiếm</button>
+                        <button class="filter-btn filter-reset-btn btn btn-outline-secondary" type="button">Đặt lại</button>
+                        <button class="filter-btn filter-apply-btn primary btn btn-primary" type="button">Áp dụng</button>
                     </div>
                 </div>
-            </div>
-        </div>
-
-        <div class="activity-tabs nav nav-pills">
-            <div class="activity-tab active nav-link">Tất cả</div>
-            <div class="activity-tab nav-link">Học tập</div>
-            <div class="activity-tab nav-link">Đạo đức</div>
-            <div class="activity-tab nav-link">Thể lực</div>
-            <div class="activity-tab nav-link">Tình nguyện</div>
-            <div class="activity-tab nav-link">Hội nhập</div>
-            <div class="activity-tab nav-link">Khác</div>
-            <div class="activity-sort">
-                <div class="sort-select">Mới nhất</div>
             </div>
         </div>
     </div>
@@ -871,16 +1167,17 @@
             <div class="activity-body">
                 <div class="activity-title">Chiến dịch Mùa hè xanh 2024</div>
                 <div class="activity-meta">
-                    <span><i class="fa-solid fa-university"></i><span class="meta-label">Đơn vị:</span> Đoàn trường Đại học ABC</span>
+                    <span><i class="fa-solid fa-university"></i><span class="meta-label">Đơn vị tổ chức:</span> Đoàn trường Đại học ABC</span>
                     <span><i class="fa-solid fa-calendar-days"></i><span class="meta-label">Thời gian:</span> 7h - ngày 25/06/2024</span>
                     <span><i class="fa-solid fa-location-dot"></i><span class="meta-label">Địa điểm:</span> TP. Hồ Chí Minh</span>
+                    <span class="activity-clothing-meta"><i class="fa-solid fa-shirt"></i><span class="meta-label">Trang phục:</span> Áo xanh thanh niên, quần dài</span>
                 </div>
                 <div class="activity-score">
-                    <div><span class="meta-label">Điểm cộng:</span><br><strong>10 điểm</strong></div>
-                    <div><span class="meta-label">Còn lại:</span><br><strong>45 / 100</strong></div>
+                    <div><span class="meta-label"><i class="fa-solid fa-star"></i>Điểm cộng:</span><br><strong>10 điểm</strong></div>
+                    <div><span class="meta-label"><i class="fa-solid fa-users"></i>Còn lại:</span><br><strong>45 / 100</strong></div>
                 </div>
                 <div class="activity-footer">
-                    <span class="activity-tag badge rounded-pill activity-tag--tinhnguyen">Tình nguyện</span>
+                    <span class="activity-tag badge rounded-pill activity-tag--volunteer">Tình nguyện</span>
                     <button class="activity-btn btn btn-primary" type="button">Đăng ký</button>
                 </div>
             </div>
@@ -893,7 +1190,7 @@
             data-location="Hội trường B, Cơ sở 1"
             data-point="8 điểm"
             data-remaining="120 / 150"
-            data-tag="Học thuật"
+            data-tag="Học tập"
             data-benefits="Cập nhật kiến thức về trí tuệ nhân tạo, nhận điểm rèn luyện và giao lưu với doanh nghiệp."
             data-clothing="Lịch sự, áo sơ mi hoặc đồng phục sinh viên."
             data-audience="Sinh viên năm 2 trở lên, ưu tiên ngành CNTT"
@@ -909,16 +1206,17 @@
             <div class="activity-body">
                 <div class="activity-title">Hội thảo: AI và tương lai nghề nghiệp</div>
                 <div class="activity-meta">
-                    <span><i class="fa-solid fa-university"></i><span class="meta-label">Đơn vị:</span> Khoa Công nghệ thông tin</span>
+                    <span><i class="fa-solid fa-university"></i><span class="meta-label">Đơn vị tổ chức:</span> Khoa Công nghệ thông tin</span>
                     <span><i class="fa-solid fa-calendar-days"></i><span class="meta-label">Thời gian:</span> 15/05/2024 - 15/05/2024</span>
                     <span><i class="fa-solid fa-location-dot"></i><span class="meta-label">Địa điểm:</span> Hội trường B, Cơ sở 1</span>
+                    <span class="activity-clothing-meta"><i class="fa-solid fa-shirt"></i><span class="meta-label">Trang phục:</span> Lịch sự, áo sơ mi</span>
                 </div>
                 <div class="activity-score">
-                    <div><span class="meta-label">Điểm cộng:</span><br><strong>8 điểm</strong></div>
-                    <div><span class="meta-label">Còn lại:</span><br><strong>120 / 150</strong></div>
+                    <div><span class="meta-label"><i class="fa-solid fa-star"></i>Điểm cộng:</span><br><strong>8 điểm</strong></div>
+                    <div><span class="meta-label"><i class="fa-solid fa-users"></i>Còn lại:</span><br><strong>120 / 150</strong></div>
                 </div>
                 <div class="activity-footer">
-                    <span class="activity-tag badge rounded-pill activity-tag--hocthuat">Học thuật</span>
+                    <span class="activity-tag badge rounded-pill activity-tag--study">Học tập</span>
                     <button class="activity-btn btn btn-primary" type="button">Đăng ký</button>
                 </div>
             </div>
@@ -931,7 +1229,7 @@
             data-location="Sân bóng đá trường ABC"
             data-point="6 điểm"
             data-remaining="8 / 16 đội"
-            data-tag="Thể thao"
+            data-tag="Thể lực"
             data-benefits="Rèn luyện thể lực, tinh thần đồng đội, giao lưu giữa các khoa và được cộng điểm rèn luyện."
             data-clothing="Áo thể thao, quần short, giày đế mềm."
             data-audience="Sinh viên toàn trường có sức khỏe tốt"
@@ -947,16 +1245,17 @@
             <div class="activity-body">
                 <div class="activity-title">Giải bóng đá sinh viên mở rộng 2024</div>
                 <div class="activity-meta">
-                    <span><i class="fa-solid fa-university"></i><span class="meta-label">Đơn vị:</span> Hội Sinh viên</span>
+                    <span><i class="fa-solid fa-university"></i><span class="meta-label">Đơn vị tổ chức:</span> Hội Sinh viên</span>
                     <span><i class="fa-solid fa-calendar-days"></i><span class="meta-label">Thời gian:</span> 10/05/2024 - 30/05/2024</span>
                     <span><i class="fa-solid fa-location-dot"></i><span class="meta-label">Địa điểm:</span> Sân bóng đá trường ABC</span>
+                    <span class="activity-clothing-meta"><i class="fa-solid fa-shirt"></i><span class="meta-label">Trang phục:</span> Áo thể thao, giày đế mềm</span>
                 </div>
                 <div class="activity-score">
-                    <div><span class="meta-label">Điểm cộng:</span><br><strong>6 điểm</strong></div>
-                    <div><span class="meta-label">Còn lại:</span><br><strong>8 / 16 đội</strong></div>
+                    <div><span class="meta-label"><i class="fa-solid fa-star"></i>Điểm cộng:</span><br><strong>6 điểm</strong></div>
+                    <div><span class="meta-label"><i class="fa-solid fa-users"></i>Còn lại:</span><br><strong>8 / 16 đội</strong></div>
                 </div>
                 <div class="activity-footer">
-                    <span class="activity-tag badge rounded-pill activity-tag--thethao">Thể thao</span>
+                    <span class="activity-tag badge rounded-pill activity-tag--fitness">Thể lực</span>
                     <button class="activity-btn btn btn-primary" type="button">Đăng ký</button>
                 </div>
             </div>
@@ -969,7 +1268,7 @@
             data-location="Giảng đường A, Cơ sở 1"
             data-point="7 điểm"
             data-remaining="60 / 100"
-            data-tag="Tình nguyện"
+            data-tag="Đạo đức"
             data-benefits="Được kiểm tra sức khỏe cơ bản, nhận giấy chứng nhận tham gia và cộng điểm rèn luyện."
             data-clothing="Trang phục gọn gàng, thoải mái, ưu tiên áo tay ngắn."
             data-audience="Sinh viên đủ điều kiện hiến máu theo quy định y tế"
@@ -985,16 +1284,17 @@
             <div class="activity-body">
                 <div class="activity-title">Hiến máu nhân đạo đợt 1/2024</div>
                 <div class="activity-meta">
-                    <span><i class="fa-solid fa-university"></i><span class="meta-label">Đơn vị:</span> Đoàn trường Đại học ABC</span>
+                    <span><i class="fa-solid fa-university"></i><span class="meta-label">Đơn vị tổ chức:</span> Đoàn trường Đại học ABC</span>
                     <span><i class="fa-solid fa-calendar-days"></i><span class="meta-label">Thời gian:</span> 08/05/2024 - 08/05/2024</span>
                     <span><i class="fa-solid fa-location-dot"></i><span class="meta-label">Địa điểm:</span> Giảng đường A, Cơ sở 1</span>
+                    <span class="activity-clothing-meta"><i class="fa-solid fa-shirt"></i><span class="meta-label">Trang phục:</span> Gọn gàng, thoải mái</span>
                 </div>
                 <div class="activity-score">
-                    <div><span class="meta-label">Điểm cộng:</span><br><strong>7 điểm</strong></div>
-                    <div><span class="meta-label">Còn lại:</span><br><strong>60 / 100</strong></div>
+                    <div><span class="meta-label"><i class="fa-solid fa-star"></i>Điểm cộng:</span><br><strong>7 điểm</strong></div>
+                    <div><span class="meta-label"><i class="fa-solid fa-users"></i>Còn lại:</span><br><strong>60 / 100</strong></div>
                 </div>
                 <div class="activity-footer">
-                    <span class="activity-tag badge rounded-pill activity-tag--tinhnguyen">Tình nguyện</span>
+                    <span class="activity-tag badge rounded-pill activity-tag--ethics">Đạo đức</span>
                     <button class="activity-btn btn btn-primary" type="button">Đăng ký</button>
                 </div>
             </div>
@@ -1007,7 +1307,7 @@
             data-location="Hội trường lớn"
             data-point="5 điểm"
             data-remaining="30 / 80"
-            data-tag="Văn hóa - Văn nghệ"
+            data-tag="Hội nhập"
             data-benefits="Giao lưu văn nghệ, phát triển kỹ năng biểu diễn và cộng điểm rèn luyện."
             data-clothing="Trang phục tự chọn phù hợp tiết mục; lịch sự, gọn gàng khi vào khán đài."
             data-audience="Sinh viên toàn trường"
@@ -1023,16 +1323,17 @@
             <div class="activity-body">
                 <div class="activity-title">Đêm văn nghệ chào tân sinh viên K15</div>
                 <div class="activity-meta">
-                    <span><i class="fa-solid fa-university"></i><span class="meta-label">Đơn vị:</span> Hội Sinh viên</span>
+                    <span><i class="fa-solid fa-university"></i><span class="meta-label">Đơn vị tổ chức:</span> Hội Sinh viên</span>
                     <span><i class="fa-solid fa-calendar-days"></i><span class="meta-label">Thời gian:</span> 25/05/2024 - 25/05/2024</span>
                     <span><i class="fa-solid fa-location-dot"></i><span class="meta-label">Địa điểm:</span> Hội trường lớn</span>
+                    <span class="activity-clothing-meta"><i class="fa-solid fa-shirt"></i><span class="meta-label">Trang phục:</span> Phù hợp tiết mục</span>
                 </div>
                 <div class="activity-score">
-                    <div><span class="meta-label">Điểm cộng:</span><br><strong>5 điểm</strong></div>
-                    <div><span class="meta-label">Còn lại:</span><br><strong>30 / 80</strong></div>
+                    <div><span class="meta-label"><i class="fa-solid fa-star"></i>Điểm cộng:</span><br><strong>5 điểm</strong></div>
+                    <div><span class="meta-label"><i class="fa-solid fa-users"></i>Còn lại:</span><br><strong>30 / 80</strong></div>
                 </div>
                 <div class="activity-footer">
-                    <span class="activity-tag badge rounded-pill activity-tag--vanhoa">Văn hóa - Văn nghệ</span>
+                    <span class="activity-tag badge rounded-pill activity-tag--integration">Hội nhập</span>
                     <button class="activity-btn btn btn-primary" type="button">Đăng ký</button>
                 </div>
             </div>
@@ -1045,7 +1346,7 @@
             data-location="Phòng B.302"
             data-point="6 điểm"
             data-remaining="25 / 40"
-            data-tag="Kỹ năng"
+            data-tag="Học tập"
             data-benefits="Nâng cao kỹ năng thuyết trình, tự tin trước đám đông và được nhận tài liệu hướng dẫn."
             data-clothing="Trang phục lịch sự, thoải mái để tham gia thực hành."
             data-audience="Sinh viên có nhu cầu phát triển kỹ năng mềm"
@@ -1061,16 +1362,17 @@
             <div class="activity-body">
                 <div class="activity-title">Workshop: Kỹ năng thuyết trình hiệu quả</div>
                 <div class="activity-meta">
-                    <span><i class="fa-solid fa-university"></i><span class="meta-label">Đơn vị:</span> Trung tâm Kỹ năng mềm</span>
+                    <span><i class="fa-solid fa-university"></i><span class="meta-label">Đơn vị tổ chức:</span> Trung tâm Kỹ năng mềm</span>
                     <span><i class="fa-solid fa-calendar-days"></i><span class="meta-label">Thời gian:</span> 18/05/2024 - 18/05/2024</span>
                     <span><i class="fa-solid fa-location-dot"></i><span class="meta-label">Địa điểm:</span> Phòng B.302</span>
+                    <span class="activity-clothing-meta"><i class="fa-solid fa-shirt"></i><span class="meta-label">Trang phục:</span> Lịch sự, thoải mái</span>
                 </div>
                 <div class="activity-score">
-                    <div><span class="meta-label">Điểm cộng:</span><br><strong>6 điểm</strong></div>
-                    <div><span class="meta-label">Còn lại:</span><br><strong>25 / 40</strong></div>
+                    <div><span class="meta-label"><i class="fa-solid fa-star"></i>Điểm cộng:</span><br><strong>6 điểm</strong></div>
+                    <div><span class="meta-label"><i class="fa-solid fa-users"></i>Còn lại:</span><br><strong>25 / 40</strong></div>
                 </div>
                 <div class="activity-footer">
-                    <span class="activity-tag badge rounded-pill activity-tag--kynang">Kỹ năng</span>
+                    <span class="activity-tag badge rounded-pill activity-tag--study">Học tập</span>
                     <button class="activity-btn btn btn-primary" type="button">Đăng ký</button>
                 </div>
             </div>
@@ -1099,16 +1401,17 @@
             <div class="activity-body">
                 <div class="activity-title">Cuộc thi Nhiếp ảnh: Khoảnh khắc sinh viên</div>
                 <div class="activity-meta">
-                    <span><i class="fa-solid fa-university"></i><span class="meta-label">Đơn vị:</span> Câu lạc bộ Nhiếp ảnh</span>
+                    <span><i class="fa-solid fa-university"></i><span class="meta-label">Đơn vị tổ chức:</span> Câu lạc bộ Nhiếp ảnh</span>
                     <span><i class="fa-solid fa-calendar-days"></i><span class="meta-label">Thời gian:</span> 01/05/2024 - 20/05/2024</span>
                     <span><i class="fa-solid fa-location-dot"></i><span class="meta-label">Địa điểm:</span> Online</span>
+                    <span class="activity-clothing-meta"><i class="fa-solid fa-shirt"></i><span class="meta-label">Trang phục:</span> Tự do, phù hợp</span>
                 </div>
                 <div class="activity-score">
-                    <div><span class="meta-label">Điểm cộng:</span><br><strong>6 điểm</strong></div>
-                    <div><span class="meta-label">Còn lại:</span><br><strong>30 / 120</strong></div>
+                    <div><span class="meta-label"><i class="fa-solid fa-star"></i>Điểm cộng:</span><br><strong>6 điểm</strong></div>
+                    <div><span class="meta-label"><i class="fa-solid fa-users"></i>Còn lại:</span><br><strong>30 / 120</strong></div>
                 </div>
                 <div class="activity-footer">
-                    <span class="activity-tag badge rounded-pill activity-tag--khac">Khác</span>
+                    <span class="activity-tag badge rounded-pill activity-tag--other">Khác</span>
                     <button class="activity-btn btn btn-primary" type="button">Đăng ký</button>
                 </div>
             </div>
@@ -1137,32 +1440,100 @@
             <div class="activity-body">
                 <div class="activity-title">Ngày hội "Vì môi trường xanh"</div>
                 <div class="activity-meta">
-                    <span><i class="fa-solid fa-university"></i><span class="meta-label">Đơn vị:</span> CLB Môi trường xanh</span>
+                    <span><i class="fa-solid fa-university"></i><span class="meta-label">Đơn vị tổ chức:</span> CLB Môi trường xanh</span>
                     <span><i class="fa-solid fa-calendar-days"></i><span class="meta-label">Thời gian:</span> 28/05/2024 - 28/05/2024</span>
                     <span><i class="fa-solid fa-location-dot"></i><span class="meta-label">Địa điểm:</span> Công viên 23/9, Quận 1</span>
+                    <span class="activity-clothing-meta"><i class="fa-solid fa-shirt"></i><span class="meta-label">Trang phục:</span> Áo xanh, giày thể thao</span>
                 </div>
                 <div class="activity-score">
-                    <div><span class="meta-label">Điểm cộng:</span><br><strong>8 điểm</strong></div>
-                    <div><span class="meta-label">Còn lại:</span><br><strong>90 / 120</strong></div>
+                    <div><span class="meta-label"><i class="fa-solid fa-star"></i>Điểm cộng:</span><br><strong>8 điểm</strong></div>
+                    <div><span class="meta-label"><i class="fa-solid fa-users"></i>Còn lại:</span><br><strong>90 / 120</strong></div>
                 </div>
                 <div class="activity-footer">
-                    <span class="activity-tag badge rounded-pill activity-tag--tinhnguyen">Tình nguyện</span>
+                    <span class="activity-tag badge rounded-pill activity-tag--volunteer">Tình nguyện</span>
                     <button class="activity-btn btn btn-primary" type="button">Đăng ký</button>
                 </div>
             </div>
         </article>
     </div>
 
-    <div class="activity-pagination pagination">
-        <span class="page-btn page-link page-item">&#x2039;</span>
-        <span class="page-btn active page-link page-item">1</span>
-        <span class="page-btn page-link page-item">2</span>
-        <span class="page-btn page-link page-item">3</span>
-        <span class="page-btn page-link page-item">&#x203A;</span>
+    <div class="pagination-container" id="activityPaginationContainer">
+        <div class="pagination-info" id="activityPaginationInfo"></div>
+        <div class="pagination mb-0" id="activityPagination"></div>
     </div>
 </div>
 
 <script>
+    // Paginate activity cards using the same control style as admin list pages.
+    (function() {
+        const itemsPerPage = 8;
+        const cards = Array.from(document.querySelectorAll('.activity-card'));
+        const pagination = document.getElementById('activityPagination');
+        const paginationInfo = document.getElementById('activityPaginationInfo');
+        let currentPage = 1;
+
+        function getVisibleCards() {
+            return cards.filter(function(card) {
+                return !card.hasAttribute('data-filter-hidden');
+            });
+        }
+
+        function createButton(label, page, classes, disabled) {
+            const button = document.createElement('button');
+            button.type = 'button';
+            button.className = 'pagination-btn page-link page-item' + (classes ? ' ' + classes : '');
+            button.textContent = label;
+
+            if (disabled) {
+                button.classList.add('disabled');
+                button.disabled = true;
+            } else {
+                button.addEventListener('click', function() {
+                    renderPage(page);
+                });
+            }
+
+            return button;
+        }
+
+        function renderPage(page) {
+            const visibleCards = getVisibleCards();
+            const totalItems = visibleCards.length;
+            const totalPages = Math.max(1, Math.ceil(totalItems / itemsPerPage));
+            currentPage = Math.min(Math.max(1, page), totalPages);
+
+            cards.forEach(function(card) {
+                card.style.display = 'none';
+            });
+
+            const startIndex = (currentPage - 1) * itemsPerPage;
+            const endIndex = Math.min(startIndex + itemsPerPage, totalItems);
+
+            visibleCards.slice(startIndex, endIndex).forEach(function(card) {
+                card.style.display = '';
+            });
+
+            if (paginationInfo) {
+                const from = totalItems === 0 ? 0 : startIndex + 1;
+                paginationInfo.textContent = 'Hiển thị ' + from + ' - ' + endIndex + ' của ' + totalItems + ' hoạt động';
+            }
+
+            if (!pagination) return;
+            pagination.innerHTML = '';
+            pagination.appendChild(createButton('<<', 1, 'first', currentPage === 1));
+            pagination.appendChild(createButton('<', currentPage - 1, 'prev', currentPage === 1));
+
+            for (let i = 1; i <= totalPages; i++) {
+                pagination.appendChild(createButton(String(i), i, i === currentPage ? 'active' : '', false));
+            }
+
+            pagination.appendChild(createButton('>', currentPage + 1, 'next', currentPage === totalPages));
+            pagination.appendChild(createButton('>>', totalPages, 'last', currentPage === totalPages));
+        }
+
+        renderPage(currentPage);
+    })();
+
     // Wire up Đăng ký buttons to the registration page with the activity title
     (function() {
         const base = 'http://localhost/KhoaLuan/public/student.php?action=dangkyhoatdong';

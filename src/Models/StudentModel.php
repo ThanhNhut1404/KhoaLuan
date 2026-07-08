@@ -9,6 +9,19 @@ use Throwable;
 class StudentModel
 {
     private const DEFAULT_STUDENT_PASSWORD = '#Tdu1234';
+    private const DEFAULT_NOTIFICATION_TYPES = [
+        'Hệ thống',
+        'Hoạt động',
+        'Điểm rèn luyện',
+        'Minh chứng',
+    ];
+    private const DEFAULT_NOTIFICATION_SENDERS = [
+        'Phòng CTSV',
+        'Đoàn - Hội',
+        'Khoa',
+        'Cố vấn học tập',
+        'Lớp trưởng',
+    ];
 
     public function __construct(private PDO $db)
     {
@@ -184,14 +197,23 @@ class StudentModel
 
     public function findStudentAccountForLogin(string $login): ?array
     {
+        $avatarSelect = $this->tableHasColumn('sinh_vien', 'AVATAR')
+            ? 'sv.AVATAR AS avatar,'
+            : "'' AS avatar,";
+        $themeColorSelect = $this->tableHasColumn('nguoi_dung', 'theme_color')
+            ? 'nd.theme_color AS theme_color,'
+            : "'blue' AS theme_color,";
+
         $statement = $this->db->prepare(
             "SELECT nd.TEN_DANG_NHAP AS username,
                     nd.MAT_KHAU AS password_hash,
                     nd.TRANG_THAI_ND AS account_status,
+                    {$themeColorSelect}
                     vt.TEN_VAI_TRO AS role_name,
                     sv.MA_SV AS student_id,
                     sv.MSSV AS mssv,
                     sv.HO_TEN AS ho_ten,
+                    {$avatarSelect}
                     sv.TEN_DANG_NHAP AS student_username
              FROM nguoi_dung nd
              INNER JOIN nguoi_dung_vai_tro ndvt ON ndvt.TEN_DANG_NHAP = nd.TEN_DANG_NHAP
@@ -240,13 +262,28 @@ class StudentModel
                     sv.TRANG_THAI_HOC_TAP AS trang_thai_hoc_tap,
                     sv.TRANG_THAI_HOC_TAP AS trang_thai,
                     {$avatarSelect}
+                    hk.TEN_HOC_KY AS hoc_ky,
+                    hk.THOI_GIAN_BDHK AS thoi_gian_bat_dau_danh_gia,
+                    hk.THOI_GIAN_KTHK AS thoi_gian_ket_thuc_danh_gia,
                     lh.TEN_LOP AS lop_hoc,
+                    kbm.TEN_KHOA AS khoa,
                     nh.TEN_NGANH AS nganh,
                     nk.TEN_NIEN_KHOA AS nien_khoa
              FROM sinh_vien sv
              LEFT JOIN lop_hoc lh ON lh.MA_LOP = sv.MA_LOP
+             LEFT JOIN khoa_bo_mon kbm ON kbm.MA_KHOA = lh.MA_KHOA
              LEFT JOIN nganh_hoc nh ON nh.MA_NGANH = lh.MA_NGANH
              LEFT JOIN nien_khoa nk ON nk.MA_NIEN_KHOA = lh.MA_NIEN_KHOA
+             LEFT JOIN hoc_ky hk ON hk.MA_HOC_KY = (
+                SELECT h2.MA_HOC_KY
+                FROM hoc_ky h2
+                WHERE h2.MA_NIEN_KHOA = lh.MA_NIEN_KHOA
+                ORDER BY CASE
+                    WHEN CURDATE() BETWEEN h2.THOI_GIAN_BDHK AND h2.THOI_GIAN_KTHK THEN 0
+                    ELSE 1
+                END, h2.MA_HOC_KY DESC
+                LIMIT 1
+             )
              WHERE sv.MA_SV = :id
              LIMIT 1"
         );
@@ -283,13 +320,28 @@ class StudentModel
                     sv.TRANG_THAI_HOC_TAP AS trang_thai_hoc_tap,
                     sv.TRANG_THAI_HOC_TAP AS trang_thai,
                     {$avatarSelect}
+                    hk.TEN_HOC_KY AS hoc_ky,
+                    hk.THOI_GIAN_BDHK AS thoi_gian_bat_dau_danh_gia,
+                    hk.THOI_GIAN_KTHK AS thoi_gian_ket_thuc_danh_gia,
                     lh.TEN_LOP AS lop_hoc,
+                    kbm.TEN_KHOA AS khoa,
                     nh.TEN_NGANH AS nganh,
                     nk.TEN_NIEN_KHOA AS nien_khoa
              FROM sinh_vien sv
              LEFT JOIN lop_hoc lh ON lh.MA_LOP = sv.MA_LOP
+             LEFT JOIN khoa_bo_mon kbm ON kbm.MA_KHOA = lh.MA_KHOA
              LEFT JOIN nganh_hoc nh ON nh.MA_NGANH = lh.MA_NGANH
              LEFT JOIN nien_khoa nk ON nk.MA_NIEN_KHOA = lh.MA_NIEN_KHOA
+             LEFT JOIN hoc_ky hk ON hk.MA_HOC_KY = (
+                SELECT h2.MA_HOC_KY
+                FROM hoc_ky h2
+                WHERE h2.MA_NIEN_KHOA = lh.MA_NIEN_KHOA
+                ORDER BY CASE
+                    WHEN CURDATE() BETWEEN h2.THOI_GIAN_BDHK AND h2.THOI_GIAN_KTHK THEN 0
+                    ELSE 1
+                END, h2.MA_HOC_KY DESC
+                LIMIT 1
+             )
              WHERE sv.TEN_DANG_NHAP = :login_username
                 OR sv.MSSV = :login_mssv
              LIMIT 1"
@@ -303,19 +355,69 @@ class StudentModel
         return $row ?: null;
     }
 
-    public function updateAccountPassword(string $username, string $passwordHash): bool
+    public function updateAccountPassword(int $studentId, string $username, string $passwordHash): bool
     {
         $statement = $this->db->prepare(
-            'UPDATE nguoi_dung
-             SET MAT_KHAU = :password
-             WHERE TEN_DANG_NHAP = :username'
+            'UPDATE nguoi_dung nd
+             INNER JOIN sinh_vien sv ON (
+                sv.TEN_DANG_NHAP = nd.TEN_DANG_NHAP
+                OR sv.MSSV = nd.TEN_DANG_NHAP
+             )
+             SET nd.MAT_KHAU = :password
+             WHERE nd.TEN_DANG_NHAP = :username
+               AND sv.MA_SV = :student_id'
         );
         $statement->execute([
             'password' => $passwordHash,
             'username' => $username,
+            'student_id' => $studentId,
         ]);
 
         return $statement->rowCount() > 0;
+    }
+
+    public function updateAccountThemeColor(int $studentId, string $username, string $themeColor): bool
+    {
+        $statement = $this->db->prepare(
+            'UPDATE nguoi_dung nd
+             INNER JOIN sinh_vien sv ON (
+                sv.TEN_DANG_NHAP = nd.TEN_DANG_NHAP
+                OR sv.MSSV = nd.TEN_DANG_NHAP
+             )
+             SET nd.theme_color = :theme_color
+             WHERE nd.TEN_DANG_NHAP = :username
+               AND sv.MA_SV = :student_id'
+        );
+        $statement->execute([
+            'theme_color' => $themeColor,
+            'username' => $username,
+            'student_id' => $studentId,
+        ]);
+
+        return $statement->rowCount() > 0 || $this->accountThemeColorMatches($studentId, $username, $themeColor);
+    }
+
+    private function accountThemeColorMatches(int $studentId, string $username, string $themeColor): bool
+    {
+        $statement = $this->db->prepare(
+            'SELECT 1
+             FROM nguoi_dung nd
+             INNER JOIN sinh_vien sv ON (
+                sv.TEN_DANG_NHAP = nd.TEN_DANG_NHAP
+                OR sv.MSSV = nd.TEN_DANG_NHAP
+             )
+             WHERE nd.TEN_DANG_NHAP = :username
+               AND sv.MA_SV = :student_id
+               AND nd.theme_color = :theme_color
+             LIMIT 1'
+        );
+        $statement->execute([
+            'username' => $username,
+            'student_id' => $studentId,
+            'theme_color' => $themeColor,
+        ]);
+
+        return (bool) $statement->fetchColumn();
     }
 
     public function departmentExists(int $departmentId): bool
@@ -632,6 +734,25 @@ class StudentModel
         return $statement->rowCount() > 0;
     }
 
+    public function updateStudentAvatar(int $id, string $avatar): bool
+    {
+        if (!$this->tableHasColumn('sinh_vien', 'AVATAR')) {
+            return false;
+        }
+
+        $statement = $this->db->prepare(
+            'UPDATE sinh_vien
+             SET AVATAR = :avatar
+             WHERE MA_SV = :id'
+        );
+        $statement->execute([
+            'avatar' => trim($avatar),
+            'id' => $id,
+        ]);
+
+        return $statement->rowCount() > 0;
+    }
+
     public function studentAvatarColumnExists(): bool
     {
         return $this->tableHasColumn('sinh_vien', 'AVATAR');
@@ -706,6 +827,179 @@ class StudentModel
     public function isConstraintException(Throwable $exception): bool
     {
         return $exception instanceof PDOException && $exception->getCode() === '23000';
+    }
+
+    public function listPortalNotifications(string $username, array $filters = []): array
+    {
+        [$whereSql, $params] = $this->buildNotificationFilterWhere($username, $filters);
+        $typeExpression = $this->notificationTypeExpression();
+
+        $statement = $this->db->prepare(
+            "SELECT tb.MA_THONG_BAO AS id,
+                    tb.NGUOI_GUI AS sender,
+                    tb.TIEU_DE AS title,
+                    tb.NOI_DUNG_TB AS body,
+                    tb.NGAY_TAO_TB AS created_at,
+                    tb.FILE_DINH_KEM AS attachment,
+                    tb.MUC_DO_UU_TIEN AS priority,
+                    tb.TRANG_THAI_TB AS notification_status,
+                    tb.MA_HOAT_DONG AS activity_id,
+                    COALESCE(n.DA_DOC, 0) AS is_read,
+                    {$typeExpression} AS type_name
+             FROM thong_bao tb
+             LEFT JOIN nhan n
+                ON n.MA_THONG_BAO = tb.MA_THONG_BAO
+               AND n.TEN_DANG_NHAP = :recipient_join
+             {$whereSql}
+             ORDER BY tb.NGAY_TAO_TB DESC, tb.MA_THONG_BAO DESC"
+        );
+
+        foreach ($params as $key => $value) {
+            $statement->bindValue($key, $value);
+        }
+        $statement->bindValue('recipient_join', $username);
+        $statement->execute();
+
+        return $statement->fetchAll();
+    }
+
+    public function getPortalNotificationFilterOptions(string $username): array
+    {
+        $visibilitySql = $this->notificationVisibilitySql();
+        $typeExpression = $this->notificationTypeExpression();
+
+        $typeStatement = $this->db->prepare(
+            "SELECT DISTINCT {$typeExpression} AS value
+             FROM thong_bao tb
+             LEFT JOIN nhan n
+                ON n.MA_THONG_BAO = tb.MA_THONG_BAO
+               AND n.TEN_DANG_NHAP = :recipient_join
+             WHERE {$visibilitySql}
+             HAVING value IS NOT NULL AND TRIM(value) <> ''
+             ORDER BY value"
+        );
+        $typeStatement->execute([
+            'recipient_join' => $username,
+            'recipient_exists' => $username,
+        ]);
+
+        $senderStatement = $this->db->prepare(
+            "SELECT DISTINCT tb.NGUOI_GUI AS value
+             FROM thong_bao tb
+             LEFT JOIN nhan n
+                ON n.MA_THONG_BAO = tb.MA_THONG_BAO
+               AND n.TEN_DANG_NHAP = :recipient_join
+             WHERE {$visibilitySql}
+               AND tb.NGUOI_GUI IS NOT NULL
+               AND TRIM(tb.NGUOI_GUI) <> ''
+             ORDER BY tb.NGUOI_GUI"
+        );
+        $senderStatement->execute([
+            'recipient_join' => $username,
+            'recipient_exists' => $username,
+        ]);
+
+        return [
+            'types' => $this->buildNotificationOptions(
+                array_column($typeStatement->fetchAll(), 'value'),
+                self::DEFAULT_NOTIFICATION_TYPES
+            ),
+            'senders' => $this->buildNotificationOptions(
+                array_column($senderStatement->fetchAll(), 'value'),
+                self::DEFAULT_NOTIFICATION_SENDERS
+            ),
+        ];
+    }
+
+    public function markPortalNotificationAsRead(string $username, int $notificationId): bool
+    {
+        if ($notificationId < 1 || $username === '') {
+            return false;
+        }
+
+        $statement = $this->db->prepare(
+            'UPDATE nhan
+             SET DA_DOC = 1
+             WHERE MA_THONG_BAO = :notification_id
+               AND TEN_DANG_NHAP = :username'
+        );
+        $statement->execute([
+            'notification_id' => $notificationId,
+            'username' => $username,
+        ]);
+
+        return $statement->rowCount() > 0;
+    }
+
+    private function buildNotificationFilterWhere(string $username, array $filters): array
+    {
+        $where = [$this->notificationVisibilitySql()];
+        $params = ['recipient_exists' => $username];
+
+        $readStatus = trim((string) ($filters['read_status'] ?? ''));
+        if ($readStatus === 'unread') {
+            $where[] = 'COALESCE(n.DA_DOC, 0) = 0';
+        } elseif ($readStatus === 'read') {
+            $where[] = 'COALESCE(n.DA_DOC, 0) = 1';
+        }
+
+        $type = trim((string) ($filters['type'] ?? ''));
+        if ($type !== '') {
+            $where[] = $this->notificationTypeExpression() . ' = :notification_type';
+            $params['notification_type'] = $type;
+        }
+
+        $sender = trim((string) ($filters['sender'] ?? ''));
+        if ($sender !== '') {
+            $where[] = 'tb.NGUOI_GUI = :notification_sender';
+            $params['notification_sender'] = $sender;
+        }
+
+        $keyword = trim((string) ($filters['keyword'] ?? ''));
+        if ($keyword !== '') {
+            $where[] = '(tb.TIEU_DE LIKE :notification_keyword
+                OR tb.NOI_DUNG_TB LIKE :notification_keyword
+                OR tb.NGUOI_GUI LIKE :notification_keyword)';
+            $params['notification_keyword'] = '%' . $keyword . '%';
+        }
+
+        return ['WHERE ' . implode(' AND ', $where), $params];
+    }
+
+    private function notificationVisibilitySql(): string
+    {
+        return '(n.TEN_DANG_NHAP IS NOT NULL
+            OR NOT EXISTS (
+                SELECT 1
+                FROM nhan n_all
+                WHERE n_all.MA_THONG_BAO = tb.MA_THONG_BAO
+                  AND n_all.TEN_DANG_NHAP <> :recipient_exists
+            ))';
+    }
+
+    private function notificationTypeExpression(): string
+    {
+        if ($this->tableHasColumn('thong_bao', 'LOAI_THONG_BAO')) {
+            return 'tb.LOAI_THONG_BAO';
+        }
+
+        return "CASE WHEN tb.MA_HOAT_DONG IS NOT NULL THEN 'Hoạt động' ELSE 'Hệ thống' END";
+    }
+
+    private function buildNotificationOptions(array $dbValues, array $defaultValues): array
+    {
+        $values = [];
+
+        foreach (array_merge($dbValues, $defaultValues) as $value) {
+            $value = trim((string) $value);
+            if ($value === '' || isset($values[$value])) {
+                continue;
+            }
+
+            $values[$value] = ['value' => $value, 'label' => $value];
+        }
+
+        return array_values($values);
     }
 
     private function buildListFilterWhere(array $filters): array

@@ -5,26 +5,39 @@
 <style>
     .calendar-page {
         display: grid;
-        gap: 18px;
+        gap: 16px;
+    }
+
+    .calendar-panel__header {
+        padding: 12px 14px;
+        border-bottom: 1px solid #e5e7eb;
+    }
+
+    .calendar-panel__body {
+        padding: 14px;
+        display: grid;
+        gap: 12px;
     }
 
     .calendar-title {
         font-size: 18px;
-        font-weight: 700;
-        color: #1d4ed8;
+        font-weight: 800;
+        color: var(--primary);
         text-transform: none;
-        letter-spacing: 0.4px;
-        text-align: center;
+        letter-spacing: 0.6px;
+        text-align: left;
+        margin: 0;
     }
 
     .calendar-card {
         background: #fff;
         border: 1px solid #e8ecf3;
-        border-radius: 12px;
-        padding: 14px;
+        border-radius: 8px;
+        padding: 0;
         box-shadow: 0 2px 8px rgba(0,0,0,0.06);
         display: grid;
-        gap: 12px;
+        gap: 0;
+        overflow: hidden;
     }
 
     .calendar-header {
@@ -47,12 +60,13 @@
         display: inline-flex;
         align-items: center;
         gap: 8px;
-        padding: 6px 10px;
+        height: 32px;
+        padding: 0 10px;
         border-radius: 10px;
         border: 1px solid #e5e7eb;
         background: #ffffff;
         font-size: 12px;
-        font-weight: 700;
+        font-weight: 800;
         color: #1f2937;
         box-shadow: 0 1px 4px rgba(15, 23, 42, 0.05);
     }
@@ -64,6 +78,9 @@
         font-weight: 700;
         color: #1f2937;
         background: transparent;
+        width: 138px;
+        height: 100%;
+        padding: 0;
     }
 
     .date-picker input::-webkit-calendar-picker-indicator {
@@ -71,14 +88,19 @@
     }
 
     .date-now-btn {
+        min-height: 32px;
         padding: 6px 10px;
         border-radius: 8px;
-        border: 1px solid #1d4ed8;
-        background: #1d4ed8;
+        border: 1px solid var(--primary);
+        background: var(--primary);
         color: #ffffff;
         font-size: 12px;
-        font-weight: 700;
+        font-weight: 900 !important;
         cursor: pointer;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        line-height: 1;
     }
 
     .calendar-nav {
@@ -94,9 +116,21 @@
         border-radius: 8px;
         border: 1px solid #e5e7eb;
         background: #fff;
-        font-weight: 700;
-        color: #1f2937;
+        font-size: 18px;
+        font-weight: 800;
+        color: var(--primary);
         cursor: pointer;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        line-height: 1;
+        padding: 0;
+    }
+
+    .nav-btn:hover {
+        background: #f8faff;
+        border-color: rgba(var(--primary-rgb), 0.35);
+        color: var(--primary);
     }
 
     .today-btn {
@@ -138,7 +172,7 @@
     }
 
     .view-toggle button.active {
-        background: #1d4ed8;
+        background: var(--primary);
         color: #fff;
     }
 
@@ -160,7 +194,7 @@
     }
 
     .schedule-header {
-        background: linear-gradient(135deg, #1d4ed8 0%, #2563eb 100%);
+        background: linear-gradient(135deg, var(--primary) 0%, var(--primary) 100%);
         color: #ffffff;
         font-weight: 700;
         text-align: center;
@@ -198,7 +232,7 @@
     }
 
     .schedule-body {
-        min-height: 150px;
+        min-height: 190px;
         background-image:
             repeating-linear-gradient(0deg, rgba(203, 213, 225, 0.3), rgba(203, 213, 225, 0.3) 1px, transparent 1px, transparent 20px),
             repeating-linear-gradient(90deg, rgba(203, 213, 225, 0.3), rgba(203, 213, 225, 0.3) 1px, transparent 1px, transparent 20px);
@@ -229,19 +263,20 @@
         width: 8px;
         height: 8px;
         border-radius: 999px;
-        background: #1d4ed8;
+        background: var(--primary);
     }
 
-    .legend-dot.study { background: #2563eb; }
+    .legend-dot.study { background: var(--primary); }
     .legend-dot.ethics { background: #16a34a; }
     .legend-dot.volunteer { background: #f59e0b; }
     .legend-dot.fitness { background: #7c3aed; }
-    .legend-dot.integration { background: #e11d48; }
+    .legend-dot.integration { background: #14b8a6; }
     .legend-dot.other { background: #6b7280; }
+    .legend-dot.paused { background: #dc2626; }
 
     @media (max-width: 900px) {
         .schedule-body {
-            min-height: 120px;
+            min-height: 150px;
         }
     }
 
@@ -256,30 +291,33 @@
         }
 
         .schedule-body {
-            min-height: 100px;
+            min-height: 125px;
         }
     }
 </style>
 
 <div class="calendar-page">
-    <h2 class="calendar-title">Lịch hoạt động</h2>
-
     <div class="calendar-card card">
-        <div class="calendar-header card-header">
-            <div class="month-label">Tháng 5, 2025 <span>v</span></div>
-            <div class="calendar-controls">
-                <label class="date-picker">
-                    <input class="form-control" type="date" value="2026-05-28" aria-label="Chọn ngày" />
-                </label>
-                <button class="date-now-btn btn btn-primary" type="button">Hiện tại</button>
-                <div class="calendar-nav">
-                    <button class="nav-btn btn btn-outline-secondary" type="button">&#x2039;</button>
-                    <button class="nav-btn btn btn-outline-secondary" type="button">&#x203A;</button>
-                </div>
-            </div>
+        <div class="calendar-panel__header card-header">
+            <h2 class="calendar-title">Lịch hoạt động</h2>
         </div>
 
-        <div class="schedule-table table-responsive">
+        <div class="calendar-panel__body card-body">
+            <div class="calendar-header">
+                <div class="month-label">Tháng 5, 2025 <span>v</span></div>
+                <div class="calendar-controls">
+                    <label class="date-picker">
+                        <input class="form-control" type="date" value="2026-05-28" aria-label="Chọn ngày" />
+                    </label>
+                    <button class="date-now-btn btn btn-primary" type="button">Hiện tại</button>
+                    <div class="calendar-nav">
+                        <button class="nav-btn btn btn-outline-secondary" type="button">&#x2039;</button>
+                        <button class="nav-btn btn btn-outline-secondary" type="button">&#x203A;</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="schedule-table table-responsive">
             <div class="schedule-cell schedule-header schedule-label">Ca hoạt động</div>
             <div class="schedule-cell schedule-header schedule-day"><span class="day">Thứ 2</span><span class="date">25/05/2026</span></div>
             <div class="schedule-cell schedule-header schedule-day"><span class="day">Thứ 3</span><span class="date">26/05/2026</span></div>
@@ -314,15 +352,17 @@
             <div class="schedule-cell schedule-body"></div>
             <div class="schedule-cell schedule-body"></div>
             <div class="schedule-cell schedule-body"></div>
-        </div>
+            </div>
 
-        <div class="calendar-legend">
-            <div class="legend-item"><span class="legend-dot study"></span> Học tập</div>
-            <div class="legend-item"><span class="legend-dot ethics"></span> Đạo đức</div>
-            <div class="legend-item"><span class="legend-dot volunteer"></span> Tình nguyện</div>
-            <div class="legend-item"><span class="legend-dot fitness"></span> Thể lực</div>
-            <div class="legend-item"><span class="legend-dot integration"></span> Hội nhập</div>
-            <div class="legend-item"><span class="legend-dot other"></span> Khác</div>
+            <div class="calendar-legend">
+                <div class="legend-item"><span class="legend-dot ethics"></span> Đạo đức</div>
+                <div class="legend-item"><span class="legend-dot fitness"></span> Thể lực</div>
+                <div class="legend-item"><span class="legend-dot study"></span> Học tập</div>
+                <div class="legend-item"><span class="legend-dot volunteer"></span> Tình nguyện</div>
+                <div class="legend-item"><span class="legend-dot integration"></span> Hội nhập</div>
+                <div class="legend-item"><span class="legend-dot other"></span> Khác</div>
+                <div class="legend-item"><span class="legend-dot paused"></span> Tạm ngưng</div>
+            </div>
         </div>
     </div>
 </div>

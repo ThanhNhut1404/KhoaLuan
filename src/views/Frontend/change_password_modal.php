@@ -3,11 +3,74 @@ $changePasswordErrors = $changePasswordErrors ?? [];
 $openChangePasswordModal = $openChangePasswordModal ?? false;
 ?>
 
+<style>
+    #passwordModal .modal-card {
+        width: min(470px, 100%);
+    }
+
+    #passwordModal .modal-header {
+        min-height: 48px;
+        padding: 10px 16px;
+    }
+
+    #passwordModal .modal-title {
+        font-size: 15px;
+        font-weight: 600;
+    }
+
+    #passwordModal .modal-close {
+        width: 34px;
+        height: 34px;
+        padding: 0;
+        font-size: 31px;
+        line-height: 1;
+        color: var(--primary-dark);
+        background: transparent;
+    }
+
+    #passwordModal .modal-close:hover {
+        color: var(--primary-dark);
+        background: #eef4ff;
+    }
+
+    #passwordModal .modal-body {
+        gap: 10px;
+        padding: 14px 18px;
+    }
+
+    #passwordModal .modal-field label {
+        margin-bottom: 5px;
+    }
+
+    #passwordModal .modal-field input {
+        height: 42px;
+        padding: 9px 42px 9px 12px;
+        border-radius: 11px;
+    }
+
+    #passwordModal .modal-actions {
+        padding: 0 18px 18px;
+    }
+
+    #passwordModal .modal-save {
+        min-height: 42px;
+        padding: 9px 14px;
+        border-radius: 11px;
+        font-weight: 800;
+        background: linear-gradient(180deg, #16a34a 0%, #15803d 100%);
+        box-shadow: 0 10px 20px rgba(22, 163, 74, 0.22);
+    }
+
+    #passwordModal .modal-save:hover {
+        background: linear-gradient(180deg, #15803d 0%, #166534 100%);
+    }
+</style>
+
 <div class="modal-overlay modal<?= $openChangePasswordModal ? ' active' : '' ?>" id="passwordModal" aria-hidden="<?= $openChangePasswordModal ? 'false' : 'true' ?>">
     <div class="modal-card modal-content" role="dialog" aria-modal="true" aria-labelledby="passwordModalTitle">
         <div class="modal-header">
             <span class="modal-title" id="passwordModalTitle">Đổi mật khẩu</span>
-            <button class="modal-close btn btn-light" type="button" aria-label="Đóng" onclick="closePasswordModal()">✕</button>
+            <button class="modal-close btn btn-light" type="button" aria-label="Đóng" onclick="closePasswordModal()">×</button>
         </div>
         <form method="post" action="/KhoaLuan/public/student.php?action=change_password">
             <div class="modal-body">

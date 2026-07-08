@@ -6,7 +6,7 @@
     <div class="activity-detail-card modal-content" role="dialog" aria-modal="true" aria-labelledby="activityDetailTitle">
         <div class="activity-detail-header modal-header">
             <span class="modal-title" id="activityDetailTitle"></span>
-            <button class="activity-detail-close btn btn-light" type="button" aria-label="Đóng" onclick="closeActivityDetail()">✕</button>
+            <button class="activity-detail-close btn btn-light" type="button" aria-label="Đóng" onclick="closeActivityDetail()">&times;</button>
         </div>
         <div class="activity-detail-body modal-body">
             <div class="activity-detail-top">
@@ -16,10 +16,10 @@
                 <div class="activity-detail-summary">
                     <div class="activity-detail-summary-grid">
                         <div class="activity-detail-summary-item card">
-                            <div class="activity-detail-summary-label"><i class="fa-solid fa-university" style="margin-right: 6px;"></i>Đơn vị</div>
+                            <div class="activity-detail-summary-label"><i class="fa-solid fa-university" style="margin-right: 6px;"></i>Đơn vị tổ chức</div>
                             <div class="activity-detail-summary-value" id="activityDetailUnit"></div>
                         </div>
-                        <div class="activity-detail-summary-item card">
+                        <div class="activity-detail-summary-item card time-box">
                             <div class="activity-detail-summary-label"><i class="fa-solid fa-calendar-days" style="margin-right: 6px;"></i>Thời gian</div>
                             <div class="activity-detail-summary-value" id="activityDetailTime"></div>
                         </div>
@@ -28,7 +28,7 @@
                             <div class="activity-detail-summary-value" id="activityDetailLocation"></div>
                         </div>
                         <div class="activity-detail-summary-item card">
-                            <div class="activity-detail-summary-label"><i class="fa-solid fa-tag" style="margin-right: 6px;"></i>Trạng thái</div>
+                            <div class="activity-detail-summary-label"><i class="fa-solid fa-tag" style="margin-right: 6px;"></i>Loại hoạt động</div>
                             <div class="activity-detail-summary-value" id="activityDetailTag"></div>
                         </div>
                     </div>
@@ -40,7 +40,7 @@
                     <div class="detail-label"><i class="fa-solid fa-gift"></i>Quyền lợi</div>
                     <div class="detail-value" id="activityDetailBenefits"></div>
                 </div>
-                <div class="detail-box card">
+                <div class="detail-box card clothing-box">
                     <div class="detail-label"><i class="fa-solid fa-shirt"></i>Trang phục</div>
                     <div class="detail-value" id="activityDetailClothing"></div>
                 </div>
@@ -61,7 +61,7 @@
                     <div class="detail-value" id="activityDetailRemaining"></div>
                 </div>
                 <div class="detail-box card full-width contact-box">
-                    <div class="detail-label"><i class="fa-solid fa-address-card"></i>Liên hệ</div>
+                    <div class="detail-label"><i class="fa-solid fa-address-card"></i>Thông tin liên hệ</div>
                     <div class="detail-contact">
                         <div class="detail-contact-item">
                             <div class="detail-label"><i class="fa-solid fa-user-tie"></i>Người đại diện</div>
@@ -76,8 +76,8 @@
             </div>
         </div>
         <div class="activity-detail-footer modal-footer">
-            <button class="detail-action btn btn-outline-secondary" type="button" onclick="closeActivityDetail()">Đóng</button>
-            <button class="detail-action primary btn btn-primary" type="button">Đăng ký</button>
+            <button class="detail-action btn btn-outline-secondary fw-bold" type="button" onclick="closeActivityDetail()">Hủy</button>
+            <button class="detail-action primary btn btn-primary fw-bold" type="button">Đăng ký</button>
         </div>
     </div>
 </div>
@@ -107,18 +107,18 @@
                 tagEl.className = 'activity-detail-summary-value activity-badge-inline badge rounded-pill';
                 
                 const tagLower = (card.dataset.tag || '').toLowerCase();
-                if (tagLower.includes('tình nguyện')) {
-                    tagEl.classList.add('badge-tinhnguyen');
-                } else if (tagLower.includes('học thuật')) {
-                    tagEl.classList.add('badge-hocthuat');
-                } else if (tagLower.includes('thể thao')) {
-                    tagEl.classList.add('badge-thethao');
-                } else if (tagLower.includes('văn hóa')) {
-                    tagEl.classList.add('badge-vanhoa');
-                } else if (tagLower.includes('kỹ năng')) {
-                    tagEl.classList.add('badge-kynang');
+                if (tagLower.includes('học tập')) {
+                    tagEl.classList.add('badge-study');
+                } else if (tagLower.includes('đạo đức')) {
+                    tagEl.classList.add('badge-ethics');
+                } else if (tagLower.includes('tình nguyện')) {
+                    tagEl.classList.add('badge-volunteer');
+                } else if (tagLower.includes('thể lực')) {
+                    tagEl.classList.add('badge-fitness');
+                } else if (tagLower.includes('hội nhập')) {
+                    tagEl.classList.add('badge-integration');
                 } else {
-                    tagEl.classList.add('badge-khac');
+                    tagEl.classList.add('badge-other');
                 }
             }
 

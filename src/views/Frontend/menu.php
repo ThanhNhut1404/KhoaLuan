@@ -31,6 +31,59 @@
     }
     .sidebar .sidebar-menu .submenu-caret { transition: transform 260ms cubic-bezier(.2,.8,.2,1); }
     .sidebar .sidebar-menu li.has-submenu.open > a .submenu-caret { transform: rotate(180deg); }
+    .student-theme-switcher {
+        padding: 6px 12px 0;
+        border-top: 1px solid #eef1f6;
+    }
+    .student-theme-title {
+        margin: 0 0 6px;
+        font-size: 11px;
+        font-weight: 800;
+        color: var(--text-muted);
+        letter-spacing: 0.4px;
+        text-transform: uppercase;
+    }
+    .student-theme-options {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        flex-wrap: wrap;
+    }
+    .student-theme-dot {
+        width: 24px;
+        height: 24px;
+        border: 2px solid rgba(255,255,255,0.95);
+        border-radius: 50%;
+        cursor: pointer;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        color: #fff;
+        box-shadow: 0 0 0 1px #d8deea;
+        transition: transform 0.16s ease, box-shadow 0.16s ease;
+    }
+    .student-theme-dot:hover {
+        transform: scale(1.08);
+    }
+    .student-theme-dot.is-active {
+        box-shadow: 0 0 0 2px var(--primary), 0 4px 10px rgba(var(--primary-rgb), 0.18);
+    }
+    .student-theme-dot i {
+        font-size: 10px;
+        opacity: 0;
+        transform: scale(0.8);
+        transition: opacity 0.16s ease, transform 0.16s ease;
+    }
+    .student-theme-dot.is-active i {
+        opacity: 1;
+        transform: scale(1);
+    }
+    .student-theme-dot[data-theme-value="blue"] { background: #1d4ed8; }
+    .student-theme-dot[data-theme-value="red"] { background: #d90429; }
+    .student-theme-dot[data-theme-value="green"] { background: #16a34a; }
+    .student-theme-dot[data-theme-value="purple"] { background: #7c3aed; }
+    .student-theme-dot[data-theme-value="cyan"] { background: #0891b2; }
+    .student-theme-dot[data-theme-value="orange"] { background: #f97316; }
 </style>
 
 <div class="sidebar" id="sidebar">
@@ -77,8 +130,9 @@
             <ul class="submenu">
                 <li><a class="nav-link" href="/KhoaLuan/public/student.php?action=dangkyhoatdong" onclick="closeSidebar()">Đăng ký hoạt động</a></li>
                 <li><a class="nav-link" href="/KhoaLuan/public/student.php?action=hoatdongdangky" onclick="closeSidebar()">Hoạt động đã đăng ký</a></li>
-                <li><a class="nav-link" href="/KhoaLuan/public/student.php?action=hoatdongdathamgia" onclick="closeSidebar()">Hoạt động đã tham gia</a></li>
                 <li><a class="nav-link" href="/KhoaLuan/public/student.php?action=lichhoatdong" onclick="closeSidebar()">Lịch hoạt động</a></li>
+                <li><a class="nav-link" href="/KhoaLuan/public/student.php?action=diemdanhhoatdong" onclick="closeSidebar()">Điểm danh hoạt động</a></li>
+                <li><a class="nav-link" href="/KhoaLuan/public/student.php?action=hoatdongdathamgia" onclick="closeSidebar()">Hoạt động đã tham gia</a></li>
             </ul>
         </li>
         <li class="has-submenu">
@@ -94,7 +148,6 @@
                 </svg>
             </a>
             <ul class="submenu">
-                <li><a class="nav-link" href="#evidence" onclick="closeSidebar()">Điểm danh hoạt động</a></li>
                 <li><a class="nav-link" href="/KhoaLuan/public/student.php?action=phieudanhgia" onclick="closeSidebar()">Phiếu đánh giá</a></li>
                 <li><a class="nav-link" href="/KhoaLuan/public/student.php?action=ketquarenluyen" onclick="closeSidebar()">Kết quả rèn luyện</a></li>
             </ul>
@@ -104,7 +157,7 @@
                 <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.8 19.8 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.08 4.18 2 2 0 0 1 4.06 2h3a2 2 0 0 1 2 1.72 12.7 12.7 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.22a2 2 0 0 1 2.11-.45 12.7 12.7 0 0 0 2.81.7A2 2 0 0 1 22 16.92Z" stroke-width="2" stroke-linecap="round"/>
             </svg>
             <span>Liên hệ</span></a></li>
-        <li><a class="nav-link" href="/KhoaLuan/public/student.php?action=logout" onclick="return confirm('Bạn có chắc muốn đăng xuất?');">
+        <li><a class="nav-link" href="/KhoaLuan/public/student.php?action=logout" onclick="openStudentLogoutConfirm(event, this);">
             <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
                 <path d="M16 17l5-5-5-5" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
@@ -112,6 +165,28 @@
             </svg>
             <span>Đăng xuất</span></a></li>
     </ul>
+    <div class="student-theme-switcher" aria-label="Chọn màu giao diện">
+        <p class="student-theme-title">Màu giao diện</p>
+        <div class="student-theme-options">
+            <?php
+                $currentThemeColor = strtolower(trim((string) ($_SESSION['theme_color'] ?? 'blue')));
+                $themeOptions = ['blue', 'red', 'green', 'purple', 'cyan', 'orange'];
+                if (!in_array($currentThemeColor, $themeOptions, true)) {
+                    $currentThemeColor = 'blue';
+                }
+            ?>
+            <?php foreach ($themeOptions as $themeOption): ?>
+                <button
+                    type="button"
+                    class="student-theme-dot<?= $themeOption === $currentThemeColor ? ' is-active' : '' ?>"
+                    data-theme-value="<?= htmlspecialchars($themeOption, ENT_QUOTES, 'UTF-8') ?>"
+                    aria-label="Chọn màu <?= htmlspecialchars($themeOption, ENT_QUOTES, 'UTF-8') ?>"
+                    aria-pressed="<?= $themeOption === $currentThemeColor ? 'true' : 'false' ?>">
+                    <i class="fas fa-check" aria-hidden="true"></i>
+                </button>
+            <?php endforeach; ?>
+        </div>
+    </div>
 </div>
 
 <div class="sidebar-overlay" id="sidebarOverlay" onclick="closeSidebar()"></div>
