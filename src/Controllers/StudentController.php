@@ -4,12 +4,16 @@ namespace KhoaLuan\QLDRL\Controllers;
 
 use KhoaLuan\QLDRL\Config\Database;
 use KhoaLuan\QLDRL\Models\StudentModel;
+use KhoaLuan\QLDRL\Services\CaptchaService;
 use Throwable;
 
 class StudentController
 {
     private const LIST_PER_PAGE = 10;
     private const SESSION_TIMEOUT_SECONDS = 1800;
+    private const DEFAULT_STUDENT_PASSWORD = '#Tdu1234';
+    private const DEFAULT_THEME_COLOR = 'blue';
+    private const ALLOWED_THEME_COLORS = ['blue', 'red', 'green', 'purple', 'cyan', 'orange'];
 
     private const STATUS_OPTIONS = [
         ['value' => 'Đang học', 'label' => 'Đang học'],
@@ -31,8 +35,13 @@ class StudentController
         }
 
         $flash = $_SESSION['student_login_flash'] ?? null;
+        $loginToast = null;
         if (is_array($flash)) {
             $message = (string) ($flash['message'] ?? '');
+            $loginToast = [
+                'type' => (string) ($flash['type'] ?? 'success'),
+                'message' => $message,
+            ];
             if (($flash['type'] ?? '') === 'success') {
                 $success = $message;
             } elseif (($flash['type'] ?? '') === 'error') {
@@ -46,17 +55,38 @@ class StudentController
         require __DIR__ . '/../views/Frontend/login.php';
     }
 
+    public function captcha(): void
+    {
+        CaptchaService::render('student_captcha');
+    }
+
     public function handleLogin(): void
     {
         $username = trim((string) ($_POST['mssv'] ?? $_POST['username'] ?? ''));
         $password = (string) ($_POST['password'] ?? '');
+        $captcha = trim((string) ($_POST['captcha'] ?? ''));
+        $expectedCaptcha = (string) ($_SESSION['student_captcha'] ?? '');
+
+        if ($captcha === '') {
+            unset($_SESSION['student_captcha']);
+            $this->login('Vui lòng nhập mã xác thực.', $username);
+            return;
+        }
+
+        if ($expectedCaptcha === '' || !hash_equals($expectedCaptcha, $captcha)) {
+            unset($_SESSION['student_captcha']);
+            $this->login('Mã xác thực không đúng.', $username);
+            return;
+        }
 
         if ($username === '') {
+            unset($_SESSION['student_captcha']);
             $this->login('Vui lòng nhập MSSV/tên đăng nhập.', $username);
             return;
         }
 
         if ($password === '') {
+            unset($_SESSION['student_captcha']);
             $this->login('Vui lòng nhập mật khẩu.', $username);
             return;
         }
@@ -65,27 +95,32 @@ class StudentController
             $account = $this->model->findStudentAccountForLogin($username);
         } catch (Throwable $exception) {
             error_log($exception->getMessage());
+            unset($_SESSION['student_captcha']);
             $this->login('Lỗi đăng nhập: ' . $exception->getMessage(), $username);
             return;
         }
 
         if ($account === null) {
-            $this->login('Tài khoản sinh viên hoặc mật khẩu không đúng.', $username);
+            unset($_SESSION['student_captcha']);
+            $this->login('MSSV hoặc mật khẩu không đúng.', $username);
             return;
         }
 
         if ((string) ($account['role_name'] ?? '') !== 'SINH_VIEN') {
+            unset($_SESSION['student_captcha']);
             $this->login('Tài khoản không có quyền truy cập cổng sinh viên.', $username);
             return;
         }
 
         if (!$this->isActiveAccount((string) ($account['account_status'] ?? ''))) {
+            unset($_SESSION['student_captcha']);
             $this->login('Tài khoản sinh viên đang bị khóa hoặc ngừng hoạt động.', $username);
             return;
         }
 
         if (!password_verify($password, (string) ($account['password_hash'] ?? ''))) {
-            $this->login('Tài khoản sinh viên hoặc mật khẩu không đúng.', $username);
+            unset($_SESSION['student_captcha']);
+            $this->login('MSSV hoặc mật khẩu không đúng.', $username);
             return;
         }
 
@@ -101,8 +136,11 @@ class StudentController
         $_SESSION['student_username'] = (string) ($account['username'] ?? '');
         $_SESSION['student_mssv'] = (string) ($account['mssv'] ?? '');
         $_SESSION['student_name'] = $studentName;
+        $_SESSION['student_avatar'] = $this->normalizeAvatarPath((string) ($account['avatar'] ?? ''));
         $_SESSION['student_role'] = 'SINH_VIEN';
         $_SESSION['student_last_activity'] = time();
+        $_SESSION['theme_color'] = $this->normalizeThemeColor((string) ($account['theme_color'] ?? self::DEFAULT_THEME_COLOR));
+        unset($_SESSION['student_captcha']);
 
         $this->login('', $username, 'Đăng nhập thành công.', true);
     }
@@ -175,6 +213,11 @@ class StudentController
         $this->renderStudentPage('hoatdongdangky', 'Hoạt động đã đăng ký');
     }
 
+    public function diemdanhhoatdong(): void
+    {
+        $this->renderStudentPage('diemdanhhoatdong', 'Điểm danh hoạt động');
+    }
+
     public function ketquarenluyen(): void
     {
         $this->renderStudentPage('ketquarenluyen', 'Kết quả rèn luyện');
@@ -182,7 +225,59 @@ class StudentController
 
     public function thongbao(): void
     {
-        $this->renderStudentPage('thongbao', 'Thông báo');
+        $this->requireStudentLogin();
+        $this->sendNoCacheHeaders();
+
+        $student = $this->currentPortalStudent();
+        $notificationFilters = $this->normalizeNotificationFilters($_GET);
+        $notificationFilterOptions = ['types' => [], 'senders' => []];
+        $notifications = [];
+        $notificationError = '';
+        $username = trim((string) ($_SESSION['student_username'] ?? ($student['username'] ?? '')));
+
+        try {
+            $notificationFilterOptions = $this->model->getPortalNotificationFilterOptions($username);
+            $notifications = $this->model->listPortalNotifications($username, $notificationFilters);
+        } catch (Throwable $exception) {
+            error_log($exception->getMessage());
+            $notificationError = 'Không thể tải danh sách thông báo lúc này.';
+        }
+
+        $title = 'Thông báo';
+        $content = __DIR__ . '/../views/Frontend/thongbao.php';
+        $passwordToast = $_SESSION['student_profile_toast'] ?? ($_SESSION['student_password_toast'] ?? null);
+        $passwordLogoutAfterToast = !empty($_SESSION['student_logout_after_password_change']);
+        $changePasswordErrors = $_SESSION['student_change_password_errors'] ?? [];
+        $openChangePasswordModal = !empty($changePasswordErrors);
+        $profileErrors = $_SESSION['student_profile_errors'] ?? [];
+        $profileFormData = $_SESSION['student_profile_form_data'] ?? [];
+        $openEditProfileModal = !empty($profileErrors);
+
+        unset(
+            $_SESSION['student_password_toast'],
+            $_SESSION['student_logout_after_password_change'],
+            $_SESSION['student_change_password_errors'],
+            $_SESSION['student_profile_toast'],
+            $_SESSION['student_profile_errors'],
+            $_SESSION['student_profile_form_data']
+        );
+
+        require __DIR__ . '/../views/Frontend/layout.php';
+    }
+
+    private function normalizeNotificationFilters(array $get): array
+    {
+        $readStatus = trim((string) ($get['read_status'] ?? ''));
+        if (!in_array($readStatus, ['', 'unread', 'read'], true)) {
+            $readStatus = '';
+        }
+
+        return [
+            'read_status' => $readStatus,
+            'type' => trim((string) ($get['type'] ?? '')),
+            'sender' => trim((string) ($get['sender'] ?? '')),
+            'keyword' => trim((string) ($get['keyword'] ?? $get['search'] ?? $get['q'] ?? '')),
+        ];
     }
 
     public function handleChangePassword(): void
@@ -199,8 +294,11 @@ class StudentController
         }
         if ($newPassword === '') {
             $errors['new_password'] = 'Vui lòng nhập mật khẩu mới.';
-        } elseif (strlen($newPassword) < 6) {
-            $errors['new_password'] = 'Mật khẩu mới phải có ít nhất 6 ký tự.';
+        } else {
+            $newPasswordError = $this->validateStudentNewPassword($newPassword, $currentPassword);
+            if ($newPasswordError !== null) {
+                $errors['new_password'] = $newPasswordError;
+            }
         }
         if ($confirmPassword === '') {
             $errors['confirm_password'] = 'Vui lòng xác nhận mật khẩu mới.';
@@ -209,9 +307,10 @@ class StudentController
         }
 
         $username = (string) ($_SESSION['student_username'] ?? '');
+        $studentId = (int) ($_SESSION['student_id'] ?? 0);
         $account = null;
 
-        if (empty($errors)) {
+        if ($currentPassword !== '') {
             try {
                 $account = $this->model->findStudentAccountForLogin($username);
             } catch (Throwable $exception) {
@@ -219,7 +318,7 @@ class StudentController
                 $errors['current_password'] = 'Không thể kiểm tra mật khẩu lúc này.';
             }
 
-            if ($account === null || !password_verify($currentPassword, (string) ($account['password_hash'] ?? ''))) {
+            if (!isset($errors['current_password']) && ($account === null || !password_verify($currentPassword, (string) ($account['password_hash'] ?? '')))) {
                 $errors['current_password'] = 'Mật khẩu cũ không đúng.';
             }
         }
@@ -231,11 +330,14 @@ class StudentController
         }
 
         try {
-            $updated = $this->model->updateAccountPassword($username, password_hash($newPassword, PASSWORD_DEFAULT));
+            $updated = $this->model->updateAccountPassword($studentId, $username, password_hash($newPassword, PASSWORD_DEFAULT));
             $_SESSION['student_password_toast'] = [
                 'type' => $updated ? 'success' : 'error',
-                'message' => $updated ? 'Đổi mật khẩu thành công.' : 'Đổi mật khẩu thất bại. Vui lòng thử lại.',
+                'message' => $updated ? 'Đổi mật khẩu thành công. Vui lòng đăng nhập lại bằng mật khẩu mới.' : 'Đổi mật khẩu thất bại. Vui lòng thử lại.',
             ];
+            if ($updated) {
+                $_SESSION['student_logout_after_password_change'] = true;
+            }
         } catch (Throwable $exception) {
             error_log($exception->getMessage());
             $_SESSION['student_password_toast'] = [
@@ -246,6 +348,47 @@ class StudentController
 
         header('Location: /KhoaLuan/public/student.php?action=profile');
         exit;
+    }
+
+    public function logoutAfterPasswordChange(): void
+    {
+        $this->sendNoCacheHeaders();
+        $this->clearStudentSession();
+        header('Location: /KhoaLuan/public/student.php?action=login');
+        exit;
+    }
+
+    private function validateStudentNewPassword(string $newPassword, string $currentPassword): ?string
+    {
+        if (hash_equals(self::DEFAULT_STUDENT_PASSWORD, $newPassword)) {
+            return 'Mật khẩu mới không được là mật khẩu mặc định #Tdu1234.';
+        }
+
+        if ($currentPassword !== '' && hash_equals($currentPassword, $newPassword)) {
+            return 'Mật khẩu mới không được trùng mật khẩu cũ.';
+        }
+
+        if (strlen($newPassword) < 8) {
+            return 'Mật khẩu mới phải có ít nhất 8 ký tự.';
+        }
+
+        if (!preg_match('/[A-Z]/', $newPassword)) {
+            return 'Mật khẩu mới phải có ít nhất 1 chữ hoa.';
+        }
+
+        if (!preg_match('/[a-z]/', $newPassword)) {
+            return 'Mật khẩu mới phải có ít nhất 1 chữ thường.';
+        }
+
+        if (!preg_match('/[0-9]/', $newPassword)) {
+            return 'Mật khẩu mới phải có ít nhất 1 chữ số.';
+        }
+
+        if (!preg_match('/[^A-Za-z0-9]/', $newPassword)) {
+            return 'Mật khẩu mới phải có ít nhất 1 ký tự đặc biệt.';
+        }
+
+        return null;
     }
 
     public function handleUpdateProfile(): void
@@ -343,6 +486,53 @@ class StudentController
 
         header('Location: /KhoaLuan/public/student.php?action=profile');
         exit;
+    }
+
+    public function handleUpdateTheme(): void
+    {
+        $this->requireStudentLogin();
+
+        if (strtoupper((string) ($_SERVER['REQUEST_METHOD'] ?? '')) !== 'POST') {
+            $this->sendJsonResponse(['success' => false, 'message' => 'Phương thức không hợp lệ.'], 405);
+        }
+
+        $payload = $_POST;
+        $rawInput = file_get_contents('php://input');
+        if (is_string($rawInput) && trim($rawInput) !== '') {
+            $jsonPayload = json_decode($rawInput, true);
+            if (is_array($jsonPayload)) {
+                $payload = array_merge($payload, $jsonPayload);
+            }
+        }
+
+        $requestedTheme = strtolower(trim((string) ($payload['theme_color'] ?? '')));
+        if (!in_array($requestedTheme, self::ALLOWED_THEME_COLORS, true)) {
+            $this->sendJsonResponse(['success' => false, 'message' => 'Màu giao diện không hợp lệ.'], 422);
+        }
+
+        $studentId = (int) ($_SESSION['student_id'] ?? 0);
+        $username = trim((string) ($_SESSION['student_username'] ?? ''));
+        if ($studentId < 1 || $username === '') {
+            $this->sendJsonResponse(['success' => false, 'message' => 'Không tìm thấy phiên sinh viên hợp lệ.'], 401);
+        }
+
+        try {
+            $updated = $this->model->updateAccountThemeColor($studentId, $username, $requestedTheme);
+        } catch (Throwable $exception) {
+            error_log($exception->getMessage());
+            $this->sendJsonResponse(['success' => false, 'message' => 'Không thể lưu màu giao diện lúc này.'], 500);
+        }
+
+        if (!$updated) {
+            $this->sendJsonResponse(['success' => false, 'message' => 'Không thể cập nhật màu giao diện.'], 500);
+        }
+
+        $_SESSION['theme_color'] = $requestedTheme;
+        $this->sendJsonResponse([
+            'success' => true,
+            'theme_color' => $requestedTheme,
+            'message' => 'Đã đổi màu giao diện.',
+        ]);
     }
 
     public function handle(string $page, array $post, array $get, string $method): array
@@ -656,6 +846,7 @@ class StudentController
         }
 
         $passwordToast = $_SESSION['student_profile_toast'] ?? ($_SESSION['student_password_toast'] ?? null);
+        $passwordLogoutAfterToast = !empty($_SESSION['student_logout_after_password_change']);
         $changePasswordErrors = $_SESSION['student_change_password_errors'] ?? [];
         $openChangePasswordModal = !empty($changePasswordErrors);
         $profileErrors = $_SESSION['student_profile_errors'] ?? [];
@@ -664,6 +855,7 @@ class StudentController
 
         unset(
             $_SESSION['student_password_toast'],
+            $_SESSION['student_logout_after_password_change'],
             $_SESSION['student_change_password_errors'],
             $_SESSION['student_profile_toast'],
             $_SESSION['student_profile_errors'],
@@ -713,8 +905,13 @@ class StudentController
         $student['mssv'] = (string) ($student['mssv'] ?? '');
         $student['username'] = (string) ($student['username'] ?? '');
         $student['lop_hoc'] = (string) ($student['lop_hoc'] ?? '');
+        $student['khoa'] = (string) ($student['khoa'] ?? '');
         $student['nganh'] = (string) ($student['nganh'] ?? '');
         $student['khoa_hoc'] = (string) ($student['khoa_hoc'] ?? '');
+        $student['nien_khoa'] = (string) ($student['nien_khoa'] ?? '');
+        $student['hoc_ky'] = (string) ($student['hoc_ky'] ?? '');
+        $student['thoi_gian_bat_dau_danh_gia'] = (string) ($student['thoi_gian_bat_dau_danh_gia'] ?? '');
+        $student['thoi_gian_ket_thuc_danh_gia'] = (string) ($student['thoi_gian_ket_thuc_danh_gia'] ?? '');
         $student['trang_thai_hoc_tap'] = (string) ($student['trang_thai_hoc_tap'] ?? ($student['trang_thai'] ?? ''));
         $student['trang_thai'] = $student['trang_thai_hoc_tap'];
         $student['ngay_sinh'] = (string) ($student['ngay_sinh'] ?? '');
@@ -723,8 +920,102 @@ class StudentController
         $student['so_dien_thoai'] = (string) ($student['so_dien_thoai'] ?? '');
         $student['dia_chi'] = (string) ($student['dia_chi'] ?? ($student['dia_chi_thuong_tru'] ?? ''));
         $student['dia_chi_thuong_tru'] = $student['dia_chi'];
-        $student['avatar'] = (string) ($student['avatar'] ?? '');
+        $rawAvatar = (string) ($student['avatar'] ?? '');
+        $student['avatar'] = $this->normalizeAvatarPath($rawAvatar);
+        if ($student['avatar'] !== '' && trim(str_replace('\\', '/', $rawAvatar)) !== $student['avatar']) {
+            try {
+                $this->model->updateStudentAvatar((int) ($student['student_id'] ?? $studentId), $student['avatar']);
+            } catch (Throwable $exception) {
+                error_log($exception->getMessage());
+            }
+        }
+        $student['avatar_url'] = $this->publicAssetUrl($student['avatar']);
+        $_SESSION['student_id'] = (int) ($student['student_id'] ?? $studentId);
+        $_SESSION['student_username'] = $student['username'];
+        $_SESSION['student_mssv'] = $student['mssv'];
+        $_SESSION['student_name'] = $student['ho_ten'] !== '' ? $student['ho_ten'] : ($_SESSION['student_name'] ?? 'Sinh viên');
+        $_SESSION['student_avatar'] = $student['avatar'];
         return $student;
+    }
+
+    private function publicAssetUrl(string $path): string
+    {
+        $path = $this->normalizeAvatarPath($path);
+        if ($path === '') {
+            return '';
+        }
+
+        $absolutePath = $this->publicFilePath($path);
+        if ($absolutePath === null || !is_file($absolutePath)) {
+            return '';
+        }
+
+        return '/KhoaLuan/public/' . $path . '?v=' . filemtime($absolutePath);
+    }
+
+    public function avatarUrlFromPath(string $path): string
+    {
+        return $this->publicAssetUrl($path);
+    }
+
+    private function normalizeAvatarPath(string $path): string
+    {
+        $path = trim(str_replace('\\', '/', $path));
+        if ($path === '' || preg_match('#^https?://#i', $path)) {
+            return '';
+        }
+
+        $path = parse_url($path, PHP_URL_PATH) ?: $path;
+        $path = preg_replace('#^[A-Za-z]:/#', '/', $path) ?? $path;
+        $path = preg_replace('#/+#', '/', $path) ?? $path;
+
+        $knownPrefixes = [
+            '/KhoaLuan/public/',
+            'KhoaLuan/public/',
+            '/public/',
+            'public/',
+        ];
+        foreach ($knownPrefixes as $prefix) {
+            if (str_starts_with($path, $prefix)) {
+                $path = substr($path, strlen($prefix));
+                break;
+            }
+        }
+
+        $path = ltrim($path, '/');
+        foreach (['uploads/avatars/', 'uploads/avatar/', 'upload/avatar/'] as $legacyPrefix) {
+            $position = strpos($path, $legacyPrefix);
+            if ($position !== false) {
+                $filename = basename(substr($path, $position + strlen($legacyPrefix)));
+                return $filename !== '' ? 'uploads/avatars/' . $filename : '';
+            }
+        }
+
+        $filename = basename($path);
+        if ($filename !== '' && $filename !== '.' && $filename !== '..') {
+            return 'uploads/avatars/' . $filename;
+        }
+
+        return '';
+    }
+
+    private function publicFilePath(string $relativePath): ?string
+    {
+        $relativePath = $this->normalizeAvatarPath($relativePath);
+        if ($relativePath === '') {
+            return null;
+        }
+
+        $publicDir = dirname(__DIR__, 2) . DIRECTORY_SEPARATOR . 'public';
+        $absolutePath = $publicDir . DIRECTORY_SEPARATOR . str_replace('/', DIRECTORY_SEPARATOR, $relativePath);
+        $avatarDir = realpath($publicDir . DIRECTORY_SEPARATOR . 'uploads' . DIRECTORY_SEPARATOR . 'avatars');
+        $resolvedPath = realpath($absolutePath);
+
+        if ($avatarDir === false || $resolvedPath === false || !str_starts_with($resolvedPath, $avatarDir)) {
+            return null;
+        }
+
+        return $resolvedPath;
     }
 
     private function isActiveAccount(string $status): bool
@@ -746,9 +1037,21 @@ class StudentController
             $_SESSION['student_name'],
             $_SESSION['student_role'],
             $_SESSION['student_last_activity'],
+            $_SESSION['student_avatar'],
+            $_SESSION['theme_color'],
             $_SESSION['student_change_password_errors'],
-            $_SESSION['student_password_toast']
+            $_SESSION['student_password_toast'],
+            $_SESSION['student_logout_after_password_change']
         );
+    }
+
+    private function normalizeThemeColor(string $themeColor): string
+    {
+        $themeColor = strtolower(trim($themeColor));
+
+        return in_array($themeColor, self::ALLOWED_THEME_COLORS, true)
+            ? $themeColor
+            : self::DEFAULT_THEME_COLOR;
     }
 
     private function sendNoCacheHeaders(): void
@@ -761,6 +1064,18 @@ class StudentController
         header('Cache-Control: no-store, no-cache, must-revalidate, max-age=0');
         header('Cache-Control: post-check=0, pre-check=0', false);
         header('Pragma: no-cache');
+    }
+
+    private function sendJsonResponse(array $payload, int $statusCode = 200): void
+    {
+        if (!headers_sent()) {
+            http_response_code($statusCode);
+            header('Content-Type: application/json; charset=utf-8');
+            header('Cache-Control: no-store, no-cache, must-revalidate, max-age=0');
+        }
+
+        echo json_encode($payload, JSON_UNESCAPED_UNICODE);
+        exit;
     }
 
     private function redirectToStudentDashboard(): void

@@ -6,7 +6,7 @@
         $value = trim((string) ($value ?? ''));
         return $value !== '' ? $value : $emptyText;
     };
-    $avatar = $student['avatar'] ?? '';
+    $avatar = $student['avatar_url'] ?? ($student['avatar'] ?? '');
     $hasAvatar = is_string($avatar) && trim($avatar) !== '';
     $fullName = trim((string) ($student['ho_ten'] ?? ''));
     $mssv = trim((string) ($student['mssv'] ?? ''));
@@ -23,8 +23,8 @@
     :root {
         --ink: #0f172a;
         --muted: #64748b;
-        --accent: #1d4ed8;
-        --accent-soft: rgba(29, 78, 216, 0.12);
+        --accent: var(--primary);
+        --accent-soft: rgba(var(--primary-rgb), 0.12);
         --line: #e5e7eb;
         --card: #ffffff;
         --shadow: 0 12px 30px rgba(15, 23, 42, 0.08);
@@ -73,10 +73,30 @@
         align-items: center;
     }
 
+    .profile-hero__row.row {
+        --bs-gutter-x: 0;
+        --bs-gutter-y: 0;
+        margin-left: 0;
+        margin-right: 0;
+    }
+
+    .profile-hero__row.row > * {
+        width: auto;
+        max-width: 100%;
+        margin-top: 0;
+        padding-left: 0;
+        padding-right: 0;
+    }
+
+    .profile-summary {
+        min-width: 0;
+    }
+
     .profile-avatar {
-        width: 96px;
-        height: 96px;
-        border-radius: 20px;
+        width: 104px;
+        height: 139px;
+        aspect-ratio: 3 / 4;
+        border-radius: 8px;
         background: linear-gradient(135deg, #e2e8f0 0%, #dbeafe 100%);
         display: flex;
         align-items: center;
@@ -105,7 +125,9 @@
         color: var(--ink);
         display: flex;
         align-items: center;
+        flex-wrap: wrap;
         gap: 8px;
+        min-width: 0;
     }
 
     .profile-badge {
@@ -129,9 +151,10 @@
 
     .profile-actions {
         display: flex;
-        gap: 10px;
+        gap: 8px;
         flex-wrap: wrap;
         justify-content: flex-end;
+        min-width: 0;
     }
 
     .action-btn {
@@ -149,8 +172,16 @@
         transition: 0.2s ease;
     }
 
+    .action-btn.icon-only {
+        width: 44px;
+        height: 44px;
+        padding: 0;
+        justify-content: center;
+        font-size: 16px;
+    }
+
     .action-btn:hover {
-        border-color: rgba(29, 78, 216, 0.35);
+        border-color: rgba(var(--primary-rgb), 0.35);
         color: var(--accent);
         background: #eef4ff;
     }
@@ -159,7 +190,7 @@
         background: var(--accent);
         color: #ffffff;
         border-color: var(--accent);
-        box-shadow: 0 10px 20px rgba(29, 78, 216, 0.2);
+        box-shadow: 0 10px 20px rgba(var(--primary-rgb), 0.2);
     }
 
     .action-btn.primary:hover {
@@ -170,12 +201,49 @@
 
     .action-btn.link {
         color: var(--accent);
-        border-color: rgba(29, 78, 216, 0.2);
+        border-color: rgba(var(--primary-rgb), 0.2);
+    }
+
+    .action-btn.password-btn {
+        font-weight: 800;
     }
 
     .action-btn.link:hover {
         background: #e8f0ff;
-        border-color: rgba(29, 78, 216, 0.4);
+        border-color: rgba(var(--primary-rgb), 0.4);
+    }
+
+    .profile-actions .action-btn.icon-only.primary {
+        width: 34px;
+        height: 34px;
+        background: #ffffff;
+        color: var(--accent);
+        border-color: transparent;
+        box-shadow: none;
+        font-size: 14px;
+    }
+
+    .profile-actions .action-btn.icon-only.primary:hover {
+        background: #eef4ff;
+        color: var(--accent);
+        border-color: transparent;
+    }
+
+    .profile-actions .action-btn.password-btn {
+        min-height: 36px;
+        padding: 7px 11px;
+        background: #ffffff;
+        color: var(--accent);
+        border-color: rgba(var(--primary-rgb), 0.25);
+        border-radius: 10px;
+        font-size: 12px;
+        box-shadow: 0 8px 18px rgba(var(--primary-rgb), 0.08);
+    }
+
+    .profile-actions .action-btn.password-btn:hover {
+        background: #f8faff;
+        color: var(--accent);
+        border-color: rgba(var(--primary-rgb), 0.4);
     }
 
     .profile-section {
@@ -252,6 +320,7 @@
     .contact-pill {
         display: flex;
         align-items: center;
+        flex-wrap: wrap;
         gap: 10px;
         padding: 10px 12px;
         border-radius: 12px;
@@ -260,6 +329,9 @@
         font-size: 12px;
         color: var(--ink);
         font-weight: 700;
+        min-width: 0;
+        white-space: normal;
+        overflow-wrap: anywhere;
     }
 
     .contact-icon {
@@ -283,12 +355,57 @@
 
     @media (max-width: 900px) {
         .profile-hero__row {
-            grid-template-columns: 1fr;
-            justify-items: start;
+            display: flex;
+            flex-wrap: wrap;
+            align-items: flex-start;
+            gap: 14px;
+        }
+
+        .profile-summary {
+            flex: 1 1 240px;
+        }
+
+        .profile-avatar {
+            flex: 0 0 auto;
         }
 
         .profile-actions {
+            flex: 1 1 100%;
             justify-content: flex-start;
+        }
+    }
+
+    @media (max-width: 560px) {
+        .profile-shell {
+            padding: 0;
+        }
+
+        .profile-card-header,
+        .profile-hero,
+        .profile-section {
+            padding-left: 14px;
+            padding-right: 14px;
+        }
+
+        .profile-summary,
+        .profile-actions {
+            flex-basis: 100%;
+        }
+
+        .profile-name {
+            font-size: 18px;
+        }
+
+        .profile-meta {
+            gap: 8px;
+        }
+
+        .info-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .contact-pill {
+            border-radius: 12px;
         }
     }
 </style>
@@ -304,7 +421,7 @@
             </div>
         <?php else: ?>
         <div class="profile-hero">
-            <div class="profile-hero__row">
+            <div class="profile-hero__row row g-3 align-items-center">
                 <div class="profile-avatar">
                     <?php if ($hasAvatar): ?>
                         <img src="<?= htmlspecialchars($avatar, ENT_QUOTES, 'UTF-8') ?>" alt="Avatar" />
@@ -312,7 +429,7 @@
                         <span><?= htmlspecialchars($avatarInitial, ENT_QUOTES, 'UTF-8') ?></span>
                     <?php endif; ?>
                 </div>
-                <div>
+                <div class="profile-summary">
                     <div class="profile-name">
                         <?= htmlspecialchars($valueOrEmpty($fullName), ENT_QUOTES, 'UTF-8') ?>
                         <span class="profile-badge badge rounded-pill"><?= htmlspecialchars($valueOrEmpty($student['trang_thai_hoc_tap'] ?? ''), ENT_QUOTES, 'UTF-8') ?></span>
@@ -326,8 +443,10 @@
                     </div>
                 </div>
                 <div class="profile-actions">
-                    <button id="openEditBtn" class="action-btn primary btn btn-primary" type="button">Chỉnh sửa thông tin</button>
-                    <button class="action-btn link btn btn-outline-secondary" type="button" onclick="openPasswordModal()">Đổi mật khẩu</button>
+                    <button id="openEditBtn" class="action-btn primary icon-only btn btn-primary" type="button" title="Chỉnh sửa thông tin" aria-label="Chỉnh sửa thông tin">
+                        <i class="fa-solid fa-pen" aria-hidden="true"></i>
+                    </button>
+                    <button class="action-btn link password-btn btn btn-outline-secondary" type="button" onclick="openPasswordModal()">Đổi mật khẩu</button>
                 </div>
             </div>
         </div>
@@ -384,8 +503,10 @@
             <div class="section-title">
                 <span class="dot">
                     <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-                        <rect x="3" y="5" width="18" height="14" rx="2" stroke-width="2" />
-                        <path d="m4 7 8 6 8-6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        <rect x="4" y="5" width="16" height="14" rx="2" stroke-width="2" />
+                        <circle cx="9" cy="10" r="2" stroke-width="2" />
+                        <path d="M7 16c.6-1.2 1.4-2 2-2s1.4.8 2 2" stroke-width="2" stroke-linecap="round" />
+                        <path d="M14 9h3M14 13h3M14 17h2" stroke-width="2" stroke-linecap="round" />
                     </svg>
                 </span>
                 Thông tin liên lạc

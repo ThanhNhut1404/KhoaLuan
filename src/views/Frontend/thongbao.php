@@ -1,20 +1,46 @@
 <?php
-    // Trang Thông báo - Khóa luận
+    $notifications = is_array($notifications ?? null) ? $notifications : [];
+    $notificationFilters = is_array($notificationFilters ?? null) ? $notificationFilters : [];
+    $notificationFilterOptions = is_array($notificationFilterOptions ?? null) ? $notificationFilterOptions : ['types' => [], 'senders' => []];
+    $notificationError = (string) ($notificationError ?? '');
+
+    $selectedReadStatus = (string) ($notificationFilters['read_status'] ?? '');
+    $selectedType = (string) ($notificationFilters['type'] ?? '');
+    $selectedSender = (string) ($notificationFilters['sender'] ?? '');
+    $selectedKeyword = trim((string) ($notificationFilters['keyword'] ?? ''));
+    $hasActiveFilters = $selectedReadStatus !== '' || $selectedType !== '' || $selectedSender !== '' || $selectedKeyword !== '';
+
+    $escape = static fn($value): string => htmlspecialchars((string) $value, ENT_QUOTES, 'UTF-8');
+    $formatDate = static function ($value): string {
+        $value = trim((string) $value);
+        if ($value === '') {
+            return '';
+        }
+
+        try {
+            return (new DateTime($value))->format('d/m/Y H:i');
+        } catch (Throwable) {
+            return $value;
+        }
+    };
+    $typeClass = static function (string $type): string {
+        return str_contains(mb_strtolower($type, 'UTF-8'), 'hoạt') ? 'activity' : 'system';
+    };
 ?>
 
 <style>
-    /* VARIABLES & UTILITIES */
     .notif-container {
         display: flex;
         flex-direction: column;
-        gap: 16px;
+        gap: 0;
         animation: fadeIn 0.4s ease-out;
+        overflow: visible;
     }
 
     .activity-page-title {
         font-size: 18px;
         font-weight: 800;
-        color: #1d4ed8;
+        color: var(--primary);
         text-transform: none;
         letter-spacing: 0.6px;
         display: flex;
@@ -27,6 +53,7 @@
         border: 1px solid #e8ecf3;
         border-radius: 8px;
         box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+        overflow: visible;
     }
 
     .activity-panel__header {
@@ -37,31 +64,11 @@
         align-items: center;
         flex-wrap: wrap;
         gap: 12px;
+        overflow: visible;
     }
 
     .activity-panel__body {
-        padding: 12px;
-    }
-
-    .filter-input {
-        display: flex;
-        align-items: center;
-        gap: 8px;
-        padding: 8px 10px;
-        border-radius: 10px;
-        border: 1px solid #e5e7eb;
-        background: #f9fafb;
-        font-size: 13px;
-        color: #1f2937;
-    }
-
-    .filter-input input {
-        border: none;
-        background: transparent;
-        outline: none;
-        width: 100%;
-        font-size: 13px;
-        color: #1f2937;
+        padding: 14px;
     }
 
     .filter-btn {
@@ -69,7 +76,7 @@
         border-radius: 10px;
         border: 1px solid #e5e7eb;
         background: #fff;
-        color: #1d4ed8;
+        color: var(--primary);
         font-size: 13px;
         font-weight: 700;
         cursor: pointer;
@@ -85,82 +92,61 @@
         border-color: #cbd5e1;
     }
 
+    .notif-filter-wrap {
+        position: relative;
+        display: inline-flex;
+        align-items: center;
+        justify-content: flex-end;
+        gap: 10px;
+        margin-left: auto;
+    }
+
+    .notif-filter-toggle {
+        width: 32px;
+        height: 32px;
+        border: 1px solid #e5e7eb;
+        border-radius: 6px;
+        background: #fff;
+        color: var(--primary);
+        cursor: pointer;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        padding: 0;
+        transition: background 0.2s ease, border-color 0.2s ease, color 0.2s ease;
+    }
+
+    .notif-filter-wrap.has-active .notif-filter-toggle,
+    .notif-filter-toggle.active {
+        background: #eff6ff;
+        border-color: #bfdbfe;
+        color: #1d4ed8;
+    }
+
+    .notif-filter-toggle:hover {
+        background: #f8fafc;
+        color: #0b1f45;
+    }
+
+    .notif-filter-toggle svg {
+        width: 16px;
+        height: 16px;
+        stroke: currentColor;
+        fill: none;
+        flex: 0 0 16px;
+    }
+
     .filter-btn.primary {
-        background: #1d4ed8;
-        border-color: #1d4ed8;
+        background: var(--primary);
+        border-color: var(--primary);
         color: #fff;
     }
 
     .filter-btn.primary:hover {
-        background: #1047a1;
-        border-color: #1047a1;
+        background: var(--primary-dark);
+        border-color: var(--primary-dark);
     }
 
-    .activity-tabs {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 10px 16px;
-        align-items: center;
-        background: #ffffff;
-        border: 1px solid #e8ecf3;
-        border-radius: 8px;
-        padding: 10px 12px;
-        font-size: 12px;
-    }
-
-    .activity-tab {
-        display: inline-flex;
-        align-items: center;
-        gap: 6px;
-        color: #64748b;
-        font-weight: 600;
-        padding: 6px 10px;
-        border-radius: 999px;
-        border: 1px solid transparent;
-        cursor: pointer;
-        transition: all 0.2s;
-    }
-
-    .activity-tab:hover {
-        background: #f1f5f9;
-        color: #1d4ed8;
-    }
-
-    .activity-tab.active {
-        background: #1d4ed8;
-        color: #ffffff;
-    }
-
-    .notif-tab-badge {
-        background: #f1f5f9;
-        color: #475569;
-        font-size: 11px;
-        font-weight: 700;
-        padding: 1px 6px;
-        border-radius: 99px;
-        transition: all 0.2s ease;
-    }
-
-    .activity-tab.active .notif-tab-badge {
-        background: rgba(255, 255, 255, 0.25);
-        color: #ffffff;
-    }
-
-    .notif-summary-badge {
-        font-size: 13px;
-        font-weight: 700;
-        transition: all 0.2s ease;
-    }
-
-    .notif-summary-badge.has-unread {
-        color: #e11d48;
-    }
-
-    .notif-summary-badge.all-read {
-        color: #16a34a;
-    }
-
-    /* LIST CARDS */
     .notif-list {
         display: flex;
         flex-direction: column;
@@ -184,11 +170,10 @@
 
     .notif-card:hover {
         border-color: #cbd5e1;
-        box-shadow: 0 6px 18px rgba(29, 78, 216, 0.06);
+        box-shadow: 0 6px 18px rgba(var(--primary-rgb), 0.06);
         transform: translateY(-2px);
     }
 
-    /* Unread Status Styles */
     .notif-card.unread {
         background: #f8faff;
         border-left: 4px solid var(--primary);
@@ -199,7 +184,6 @@
         color: #0f172a;
     }
 
-    /* Unread Dot */
     .notif-unread-dot {
         width: 8px;
         height: 8px;
@@ -207,10 +191,9 @@
         border-radius: 50%;
         display: inline-block;
         margin-left: 8px;
-        box-shadow: 0 0 8px rgba(59, 130, 246, 0.6);
+        box-shadow: 0 0 8px rgba(var(--primary-rgb), 0.6);
     }
 
-    /* Icon Types */
     .notif-icon-circle {
         width: 42px;
         height: 42px;
@@ -232,7 +215,6 @@
         color: #0284c7;
     }
 
-    /* Info Details */
     .notif-item-details {
         display: flex;
         flex-direction: column;
@@ -281,7 +263,6 @@
         word-break: break-word;
     }
 
-    /* Category Badges */
     .notif-badge {
         display: inline-flex;
         align-items: center;
@@ -305,7 +286,6 @@
         border: 1px solid #e0f2fe;
     }
 
-    /* ACCORDION EXPANSION */
     .notif-content-drawer {
         max-height: 0;
         overflow: hidden;
@@ -314,7 +294,7 @@
     }
 
     .notif-card.expanded .notif-content-drawer {
-        max-height: 300px;
+        max-height: 360px;
     }
 
     .notif-card.expanded {
@@ -355,14 +335,13 @@
         transition: transform 0.3s ease;
     }
 
-    /* EMPTY STATE */
     .notif-empty-state {
         background: #ffffff;
         border-radius: 16px;
         border: 1px dashed #cbd5e1;
         padding: 48px 24px;
         text-align: center;
-        display: none;
+        display: <?= empty($notifications) ? 'flex' : 'none' ?>;
         flex-direction: column;
         align-items: center;
         justify-content: center;
@@ -394,17 +373,168 @@
         font-size: 14px;
         color: #94a3b8;
         margin: 0;
-        max-width: 320px;
+        max-width: 360px;
     }
 
-    /* ANIMATIONS */
+    .notif-filter-modal {
+        position: absolute;
+        top: calc(100% + 8px);
+        right: 0;
+        z-index: 20;
+        width: max-content;
+        max-width: calc(100vw - 48px);
+        padding: 14px;
+        border: 1px solid #e5e7eb;
+        border-radius: 10px;
+        background: #ffffff;
+        box-shadow: 0 16px 36px rgba(15, 23, 42, 0.16);
+        display: none;
+    }
+
+    .notif-filter-modal.open {
+        display: block;
+    }
+
+    .notif-filter-card {
+        width: max-content;
+        max-width: 100%;
+        background: transparent;
+        border: 0;
+        box-shadow: none;
+        overflow: visible;
+    }
+
+    .notif-filter-form {
+        width: max-content;
+        max-width: 100%;
+    }
+
+    .notif-filter-body {
+        display: grid;
+        grid-template-columns: repeat(3, max-content);
+        gap: 12px;
+    }
+
+    .notif-filter-field {
+        display: grid;
+        gap: 6px;
+        font-size: 12px;
+        color: var(--primary);
+        font-weight: 700;
+        width: max-content;
+    }
+
+    .notif-filter-field label {
+        font-size: 12px;
+        font-weight: 700;
+        color: var(--primary);
+    }
+
+    .notif-filter-field select {
+        width: auto;
+        min-width: 132px;
+        min-height: 38px;
+        padding: 0 34px 0 10px;
+        border-radius: 10px;
+        border: 1px solid #e5e7eb;
+        background-color: #f9fafb;
+        background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%231047a1' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+        background-position: right 10px center;
+        background-repeat: no-repeat;
+        background-size: 16px;
+        color: #1f2937;
+        font-size: 13px;
+        font-weight: 600;
+        outline: none;
+        cursor: pointer;
+        appearance: none;
+    }
+
+    .notif-filter-field select:focus {
+        border-color: var(--primary-border-strong);
+        box-shadow: 0 0 0 0.2rem rgba(var(--primary-rgb), 0.12);
+    }
+
+    #readStatusFilterClean {
+        min-width: 132px;
+    }
+
+    #typeFilterClean {
+        min-width: 148px;
+    }
+
+    #senderFilterClean {
+        min-width: 150px;
+    }
+
+    .notif-filter-actions {
+        display: flex;
+        justify-content: flex-end;
+        gap: 10px;
+        margin-top: 14px;
+    }
+
+    .notif-filter-actions .filter-reset-btn,
+    .notif-filter-actions .filter-apply-btn {
+        min-height: 38px;
+        padding: 8px 20px;
+        border-radius: 10px;
+        border: 1px solid #e5e7eb;
+        font-size: 13px;
+        font-weight: 700;
+        line-height: 1.2;
+        cursor: pointer;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        white-space: nowrap;
+    }
+
+    .notif-filter-actions .filter-reset-btn {
+        color: #dc2626 !important;
+        background: #ffffff !important;
+        border-color: #e5e7eb !important;
+    }
+
+    .notif-filter-actions .filter-reset-btn:hover {
+        color: #dc2626 !important;
+        background: #e5e7eb !important;
+        border-color: #cbd5e1 !important;
+    }
+
+    .notif-filter-actions .filter-apply-btn {
+        color: #ffffff !important;
+        background: linear-gradient(180deg, #16a34a 0%, #15803d 100%) !important;
+        border-color: #16a34a !important;
+    }
+
+    .notif-filter-actions .filter-apply-btn:hover {
+        color: #ffffff !important;
+        background: linear-gradient(180deg, #15803d 0%, #166534 100%) !important;
+        border-color: #15803d !important;
+    }
+
+    .notif-error {
+        padding: 12px 14px;
+        border: 1px solid #fecaca;
+        background: #fef2f2;
+        color: #b91c1c;
+        border-radius: 10px;
+        font-size: 13px;
+        font-weight: 700;
+    }
+
     @keyframes fadeIn {
         from { opacity: 0; transform: translateY(8px); }
         to { opacity: 1; transform: translateY(0); }
     }
 
-    /* RESPONSIVE */
     @media (max-width: 768px) {
+        .notif-filter-body {
+            grid-template-columns: repeat(2, max-content);
+        }
+
         .notif-card {
             grid-template-columns: auto 1fr;
             padding: 14px;
@@ -417,440 +547,210 @@
             margin-top: -8px;
         }
     }
+
+    @media (max-width: 560px) {
+        .notif-filter-body {
+            grid-template-columns: 1fr;
+        }
+
+        .notif-filter-field,
+        .notif-filter-field select {
+            width: 100%;
+        }
+
+        .notif-filter-actions {
+            flex-direction: column-reverse;
+        }
+
+        .notif-filter-actions .filter-btn {
+            width: 100%;
+        }
+    }
 </style>
 
 <div class="notif-container">
-    <!-- TIÊU ĐỀ & TÌM KIẾM -->
     <div class="activity-panel card">
         <div class="activity-panel__header card-header">
             <div class="activity-page-title">
                 <i class="fa-solid fa-bell"></i>
                 Thông báo
             </div>
-            <div class="notif-summary-badge has-unread badge rounded-pill" id="notifUnreadSummary">Bạn có 4 thông báo chưa đọc</div>
-        </div>
-        <div class="activity-panel__body card-body" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 16px; padding: 12px 14px;">
-            <!-- SEARCH INPUT -->
-            <div class="filter-input" style="max-width: 320px; width: 100%;">
-                <i class="fa-solid fa-magnifying-glass" style="color: #94a3b8; font-size: 14px;"></i>
-                <input class="form-control" type="text" id="notifSearch" placeholder="Tìm kiếm thông báo..." onkeyup="filterNotifications()">
+            <div class="notif-filter-wrap <?= $hasActiveFilters ? 'has-active' : '' ?>">
+                <button class="notif-filter-toggle btn btn-outline-secondary" id="notifFilterToggle" type="button" onclick="openNotifFilter()" title="Bộ lọc" aria-label="Bộ lọc" aria-expanded="false">
+                    <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                        <path d="M4 5h16l-6 7v5l-4 2v-7L4 5Z" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" />
+                    </svg>
+                </button>
+                <div class="notif-filter-modal" id="notifFilterModal" aria-hidden="true">
+                    <div class="notif-filter-card">
+                        <form class="notif-filter-form" method="get" action="/KhoaLuan/public/student.php">
+                            <input type="hidden" name="action" value="thongbao">
+                            <div class="notif-filter-body">
+                                <div class="notif-filter-field">
+                                    <label for="readStatusFilterClean">Trạng thái đọc</label>
+                                    <select id="readStatusFilterClean" name="read_status">
+                                        <option value="">Tất cả</option>
+                                        <option value="unread" <?= $selectedReadStatus === 'unread' ? 'selected' : '' ?>>Chưa đọc</option>
+                                        <option value="read" <?= $selectedReadStatus === 'read' ? 'selected' : '' ?>>Đã đọc</option>
+                                    </select>
+                                </div>
+
+                                <div class="notif-filter-field">
+                                    <label for="typeFilterClean">Loại thông báo</label>
+                                    <select id="typeFilterClean" name="type">
+                                        <option value="">Tất cả</option>
+                                        <?php foreach (($notificationFilterOptions['types'] ?? []) as $option): ?>
+                                            <?php $value = (string) ($option['value'] ?? ''); ?>
+                                            <option value="<?= $escape($value) ?>" <?= $selectedType === $value ? 'selected' : '' ?>><?= $escape($option['label'] ?? $value) ?></option>
+                                        <?php endforeach; ?>
+                                    </select>
+                                </div>
+
+                                <div class="notif-filter-field">
+                                    <label for="senderFilterClean">Đơn vị gửi</label>
+                                    <select id="senderFilterClean" name="sender">
+                                        <option value="">Tất cả</option>
+                                        <?php foreach (($notificationFilterOptions['senders'] ?? []) as $option): ?>
+                                            <?php $value = (string) ($option['value'] ?? ''); ?>
+                                            <option value="<?= $escape($value) ?>" <?= $selectedSender === $value ? 'selected' : '' ?>><?= $escape($option['label'] ?? $value) ?></option>
+                                        <?php endforeach; ?>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="notif-filter-actions">
+                                <a class="filter-btn filter-reset-btn btn btn-light" href="/KhoaLuan/public/student.php?action=thongbao">Đặt lại</a>
+                                <button class="filter-btn filter-apply-btn primary btn btn-primary" type="submit">Áp dụng</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
             </div>
-            <!-- MARK ALL ACTION -->
-            <button class="filter-btn primary btn btn-primary" id="btnMarkAll" onclick="markAllAsRead()">
-                <i class="fa-solid fa-check-double"></i> Đánh dấu tất cả đã đọc
-            </button>
         </div>
-    </div>
 
-    <!-- TABS -->
-    <div class="activity-tabs nav nav-pills" role="tablist">
-        <button class="activity-tab active nav-link" id="tab-all" onclick="switchTab('all')" role="tab" aria-selected="true">
-            Tất cả <span class="notif-tab-badge badge rounded-pill" id="badge-all">6</span>
-        </button>
-        <button class="activity-tab nav-link" id="tab-unread" onclick="switchTab('unread')" role="tab" aria-selected="false">
-            Chưa đọc <span class="notif-tab-badge badge rounded-pill" id="badge-unread">4</span>
-        </button>
-        <button class="activity-tab nav-link" id="tab-system" onclick="switchTab('system')" role="tab" aria-selected="false">
-            Hệ thống <span class="notif-tab-badge badge rounded-pill" id="badge-system">3</span>
-        </button>
-        <button class="activity-tab nav-link" id="tab-activity" onclick="switchTab('activity')" role="tab" aria-selected="false">
-            Hoạt động <span class="notif-tab-badge badge rounded-pill" id="badge-activity">3</span>
-        </button>
-    </div>
+        <div class="activity-panel__body card-body">
 
-    <!-- DANH SÁCH THÔNG BÁO -->
+    <?php if ($notificationError !== ''): ?>
+        <div class="notif-error"><?= $escape($notificationError) ?></div>
+    <?php endif; ?>
+
     <div class="notif-list" id="notifList">
-        <!-- Item 1 -->
-        <div class="notif-card unread card" id="notif-1" data-category="activity" data-status="unread" onclick="toggleExpand('notif-1')">
-            <div class="notif-icon-circle activity" aria-hidden="true">
-                <i class="fa-solid fa-person-running"></i>
-            </div>
-            <div class="notif-item-details">
-                <div class="notif-item-meta">
-                    <span class="notif-sender">Phòng CTSV</span>
-                    <span class="notif-dot-separator" aria-hidden="true"></span>
-                    <span class="notif-time" title="2026-04-24 08:30:00">
-                        <i class="fa-regular fa-clock"></i> 24/04/2026 08:30
-                    </span>
-                    <span class="notif-dot-separator" aria-hidden="true"></span>
-                    <span class="notif-badge activity badge rounded-pill">Hoạt động</span>
+        <?php foreach ($notifications as $notification): ?>
+            <?php
+                $id = (int) ($notification['id'] ?? 0);
+                $isRead = (int) ($notification['is_read'] ?? 0) === 1;
+                $typeName = trim((string) ($notification['type_name'] ?? 'Hệ thống'));
+                $badgeClass = $typeClass($typeName);
+                $icon = $badgeClass === 'activity' ? 'fa-person-running' : 'fa-gear';
+                $titleText = trim((string) ($notification['title'] ?? 'Thông báo'));
+                $bodyText = trim((string) ($notification['body'] ?? ''));
+                $preview = mb_strlen($bodyText, 'UTF-8') > 170 ? mb_substr($bodyText, 0, 170, 'UTF-8') . '...' : $bodyText;
+                $sender = trim((string) ($notification['sender'] ?? 'Hệ thống'));
+                $createdAt = $formatDate($notification['created_at'] ?? '');
+            ?>
+            <div class="notif-card <?= $isRead ? '' : 'unread' ?> card" id="notif-<?= $id ?>" data-status="<?= $isRead ? 'read' : 'unread' ?>" onclick="toggleExpand('notif-<?= $id ?>')">
+                <div class="notif-icon-circle <?= $badgeClass ?>" aria-hidden="true">
+                    <i class="fa-solid <?= $icon ?>"></i>
                 </div>
-                <div class="notif-item-title">
-                    Thông báo cập nhật điểm rèn luyện học kỳ I <span class="notif-unread-dot" id="dot-notif-1"></span>
+                <div class="notif-item-details">
+                    <div class="notif-item-meta">
+                        <span class="notif-sender"><?= $escape($sender) ?></span>
+                        <?php if ($createdAt !== ''): ?>
+                            <span class="notif-dot-separator" aria-hidden="true"></span>
+                            <span class="notif-time" title="<?= $escape($notification['created_at'] ?? '') ?>">
+                                <i class="fa-regular fa-clock"></i> <?= $escape($createdAt) ?>
+                            </span>
+                        <?php endif; ?>
+                        <span class="notif-dot-separator" aria-hidden="true"></span>
+                        <span class="notif-badge <?= $badgeClass ?> badge rounded-pill"><?= $escape($typeName) ?></span>
+                    </div>
+                    <div class="notif-item-title">
+                        <?= $escape($titleText) ?>
+                        <?php if (!$isRead): ?>
+                            <span class="notif-unread-dot" id="dot-notif-<?= $id ?>"></span>
+                        <?php endif; ?>
+                    </div>
+                    <div class="notif-preview-text"><?= $escape($preview) ?></div>
                 </div>
-                <div class="notif-preview-text">
-                    Kính gửi các bạn sinh viên, Phòng CTSV đã cập nhật điểm rèn luyện tạm tính học kỳ I năm học 2025-2026. Sinh viên vui lòng kiểm tra...
+                <div class="notif-angle" aria-label="Mở rộng chi tiết">
+                    <i class="fa-solid fa-chevron-down"></i>
                 </div>
-            </div>
-            <div class="notif-angle" aria-label="Mở rộng chi tiết">
-                <i class="fa-solid fa-chevron-down"></i>
-            </div>
-            <div class="notif-content-drawer">
-                <div class="notif-expanded-body">
-                    Kính gửi các bạn sinh viên, Phòng CTSV đã cập nhật điểm rèn luyện tạm tính học kỳ I năm học 2025-2026. <br><br>
-                    Sinh viên vui lòng kiểm tra và gửi phản hồi/minh chứng bổ sung nếu có sai sót trực tiếp cho cố vấn học tập hoặc qua cổng hỗ trợ trực tuyến của Trường trước ngày 30/04/2026. Sau thời hạn trên, dữ liệu sẽ được khóa để lập danh sách khen thưởng chính thức.
-                </div>
-            </div>
-        </div>
-
-        <!-- Item 2 -->
-        <div class="notif-card card" id="notif-2" data-category="activity" data-status="read" onclick="toggleExpand('notif-2')">
-            <div class="notif-icon-circle activity" aria-hidden="true">
-                <i class="fa-solid fa-calendar-days"></i>
-            </div>
-            <div class="notif-item-details">
-                <div class="notif-item-meta">
-                    <span class="notif-sender">Đoàn - Hội</span>
-                    <span class="notif-dot-separator" aria-hidden="true"></span>
-                    <span class="notif-time" title="2026-04-22 14:10:00">
-                        <i class="fa-regular fa-clock"></i> 22/04/2026 14:10
-                    </span>
-                    <span class="notif-dot-separator" aria-hidden="true"></span>
-                    <span class="notif-badge activity badge rounded-pill">Hoạt động</span>
-                </div>
-                <div class="notif-item-title">
-                    Hướng dẫn đăng ký hoạt động ngoại khóa
-                </div>
-                <div class="notif-preview-text">
-                    Đoàn trường hướng dẫn các bước đăng ký tham gia các hoạt động ngoại khóa năm học mới. Các bạn sinh viên có thể đăng ký trực tuyến...
+                <div class="notif-content-drawer">
+                    <div class="notif-expanded-body"><?= nl2br($escape($bodyText)) ?></div>
                 </div>
             </div>
-            <div class="notif-angle" aria-label="Mở rộng chi tiết">
-                <i class="fa-solid fa-chevron-down"></i>
-            </div>
-            <div class="notif-content-drawer">
-                <div class="notif-expanded-body">
-                    Đoàn trường hướng dẫn các bước đăng ký tham gia các hoạt động ngoại khóa năm học mới. <br><br>
-                    Các bạn sinh viên có thể đăng ký trực tuyến thông qua ứng dụng Cổng thông tin sinh viên bằng cách truy cập mục <strong>Đăng ký hoạt động</strong> trên thanh menu. Mỗi hoạt động đăng ký thành công và được xác nhận tham gia sẽ được cộng điểm rèn luyện tương ứng theo quy chế đánh giá điểm rèn luyện hiện hành.
-                </div>
-            </div>
-        </div>
-
-        <!-- Item 3 -->
-        <div class="notif-card unread card" id="notif-3" data-category="system" data-status="unread" onclick="toggleExpand('notif-3')">
-            <div class="notif-icon-circle system" aria-hidden="true">
-                <i class="fa-solid fa-gear"></i>
-            </div>
-            <div class="notif-item-details">
-                <div class="notif-item-meta">
-                    <span class="notif-sender">Khoa CNTT</span>
-                    <span class="notif-dot-separator" aria-hidden="true"></span>
-                    <span class="notif-time" title="2026-04-18 09:00:00">
-                        <i class="fa-regular fa-clock"></i> 18/04/2026 09:00
-                    </span>
-                    <span class="notif-dot-separator" aria-hidden="true"></span>
-                    <span class="notif-badge system badge rounded-pill">Hệ thống</span>
-                </div>
-                <div class="notif-item-title">
-                    Lịch tiếp nhận minh chứng điểm rèn luyện <span class="notif-unread-dot" id="dot-notif-3"></span>
-                </div>
-                <div class="notif-preview-text">
-                    Khoa Công nghệ thông tin thông báo lịch tiếp nhận hồ sơ minh chứng điểm rèn luyện trực tiếp tại văn phòng Khoa (Phòng A201). Thời gian...
-                </div>
-            </div>
-            <div class="notif-angle" aria-label="Mở rộng chi tiết">
-                <i class="fa-solid fa-chevron-down"></i>
-            </div>
-            <div class="notif-content-drawer">
-                <div class="notif-expanded-body">
-                    Khoa Công nghệ thông tin thông báo lịch tiếp nhận hồ sơ minh chứng điểm rèn luyện trực tiếp tại văn phòng Khoa (Phòng A201). <br><br>
-                    Thời gian tiếp nhận từ ngày 20/04 đến hết ngày 25/04/2026 (sáng từ 8h00 - 11h00, chiều từ 13h30 - 16h30). Các bạn sinh viên chuẩn bị đầy đủ bản in minh chứng hoạt động cùng biểu mẫu đánh giá tự chấm đã ký tên cố vấn học tập trước khi nộp.
-                </div>
-            </div>
-        </div>
-
-        <!-- Item 4 -->
-        <div class="notif-card unread card" id="notif-4" data-category="system" data-status="unread" onclick="toggleExpand('notif-4')">
-            <div class="notif-icon-circle system" aria-hidden="true">
-                <i class="fa-solid fa-triangle-exclamation"></i>
-            </div>
-            <div class="notif-item-details">
-                <div class="notif-item-meta">
-                    <span class="notif-sender">Hệ thống</span>
-                    <span class="notif-dot-separator" aria-hidden="true"></span>
-                    <span class="notif-time" title="2026-04-10 16:45:00">
-                        <i class="fa-regular fa-clock"></i> 10/04/2026 16:45
-                    </span>
-                    <span class="notif-dot-separator" aria-hidden="true"></span>
-                    <span class="notif-badge system badge rounded-pill">Hệ thống</span>
-                </div>
-                <div class="notif-item-title">
-                    Nhắc hạn hoàn tất khảo sát học kỳ <span class="notif-unread-dot" id="dot-notif-4"></span>
-                </div>
-                <div class="notif-preview-text">
-                    Nhắc nhở: Bạn còn khảo sát đánh giá giảng viên chưa hoàn tất. Vui lòng truy cập Cổng khảo sát để thực hiện trước hạn chót...
-                </div>
-            </div>
-            <div class="notif-angle" aria-label="Mở rộng chi tiết">
-                <i class="fa-solid fa-chevron-down"></i>
-            </div>
-            <div class="notif-content-drawer">
-                <div class="notif-expanded-body">
-                    Nhắc nhở: Bạn còn khảo sát đánh giá giảng viên chưa hoàn tất. <br><br>
-                    Vui lòng truy cập Cổng khảo sát để thực hiện trước hạn chót ngày 15/04/2026. Việc không hoàn tất khảo sát đúng hạn có thể ảnh hưởng tiêu cực tới kết quả điểm rèn luyện (Mục đánh giá ý thức học tập) và hạn chế một số chức năng tra cứu đăng ký môn học của học kỳ tiếp theo.
-                </div>
-            </div>
-        </div>
-
-        <!-- Item 5 -->
-        <div class="notif-card card" id="notif-5" data-category="activity" data-status="read" onclick="toggleExpand('notif-5')">
-            <div class="notif-icon-circle activity" aria-hidden="true">
-                <i class="fa-solid fa-clipboard-check"></i>
-            </div>
-            <div class="notif-item-details">
-                <div class="notif-item-meta">
-                    <span class="notif-sender">Hệ thống</span>
-                    <span class="notif-dot-separator" aria-hidden="true"></span>
-                    <span class="notif-time" title="2026-04-05 10:20:00">
-                        <i class="fa-regular fa-clock"></i> 05/04/2026 10:20
-                    </span>
-                    <span class="notif-dot-separator" aria-hidden="true"></span>
-                    <span class="notif-badge activity badge rounded-pill">Hoạt động</span>
-                </div>
-                <div class="notif-item-title">
-                    Xác nhận đăng ký hoạt động thành công
-                </div>
-                <div class="notif-preview-text">
-                    Hệ thống xác nhận bạn đã đăng ký thành công hoạt động 'Chiến dịch Mùa hè xanh 2026'. Vui lòng có mặt đúng giờ và mặc đúng trang phục...
-                </div>
-            </div>
-            <div class="notif-angle" aria-label="Mở rộng chi tiết">
-                <i class="fa-solid fa-chevron-down"></i>
-            </div>
-            <div class="notif-content-drawer">
-                <div class="notif-expanded-body">
-                    Hệ thống xác nhận bạn đã đăng ký thành công hoạt động <strong>"Chiến dịch Mùa hè xanh 2026"</strong>. <br><br>
-                    Vui lòng có mặt đúng giờ (7h00 ngày 10/05/2026) tại sảnh A và mặc đúng trang phục áo xanh Thanh niên Việt Nam để làm lễ xuất quân. Hoạt động này được cộng 10 điểm rèn luyện vào điều kiện hoạt động cộng đồng xã hội.
-                </div>
-            </div>
-        </div>
-
-        <!-- Item 6 -->
-        <div class="notif-card unread card" id="notif-6" data-category="system" data-status="unread" onclick="toggleExpand('notif-6')">
-            <div class="notif-icon-circle system" aria-hidden="true">
-                <i class="fa-solid fa-shield-halved"></i>
-            </div>
-            <div class="notif-item-details">
-                <div class="notif-item-meta">
-                    <span class="notif-sender">Hệ thống</span>
-                    <span class="notif-dot-separator" aria-hidden="true"></span>
-                    <span class="notif-time" title="2026-04-01 21:15:00">
-                        <i class="fa-regular fa-clock"></i> 01/04/2026 21:15
-                    </span>
-                    <span class="notif-dot-separator" aria-hidden="true"></span>
-                    <span class="notif-badge system badge rounded-pill">Hệ thống</span>
-                </div>
-                <div class="notif-item-title">
-                    Cảnh báo tài khoản đăng nhập lạ <span class="notif-unread-dot" id="dot-notif-6"></span>
-                </div>
-                <div class="notif-preview-text">
-                    Phát hiện đăng nhập vào tài khoản của bạn từ thiết bị hoặc địa điểm mới. Nếu đây không phải là bạn, vui lòng tiến hành đổi mật khẩu...
-                </div>
-            </div>
-            <div class="notif-angle" aria-label="Mở rộng chi tiết">
-                <i class="fa-solid fa-chevron-down"></i>
-            </div>
-            <div class="notif-content-drawer">
-                <div class="notif-expanded-body">
-                    Phát hiện đăng nhập vào tài khoản của bạn từ thiết bị Chrome trên Windows ở địa chỉ IP 171.244.xxx.xxx (Cần Thơ, Việt Nam). <br><br>
-                    Nếu đây không phải là bạn, vui lòng tiến hành đổi mật khẩu ngay lập tức tại phần <strong>Thông tin chung -> Đổi mật khẩu</strong> để bảo vệ tài khoản điểm rèn luyện cá nhân khỏi sự cố rò rỉ dữ liệu.
-                </div>
-            </div>
-        </div>
+        <?php endforeach; ?>
     </div>
 
-    <!-- EMPTY STATE -->
     <div class="notif-empty-state" id="notifEmptyState">
         <div class="notif-empty-icon" aria-hidden="true">
             <i class="fa-regular fa-bell-slash"></i>
         </div>
-        <h3>Không tìm thấy thông báo nào</h3>
-        <p>Hộp thư thông báo của bạn đang trống hoặc không có thông báo nào khớp với bộ lọc tìm kiếm hiện tại.</p>
+        <h3>Không có thông báo nào</h3>
+        <p>Hộp thư thông báo của bạn đang trống hoặc không có thông báo nào phù hợp với bộ lọc.</p>
+    </div>
+        </div>
     </div>
 </div>
 
 <script>
-    let currentTab = 'all';
-
-    // Toggle accordion drawer for specific notification
     function toggleExpand(id) {
-        const card = document.getElementById(id);
-        const wasExpanded = card.classList.contains('expanded');
+        var card = document.getElementById(id);
+        if (!card) return;
+        var wasExpanded = card.classList.contains('expanded');
 
-        // Close all expanded first for clean accordion behavior
-        document.querySelectorAll('.notif-card').forEach(c => {
-            c.classList.remove('expanded');
+        document.querySelectorAll('.notif-card').forEach(function(item) {
+            item.classList.remove('expanded');
         });
 
         if (!wasExpanded) {
             card.classList.add('expanded');
-            // If it was unread, mark as read on expand
             if (card.classList.contains('unread')) {
                 markAsRead(id);
             }
         }
     }
 
-    // Mark single notification as read
     function markAsRead(id) {
-        const card = document.getElementById(id);
-        if (card.classList.contains('unread')) {
-            card.classList.remove('unread');
-            card.setAttribute('data-status', 'read');
-            
-            // Remove unread dot
-            const dot = document.getElementById('dot-' + id);
-            if (dot) {
-                dot.remove();
-            }
+        var card = document.getElementById(id);
+        if (!card || !card.classList.contains('unread')) return;
+        card.classList.remove('unread');
+        card.setAttribute('data-status', 'read');
 
-            // Recalculate badges
-            updateBadges();
+        var dot = document.getElementById('dot-' + id);
+        if (dot) {
+            dot.remove();
         }
     }
 
-    // Mark all notifications as read
-    function markAllAsRead() {
-        document.querySelectorAll('.notif-card.unread').forEach(card => {
-            const id = card.getAttribute('id');
-            card.classList.remove('unread');
-            card.setAttribute('data-status', 'read');
-            
-            const dot = document.getElementById('dot-' + id);
-            if (dot) {
-                dot.remove();
-            }
-        });
-
-        // Add subtle animation check to the button
-        const btn = document.getElementById('btnMarkAll');
-        const originalHtml = btn.innerHTML;
-        btn.innerHTML = '<i class="fa-solid fa-circle-check"></i> Đã hoàn thành';
-        btn.style.background = '#10b981';
-        btn.style.borderColor = '#10b981';
-        btn.style.color = '#ffffff';
-        
-        setTimeout(() => {
-            btn.innerHTML = originalHtml;
-            btn.style.background = '';
-            btn.style.borderColor = '';
-            btn.style.color = '';
-        }, 1500);
-
-        updateBadges();
-        
-        // If we are currently on the 'unread' tab, refresh view
-        if (currentTab === 'unread') {
-            switchTab('unread');
+    function openNotifFilter() {
+        var modal = document.querySelector('.notif-filter-wrap #notifFilterModal');
+        if (!modal) return;
+        var isOpen = modal.classList.contains('open');
+        modal.classList.toggle('open', !isOpen);
+        modal.setAttribute('aria-hidden', isOpen ? 'true' : 'false');
+        var toggle = document.getElementById('notifFilterToggle');
+        if (toggle) {
+            toggle.classList.toggle('active', !isOpen);
+            toggle.setAttribute('aria-expanded', isOpen ? 'false' : 'true');
         }
     }
 
-    // Switch between tabs
-    function switchTab(tabId) {
-        currentTab = tabId;
-        
-        // Remove active class from all tabs
-        document.querySelectorAll('.activity-tab').forEach(t => {
-            t.classList.remove('active');
-            t.setAttribute('aria-selected', 'false');
-        });
-
-        // Add active to selected tab
-        document.getElementById('tab-' + tabId).classList.add('active');
-        document.getElementById('tab-' + tabId).setAttribute('aria-selected', 'true');
-
-        filterNotifications();
-    }
-
-    // Filter notifications based on tab and search query
-    function filterNotifications() {
-        const query = document.getElementById('notifSearch').value.toLowerCase().trim();
-        const cards = document.querySelectorAll('.notif-card');
-        let visibleCount = 0;
-
-        cards.forEach(card => {
-            const category = card.getAttribute('data-category');
-            const status = card.getAttribute('data-status');
-            const title = card.querySelector('.notif-item-title').textContent.toLowerCase();
-            const preview = card.querySelector('.notif-preview-text').textContent.toLowerCase();
-            const sender = card.querySelector('.notif-sender').textContent.toLowerCase();
-            const body = card.querySelector('.notif-expanded-body').textContent.toLowerCase();
-
-            let matchesTab = false;
-            if (currentTab === 'all') {
-                matchesTab = true;
-            } else if (currentTab === 'unread') {
-                matchesTab = (status === 'unread');
-            } else if (currentTab === 'system') {
-                matchesTab = (category === 'system');
-            } else if (currentTab === 'activity') {
-                matchesTab = (category === 'activity');
-            }
-
-            let matchesSearch = true;
-            if (query !== '') {
-                matchesSearch = title.includes(query) || 
-                                preview.includes(query) || 
-                                sender.includes(query) ||
-                                body.includes(query);
-            }
-
-            if (matchesTab && matchesSearch) {
-                card.style.display = 'grid';
-                visibleCount++;
-            } else {
-                card.style.display = 'none';
-            }
-        });
-
-        // Display empty state if no notifications match
-        const emptyState = document.getElementById('notifEmptyState');
-        const listContainer = document.getElementById('notifList');
-        
-        if (visibleCount === 0) {
-            emptyState.style.display = 'flex';
-        } else {
-            emptyState.style.display = 'none';
+    function closeNotifFilter() {
+        var modal = document.querySelector('.notif-filter-wrap #notifFilterModal');
+        if (!modal) return;
+        modal.classList.remove('open');
+        modal.setAttribute('aria-hidden', 'true');
+        var toggle = document.getElementById('notifFilterToggle');
+        if (toggle) {
+            toggle.classList.remove('active');
+            toggle.setAttribute('aria-expanded', 'false');
         }
     }
 
-    // Dynamically calculate and update badge counts on the tab headers
-    function updateBadges() {
-        const cards = document.querySelectorAll('.notif-card');
-        
-        let total = cards.length;
-        let unread = 0;
-        let system = 0;
-        let activity = 0;
-
-        cards.forEach(card => {
-            const category = card.getAttribute('data-category');
-            const status = card.getAttribute('data-status');
-
-            if (status === 'unread') unread++;
-            if (category === 'system') system++;
-            if (category === 'activity') activity++;
-        });
-
-        // Update badge DOM
-        document.getElementById('badge-all').textContent = total;
-        document.getElementById('badge-unread').textContent = unread;
-        document.getElementById('badge-system').textContent = system;
-        document.getElementById('badge-activity').textContent = activity;
-
-        // Update summary text
-        const summary = document.getElementById('notifUnreadSummary');
-        if (unread > 0) {
-            summary.textContent = `Bạn có ${unread} thông báo chưa đọc`;
-            summary.className = 'notif-summary-badge has-unread';
-        } else {
-            summary.textContent = 'Bạn đã đọc tất cả thông báo';
-            summary.className = 'notif-summary-badge all-read';
+    document.addEventListener('click', function(event) {
+        var filterWrap = document.querySelector('.notif-filter-wrap');
+        if (filterWrap && !filterWrap.contains(event.target)) {
+            closeNotifFilter();
         }
-    }
-
-    // Initialize counts on page load
-    document.addEventListener('DOMContentLoaded', () => {
-        updateBadges();
     });
 </script>

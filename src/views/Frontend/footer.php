@@ -1,33 +1,44 @@
 <footer class="student-footer">
     <div class="footer-inner container-fluid">
-        <div class="footer-content row">
+        <div class="footer-content row g-3">
             <div class="footer-section col-12 col-md-4">
-                <div class="footer-heading">
-                    <div class="footer-brand">UniDRL</div>
+                <div class="footer-heading footer-logo-heading">
+                    <img class="footer-logo" src="/KhoaLuan/public/images/logo2.png" alt="UniDRL" />
                 </div>
-                <p class="footer-text">Hệ thống quản lý điểm rèn luyện sinh viên – minh bạch, nhanh chóng, hiệu quả.</p>
+                <p class="footer-text">Hệ thống chấm điểm rèn luyện sinh viên – minh bạch, nhanh chóng, hiệu quả.</p>
 
-                <div class="footer-social" aria-hidden="true">
-                    <a href="#" title="Facebook"><i class="fab fa-facebook-f"></i></a>
-                    <a href="#" title="YouTube"><i class="fab fa-youtube"></i></a>
+                <div class="footer-social" aria-label="Mạng xã hội UniDRL">
+                    <a href="#" title="Facebook" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>
+                    <a href="#" title="YouTube" aria-label="YouTube"><i class="fab fa-youtube"></i></a>
+                    <a href="#" title="GitHub" aria-label="GitHub"><i class="fab fa-github"></i></a>
+                    <a href="mailto:contact@tdu.edu.vn" title="Email" aria-label="Email"><i class="fas fa-envelope"></i></a>
                 </div>
             </div>
 
             <div class="footer-section col-12 col-md-4">
-                <div class="footer-heading"><i class="fas fa-envelope"></i> <span>Liên hệ</span></div>
+                <div class="footer-heading"><i class="fas fa-headset"></i> <span>Liên hệ</span></div>
                 <ul class="footer-contact">
-                    <li><a href="mailto:contact@tdu.edu.vn">contact@tdu.edu.vn</a></li>
-                    <li><a href="tel:0123456789">0123.456.789</a></li>
-                    <li>Phòng Công tác Chính trị - Quản lý Sinh viên</li>
+                    <li>
+                        <span class="footer-item-icon"><i class="fas fa-envelope"></i></span>
+                        <a href="mailto:contact@tdu.edu.vn">contact@tdu.edu.vn</a>
+                    </li>
+                    <li>
+                        <span class="footer-item-icon"><i class="fas fa-phone"></i></span>
+                        <a href="tel:0123456789">0123.456.789</a>
+                    </li>
+                    <li>
+                        <span class="footer-item-icon"><i class="fas fa-map-marker-alt"></i></span>
+                        <span>Phòng Công tác Chính trị - Quản lý Sinh viên</span>
+                    </li>
                 </ul>
             </div>
 
             <div class="footer-section col-12 col-md-4">
                 <div class="footer-heading"><i class="fas fa-link"></i> <span>Liên kết nhanh</span></div>
                 <ul class="footer-links">
-                    <li><a href="#">Hướng dẫn</a></li>
-                    <li><a href="#">Trợ giúp</a></li>
-                    <li><a href="#">Chính sách bảo mật</a></li>
+                    <li><a href="#"><i class="fas fa-angle-right"></i><span>Hướng dẫn</span></a></li>
+                    <li><a href="#"><i class="fas fa-angle-right"></i><span>Trợ giúp</span></a></li>
+                    <li><a href="#"><i class="fas fa-angle-right"></i><span>Chính sách bảo mật</span></a></li>
                 </ul>
             </div>
         </div>
