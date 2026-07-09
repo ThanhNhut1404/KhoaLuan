@@ -35,7 +35,7 @@ $openChangePasswordModal = $openChangePasswordModal ?? false;
             <div class="modal-field">
                 <label for="adminNewPassword">Mật khẩu mới<span class="req">*</span></label>
                 <div class="modal-input-wrap">
-                    <input id="adminNewPassword" name="new_password" type="password" placeholder="Nhập mật khẩu mới" />
+                    <input id="adminNewPassword" name="new_password" type="password" placeholder="Nhập mật khẩu mới" data-password-strength />
                     <button class="modal-toggle" type="button" aria-label="Hiện mật khẩu" data-target="adminNewPassword">
                         <svg class="eye-on" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                             <path d="M2 12s3.5-6 10-6 10 6 10 6-3.5 6-10 6-10-6-10-6Z" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
@@ -56,7 +56,7 @@ $openChangePasswordModal = $openChangePasswordModal ?? false;
             <div class="modal-field">
                 <label for="adminConfirmPassword">Xác nhận mật khẩu<span class="req">*</span></label>
                 <div class="modal-input-wrap">
-                    <input id="adminConfirmPassword" name="confirm_password" type="password" placeholder="Nhập lại mật khẩu mới" />
+                    <input id="adminConfirmPassword" name="confirm_password" type="password" placeholder="Nhập lại mật khẩu mới" data-password-match="#adminNewPassword" />
                     <button class="modal-toggle" type="button" aria-label="Hiện mật khẩu" data-target="adminConfirmPassword">
                         <svg class="eye-on" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                             <path d="M2 12s3.5-6 10-6 10 6 10 6-3.5 6-10 6-10-6-10-6Z" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>

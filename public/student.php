@@ -30,6 +30,11 @@ if ($page === 'forgot_password') {
 if ($page === 'verify_otp') {
 	$forgotPasswordController = new StudentForgotPasswordController();
 
+	if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_GET['action'] ?? '') === 'resend_otp') {
+		$forgotPasswordController->handleResendOtp();
+		exit;
+	}
+
 	if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 		$forgotPasswordController->handleVerifyOtp();
 		exit;

@@ -1790,5 +1790,6 @@ if (!in_array($studentThemeColor, ['blue', 'red', 'green', 'purple', 'cyan', 'or
 <script src="/KhoaLuan/public/js/menu.js"></script>
 <script src="/KhoaLuan/public/js/student.js"></script>
 
+<script src="/KhoaLuan/public/js/password-strength.js"></script>
 </body>
 </html>

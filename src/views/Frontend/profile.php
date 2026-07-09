@@ -93,8 +93,8 @@
     }
 
     .profile-avatar {
-        width: 104px;
-        height: 139px;
+        width: 105px;
+        height: 140px;
         aspect-ratio: 3 / 4;
         border-radius: 8px;
         background: linear-gradient(135deg, #e2e8f0 0%, #dbeafe 100%);

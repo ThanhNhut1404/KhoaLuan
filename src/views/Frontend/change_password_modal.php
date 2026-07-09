@@ -5,7 +5,7 @@ $openChangePasswordModal = $openChangePasswordModal ?? false;
 
 <style>
     #passwordModal .modal-card {
-        width: min(470px, 100%);
+        width: min(380px, 100%);
     }
 
     #passwordModal .modal-header {
@@ -98,7 +98,7 @@ $openChangePasswordModal = $openChangePasswordModal ?? false;
                 <div class="modal-field pwd-wrap">
                     <label class="form-label" for="newPassword">Mật khẩu mới<span class="req">*</span></label>
                     <div class="modal-input-wrap">
-                        <input id="newPassword" name="new_password" type="password" class="form-control" placeholder="Nhập mật khẩu mới" />
+                        <input id="newPassword" name="new_password" type="password" class="form-control" placeholder="Nhập mật khẩu mới" data-password-strength />
                         <button class="modal-toggle" type="button" aria-label="Hiện mật khẩu" data-target="newPassword">
                             <svg class="eye-on" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                                 <path d="M2 12s3.5-6 10-6 10 6 10 6-3.5 6-10 6-10-6-10-6Z" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
@@ -119,7 +119,7 @@ $openChangePasswordModal = $openChangePasswordModal ?? false;
                 <div class="modal-field pwd-wrap">
                     <label class="form-label" for="confirmPassword">Xác nhận mật khẩu<span class="req">*</span></label>
                     <div class="modal-input-wrap">
-                        <input id="confirmPassword" name="confirm_password" type="password" class="form-control" placeholder="Nhập lại mật khẩu mới" />
+                        <input id="confirmPassword" name="confirm_password" type="password" class="form-control" placeholder="Nhập lại mật khẩu mới" data-password-match="#newPassword" />
                         <button class="modal-toggle" type="button" aria-label="Hiện mật khẩu" data-target="confirmPassword">
                             <svg class="eye-on" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                                 <path d="M2 12s3.5-6 10-6 10 6 10 6-3.5 6-10 6-10-6-10-6Z" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>

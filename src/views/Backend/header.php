@@ -60,7 +60,7 @@ $adminRole = $adminSession['TEN_VAI_TRO'] ?? '';
                         <path d="M4 20c1.6-3 5-4 8-4s6.4 1 8 4" stroke="#ffffff" stroke-width="2" stroke-linecap="round"/>
                     </svg>
                 </span>
-                <span><?= htmlspecialchars($adminName) ?><?= $adminRole !== '' ? ' - ' . htmlspecialchars($adminRole) : '' ?></span>
+                <span><?= htmlspecialchars($adminName) ?></span>
                 <svg class="admin-user-caret" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
                     <path d="M6 9l6 6 6-6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
                 </svg>

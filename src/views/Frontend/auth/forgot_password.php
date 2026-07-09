@@ -3,6 +3,7 @@ $title = 'Quên mật khẩu Sinh viên';
 $email = $email ?? '';
 $errors = $errors ?? [];
 $toast = $toast ?? null;
+$cooldownRemaining = (int) ($cooldownRemaining ?? 0);
 
 $h = static fn ($value): string => htmlspecialchars((string) $value, ENT_QUOTES, 'UTF-8');
 ?>
@@ -142,6 +143,14 @@ $h = static fn ($value): string => htmlspecialchars((string) $value, ENT_QUOTES,
 
     .back-link:hover { color: #1649b8; }
 
+    .auth-hint {
+        color: var(--muted);
+        font-size: 12.5px;
+        font-weight: 700;
+        line-height: 1.4;
+        text-align: center;
+    }
+
     .auth-toast {
         position: fixed;
         top: 18px;
@@ -194,6 +203,8 @@ $h = static fn ($value): string => htmlspecialchars((string) $value, ENT_QUOTES,
                 <input id="email" name="email" class="form-control" type="email" value="<?= $h($email) ?>" placeholder="Nhập email đã đăng ký" autofocus>
                 <?php if (!empty($errors['email'])): ?>
                     <div class="field-error"><?= $h($errors['email']) ?></div>
+                <?php elseif ($cooldownRemaining > 0): ?>
+                    <div class="auth-hint">Vui lòng chờ <?= $cooldownRemaining ?> giây trước khi gửi lại mã OTP.</div>
                 <?php endif; ?>
             </div>
 

@@ -66,7 +66,7 @@ $roleLabel = static function (string $roleName): string {
                         <div class="form-field">
                             <label class="field-label form-label" for="password">Mật khẩu <span class="required">*</span></label>
                             <div class="account-password-wrap">
-                                <input id="password" name="password" class="field-input form-control" type="password" placeholder="Nhập mật khẩu" />
+                                <input id="password" name="password" class="field-input form-control" type="password" placeholder="Nhập mật khẩu" data-password-strength />
                                 <button class="account-password-toggle" type="button" aria-label="Hiện mật khẩu" data-target="password">
                                     <svg class="eye-on" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                                         <path d="M2 12s3.5-6 10-6 10 6 10 6-3.5 6-10 6-10-6-10-6Z" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
@@ -86,7 +86,7 @@ $roleLabel = static function (string $roleName): string {
                         <div class="form-field">
                             <label class="field-label form-label" for="confirm_password">Xác nhận mật khẩu <span class="required">*</span></label>
                             <div class="account-password-wrap">
-                                <input id="confirm_password" name="confirm_password" class="field-input form-control" type="password" placeholder="Nhập lại mật khẩu" />
+                                <input id="confirm_password" name="confirm_password" class="field-input form-control" type="password" placeholder="Nhập lại mật khẩu" data-password-match="#password" />
                                 <button class="account-password-toggle" type="button" aria-label="Hiện mật khẩu" data-target="confirm_password">
                                     <svg class="eye-on" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                                         <path d="M2 12s3.5-6 10-6 10 6 10 6-3.5 6-10 6-10-6-10-6Z" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>

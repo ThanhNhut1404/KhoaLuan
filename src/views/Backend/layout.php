@@ -41,6 +41,7 @@
         }
 
         .sidebar {
+            position: relative;
             width: 247px;
             background: linear-gradient(180deg, #0f2a5a 0%, #0b1f45 100%);
             color: #e2e8f0;
@@ -50,6 +51,54 @@
 
         .sidebar.collapsed {
             width: 86px;
+        }
+
+        .sidebar-collapse-toggle-wrapper {
+            position: absolute;
+            left: 50%;
+            bottom: 16px;
+            transform: translateX(-50%);
+            width: max-content;
+            z-index: 2;
+        }
+
+        .sidebar-collapse-toggle {
+            width: 38px;
+            height: 38px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            border: 1px solid rgba(255, 255, 255, 0.18);
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.08);
+            color: #cbd5f5;
+            cursor: pointer;
+            transition: background 0.2s ease, color 0.2s ease;
+        }
+
+        .sidebar-collapse-toggle:hover,
+        .sidebar-collapse-toggle:focus {
+            background: rgba(255, 255, 255, 0.14);
+            color: #f8fafc;
+            outline: none;
+        }
+
+        .sidebar-collapse-toggle svg {
+            width: 18px;
+            height: 18px;
+            pointer-events: none;
+        }
+
+        .sidebar .sidebar-collapse-icon-right {
+            display: none;
+        }
+
+        .sidebar.collapsed .sidebar-collapse-icon-left {
+            display: none;
+        }
+
+        .sidebar.collapsed .sidebar-collapse-icon-right {
+            display: inline;
         }
 
         .main {
@@ -950,9 +999,16 @@
         (function() {
             var toggle = document.getElementById('sidebarToggle');
             var sidebar = document.querySelector('.sidebar');
+            var sidebarCollapseToggle = document.getElementById('sidebarCollapseToggle');
             var userBtn = document.getElementById('userMenuBtn');
             var userMenu = document.getElementById('userMenu');
             if (!toggle || !sidebar) return;
+
+            if (sidebarCollapseToggle) {
+                sidebarCollapseToggle.addEventListener('click', function() {
+                    toggle.click();
+                });
+            }
 
             function closeSidebarSubmenus() {
                 document.querySelectorAll('.sidebar .nav-item.open').forEach(function(item) {
@@ -1041,6 +1097,7 @@
         <?php endif; ?>
     </script>
 
+<script src="/KhoaLuan/public/js/password-strength.js"></script>
 </body>
 
 </html>

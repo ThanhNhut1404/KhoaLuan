@@ -116,4 +116,12 @@ if (!function_exists('renderBackendSidebarIcon')) {
             <?php endif; ?>
         <?php endforeach; ?>
     </nav>
+    <div class="sidebar-collapse-toggle-wrapper">
+        <button id="sidebarCollapseToggle" type="button" class="sidebar-collapse-toggle" aria-label="Thu gọn hoặc mở rộng sidebar">
+            <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path class="sidebar-collapse-icon-left" d="M15 6l-6 6 6 6" stroke="#cbd5f5" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                <path class="sidebar-collapse-icon-right" d="M9 6l6 6-6 6" stroke="#cbd5f5" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+            </svg>
+        </button>
+    </div>
 </div>

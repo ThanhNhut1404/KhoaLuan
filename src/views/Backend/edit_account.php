@@ -76,14 +76,14 @@
                 <!-- Mật khẩu -->
                 <div class="form-field">
                     <label class="field-label form-label" for="password">Mật khẩu</label>
-                    <input type="password" id="password" name="password" class="field-input form-control" placeholder="Nhập mật khẩu" />
+                    <input type="password" id="password" name="password" class="field-input form-control" placeholder="Nhập mật khẩu" data-password-strength data-password-optional="true" />
                     <span class="field-error<?= isset($errors['password']) ? '' : ' is-empty' ?>"><?= isset($errors['password']) ? htmlspecialchars($errors['password']) : '&nbsp;' ?></span>
                 </div>
 
                 <!-- Xác nhận mật khẩu -->
                 <div class="form-field">
                     <label class="field-label form-label" for="confirm_password">Xác nhận mật khẩu</label>
-                    <input type="password" id="confirm_password" name="confirm_password" class="field-input form-control" placeholder="Nhập lại mật khẩu" />
+                    <input type="password" id="confirm_password" name="confirm_password" class="field-input form-control" placeholder="Nhập lại mật khẩu" data-password-match="#password" />
                     <span class="field-error<?= isset($errors['confirm_password']) ? '' : ' is-empty' ?>"><?= isset($errors['confirm_password']) ? htmlspecialchars($errors['confirm_password']) : '&nbsp;' ?></span>
                 </div>
 

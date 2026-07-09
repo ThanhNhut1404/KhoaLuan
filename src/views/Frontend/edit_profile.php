@@ -158,7 +158,7 @@ $avatarInitial = $studentName !== ''
         border-color: #15803d !important;
     }
     #editProfileModal .avatar-section { display: flex; align-items: flex-end; gap: 10px; padding: 6px 2px 18px; }
-    #editProfileModal .avatar-preview { width: 104px; height: 139px; aspect-ratio: 3 / 4; border-radius: 8px; overflow: hidden; flex: 0 0 auto; border: 2px solid #e8ecf3; background: linear-gradient(135deg, #e2e8f0 0%, #dbeafe 100%); display: flex; align-items: center; justify-content: center; box-shadow: 0 10px 22px rgba(15, 23, 42, 0.10); }
+    #editProfileModal .avatar-preview { width: 105px; height: 140px; aspect-ratio: 3 / 4; border-radius: 8px; overflow: hidden; flex: 0 0 auto; border: 2px solid #e8ecf3; background: linear-gradient(135deg, #e2e8f0 0%, #dbeafe 100%); display: flex; align-items: center; justify-content: center; box-shadow: 0 10px 22px rgba(15, 23, 42, 0.10); }
     #editProfileModal .avatar-preview img { width: 100%; height: 100%; object-fit: cover; display: block; }
     #editProfileModal .avatar-preview span { font-size: 30px; font-weight: 800; color: var(--primary); }
     #editProfileModal .avatar-meta { display: grid; gap: 5px; align-self: flex-end; margin-bottom: 2px; transform: translateY(18px); }
