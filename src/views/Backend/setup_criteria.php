@@ -29,35 +29,35 @@ function errorHtml(array $errors, string $key): string
             <h3 class="panel-title">THIẾT LẬP BỘ TIÊU CHÍ</h3>
         </div>
         <div class="panel-body card-body">
-            <div class="card mb-4 p-3">
-                <form method="GET" action="/KhoaLuan/public/admin.php">
-                    <input type="hidden" name="page" value="setup_criteria">
-                    <div class="row g-3 align-items-end">
-                        <div class="col-md-8">
-                            <label class="form-label">Bộ tiêu chí mẫu</label>
-                            <select id="template_id" name="template_id" class="form-select" onchange="this.form.submit()">
-                                <option value="">-- Chọn bộ tiêu chí mẫu --</option>
-                                <?php foreach ($masterTemplates as $template): ?>
-                                    <?php $templateOptionId = (int) ($template['id'] ?? $template['MA_BO_MAU'] ?? 0); ?>
-                                    <option value="<?= htmlspecialchars((string) $templateOptionId, ENT_QUOTES, 'UTF-8') ?>" <?= $templateOptionId === $selectedTemplateId ? 'selected' : '' ?>>
-                                        <?= htmlspecialchars($template['name'] ?? $template['TEN_BO_MAU'] ?? '', ENT_QUOTES, 'UTF-8') ?>
-                                    </option>
-                                <?php endforeach; ?>
-                            </select>
-                        </div>
-                        <div class="col-md-4 d-flex gap-2">
-                            <button type="button" class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#addTemplateModal">+ Tạo bộ tiêu chí</button>
-                            <?php if ($selectedTemplateId > 0): ?>
-                                <button type="button" class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#addCategoryModal">+ Thêm danh mục lớn</button>
-                            <?php endif; ?>
-                        </div>
+            <form method="GET" action="/KhoaLuan/public/admin.php" class="setup-criteria-form">
+                <input type="hidden" name="page" value="setup_criteria">
+                <div class="form-grid" style="grid-template-columns: minmax(0, 2fr) minmax(0, 1fr); gap: 0 14px; align-items: end;">
+                    <div class="form-field" style="max-width: 380px;">
+                        <label class="field-label form-label" for="template_id">Bộ tiêu chí mẫu</label>
+                        <select id="template_id" name="template_id" class="field-input form-select" onchange="this.form.submit()">
+                            <option value="">-- Chọn bộ tiêu chí mẫu --</option>
+                            <?php foreach ($masterTemplates as $template): ?>
+                                <?php $templateOptionId = (int) ($template['id'] ?? $template['MA_BO_MAU'] ?? 0); ?>
+                                <option value="<?= htmlspecialchars((string) $templateOptionId, ENT_QUOTES, 'UTF-8') ?>" <?= $templateOptionId === $selectedTemplateId ? 'selected' : '' ?>>
+                                    <?= htmlspecialchars($template['name'] ?? $template['TEN_BO_MAU'] ?? '', ENT_QUOTES, 'UTF-8') ?>
+                                </option>
+                            <?php endforeach; ?>
+                        </select>
                     </div>
-                </form>
-            </div>
+                    <div class="form-field d-flex gap-2 justify-content-start" style="padding-bottom: 2px;">
+                        <button type="button" class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#addTemplateModal">+ Tạo bộ tiêu chí</button>
+                        <?php if ($selectedTemplateId > 0): ?>
+                            <button type="button" class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#addCategoryModal">+ Thêm danh mục lớn</button>
+                        <?php endif; ?>
+                    </div>
+                </div>
+            </form>
 
             <div class="d-flex justify-content-between align-items-center mb-3">
                 <div>
-                    <span class="text-muted">Quản lý bộ tiêu chí mẫu, danh mục và tiêu chí con.</span>
+                    <?php if ($selectedTemplateId > 0): ?>
+                        <span class="text-muted">Quản lý bộ tiêu chí mẫu, danh mục và tiêu chí con.</span>
+                    <?php endif; ?>
                 </div>
                 <div class="d-flex gap-2">
                     <?php if ($selectedTemplateId > 0): ?>
@@ -76,9 +76,7 @@ function errorHtml(array $errors, string $key): string
                 </div>
             </div>
 
-            <?php if ($selectedTemplateId <= 0): ?>
-                <div class="alert alert-info">Vui lòng chọn một bộ tiêu chí mẫu để chỉnh sửa danh mục và tiêu chí con.</div>
-            <?php else: ?>
+            <?php if ($selectedTemplateId > 0): ?>
                 <?php
                     $templateName = '';
                     foreach ($masterTemplates as $t) {
