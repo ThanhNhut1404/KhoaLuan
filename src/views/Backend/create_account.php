@@ -130,9 +130,9 @@ $roleLabel = static function (string $roleName): string {
                             <?= $error('birth_date') ?>
                         </div>
 
-                        <div class="form-field role-field" data-roles="SINH_VIEN GIANG_VIEN CO_VAN_HOC_TAP BO_MON KHOA DOAN_KHOA DOAN_TRUONG">
-                            <label class="field-label form-label" for="email">Email <span class="required">*</span></label>
-                            <input id="email" name="email" class="field-input form-control" type="email" value="<?= $value('email') ?>" placeholder="Nhập email" />
+                        <div class="form-field role-field" data-roles="GIANG_VIEN CO_VAN_HOC_TAP BO_MON KHOA DOAN_KHOA LIEN_CHI DOAN_TRUONG CAN_BO_LOP">
+                            <label class="field-label form-label" for="email">Email tài khoản <span class="required">*</span></label>
+                            <input id="email" name="email" class="field-input form-control" type="email" value="<?= $value('email') ?>" placeholder="Nhập email tài khoản" />
                             <?= $error('email') ?>
                         </div>
 

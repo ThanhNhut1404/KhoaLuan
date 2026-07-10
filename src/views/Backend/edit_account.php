@@ -1,13 +1,13 @@
 <?php
-    $id = isset($_GET['id']) ? (int)$_GET['id'] : null;
+    $usernameParam = trim((string) ($_GET['username'] ?? $_GET['id'] ?? ''));
     $roles = $roles ?? [];
     $users = $users ?? [];
     $formData = $formData ?? [];
     $errors = $errors ?? [];
 
-    if ($id && empty($formData)) {
+    if ($usernameParam !== '' && empty($formData)) {
         foreach ($users as $u) {
-            if (($u['id'] ?? null) == $id) {
+            if ((string) ($u['username'] ?? '') === $usernameParam) {
                 $formData = $u;
                 break;
             }
@@ -17,7 +17,7 @@
 <div class="edit-account-page">
     <div class="page-panel card"><div class="panel-header card-header"><h2 class="panel-title">CHỈNH SỬA TÀI KHOẢN</h2></div>
     <div class="panel-body card-body">
-        <form id="editAccountForm" method="POST" action="?page=edit_account&id=<?= $id ?>">
+        <form id="editAccountForm" method="POST" action="?page=edit_account&username=<?= urlencode($usernameParam) ?>">
             <div class="form-grid">
                 <!-- Tên người dùng -->
                 <div class="form-field">
@@ -29,7 +29,7 @@
                 <!-- Tên tài khoản -->
                 <div class="form-field">
                     <label class="field-label form-label" for="username">Tên tài khoản <span class="required">*</span></label>
-                    <input type="text" id="username" name="username" class="field-input form-control" placeholder="Nhập tên tài khoản" value="<?= htmlspecialchars($formData['username'] ?? '') ?>" required />
+                    <input type="text" id="username" name="username" class="field-input form-control" placeholder="Nhập tên tài khoản" value="<?= htmlspecialchars($formData['username'] ?? '') ?>" readonly required />
                     <span class="field-error<?= isset($errors['username']) ? '' : ' is-empty' ?>"><?= isset($errors['username']) ? htmlspecialchars($errors['username']) : '&nbsp;' ?></span>
                 </div>
 
@@ -61,8 +61,8 @@
 
                 <!-- Email -->
                 <div class="form-field">
-                    <label class="field-label form-label" for="email">Email <span class="required">*</span></label>
-                    <input type="email" id="email" name="email" class="field-input form-control" placeholder="Nhập email" value="<?= htmlspecialchars($formData['email'] ?? '') ?>" required />
+                    <label class="field-label form-label" for="email">Email tài khoản <span class="required">*</span></label>
+                    <input type="email" id="email" name="email" class="field-input form-control" placeholder="Nhập email tài khoản" value="<?= htmlspecialchars($formData['email'] ?? '') ?>" required />
                     <span class="field-error<?= isset($errors['email']) ? '' : ' is-empty' ?>"><?= isset($errors['email']) ? htmlspecialchars($errors['email']) : '&nbsp;' ?></span>
                 </div>
 

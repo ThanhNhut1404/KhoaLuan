@@ -45,11 +45,26 @@ function showAdminLogin(string $error = '', string $success = '', bool $redirect
 
 function handleAdminLogin(): void
 {
+    $captcha = trim((string) ($_POST['captcha'] ?? ''));
+    $expectedCaptcha = (string) ($_SESSION['admin_captcha'] ?? '');
+
+    if ($captcha === '' || $expectedCaptcha === '' || !hash_equals($expectedCaptcha, $captcha)) {
+        unset($_SESSION['admin_captcha']);
+        showAdminLogin('Mã xác thực không chính xác.');
+        return;
+    }
+
+    unset($_SESSION['admin_captcha']);
+
     $tenDangNhap = trim($_POST['admin_user'] ?? '');
     $matKhau = $_POST['admin_pass'] ?? '';
 
     $authController = new \KhoaLuan\QLDRL\Controllers\AuthController();
     $state = $authController->loginAdmin($tenDangNhap, $matKhau);
+
+    if (!empty($state['redirectToAdmin'])) {
+        unset($_SESSION['admin_captcha']);
+    }
 
     showAdminLogin($state['error'], $state['success'], $state['redirectToAdmin']);
 }
@@ -130,6 +145,7 @@ function adminRequiredPermissionForPage(string $page): string
     $map = [
         'list_khoa' => 'list_departments',
         'roles' => 'role_permission',
+        'register_permissions' => 'role_permission',
         'list_major' => 'list_majors',
         'list_class' => 'list_classes',
         'list_year' => 'list_academic_years',
@@ -210,6 +226,10 @@ function adminRequiredPermissionForAction(string $page, array $post, string $met
             'save' => isset($post['id']) && trim((string) ($post['id'] ?? '')) !== '' ? 'edit_criteria' : 'create_criteria',
             default => null,
         },
+        'register_permissions' => match ($action) {
+            'register', 'register_all', 'delete' => 'role_permission',
+            default => null,
+        },
         default => null,
     };
 }
@@ -218,6 +238,10 @@ if ($page === 'logout') {
     destroyCurrentSession();
     header('Location: /KhoaLuan/public/admin.php?page=login');
     exit;
+}
+
+if ($page === 'captcha') {
+    \KhoaLuan\QLDRL\Services\CaptchaService::render('admin_captcha');
 }
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && $page === 'login') {
@@ -340,6 +364,202 @@ if ($isAdmin) {
     };
 }
 
+$permissionService = new class($permissionService, $isAdmin) {
+    public function __construct(
+        private object $inner,
+        private bool $isAdmin
+    ) {
+    }
+
+    public function buildSidebarMenu(array $roleIds): array
+    {
+        $menu = $this->mergeRegistryMenu($this->inner->buildSidebarMenu($roleIds), $roleIds);
+
+        if ($this->isAdmin) {
+            $menu = $this->ensureAdminRegistryMenu($menu);
+        }
+
+        return $menu;
+    }
+
+    private function mergeRegistryMenu(array $menu, array $roleIds): array
+    {
+        try {
+            $registry = new \KhoaLuan\QLDRL\Models\PermissionRegistryModel(
+                \KhoaLuan\QLDRL\Config\Database::getConnection()
+            );
+            $permissions = $this->isAdmin
+                ? $registry->getRegisteredRegistryFunctions()
+                : $this->inner->getPermissionsByRoles($roleIds);
+        } catch (\Throwable $exception) {
+            error_log($exception->getMessage());
+
+            return $menu;
+        }
+
+        $allowedPages = [];
+        foreach ($permissions as $permission) {
+            $page = trim((string) ($permission['PAGE'] ?? ''));
+            if ($page !== '') {
+                $allowedPages[$page] = true;
+            }
+        }
+
+        foreach ($registry->getRegistryFunctions() as $function) {
+            if (empty($function['HIEN_THI_MENU']) || ($function['TRANG_THAI_CN'] ?? '') !== 'HOAT_DONG') {
+                continue;
+            }
+
+            if (!$this->isRegistryPageAllowed($function, $allowedPages)) {
+                continue;
+            }
+
+            $page = trim((string) ($function['PAGE'] ?? ''));
+            $menuPage = trim((string) ($function['MENU_PAGE'] ?? $page));
+            $childPage = $menuPage !== '' ? $menuPage : $page;
+            if ($childPage === '' || $this->menuHasPage($menu, $childPage)) {
+                continue;
+            }
+
+            $module = trim((string) ($function['MODULE'] ?? 'KhÃ¡c'));
+            if ($module === '') {
+                $module = 'KhÃ¡c';
+            }
+
+            $menuUrl = trim((string) ($function['MENU_URL'] ?? ''));
+            $child = [
+                'page' => $childPage,
+                'label' => (string) ($function['TEN_CHUC_NANG'] ?? $childPage),
+                'url' => $menuUrl !== '' ? $menuUrl : '?page=' . rawurlencode($childPage),
+            ];
+
+            $parentIndex = $this->findParentIndex($menu, $module);
+            if ($parentIndex === null) {
+                $menu[] = [
+                    'label' => $module,
+                    'icon' => trim((string) ($function['ICON'] ?? 'dashboard')) ?: 'dashboard',
+                    'children' => [$child],
+                ];
+                continue;
+            }
+
+            $menu[$parentIndex]['children'][] = $child;
+        }
+
+        return $menu;
+    }
+
+    private function ensureAdminRegistryMenu(array $menu): array
+    {
+        $registerChild = [
+            'page' => 'register_permissions',
+            'label' => 'Đăng ký chức năng',
+            'url' => '?page=register_permissions',
+        ];
+
+        foreach ($menu as &$parent) {
+            $hasPermissionMenu = false;
+            foreach (($parent['children'] ?? []) as $child) {
+                $hasPermissionMenu = $hasPermissionMenu || (($child['page'] ?? '') === 'roles');
+            }
+
+            if (!$hasPermissionMenu) {
+                continue;
+            }
+
+            if (!$this->hasChild($parent['children'] ?? [], $registerChild['page'])) {
+                $parent['children'] = $this->insertChildBeforePage(
+                    $parent['children'] ?? [],
+                    $registerChild,
+                    'roles'
+                );
+            }
+            unset($parent);
+
+            return $menu;
+        }
+        unset($parent);
+
+        $menu[] = [
+            'label' => 'Quáº£n lÃ½ phÃ¢n quyá»n',
+            'icon' => 'permission',
+            'children' => [
+                $registerChild,
+                ['page' => 'roles', 'label' => 'Cáº¥p quyá»n truy cáº­p', 'url' => '?page=roles'],
+            ],
+        ];
+
+        return $menu;
+    }
+
+    private function isRegistryPageAllowed(array $function, array $allowedPages): bool
+    {
+        if ($this->isAdmin) {
+            return true;
+        }
+
+        $page = trim((string) ($function['PAGE'] ?? ''));
+        $menuPage = trim((string) ($function['MENU_PAGE'] ?? ''));
+
+        return ($page !== '' && isset($allowedPages[$page]))
+            || ($menuPage !== '' && isset($allowedPages[$menuPage]));
+    }
+
+    private function findParentIndex(array $menu, string $label): ?int
+    {
+        foreach ($menu as $index => $parent) {
+            if ((string) ($parent['label'] ?? '') === $label) {
+                return (int) $index;
+            }
+        }
+
+        return null;
+    }
+
+    private function menuHasPage(array $menu, string $page): bool
+    {
+        foreach ($menu as $parent) {
+            if ($this->hasChild($parent['children'] ?? [], $page)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    private function hasChild(array $children, string $page): bool
+    {
+        foreach ($children as $child) {
+            if (($child['page'] ?? '') === $page) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    private function insertChildBeforePage(array $children, array $newChild, string $beforePage): array
+    {
+        $result = [];
+        $inserted = false;
+
+        foreach ($children as $child) {
+            if (!$inserted && (($child['page'] ?? '') === $beforePage)) {
+                $result[] = $newChild;
+                $inserted = true;
+            }
+
+            $result[] = $child;
+        }
+
+        if (!$inserted) {
+            $result[] = $newChild;
+        }
+
+        return $result;
+    }
+};
+
 if ($page === 'roles') {
     $rolePermissionController = new \KhoaLuan\QLDRL\Controllers\RolePermissionController();
     $rolePermissionState = $rolePermissionController->handle($_GET, $_POST, $_SERVER['REQUEST_METHOD'], $_SESSION['admin']);
@@ -382,11 +602,55 @@ if ($page === 'list_role_permissions') {
     $adminToast = $rolePermissionListState['toast'] ?? null;
 }
 
+if ($page === 'register_permissions') {
+    $permissionRegistryController = new \KhoaLuan\QLDRL\Controllers\PermissionRegistryController();
+    $permissionRegistryState = $permissionRegistryController->handle($_GET, $_POST, $_SERVER['REQUEST_METHOD'], $_SESSION['admin']);
+
+    if (!empty($permissionRegistryState['forbidden'])) {
+        http_response_code(403);
+        $content = $viewPath . '403.php';
+        $title = 'KhÃ´ng cÃ³ quyá»n truy cáº­p';
+        include $viewPath . 'layout.php';
+        exit;
+    }
+
+    $pendingFunctions = $permissionRegistryState['pendingFunctions'];
+    $registeredFunctions = $permissionRegistryState['registeredFunctions'];
+    $registryErrors = $permissionRegistryState['registryErrors'];
+    $adminToast = $permissionRegistryState['toast'] ?? null;
+}
+
 if ($page === 'create_account') {
     $accountController = new \KhoaLuan\QLDRL\Controllers\AccountController();
     $accountState = $accountController->create(array_merge($_GET, $_POST), $_SERVER['REQUEST_METHOD']);
 
     $createAccountOptions = $accountState['options'];
+    $formData = $accountState['formData'];
+    $errors = $accountState['errors'];
+    $adminToast = $accountState['toast'];
+}
+
+if ($page === 'list_accounts') {
+    $accountController = new \KhoaLuan\QLDRL\Controllers\AccountController();
+    $accountState = $accountController->listing($_POST, $_SERVER['REQUEST_METHOD']);
+
+    $accounts = $accountState['accounts'];
+    $roles = $accountState['roles'];
+    $adminToast = $accountState['toast'];
+}
+
+if ($page === 'edit_account') {
+    $accountController = new \KhoaLuan\QLDRL\Controllers\AccountController();
+    $accountState = $accountController->edit($_GET, $_POST, $_SERVER['REQUEST_METHOD']);
+
+    if (!empty($accountState['notFound'])) {
+        $_SESSION['message'] = 'Không tìm thấy tài khoản cần chỉnh sửa.';
+        $_SESSION['message_type'] = 'error';
+        header('Location: /KhoaLuan/public/admin.php?page=list_accounts');
+        exit;
+    }
+
+    $roles = $accountState['roles'];
     $formData = $accountState['formData'];
     $errors = $accountState['errors'];
     $adminToast = $accountState['toast'];

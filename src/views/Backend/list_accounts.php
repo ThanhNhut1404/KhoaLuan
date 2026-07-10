@@ -19,51 +19,43 @@
             <div class="header-content">
                 <h2 class="panel-title">DANH SÁCH TÀI KHOẢN</h2>
 
-                <div class="actions-right">
-                    <button id="filterToggle" class="btn-create filter-reset btn btn-outline-secondary">
+                <div class="filter-wrap" id="accountFilter">
+                    <button type="button" id="filterToggle" class="filter-btn btn btn-outline-secondary" title="Bộ lọc" aria-label="Bộ lọc" aria-expanded="false">
                         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <path d="M3 5h18M6 12h12M10 19h4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+                            <path d="M4 5h16l-6 7v5l-4 2v-7L4 5Z" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" />
                         </svg>
-                        Bộ lọc
                     </button>
-                </div>
-            </div>
-
-            <div id="filterBar" class="filter-bar" style="display:none;">
-                <div class="filter-row">
-                    <div class="filter-group">
-                        <label class="filter-label">Vai trò</label>
-                        <select id="filterRole" class="field-input form-select">
+                    <div class="filter-menu" id="filterBar" role="menu" aria-labelledby="filterToggle">
+                        <div class="filter-form">
+                            <label class="filter-label" for="filterRole">Vai trò</label>
+                            <select id="filterRole" class="filter-select form-select">
                             <option value="">Tất cả</option>
                             <?php foreach ($roles as $r): ?>
                                 <option value="<?= htmlspecialchars($r) ?>"><?= htmlspecialchars($r) ?></option>
                             <?php endforeach; ?>
-                        </select>
-                    </div>
+                            </select>
 
-                    <div class="filter-group">
-                        <label class="filter-label">Trạng thái</label>
-                        <select id="filterStatus" class="field-input form-select">
+                            <label class="filter-label" for="filterStatus">Trạng thái</label>
+                            <select id="filterStatus" class="filter-select form-select">
                             <option value="">Tất cả</option>
                             <?php foreach ($statuses as $k=>$v): ?>
                                 <option value="<?= $k ?>"><?= $v ?></option>
                             <?php endforeach; ?>
-                        </select>
-                    </div>
+                            </select>
 
-                    <div class="filter-group">
-                        <label class="filter-label">Giới tính</label>
-                        <select id="filterGender" class="field-input form-select">
+                            <label class="filter-label" for="filterGender">Giới tính</label>
+                            <select id="filterGender" class="filter-select form-select">
                             <option value="">Tất cả</option>
                             <?php foreach ($genders as $k=>$v): ?>
                                 <option value="<?= $k ?>"><?= $v ?></option>
                             <?php endforeach; ?>
-                        </select>
-                    </div>
+                            </select>
 
-                    <div class="filter-group filter-actions">
-                        <button id="resetFilters" class="btn-create filter-reset btn btn-outline-secondary">Đặt lại</button>
-                        <button id="applyFilters" class="btn-create filter-apply btn btn-primary">Áp dụng</button>
+                            <div class="filter-actions">
+                                <button type="button" id="resetFilters" class="filter-clear btn btn-outline-secondary">Đặt lại</button>
+                                <button type="button" id="applyFilters" class="filter-apply btn btn-primary">Lọc</button>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -84,7 +76,7 @@
                                 <th class="col-fullname">TÊN NGƯỜI DÙNG</th>
                                 <th class="col-username">TÊN TÀI KHOẢN</th>
                                 <th class="col-gender">GIỚI TÍNH</th>
-                                <th class="col-email">EMAIL</th>
+                                <th class="col-email">EMAIL TÀI KHOẢN</th>
                                 <th class="col-phone">SỐ ĐIỆN THOẠI</th>
                                 <th class="col-role">VAI TRÒ</th>
                                 <th class="col-status">TRẠNG THÁI</th>
@@ -95,19 +87,19 @@
                         </thead>
                         <tbody>
                             <?php foreach ($accounts as $index => $a): ?>
-                                <tr data-id="<?= $a['id'] ?>" data-role="<?= htmlspecialchars($a['role']) ?>" data-status="<?= htmlspecialchars($a['status']) ?>" data-gender="<?= htmlspecialchars($a['gender']) ?>">
+                                <tr data-id="<?= htmlspecialchars((string) ($a['id'] ?? $a['username'] ?? '')) ?>" data-role="<?= htmlspecialchars($a['role'] ?? '') ?>" data-status="<?= htmlspecialchars($a['status'] ?? '') ?>" data-gender="<?= htmlspecialchars($a['gender'] ?? '') ?>">
                                     <td class="col-stt">0<?= $index + 1 ?></td>
                                     <td class="col-fullname"><?= htmlspecialchars($a['full_name']) ?></td>
                                     <td class="col-username"><?= htmlspecialchars($a['username']) ?></td>
                                     <td class="col-gender"><?= htmlspecialchars($genders[$a['gender']] ?? $a['gender']) ?></td>
-                                    <td class="col-email"><?= htmlspecialchars($a['email']) ?></td>
+                                    <td class="col-email"><?= htmlspecialchars(trim((string) ($a['email'] ?? '')) !== '' ? (string) $a['email'] : '-') ?></td>
                                     <td class="col-phone"><?= htmlspecialchars($a['phone']) ?></td>
                                     <td class="col-role"><?= htmlspecialchars($a['role']) ?></td>
                                     <td class="col-status">
                                         <?php if ($canChangeStatusAccount): ?>
                                         <form method="POST" style="display:inline-block;">
-                                            <input type="hidden" name="_row_id" value="<?= $a['id'] ?>" />
-                                            <select name="status[<?= $a['id'] ?>]" class="status-select form-select" onchange="updateStatusSelect(this)">
+                                            <input type="hidden" name="_row_id" value="<?= htmlspecialchars((string) ($a['id'] ?? $a['username'] ?? '')) ?>" />
+                                            <select name="status[<?= htmlspecialchars((string) ($a['id'] ?? $a['username'] ?? '')) ?>]" class="status-select form-select" onchange="updateStatusSelect(this)">
                                                 <option value="active" <?= $a['status'] === 'active' ? 'selected' : '' ?>>Hoạt động</option>
                                                 <option value="inactive" <?= $a['status'] === 'inactive' ? 'selected' : '' ?>>Không hoạt động</option>
                                             </select>
@@ -120,10 +112,19 @@
                                     <td class="col-action">
                                         <div class="action-group">
                                             <?php if ($canEditAccount): ?>
-                                            <button class="action-btn edit btn btn-outline-primary" title="Chỉnh sửa" onclick="editAccount(<?= $a['id'] ?>)">✎</button>
+                                            <button type="button" class="action-btn edit btn btn-outline-primary" title="Chỉnh sửa" aria-label="Chỉnh sửa tài khoản" onclick="editAccount(<?= htmlspecialchars(json_encode((string) ($a['id'] ?? $a['username'] ?? ''), JSON_UNESCAPED_UNICODE | JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP), ENT_QUOTES, 'UTF-8') ?>)">
+                                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                    <path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
+                                                    <path d="M15.5 3.5a2.121 2.121 0 1 1 3 3L18 7.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
+                                                </svg>
+                                            </button>
                                             <?php endif; ?>
                                             <?php if ($canDeleteAccount): ?>
-                                            <button class="action-btn delete btn btn-danger" title="Xóa" onclick="showDeleteConfirm(<?= $a['id'] ?>, 'tài khoản', <?= htmlspecialchars(json_encode((string) ($a['full_name'] ?? ''), JSON_UNESCAPED_UNICODE | JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP), ENT_QUOTES, 'UTF-8') ?>)">🗑</button>
+                                            <button type="button" class="action-btn delete btn btn-danger" title="Xóa" aria-label="Xóa tài khoản" onclick="showDeleteConfirm(<?= htmlspecialchars(json_encode((string) ($a['id'] ?? $a['username'] ?? ''), JSON_UNESCAPED_UNICODE | JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP), ENT_QUOTES, 'UTF-8') ?>, 'tài khoản', <?= htmlspecialchars(json_encode((string) ($a['full_name'] ?? ''), JSON_UNESCAPED_UNICODE | JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP), ENT_QUOTES, 'UTF-8') ?>)">
+                                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                    <path d="M19 7l-1 12a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2l-1-12M9 7V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v3M9 11v6M15 11v6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
+                                                </svg>
+                                            </button>
                                             <?php endif; ?>
                                         </div>
                                     </td>
@@ -173,15 +174,75 @@
     }
 
     .panel-header {
+        position: relative;
+        z-index: 40;
         padding: 12px 14px;
         border-bottom: 1px solid #e5e7eb;
         background: #f9fafb;
+        border-radius: 8px 8px 0 0;
     }
 
     .header-content {
         display: flex;
         justify-content: space-between;
         align-items: center;
+        gap: 12px;
+    }
+
+    .filter-wrap {
+        position: relative;
+        display: inline-flex;
+        align-items: center;
+    }
+
+    .filter-btn {
+        width: 32px;
+        height: 32px;
+        border: 1px solid #e5e7eb;
+        border-radius: 6px;
+        background: #ffffff;
+        color: #0f2a5a;
+        cursor: pointer;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        padding: 0;
+        transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+    }
+
+    .filter-btn:hover {
+        background: #f8fafc;
+        color: #0b1f45;
+    }
+
+    .filter-btn svg {
+        width: 16px;
+        height: 16px;
+        stroke: currentColor;
+        fill: none;
+    }
+
+    .filter-menu {
+        position: absolute;
+        top: calc(100% + 6px);
+        right: 0;
+        z-index: 1000;
+        display: none;
+        width: 300px;
+        padding: 12px;
+        background: #ffffff;
+        border: 1px solid #e5e7eb;
+        border-radius: 8px;
+        box-shadow: 0 8px 20px rgba(15, 42, 90, 0.12);
+    }
+
+    .filter-wrap.open .filter-menu {
+        display: block;
+    }
+
+    .filter-form {
+        display: grid;
+        gap: 8px;
     }
 
     .panel-title {
@@ -281,11 +342,23 @@
         width: 12%;
     }
 
-    .col-gender,
-    .col-email,
-    .col-phone,
+    .col-gender {
+        width: 7%;
+        white-space: nowrap;
+    }
+
+    .col-phone {
+        width: 10%;
+        white-space: nowrap;
+    }
+
     .col-role {
-        width: 12%;
+        width: 9%;
+        white-space: nowrap;
+    }
+
+    .col-email {
+        width: 16%;
     }
 
     .col-status {
@@ -342,6 +415,13 @@
         cursor: pointer;
         transition: all 0.2s;
         padding: 0;
+    }
+
+    .action-btn svg {
+        width: 16px;
+        height: 16px;
+        stroke: currentColor;
+        fill: none;
     }
 
     .action-btn:hover {
@@ -434,6 +514,11 @@
     }
 
     @media (max-width: 768px) {
+        .filter-menu {
+            right: -4px;
+            width: min(300px, calc(100vw - 48px));
+        }
+
         .table-wrapper {
             overflow-x: auto;
         }
@@ -443,86 +528,33 @@
         }
     }
 
-    /* Filter bar styles aligned with list_class look */
-    .filter-bar {
-        padding: 12px 16px;
-        border-top: 1px solid #e8ecf3;
-        background: #ffffff;
-    }
-
-    .filter-row {
-        display: flex;
-        gap: 12px;
-        align-items: flex-end;
-        flex-wrap: wrap;
-    }
-
-    .filter-group {
-        display: flex;
-        flex-direction: column;
-        gap: 6px;
-        flex-shrink: 0;
-    }
-
     .filter-label {
-        font-weight: 700;
         font-size: 12px;
+        font-weight: 700;
         color: #0f2a5a;
+        margin: 0;
     }
 
-    .filter-bar .field-input {
-        padding: 10px;
-        border-radius: 10px;
-        border: 1px solid #e5e7eb;
-        background: #f9fafb;
+    .filter-select {
+        min-height: 36px;
         font-size: 13px;
-        height: 40px;
-        box-sizing: border-box;
+        border-radius: 8px;
+        border-color: #e5e7eb;
     }
 
     .filter-actions {
         display: flex;
-        flex-direction: row;
-        gap: 12px;
-        align-items: center;
-        flex-wrap: nowrap;
-        justify-content: flex-start;
-        flex-shrink: 0;
+        justify-content: flex-end;
+        gap: 8px;
+        padding-top: 6px;
     }
 
-    .btn-create.filter-apply,
-    .btn-create.filter-reset {
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        height: 34px;
-        min-width: 80px;
-        padding: 0 10px;
-        border-radius: 6px;
+    .filter-clear,
+    .filter-apply {
+        font-size: 13px;
         font-weight: 700;
-        cursor: pointer;
-        white-space: nowrap;
-        font-size: 13px;
-    }
-
-    .btn-create.filter-apply {
-        background: linear-gradient(180deg, #0f2a5a 0%, #0b1f45 100%);
-        color: #ffffff;
-        border: 1px solid #0f2a5a;
-    }
-
-    .btn-create.filter-reset {
-        background: #ffffff;
-        color: #0f2a5a;
-        border: 1px solid #e5e7eb;
-    }
-
-    /* Reduce select/input heights to match buttons */
-    .filter-bar .field-input {
-        padding: 8px 10px;
-        height: 34px;
         border-radius: 8px;
-        font-size: 13px;
+        padding: 7px 12px;
     }
 
     /* Status select styling (same as list_major) */
@@ -533,10 +565,34 @@
 </style>
 
 <script>
-    document.getElementById('filterToggle').addEventListener('click', function(){
-        var f = document.getElementById('filterBar');
-        f.style.display = (f.style.display === 'none' || f.style.display === '') ? 'block' : 'none';
-    });
+    (function() {
+        var filterWrap = document.getElementById('accountFilter');
+        var filterToggle = document.getElementById('filterToggle');
+
+        if (!filterWrap || !filterToggle) {
+            return;
+        }
+
+        filterToggle.addEventListener('click', function(event) {
+            event.stopPropagation();
+            var isOpen = filterWrap.classList.toggle('open');
+            filterToggle.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+        });
+
+        document.addEventListener('click', function(event) {
+            if (!filterWrap.contains(event.target)) {
+                filterWrap.classList.remove('open');
+                filterToggle.setAttribute('aria-expanded', 'false');
+            }
+        });
+
+        document.addEventListener('keydown', function(event) {
+            if (event.key === 'Escape') {
+                filterWrap.classList.remove('open');
+                filterToggle.setAttribute('aria-expanded', 'false');
+            }
+        });
+    })();
 
     function filterAccounts() {
         var role = document.getElementById('filterRole').value;
@@ -575,7 +631,7 @@
     document.getElementById('applyFilters').addEventListener('click', function(e){ e.preventDefault(); filterAccounts(); });
     document.getElementById('resetFilters').addEventListener('click', function(e){ e.preventDefault(); document.getElementById('filterRole').value=''; document.getElementById('filterStatus').value=''; document.getElementById('filterGender').value=''; filterAccounts(); });
 
-    function editAccount(id){ window.location.href = '?page=edit_account&id=' + id; }
+    function editAccount(username){ window.location.href = '?page=edit_account&username=' + encodeURIComponent(username); }
 
     
 </script>

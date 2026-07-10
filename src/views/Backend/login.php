@@ -213,23 +213,27 @@ $redirectToAdmin = $redirectToAdmin ?? false;
     .toggle-btn.is-visible .eye-off { display: block; }
     .helper-row { display:flex; gap:10px; align-items:center; justify-content: space-between; font-size:13px; color:var(--muted); margin-top:8px; }
     .forget-pass-link { color:var(--brand); text-decoration:none; font-weight:600; background:none; border:none; padding:0; cursor:pointer; align-self: flex-end; }
-    .captcha-row { display:flex; gap:10px; align-items:center; margin-top:10px; }
-    .captcha-input { flex: 0 0 140px; }
+    .captcha-row { display:flex; gap:0; align-items:center; margin-top:10px; }
+    .captcha-input { flex: 0 0 140px; margin-right:10px; }
     .captcha-refresh {
-        width:40px;
-        height:40px;
-        border-radius:10px;
-        border:1px solid #e6eef8;
-        background:#ffffff;
+        width:auto;
+        min-width:34px;
+        height:46px;
+        flex:0 0 auto;
+        border-radius:12px;
+        border:none;
+        background:transparent;
         color:var(--brand);
         cursor:pointer;
         display:inline-flex;
         align-items:center;
         justify-content:center;
+        margin-right:0;
+        padding:0 5px;
         transition: 0.2s ease;
     }
-    .captcha-refresh:hover { background:#e6eef7; }
-    .captcha-refresh svg { width:18px; height:18px; stroke: currentColor; fill: none; }
+    .captcha-refresh:hover { background:rgba(15, 42, 90, 0.08); }
+    .captcha-refresh svg { width:22px; height:22px; stroke: currentColor; fill: none; }
     .captcha-image {
         height:40px;
         min-width:150px;
@@ -424,14 +428,14 @@ $redirectToAdmin = $redirectToAdmin ?? false;
                 <div class="form-row">
                     <label class="form-label" for="captchaInput">Nhập mã</label>
                     <div class="captcha-row">
-                        <input id="captchaInput" class="form-control captcha-input" type="text" placeholder="Nhập mã" aria-label="Nhập mã xác thực" />
-                        <button class="captcha-refresh" type="button" aria-label="Tải lại mã">
+                        <input id="captchaInput" name="captcha" class="form-control captcha-input" type="text" placeholder="Nhập mã" aria-label="Nhập mã xác thực" autocomplete="off" />
+                        <button id="refreshAdminCaptcha" class="captcha-refresh" type="button" aria-label="Tải lại mã">
                             <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                                 <path d="M20 12a8 8 0 1 1-2.34-5.66" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
                                 <path d="M20 4v6h-6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
                             </svg>
                         </button>
-                        <div class="captcha-image" aria-label="Mã xác thực">CAPTCHA</div>
+                        <img id="adminCaptchaImage" class="captcha-image" src="/KhoaLuan/public/admin.php?page=captcha" alt="Mã xác thực" />
                     </div>
                 </div>
 
@@ -492,6 +496,20 @@ $redirectToAdmin = $redirectToAdmin ?? false;
             closeForgotModal();
         }
     });
+
+    (function(){
+        var btn = document.getElementById('refreshAdminCaptcha');
+        var img = document.getElementById('adminCaptchaImage');
+        var input = document.getElementById('captchaInput');
+        if (!btn || !img) return;
+        btn.addEventListener('click', function(){
+            img.src = '/KhoaLuan/public/admin.php?page=captcha&t=' + Date.now();
+            if (input) {
+                input.value = '';
+                input.focus();
+            }
+        });
+    })();
 
     <?php if ($redirectToAdmin): ?>
     window.setTimeout(function() {

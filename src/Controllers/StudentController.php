@@ -75,7 +75,7 @@ class StudentController
 
         if ($expectedCaptcha === '' || !hash_equals($expectedCaptcha, $captcha)) {
             unset($_SESSION['student_captcha']);
-            $this->login('Mã xác thực không đúng.', $username);
+            $this->login('Mã xác thực không chính xác.', $username);
             return;
         }
 
