@@ -17,13 +17,44 @@ class ForgotPasswordModel
                     sv.MSSV AS mssv,
                     sv.HO_TEN AS full_name,
                     sv.EMAIL_SV AS email,
-                    nd.TRANG_THAI_ND AS account_status
+                    nd.TEN_DANG_NHAP AS account_username,
+                    nd.TRANG_THAI_ND AS account_status,
+                    nd.MAT_KHAU AS password_hash,
+                    COALESCE(MAX(CASE WHEN vt.TEN_VAI_TRO = \'SINH_VIEN\' THEN 1 ELSE 0 END), 0) AS is_student_role
              FROM sinh_vien sv
-             INNER JOIN nguoi_dung nd ON nd.TEN_DANG_NHAP = sv.TEN_DANG_NHAP
+             LEFT JOIN nguoi_dung nd ON nd.TEN_DANG_NHAP = sv.TEN_DANG_NHAP
+             LEFT JOIN nguoi_dung_vai_tro ndvt ON ndvt.TEN_DANG_NHAP = nd.TEN_DANG_NHAP
+             LEFT JOIN vai_tro vt ON vt.MA_VAI_TRO = ndvt.MA_VAI_TRO
              WHERE LOWER(sv.EMAIL_SV) = LOWER(:email)
+             GROUP BY sv.TEN_DANG_NHAP, sv.MSSV, sv.HO_TEN, sv.EMAIL_SV,
+                nd.TEN_DANG_NHAP, nd.TRANG_THAI_ND, nd.MAT_KHAU
              LIMIT 1'
         );
         $statement->execute(['email' => $email]);
+        $row = $statement->fetch();
+
+        return $row ?: null;
+    }
+
+    public function findOtpByIdForUsername(int $otpId, string $username): ?array
+    {
+        $statement = $this->db->prepare(
+            'SELECT ID,
+                    TEN_DANG_NHAP,
+                    MA_BAM_OTP,
+                    THOI_GIAN_HET_HAN,
+                    THOI_GIAN_DA_SU_DUNG,
+                    SO_LAN_NHAP_SAI,
+                    NGAY_TAO
+             FROM otp_dat_lai_mat_khau
+             WHERE ID = :id
+               AND TEN_DANG_NHAP = :username
+             LIMIT 1'
+        );
+        $statement->execute([
+            'id' => $otpId,
+            'username' => $username,
+        ]);
         $row = $statement->fetch();
 
         return $row ?: null;
@@ -101,6 +132,20 @@ class ForgotPasswordModel
         );
 
         return $statement->execute(['id' => $otpId]) && $statement->rowCount() > 0;
+    }
+
+    public function getPasswordHash(string $username): ?string
+    {
+        $statement = $this->db->prepare(
+            'SELECT MAT_KHAU
+             FROM nguoi_dung
+             WHERE TEN_DANG_NHAP = :username
+             LIMIT 1'
+        );
+        $statement->execute(['username' => $username]);
+        $passwordHash = $statement->fetchColumn();
+
+        return $passwordHash === false ? null : (string) $passwordHash;
     }
 
     public function updatePassword(string $username, string $password): bool

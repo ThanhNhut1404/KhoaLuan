@@ -20,17 +20,18 @@
 <style>
     @import url('https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap');
 
-    :root {
+    .profile-shell {
         --ink: #0f172a;
         --muted: #64748b;
         --accent: var(--primary);
         --accent-soft: rgba(var(--primary-rgb), 0.12);
+        --accent-hover: var(--primary-dark);
+        --accent-surface: var(--primary-surface);
+        --accent-border: var(--primary-border);
+        --accent-border-strong: var(--primary-border-strong);
         --line: #e5e7eb;
         --card: #ffffff;
         --shadow: 0 12px 30px rgba(15, 23, 42, 0.08);
-    }
-
-    .profile-shell {
         position: relative;
         display: grid;
         gap: 14px;
@@ -97,7 +98,7 @@
         height: 140px;
         aspect-ratio: 3 / 4;
         border-radius: 8px;
-        background: linear-gradient(135deg, #e2e8f0 0%, #dbeafe 100%);
+        background: linear-gradient(135deg, var(--accent-soft) 0%, var(--accent-border) 100%);
         display: flex;
         align-items: center;
         justify-content: center;
@@ -183,7 +184,7 @@
     .action-btn:hover {
         border-color: rgba(var(--primary-rgb), 0.35);
         color: var(--accent);
-        background: #eef4ff;
+        background: var(--accent-surface);
     }
 
     .action-btn.primary {
@@ -194,9 +195,9 @@
     }
 
     .action-btn.primary:hover {
-        background: #1b3fb5;
+        background: var(--accent-hover);
         color: #ffffff;
-        border-color: #1b3fb5;
+        border-color: var(--accent-hover);
     }
 
     .action-btn.link {
@@ -209,7 +210,7 @@
     }
 
     .action-btn.link:hover {
-        background: #e8f0ff;
+        background: var(--accent-surface);
         border-color: rgba(var(--primary-rgb), 0.4);
     }
 
@@ -224,7 +225,7 @@
     }
 
     .profile-actions .action-btn.icon-only.primary:hover {
-        background: #eef4ff;
+        background: var(--accent-surface);
         color: var(--accent);
         border-color: transparent;
     }
@@ -241,7 +242,7 @@
     }
 
     .profile-actions .action-btn.password-btn:hover {
-        background: #f8faff;
+        background: var(--accent-surface);
         color: var(--accent);
         border-color: rgba(var(--primary-rgb), 0.4);
     }
@@ -324,8 +325,8 @@
         gap: 10px;
         padding: 10px 12px;
         border-radius: 12px;
-        background: #f8fafc;
-        border: 1px solid #eef2f7;
+        background: var(--accent-surface);
+        border: 1px solid var(--accent-border);
         font-size: 12px;
         color: var(--ink);
         font-weight: 700;

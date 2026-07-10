@@ -254,7 +254,7 @@ $h = static fn ($value): string => htmlspecialchars((string) $value, ENT_QUOTES,
                 <?php if (!empty($errors['otp'])): ?>
                     <div class="field-error"><?= $h($errors['otp']) ?></div>
                 <?php endif; ?>
-                <div class="field-error" id="otpExpiredError" style="display:none;">Mã OTP đã hết hạn. Vui lòng gửi lại mã mới.</div>
+                <div class="field-error" id="otpExpiredError" style="display:none;">Mã OTP đã hết hạn. Vui lòng yêu cầu mã mới.</div>
             </div>
 
             <div class="d-grid mt-3 otp-actions">

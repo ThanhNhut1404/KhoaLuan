@@ -12,6 +12,7 @@ class StudentForgotPasswordController
     private const OTP_EXPIRES_MINUTES = 5;
     private const OTP_RESEND_COOLDOWN_SECONDS = 60;
     private const MAX_OTP_ATTEMPTS = 5;
+    private const DEFAULT_STUDENT_PASSWORD = '#Tdu1234';
 
     public function __construct(
         private ?ForgotPasswordModel $model = null,
@@ -42,11 +43,6 @@ class StudentForgotPasswordController
             $errors['email'] = 'Vui lòng nhập email.';
         } elseif (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
             $errors['email'] = 'Email không hợp lệ.';
-        } else {
-            $cooldownRemaining = $this->otpCooldownRemaining($email);
-            if ($cooldownRemaining > 0) {
-                $errors['email'] = 'Vui lòng chờ ' . $cooldownRemaining . ' giây trước khi gửi lại mã OTP.';
-            }
         }
 
         if (!empty($errors)) {
@@ -65,21 +61,41 @@ class StudentForgotPasswordController
             if ($student === null) {
                 $this->render('forgot_password', [
                     'email' => $email,
-                    'errors' => ['email' => 'Không tìm thấy tài khoản sinh viên với email này.'],
+                    'errors' => ['email' => 'Email này chưa được đăng ký trong hệ thống sinh viên.'],
                     'toast' => null,
                     'cooldownRemaining' => 0,
                 ]);
                 return;
             }
 
-            if (!$this->canSendResetOtp((string) ($student['account_status'] ?? ''))) {
+            $studentError = $this->studentOtpEligibilityError($student);
+            if ($studentError !== null) {
                 $this->render('forgot_password', [
                     'email' => $email,
-                    'errors' => ['email' => 'Tài khoản sinh viên đang bị khóa, không thể gửi OTP.'],
+                    'errors' => ['email' => $studentError],
                     'toast' => null,
                     'cooldownRemaining' => 0,
                 ]);
                 return;
+            }
+
+            $username = (string) ($student['username'] ?? '');
+            $currentOtp = $this->model->findLatestOtp($username);
+            if ($currentOtp !== null) {
+                $currentOtpId = (int) ($currentOtp['ID'] ?? 0);
+
+                if ((int) ($currentOtp['SO_LAN_NHAP_SAI'] ?? 0) >= self::MAX_OTP_ATTEMPTS
+                    || $this->isExpired((string) ($currentOtp['THOI_GIAN_HET_HAN'] ?? ''))
+                ) {
+                    $this->model->markOtpUsed($currentOtpId);
+                } else {
+                    $this->storeResetSession($username, $currentOtpId, strtolower($email), false);
+                    $_SESSION['student_reset_toast'] = [
+                        'type' => 'error',
+                        'message' => 'Mã OTP vẫn còn hiệu lực. Vui lòng nhập mã hiện tại hoặc chờ hết hạn để gửi lại.',
+                    ];
+                    $this->redirect('/KhoaLuan/public/student.php?page=verify_otp');
+                }
             }
 
             $this->clearResetSession();
@@ -87,7 +103,6 @@ class StudentForgotPasswordController
             $otp = (string) random_int(100000, 999999);
             $hashedOtp = password_hash($otp, PASSWORD_DEFAULT);
             $expiresAt = date('Y-m-d H:i:s', time() + (self::OTP_EXPIRES_MINUTES * 60));
-            $username = (string) ($student['username'] ?? '');
 
             $this->model->disableOldOtps($username);
             $otpId = $this->model->createOtp($username, $hashedOtp, $expiresAt);
@@ -104,7 +119,7 @@ class StudentForgotPasswordController
                 $this->render('forgot_password', [
                     'email' => $email,
                     'errors' => [],
-                    'toast' => ['type' => 'error', 'message' => 'Không thể gửi mã OTP lúc này. Vui lòng thử lại sau.'],
+                    'toast' => ['type' => 'error', 'message' => 'Không thể gửi mã OTP. Vui lòng thử lại sau.'],
                     'cooldownRemaining' => 0,
                 ]);
                 return;
@@ -139,6 +154,10 @@ class StudentForgotPasswordController
     public function verifyOtp(): void
     {
         if (empty($_SESSION['student_reset_requested'])) {
+            $_SESSION['student_reset_toast'] = [
+                'type' => 'error',
+                'message' => 'Vui lòng nhập email sinh viên để nhận mã OTP trước.',
+            ];
             $this->redirect('/KhoaLuan/public/student.php?page=forgot_password');
         }
 
@@ -178,18 +197,19 @@ class StudentForgotPasswordController
                 $this->clearResetSession();
                 $this->render('forgot_password', [
                     'email' => $email,
-                    'errors' => ['email' => 'Không tìm thấy tài khoản sinh viên với email này.'],
+                    'errors' => ['email' => 'Email này chưa được đăng ký trong hệ thống sinh viên.'],
                     'toast' => null,
                     'cooldownRemaining' => 0,
                 ]);
                 return;
             }
 
-            if (!$this->canSendResetOtp((string) ($student['account_status'] ?? ''))) {
+            $studentError = $this->studentOtpEligibilityError($student);
+            if ($studentError !== null) {
                 $this->clearResetSession();
                 $this->render('forgot_password', [
                     'email' => $email,
-                    'errors' => ['email' => 'Tài khoản sinh viên đang bị khóa, không thể gửi OTP.'],
+                    'errors' => ['email' => $studentError],
                     'toast' => null,
                     'cooldownRemaining' => 0,
                 ]);
@@ -216,9 +236,9 @@ class StudentForgotPasswordController
                 $this->render('verify_otp', [
                     'otp' => '',
                     'errors' => [],
-                    'toast' => ['type' => 'error', 'message' => 'Không thể gửi lại mã OTP lúc này. Vui lòng thử lại sau.'],
+                    'toast' => ['type' => 'error', 'message' => 'Không thể gửi mã OTP. Vui lòng thử lại sau.'],
                     'resendAvailableIn' => 0,
-                    'otpRemainingSeconds' => self::OTP_EXPIRES_MINUTES * 60,
+                    'otpRemainingSeconds' => 0,
                 ]);
                 return;
             }
@@ -252,6 +272,10 @@ class StudentForgotPasswordController
     public function handleVerifyOtp(): void
     {
         if (empty($_SESSION['student_reset_requested'])) {
+            $_SESSION['student_reset_toast'] = [
+                'type' => 'error',
+                'message' => 'Vui lòng nhập email sinh viên để nhận mã OTP trước.',
+            ];
             $this->redirect('/KhoaLuan/public/student.php?page=forgot_password');
         }
 
@@ -279,6 +303,7 @@ class StudentForgotPasswordController
         }
 
         $username = (string) ($_SESSION['student_reset_username'] ?? '');
+        $sessionOtpId = (int) ($_SESSION['student_reset_otp_id'] ?? 0);
         $otpRow = null;
 
         try {
@@ -286,23 +311,31 @@ class StudentForgotPasswordController
                 $otpRow = $this->model->findLatestOtp($username);
             }
 
+            if ($username !== '' && $sessionOtpId > 0) {
+                $otpRow = $this->model->findOtpByIdForUsername($sessionOtpId, $username);
+            }
+
             if ($otpRow === null) {
-                $errors['otp'] = 'Mã OTP không tồn tại, đã hết hạn hoặc đã được sử dụng. Vui lòng gửi lại mã mới.';
+                $errors['otp'] = 'Mã OTP không tồn tại. Vui lòng yêu cầu mã mới.';
+            } elseif (!empty($otpRow['THOI_GIAN_DA_SU_DUNG'])) {
+                $errors['otp'] = 'Mã OTP đã được sử dụng. Vui lòng yêu cầu mã mới.';
             } elseif ((int) ($otpRow['SO_LAN_NHAP_SAI'] ?? 0) >= self::MAX_OTP_ATTEMPTS) {
-                $_SESSION['student_reset_locked_until'] = time() + (self::OTP_EXPIRES_MINUTES * 60);
-                $errors['otp'] = 'Bạn đã nhập sai OTP quá nhiều lần. Xác minh tạm thời bị khóa, vui lòng gửi lại mã mới.';
+                $this->model->markOtpUsed((int) ($otpRow['ID'] ?? 0));
+                unset($_SESSION['student_reset_locked_until']);
+                $errors['otp'] = 'Bạn đã nhập sai OTP quá số lần cho phép. Vui lòng yêu cầu mã mới.';
             } elseif ($this->isExpired((string) ($otpRow['THOI_GIAN_HET_HAN'] ?? ''))) {
                 $this->model->markOtpUsed((int) ($otpRow['ID'] ?? 0));
-                $errors['otp'] = 'Mã OTP đã hết hạn. Vui lòng gửi lại mã mới.';
+                $errors['otp'] = 'Mã OTP đã hết hạn. Vui lòng yêu cầu mã mới.';
             } elseif (!password_verify($otp, (string) ($otpRow['MA_BAM_OTP'] ?? ''))) {
                 $this->model->increaseAttempts((int) ($otpRow['ID'] ?? 0));
-                $remainingAttempts = max(0, self::MAX_OTP_ATTEMPTS - ((int) ($otpRow['SO_LAN_NHAP_SAI'] ?? 0) + 1));
+                $failedAttempts = (int) ($otpRow['SO_LAN_NHAP_SAI'] ?? 0) + 1;
 
-                if ($remainingAttempts === 0) {
-                    $_SESSION['student_reset_locked_until'] = time() + (self::OTP_EXPIRES_MINUTES * 60);
-                    $errors['otp'] = 'Mã OTP không chính xác. Bạn đã nhập sai quá nhiều lần, vui lòng gửi lại mã mới.';
+                if ($failedAttempts >= self::MAX_OTP_ATTEMPTS) {
+                    $this->model->markOtpUsed((int) ($otpRow['ID'] ?? 0));
+                    unset($_SESSION['student_reset_locked_until']);
+                    $errors['otp'] = 'Bạn đã nhập sai OTP quá số lần cho phép. Vui lòng yêu cầu mã mới.';
                 } else {
-                    $errors['otp'] = 'Mã OTP không chính xác. Bạn còn ' . $remainingAttempts . ' lần thử.';
+                    $errors['otp'] = 'Mã OTP không đúng.';
                 }
             }
 
@@ -363,6 +396,9 @@ class StudentForgotPasswordController
 
         try {
             $otpRow = $username !== '' ? $this->model->findLatestOtp($username) : null;
+            if ($username !== '' && $verifiedOtpId > 0) {
+                $otpRow = $this->model->findOtpByIdForUsername($verifiedOtpId, $username);
+            }
 
             if ($otpRow === null
                 || (int) ($otpRow['ID'] ?? 0) !== $verifiedOtpId
@@ -376,6 +412,15 @@ class StudentForgotPasswordController
                     'message' => 'Phiên đặt lại mật khẩu đã hết hạn. Vui lòng thực hiện lại.',
                 ];
                 $this->redirect('/KhoaLuan/public/student.php?page=forgot_password');
+            }
+
+            $currentPasswordHash = $this->model->getPasswordHash($username);
+            if ($currentPasswordHash !== null && password_verify($password, $currentPasswordHash)) {
+                $this->render('reset_password', [
+                    'errors' => ['password' => 'Mật khẩu mới không được trùng với mật khẩu cũ.'],
+                    'toast' => null,
+                ]);
+                return;
             }
 
             if (!$this->model->updatePassword($username, $password)) {
@@ -409,6 +454,8 @@ class StudentForgotPasswordController
 
         if ($password === '') {
             $errors['password'] = 'Vui lòng nhập mật khẩu mới.';
+        } elseif (hash_equals(self::DEFAULT_STUDENT_PASSWORD, $password)) {
+            $errors['password'] = 'Không được sử dụng mật khẩu mặc định #Tdu1234.';
         } elseif (strlen($password) < 8) {
             $errors['password'] = 'Mật khẩu phải có tối thiểu 8 ký tự.';
         } elseif (!preg_match('/[A-Z]/', $password)) {
@@ -433,11 +480,39 @@ class StudentForgotPasswordController
     private function ensureOtpVerified(): void
     {
         if (empty($_SESSION['student_reset_otp_verified']) || empty($_SESSION['student_reset_username'])) {
-            $target = !empty($_SESSION['student_reset_requested'])
-                ? '/KhoaLuan/public/student.php?page=verify_otp'
-                : '/KhoaLuan/public/student.php?page=forgot_password';
-            $this->redirect($target);
+            $_SESSION['student_reset_toast'] = [
+                'type' => 'error',
+                'message' => 'Vui lòng xác thực OTP trước khi đặt lại mật khẩu.',
+            ];
+            $this->redirect('/KhoaLuan/public/student.php?page=forgot_password');
         }
+    }
+
+    private function studentOtpEligibilityError(array $student): ?string
+    {
+        if (empty($student['account_username'])) {
+            return 'Sinh viên chưa được cấp tài khoản đăng nhập. Vui lòng liên hệ quản trị viên.';
+        }
+
+        if ((int) ($student['is_student_role'] ?? 0) !== 1) {
+            return 'Email này không thuộc tài khoản sinh viên trong hệ thống.';
+        }
+
+        if (!$this->canSendResetOtp((string) ($student['account_status'] ?? ''))) {
+            return 'Tài khoản sinh viên hiện không hoạt động. Vui lòng liên hệ quản trị viên.';
+        }
+
+        return null;
+    }
+
+    private function storeResetSession(string $username, int $otpId, string $email, bool $verified): void
+    {
+        $_SESSION['student_reset_requested'] = true;
+        $_SESSION['student_reset_username'] = $username;
+        $_SESSION['student_reset_otp_id'] = $otpId;
+        $_SESSION['student_reset_otp_verified'] = $verified;
+        $_SESSION['student_reset_email'] = strtolower($email);
+        unset($_SESSION['student_reset_locked_until']);
     }
 
     private function clearResetSession(): void
@@ -447,6 +522,8 @@ class StudentForgotPasswordController
             $_SESSION['student_reset_username'],
             $_SESSION['student_reset_otp_id'],
             $_SESSION['student_reset_otp_verified'],
+            $_SESSION['student_reset_email'],
+            $_SESSION['student_reset_last_sent_at'],
             $_SESSION['student_reset_locked_until']
         );
     }

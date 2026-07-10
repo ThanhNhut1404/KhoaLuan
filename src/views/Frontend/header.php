@@ -114,9 +114,9 @@ $avatarInitial = $studentDisplayName !== ''
                 <div class="dropdown-divider"></div>
                 <a class="dropdown-item" href="/KhoaLuan/public/student.php?action=logout" onclick="openStudentLogoutConfirm(event, this);">
                     <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <path d="M10 17l-1 1a2 2 0 0 1-2.83 0L4 15.83a2 2 0 0 1 0-2.83L6.17 11a2 2 0 0 1 2.83 0l1 1" stroke-width="2" stroke-linecap="round"/>
-                        <path d="M7 14h10" stroke-width="2" stroke-linecap="round"/>
-                        <path d="M15 10l2 4-2 4" stroke-width="2" stroke-linecap="round"/>
+                        <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        <path d="M16 17l5-5-5-5" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        <path d="M21 12H9" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
                     </svg>
                     Đăng xuất
                 </a>
